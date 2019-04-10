@@ -1,0 +1,27 @@
+.navbar-toggler:focus, .navbar-toggler:active {
+    outline: none;
+    box-shadow: none;
+}
+.navbar-toggler {
+    border: none;
+}
+
+.border-bottom-thick {
+    border-bottom: 1px solid #07889B !important;
+}
+tr {
+    border-bottom: 1px solid #cfdfe1;
+}
+.table td, .table th {
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+table {
+    margin: 0 auto;
+}
+input[type=number]{
+    width: 75px;
+    text-align: center;
+}
