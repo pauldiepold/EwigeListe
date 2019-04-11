@@ -20,8 +20,8 @@ class Profile extends Model {
 
         $this->points = $games->sum('points');
         $this->pointsPerGame = $this->games == 0 ? null : $this->points / $this->games;
-        $this->pointsPerWin = $this->games == 0 ? null : $gamesWon->sum('points') / $this->gamesWon;
-        $this->pointsPerLose = $this->games == 0 ? null : $gamesLost->sum('points') / $this->gamesLost;
+        $this->pointsPerWin = $this->gamesWon == 0 ? null : $gamesWon->sum('points') / $this->gamesWon;
+        $this->pointsPerLose = $this->gamesLost == 0 ? null : $gamesLost->sum('points') / $this->gamesLost;
         $this->winrate = $this->games == 0 ? null : $this->gamesWon / $this->games * 100;
 
         $soli = clone $games;
