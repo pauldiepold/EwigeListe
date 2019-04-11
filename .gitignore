@@ -1,3 +1,5 @@
+/.idea/
+.editorconfig
 /node_modules
 /public/hot
 /public/storage
