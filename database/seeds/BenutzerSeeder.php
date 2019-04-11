@@ -1,8 +1,10 @@
 <?php
 
+use App\User;
 use Illuminate\Database\Seeder;
 use App\Player;
 use App\Profile;
+use Illuminate\Support\Facades\Hash;
 
 class BenutzerSeeder extends Seeder
 {
@@ -19,10 +21,22 @@ class BenutzerSeeder extends Seeder
         $statement->execute(array());
         while ($row = $statement->fetch())
         {
-            $player = Player::create(['old_id' => $row['id'], 'hide' => $row['verstecken'], 'surname' => $row['vorname'], 'name' => $row['nachname']]);
+            $player = Player::create([
+                'old_id' => $row['id'],
+                'hide' => $row['verstecken'],
+                'surname' => $row['vorname'],
+                'name' => $row['nachname']
+            ]);
 
             $profile = Profile::create();
             $profile->player()->associate($player)->save();
+
+            $user = User::create([
+                'player_id' => $player->id,
+                'email' => $row['email'],
+                'password' => $row['passwort'],
+            ]);
+            $user->player()->associate($player)->save();
         }
     }
 }

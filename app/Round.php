@@ -60,9 +60,55 @@ class Round extends Model {
         return $players;
     }
 
-    public function addGame($winners, $points)
+    public function addGame($winners, $pointsRound)
     {
+        $players = $this->getActivePlayers();
+        $solo = (count($winners) != 2 ? true : false);
 
+        $game = Game::create([
+            'points' => $pointsRound,
+            'solo' => $solo,
+        ]);
+        $game->round()->associate($this)->save();
+
+        foreach ($players as $player)
+        {
+            if (count($winners) == 1 &&
+                in_array($player->id, $winners))           // Solo gewonnen
+            {
+                $soloist = true;
+                $won = true;
+                $points = 3 * $pointsRound;
+            } elseif (count($winners) == 3 &&
+                      !in_array($player->id, $winners))    // Solo verloren
+            {
+                $soloist = true;
+                $won = false;
+                $points = -3 * $pointsRound;
+            } elseif ((count($winners) == 2 &&
+                       in_array($player->id, $winners)) ||
+                      (count($winners) == 3 &&
+                       in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
+            {
+                $soloist = false;
+                $won = true;
+                $points = 1 * $pointsRound;
+            } elseif ((count($winners) == 2 &&
+                       !in_array($player->id, $winners)) ||
+                      (count($winners) == 1 &&
+                       !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
+            {
+                $soloist = false;
+                $won = false;
+                $points = -1 * $pointsRound;
+            }
+
+            $game->players()->attach($player->id, [
+                'won' => $won,
+                'soloist' => $soloist,
+                'points' => $points
+            ]);
+        }
     }
 
     public function games()

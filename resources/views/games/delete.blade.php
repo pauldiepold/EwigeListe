@@ -5,7 +5,7 @@
 @section('heading', 'Spiel löschen')
 
 @section('content')
-    <p>Willst du folgendes Spiel wirklich löschen?</p>
+    <p></p>
 
     @foreach ($game->players as $player)
         <p>{{ $player->surname }} {{ $player->name }}: {{ $game->players()->where('player_id', $player->id)->first()->pivot->points }}</p>

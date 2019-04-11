@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePlayersTable extends Migration {
-
+class AddUserForeignKey extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -13,14 +13,9 @@ class CreatePlayersTable extends Migration {
      */
     public function up()
     {
-        Schema::create('players', function (Blueprint $table)
+        Schema::table('users', function(Blueprint $table)
         {
-            $table->increments('id');
-            $table->unsignedInteger('old_id');
-            $table->string('surname');
-            $table->string('name');
-            $table->boolean('hide');
-            $table->timestamps();
+            $table->foreign('player_id')->references('id')->on('players');
         });
     }
 
@@ -31,6 +26,9 @@ class CreatePlayersTable extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('players');
+        Schema::table('users', function(Blueprint $table)
+        {
+            $table->dropForeign('users_player_id_foreign');
+        });
     }
 }

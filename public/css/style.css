@@ -25,3 +25,7 @@ input[type=number]{
     width: 75px;
     text-align: center;
 }
+
+.alert {
+    display :inline-block;
+}

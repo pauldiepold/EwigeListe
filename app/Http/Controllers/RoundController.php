@@ -19,9 +19,68 @@ class RoundController extends Controller {
         return view('rounds.index', ['rounds' => $rounds]);
     }
 
+    public function show(Round $round)
+    {
+        $colRound = collect();
+        $colRow = collect();
+        $playerPoints = array();
+
+        //Kopfzeile
+        foreach ($round->players as $player)
+        {
+            $playerPoints[] = 0;
+            $colItem = collect();
+            $colItem->push($player->surname);
+            $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
+
+            $colRow->push($colItem);
+        }
+        $colItem = collect();
+        $colItem->push('Punkte');
+        $colRow->push($colItem);
+        $colRound->push($colRow);
+
+        //Spiele
+        foreach ($round->games as $game)
+        {
+            $colRow = collect();
+            $i = 0;
+
+            foreach ($round->players as $player)
+            {
+                $colItem = collect();
+                if ($game->players->contains($player))
+                {
+                    $pivot = $game->players()->where('player_id', $player->id)->first()->pivot;
+                    $playerPoints[$i] += $pivot->points;
+                    $colItem->push($playerPoints[$i]);
+
+                    $pivot->won ? $colItem->push('won') : '';
+                } else
+                {
+                    $colItem->push('-');
+                }
+                $i++;
+                $colRow->push($colItem);
+            }
+
+            $colItem = collect();
+            $colItem->push($game->points);
+            $colRow->push($colItem);
+
+            ($game->getDealerIndex() + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
+
+            $game->solo ? $colRow->push('solo') : '';
+            $colRound->push($colRow);
+        }
+
+        $activePlayers = $round->getActivePlayers();
+
+        return view('rounds.show', compact('round', 'colRound', 'activePlayers'));
+    }
+
     public function create($numberOfPlayers = 4)
     {
-
         if ($numberOfPlayers < 4 || $numberOfPlayers > 7)
         {
             abort(404);
@@ -52,7 +111,7 @@ class RoundController extends Controller {
             return array_search($model->getKey(), $players_array);
         });
 
-        $index = 1;
+        $index = 0;
         foreach ($players as $player)
         {
             $round->players()->attach($player->id, [
@@ -61,14 +120,7 @@ class RoundController extends Controller {
             $index++;
         }
 
-        return redirect('/rounds');
-    }
-
-    public function show(Round $round)
-    {
-        $games = $round->games;
-
-        return view('rounds.show', ['round' => $round, 'games' => $games]);
+        return redirect('/rounds/' . $round->id);
     }
 
     public function edit(Round $round)
