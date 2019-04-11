@@ -11,6 +11,8 @@
 |
 */
 
+Route::get('/', 'PlayerController@index');
+
 Route::resource('/players','PlayerController');
 
 Route::resource('/rounds','RoundController');
