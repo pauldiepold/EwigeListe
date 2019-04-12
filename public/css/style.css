@@ -1,3 +1,6 @@
+body {
+	margin-top: 110px;	
+}
 .navbar-toggler:focus, .navbar-toggler:active {
     outline: none;
     box-shadow: none;
@@ -28,4 +31,20 @@ input[type=number]{
 
 .alert {
     display :inline-block;
+}
+
+.fixed-top {
+	top: 42px;	
+}
+#navbar-header {
+	top: 0px;
+	position: fixed;
+	height: 42px;
+	padding-right:16px;
+	padding-left:16px;
+	display:flex;
+	flex-direction:row;
+	flex-wrap:nowrap;
+	justify-content:flex-start;
+	
 }

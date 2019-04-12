@@ -15,7 +15,7 @@ class SessionSeeder extends Seeder
     {
         $pdo = new PDO('mysql:host=localhost;dbname=' . env('DB_DATABASE_old'), env('DB_USERNAME_old'), env('DB_PASSWORD_old'));
 		
-		$statement = $pdo->prepare("SELECT * FROM session LIMIT 100");
+		$statement = $pdo->prepare("SELECT * FROM session");
         $statement->execute(array());
         while ($row = $statement->fetch())
         {

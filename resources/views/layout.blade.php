@@ -15,11 +15,29 @@
 
     <title>@yield('title')</title>
 </head>
-<body style="margin-top: 4em;" class="text-center">
+<body class="text-center">
+	<script>
+		$(function() {
+ 			$('#navbarCollapse').on('show.bs.collapse', function () {
+ 				$('#fa-bars').hide();
+				$('#fa-times').show();
+			});
+			$('#navbarCollapse').on('hide.bs.collapse', function () {
+ 				$('#fa-bars').show();
+				$('#fa-times').hide();
+			});
+		});
+	</script>
+	<div id="navbar-header" class="w-100">
+		<div class="d-flex justify-content-center">
+			<h3 class="text-danger text-center">Ewige Liste</h3>
+		</div>
+	</div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <button class="navbar-toggler mx-auto" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-                aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span><span style="vertical-align: middle;"> Menü</span>
+                aria-controls="navbarsExample08" aria-expanded="false" aria-label="Toggle navigation">			
+        	<i id="fa-bars" class="fas fa-bars"></i><i id="fa-times" class="fas fa-times" style="display:none;"></i>
+		<!--<span style="vertical-align: middle;"> Menü</span> -->
         </button>
 
         <div class="collapse navbar-collapse justify-content-md-center" id="navbarCollapse">
@@ -33,10 +51,27 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/rounds">Rundenarchiv</a>
                 </li>
+				
+				<li class="nav-item">
+					@guest
+                    <a class="nav-link" href="/login">Login</a>
+					@endguest
+					@auth
+					<a class="nav-link" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+					@endauth
+                </li>
+				
             </ul>
         </div>
     </nav>
-
     <div class="container">
         <h3 class="mb-4">
             @yield('heading')
