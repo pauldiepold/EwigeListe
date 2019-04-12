@@ -113,7 +113,7 @@ class Round extends Model {
 
     public function games()
     {
-        return $this->hasMany(Game::class);
+        return $this->hasMany(Game::class)->orderBy('created_at', 'asc');
     }
 
     public function players()
