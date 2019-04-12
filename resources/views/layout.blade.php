@@ -14,20 +14,10 @@
           integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <title>@yield('title')</title>
+
 </head>
+
 <body class="text-center">
-    <script>
-        $(function () {
-            $('#navbarCollapse').on('show.bs.collapse', function () {
-                $('#fa-bars').hide();
-                $('#fa-times').show();
-            });
-            $('#navbarCollapse').on('hide.bs.collapse', function () {
-                $('#fa-bars').show();
-                $('#fa-times').hide();
-            });
-        });
-    </script>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="row w-100 justify-content-center mx-auto">
             <div class="col text-center text-light">

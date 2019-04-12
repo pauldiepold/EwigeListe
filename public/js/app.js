@@ -36831,7 +36831,9 @@ module.exports = function(module) {
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js"); //window.Vue = require('vue');
+__webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
+__webpack_require__(/*! ./scripts/custom.js */ "./resources/js/scripts/custom.js"); //window.Vue = require('vue');
 
 /**
  * The following block of code may be used to automatically register your
@@ -36913,6 +36915,26 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/scripts/custom.js":
+/*!****************************************!*\
+  !*** ./resources/js/scripts/custom.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+$(function () {
+  $('#navbarCollapse').on('show.bs.collapse', function () {
+    $('#fa-bars').hide();
+    $('#fa-times').show();
+  });
+  $('#navbarCollapse').on('hide.bs.collapse', function () {
+    $('#fa-bars').show();
+    $('#fa-times').hide();
+  });
+});
 
 /***/ }),
 
