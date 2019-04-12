@@ -5,9 +5,6 @@
 @section('heading', 'Rundenarchiv')
 
 @section('content')
-    @include('back')
-
-
     {{ $rounds->onEachSide(1)->links() }}
 
     <div class="row justify-content-center my-4">
