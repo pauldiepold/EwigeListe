@@ -35,7 +35,7 @@
 
                             <div class="form-row my-4 mx-auto justify-content-center">
                                 <div class="col-xs-6 col-xs-offset-3">
-                                    <input class="form-control" type="number" min="-4" max="16" value="0" name="points">
+                                    <input class="form-control" type="number" min="-4" max="16" name="points">
                                     <label for="points" class="control-label font-weight-bold">Punkte</label>
                                 </div>
                             </div>

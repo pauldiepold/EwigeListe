@@ -86,7 +86,11 @@ class RoundController extends Controller {
             abort(404);
         }
 
-        $players = Player::all();
+        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
+            ->where('players.hide', '=', '0')
+            ->orderBy('profiles.games', 'desc')
+            ->select('players.*')
+            ->get();
 
         return view('rounds.create', ['players' => $players, 'numberOfPlayers' => $numberOfPlayers]);
     }
