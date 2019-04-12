@@ -1,0 +1,56 @@
+body {
+  margin-top: 110px;
+}
+
+.navbar-toggler:focus, .navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler {
+  border: none;
+}
+
+.border-bottom-thick {
+  border-bottom: 1px solid #07889B !important;
+}
+
+tr {
+  border-bottom: 1px solid #cfdfe1;
+}
+
+.table td, .table th {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+table {
+  margin: 0 auto;
+}
+
+input[type=number] {
+  width: 75px;
+  text-align: center;
+}
+
+.alert {
+  display: inline-block;
+}
+
+.fixed-top {
+}
+
+#navbar-header {
+  top: 0px;
+  position: fixed;
+  height: 42px;
+  padding-right: 16px;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+
+}
