@@ -18,7 +18,7 @@ class SpielSeeder extends Seeder
 		
 		$rounds = Round::all();	
 		
-		$statement = $pdo->prepare("SELECT * FROM spiel");
+		$statement = $pdo->prepare("SELECT * FROM spiel  " . env('DB_SEED_LIMIT') . " " . env('DB_SEED_LIMIT_SPIEL'));
         $statement->execute(array());
 		
         while ($row = $statement->fetch())
