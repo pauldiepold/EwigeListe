@@ -2,7 +2,7 @@
     Spiel eintragen
 </button>
 
-<div class="modal " id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
+<div class="modal" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">

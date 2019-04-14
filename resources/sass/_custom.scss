@@ -22,8 +22,6 @@ body {
   border: none;
 }
 
-
-
 .table-borderless tr, .table-borderless td{
   border: none !important;
 }
@@ -33,11 +31,12 @@ tr {
 }
 
 table, tbody, tr, th {
-  border-top: none !important ;
+  border-top: none !important;
 }
 
-.border-bottom-thick {
-  border-bottom: 2px solid $muted !important;
+.border-bottom-thick td,
+.border-bottom-thick th {
+  border-bottom: 1px solid $muted !important;
 }
 
 .table td, .table th {

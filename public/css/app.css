@@ -10695,8 +10695,9 @@ th {
   border-top: none !important;
 }
 
-.border-bottom-thick {
-  border-bottom: 2px solid #1C7293 !important;
+.border-bottom-thick td,
+.border-bottom-thick th {
+  border-bottom: 1px solid #1C7293 !important;
 }
 
 .table td,

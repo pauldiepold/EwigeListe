@@ -13,6 +13,8 @@
     @include('rounds.inc.pointsTable')
 
     @can('update', $round)
+            @include('games.update')
+            <br><br>
         @include('games.delete')
     @endcan
 

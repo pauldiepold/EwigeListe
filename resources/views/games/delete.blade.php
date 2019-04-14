@@ -3,7 +3,7 @@
         Letztes Spiel löschen
     </button>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    <div class="modal" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -13,8 +13,8 @@
                 </div>
                 <div class="modal-body">
                     @foreach ($lastGame->players as $player)
-                        <p>{{ $player->surname }} {{ $player->name }}
-                            : {{ $lastGame->players()->where('player_id', $player->id)->first()->pivot->points }}</p>
+                        <p{!! $player->pivot->won ? ' class="font-weight-bold"' : '' !!}>{{ $player->surname }} {{ $player->name }}
+                            : {{ $player->pivot->points }}</p>
                     @endforeach
 
                     <form method="POST" action="/games/{{ $lastGame->id }}">

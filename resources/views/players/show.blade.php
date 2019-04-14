@@ -38,7 +38,7 @@
                 </tr>
                 <tr>
                     <td class="pb-4">Gewinnrate:</td>
-                    <td class="font-weight-bold">{{ $profile->winrate }}</td>
+                    <td class="font-weight-bold">{{ $profile->winrate }}%</td>
                 </tr>
                 <tr>
                     <td>Soli:</td>
@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <td>Solo-Gewinnrate:</td>
-                    <td class="font-weight-bold">{{ $profile->soloWinrate }}</td>
+                    <td class="font-weight-bold">{{ $profile->soloWinrate }}%</td>
                 </tr>
                 <tr>
                     <td class="pb-4">Punkte durch Soli:</td>
