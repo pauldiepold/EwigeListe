@@ -34,6 +34,8 @@ Route::get('/games/delete/{round}', 'GameController@showDelete');
 
 Route::get('/profiles/updateAll', 'ProfileController@updateAll');
 
+Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete');
+
 Auth::routes();
 
 Route::get('/test', 'TestController@test');
