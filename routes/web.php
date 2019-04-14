@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,12 +11,16 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/test', 'TestController@test');
 
-Route::get('/', 'PlayerController@index');
+Route::get('/', 'HomeController@index');
+Route::get('/home', 'HomeController@index')->name('home');
 
 Route::resource('/players','PlayerController');
 
+Route::get('/rounds/current', function() {
+    $lastRound = Auth::user()->player->games()->latest()->first()->round;
+    return redirect('/rounds/' . $lastRound->id);
+});
 Route::resource('/rounds','RoundController');
 Route::get('/rounds/create/{numberOfPlayers?}', 'RoundController@create');
 
@@ -30,4 +35,4 @@ Route::get('/profiles/updateAll', 'ProfileController@updateAll');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/test', 'TestController@test');

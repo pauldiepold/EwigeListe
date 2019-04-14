@@ -72,10 +72,14 @@ class SpielSeeder extends Seeder
                     $game->players()->attach($player->id, [
                         'won' => $won,
                         'soloist' => $soloist,
-                        'points' => $points
+                        'points' => $points,
+                        'created_at' => $row['created_at'],
+                        'updated_at' => $row['created_at']
                     ]);
                 }
             }
+            $game->updated_at = $row['created_at'];
+            $game->save();
         }
     }
 }

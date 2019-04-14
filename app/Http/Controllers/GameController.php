@@ -38,10 +38,6 @@ class   GameController extends Controller {
             return Redirect::back()->withInput()->withErrors(['Du kannst nur das letzte Spiel einer Runde löschen!']);
         }
 
-        if (!$game->round->active) {
-            return Redirect::back()->withInput()->withErrors(['Du kannst nur Spiele aus aktiven Runden löschen!']);
-        }
-
         $game->delete();
 
         return redirect('/rounds/' . $game->round->id);

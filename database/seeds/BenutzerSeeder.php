@@ -25,7 +25,9 @@ class BenutzerSeeder extends Seeder
                 'old_id' => $row['id'],
                 'hide' => $row['verstecken'],
                 'surname' => $row['vorname'],
-                'name' => $row['nachname']
+                'name' => $row['nachname'],
+                'created_at' => $row['created_at'],
+                'updated_at' => $row['created_at'],
             ]);
 
             $profile = Profile::create();

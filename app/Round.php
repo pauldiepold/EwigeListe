@@ -10,13 +10,12 @@ class Round extends Model {
     protected $fillable = [];
 
     protected $attributes = [
-        'active' => true,
         'old_id' => null,
     ];
 
     public function getLastGame()
     {
-        return $this->games()->orderBy('created_at', 'desc')->first();
+        return $this->games()->latest()->first();
     }
 
     public function getDealerIndex()
@@ -113,7 +112,7 @@ class Round extends Model {
 
     public function games()
     {
-        return $this->hasMany(Game::class)->orderBy('created_at', 'asc');
+        return $this->hasMany(Game::class);
     }
 
     public function players()

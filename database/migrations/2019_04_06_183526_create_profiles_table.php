@@ -35,15 +35,22 @@ class CreateProfilesTable extends Migration
             $table->float('soloWinrate', 4, 1)->nullable();
             $table->integer('soloPoints')->nullable();
 
-            $table->date('mostGamesDay')->nullable();
-            $table->integer('mostGamesDayCount')->nullable();
+            $table->integer('mostGamesDay')->nullable();
+            $table->timestamp('mostGamesDayDate')->nullable();
             $table->integer('mostGamesMonth')->nullable();
+            $table->timestamp('mostGamesMonthDate')->nullable();
 
             $table->integer('highestPoints')->nullable();
+            $table->timestamp('highestPointsDate')->nullable();
             $table->integer('lowestPoints')->nullable();
+            $table->timestamp('lowestPointsDate')->nullable();
 
             $table->integer('winStreak')->nullable();
+            $table->timestamp('winStreakStart')->nullable();
+            $table->timestamp('winStreakEnd')->nullable();
             $table->integer('loseStreak')->nullable();
+            $table->timestamp('loseStreakStart')->nullable();
+            $table->timestamp('loseStreakEnd')->nullable();
 
 
             $table->timestamps();

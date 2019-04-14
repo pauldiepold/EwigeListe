@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layouts.main')
 
 @section('title', 'Runde Starten')
 
@@ -46,6 +46,6 @@
         <button type="submit" class="btn btn-secondary">Neue Runde Starten</button>
     </form>
 
-    @include('error')
+    @include('include.error')
 
 @endsection

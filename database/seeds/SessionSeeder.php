@@ -21,7 +21,6 @@ class SessionSeeder extends Seeder
         {
             $round = App\Round::create([
                 'old_id' => $row['id'],
-                'active' => $row['aktiv'],
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['created_at']
             ]);

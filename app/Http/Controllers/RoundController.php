@@ -14,23 +14,26 @@ class RoundController extends Controller {
 
     public function index()
     {
-        $rounds = Round::orderBy('created_at', 'asc')->paginate(50);
+        $rounds = Round::oldest()->paginate(50);
 
-        return view('rounds.index', ['rounds' => $rounds]);
+        return view('rounds.index', compact('rounds'));
     }
 
     public function show(Round $round)
     {
+        $round->load('players', 'games');
         $colRound = collect();
         $colRow = collect();
         $playerPoints = array();
 
         //Kopfzeile
-        foreach ($round->players as $player)
+        $players = $round->players;
+        foreach ($players as $player)
         {
             $playerPoints[] = 0;
             $colItem = collect();
             $colItem->push($player->surname);
+            $colItem->push($player->id);
             $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
 
             $colRow->push($colItem);
@@ -41,10 +44,11 @@ class RoundController extends Controller {
         $colRound->push($colRow);
 
         //Spiele
-        foreach ($round->games as $game)
+        foreach ($round->games()->oldest()->get() as $game)
         {
             $colRow = collect();
             $i = 0;
+            $game->load('players');
 
             foreach ($round->players as $player)
             {
@@ -75,8 +79,9 @@ class RoundController extends Controller {
         }
 
         $activePlayers = $round->getActivePlayers();
+        $lastGame = $round->getLastGame();
 
-        return view('rounds.show', compact('round', 'colRound', 'activePlayers'));
+        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame'));
     }
 
     public function create($numberOfPlayers = 4)
