@@ -11,7 +11,7 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-5 col-xl-4">
-            <table class="table text-left">
+            <table class="table table-sm table-borderless text-left">
                 <tr>
                     <td>Aktuelle Punktzahl:</td>
                     <td class="font-weight-bold">{{ $profile->points }}</td>
@@ -25,7 +25,7 @@
                     <td class="font-weight-bold">{{ $profile->pointsPerWin }}</td>
                 </tr>
                 <tr>
-                    <td>Punkte pro verlorenem Spiel:</td>
+                    <td class="pb-4">Punkte pro verlorenem Spiel:</td>
                     <td class="font-weight-bold">{{ $profile->pointsPerLose }}</td>
                 </tr>
                 <tr>
@@ -37,7 +37,7 @@
                     <td class="font-weight-bold">{{ $profile->gamesWon }} / {{ $profile->gamesLost }}</td>
                 </tr>
                 <tr>
-                    <td>Gewinnrate:</td>
+                    <td class="pb-4">Gewinnrate:</td>
                     <td class="font-weight-bold">{{ $profile->winrate }}</td>
                 </tr>
                 <tr>
@@ -53,7 +53,7 @@
                     <td class="font-weight-bold">{{ $profile->soloWinrate }}</td>
                 </tr>
                 <tr>
-                    <td>Punkte durch Soli:</td>
+                    <td class="pb-4">Punkte durch Soli:</td>
                     <td class="font-weight-bold">{{ $profile->soloPoints }}</td>
                 </tr>
 

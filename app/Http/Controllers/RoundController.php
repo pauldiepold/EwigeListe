@@ -38,9 +38,6 @@ class RoundController extends Controller {
 
             $colRow->push($colItem);
         }
-        $colItem = collect();
-        $colItem->push('Punkte');
-        $colRow->push($colItem);
         $colRound->push($colRow);
 
         //Spiele

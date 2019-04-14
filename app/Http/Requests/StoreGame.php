@@ -6,6 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreGame extends FormRequest {
 
+    protected $errorBag = 'create';
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,15 +26,17 @@ class StoreGame extends FormRequest {
     public function rules()
     {
         return [
-            'points' => 'required|integer|nullable',
-            'winners' => 'required|array|between:1,3'
+            'winners' => 'required|max:3|array',
+            'points' => 'required|integer|nullable|between:-4,16',
         ];
     }
 
     public function messages()
     {
         return [
-
+            'winners.required' => 'Es muss mindestens ein Gewinner ausgewählt werden!',
+            'winners.max' => 'Es dürfen höchstens drei Gewinner ausgewählt werden!',
+            'points.required' => 'Es muss eine Punktzahl angegeben werden!'
         ];
     }
 }

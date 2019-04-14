@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <button type="submit" class="btn btn-secondary">Neue Runde Starten</button>
+        <button type="submit" class="btn btn-primary">Neue Runde Starten</button>
     </form>
 
     @include('include.error')

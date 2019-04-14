@@ -11,13 +11,15 @@
             </div>
             <div class="modal-body">
 
+                @include('include.errorNamed', ['nameBag' => 'create'])
+
                 <form method="POST" action="/rounds/{{ $round->id }}/game">
                     @csrf
 
                     @foreach ($activePlayers as $player)
                         <div class="custom-control custom-checkbox my-1">
                             <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
-                                   id="player{{ $player->id }}" name="winners[]">
+                                   id="player{{ $player->id }}" name="winners[]" {{ collect(old('winners'))->contains($player->id) ? 'checked' : '' }}>
                             <label class="custom-control-label font-weight-bold" for="player{{ $player->id }}">
                                 {{ $player->surname }} {{ $player->name }}
                             </label>
@@ -26,11 +28,10 @@
 
                     <div class="form-row my-4 mx-auto justify-content-center">
                         <div class="col-xs-6 col-xs-offset-3">
-                            <input class="form-control" type="number" min="-4" max="16" name="points">
+                            <input class="form-control{{ $errors->create->first('points') ? ' is-invalid' : '' }}" type="number" min="-4" max="16" name="points" value="{{ old('points') }}">
                             <label for="points" class="control-label font-weight-bold">Punkte</label>
                         </div>
                     </div>
-
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
                 </form>
 
@@ -41,3 +42,10 @@
         </div>
     </div>
 </div>
+@if(count($errors->create) > 0)
+    <script>
+        $(function () {
+            $('#createModal').modal({show: true});
+        });
+    </script>
+@endif

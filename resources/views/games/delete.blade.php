@@ -31,12 +31,4 @@
             </div>
         </div>
     </div>
-
-    @if (count($errors) > 0)
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('#deleteModal').modal({show: true});
-            });
-        </script>
-    @endif
 @endif
