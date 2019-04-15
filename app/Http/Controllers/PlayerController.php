@@ -11,7 +11,7 @@ class PlayerController extends Controller {
 
     public function index()
     {
-        $players = Player::all();
+        $players = Player::with('profile')->get();
 
         return view('players.index', ['players' => $players]);
     }
@@ -30,7 +30,7 @@ class PlayerController extends Controller {
     {
         $profile = $player->profile;
 
-        $rounds = $player->rounds()->orderBy('created_at', 'asc')->paginate(10);
+        $rounds = $player->rounds()->orderBy('created_at', 'asc')->with(['games', 'players'])->paginate(10);
 
         return view('players.show', compact('player', 'profile', 'rounds'));
     }

@@ -26,6 +26,7 @@ class SpielSeeder extends Seeder
             $game = App\Game::create([
                 'solo' => $row['solo'],
                 'points' => $row['punkte'],
+                'dealerIndex' => $row['geber'] - 1,
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['created_at']
             ]);

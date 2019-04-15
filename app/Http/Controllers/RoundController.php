@@ -14,23 +14,21 @@ class RoundController extends Controller {
 
     public function index()
     {
-        $rounds = Round::oldest()->paginate(50);
+        $rounds = Round::oldest()->with(['games', 'players'])->paginate(50);
 
         return view('rounds.index', compact('rounds'));
     }
 
     public function show(Round $round)
     {
-        $round->load('players', 'games');
+        //$round->load('players', 'games');
         $colRound = collect();
         $colRow = collect();
-        $playerPoints = array();
+        $playerPoints = collect();
 
         //Kopfzeile
-        $players = $round->players;
-        foreach ($players as $player)
+        foreach ($round->players as $player)
         {
-            $playerPoints[] = 0;
             $colItem = collect();
             $colItem->push($player->surname);
             $colItem->push($player->id);
@@ -40,36 +38,39 @@ class RoundController extends Controller {
         }
         $colRound->push($colRow);
 
+
         //Spiele
-        foreach ($round->games()->oldest()->get() as $game)
+        foreach ($round->games()->oldest()->with('players')->get() as $game)
         {
             $colRow = collect();
-            $i = 0;
-            $game->load('players');
+
+            foreach ($game->players as $player)
+            {
+                $colItem = collect();
+
+                $playerPoints->put($player->id, $playerPoints->get($player->id) + $player->pivot->points);
+                $colItem->push($playerPoints->get($player->id));
+
+                $player->pivot->won ? $colItem->push('won') : '';
+
+                $colRow->put($player->id, $colItem);
+            }
 
             foreach ($round->players as $player)
             {
-                $colItem = collect();
-                if ($game->players->contains($player))
+                if (!$colRow->has($player->id))
                 {
-                    $pivot = $game->players()->where('player_id', $player->id)->first()->pivot;
-                    $playerPoints[$i] += $pivot->points;
-                    $colItem->push($playerPoints[$i]);
-
-                    $pivot->won ? $colItem->push('won') : '';
-                } else
-                {
+                    $colItem = collect();
                     $colItem->push('-');
+                    $colRow->put($player->id, $colItem);
                 }
-                $i++;
-                $colRow->push($colItem);
             }
 
             $colItem = collect();
             $colItem->push($game->points);
-            $colRow->push($colItem);
+            $colRow->put('points', $colItem);
 
-            ($game->getDealerIndex() + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
+            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
 
             $game->solo ? $colRow->push('solo') : '';
             $colRound->push($colRow);

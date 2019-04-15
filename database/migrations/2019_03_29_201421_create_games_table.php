@@ -18,6 +18,7 @@ class CreateGamesTable extends Migration
             $table->unsignedInteger('round_id')->nullable();
             $table->Integer('points')->nullable();
             $table->boolean('solo');
+            $table->integer('dealerIndex')->nullable();
             $table->timestamps();
 
             $table->foreign('round_id')

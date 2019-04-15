@@ -13,14 +13,14 @@ class Game extends Model {
 
     ];
 
-    public function getDealerIndex()
+    /*public function getDealerIndex()
     {
         return $this->round->games
                    ->where('created_at', '<', $this->created_at)
                    ->where('solo', 0)->count()
                % $this->round->players->count();
 
-    }
+    }*/
 
     public function round()
     {
