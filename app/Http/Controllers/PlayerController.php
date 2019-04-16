@@ -9,11 +9,20 @@ use Illuminate\Support\Facades\DB;
 
 class PlayerController extends Controller {
 
-    public function index()
+    public function index($orderBy = 'games', $order = 'down')
     {
-        $players = Player::with('profile')->get();
-
-        return view('players.index', ['players' => $players]);
+		$orderSQL = $order == 'up' ? 'asc' : 'desc';
+		
+		if ($orderBy == 'surname') {
+			$orderTable =  'players';
+			$orderSQL = $orderSQL == 'asc' ? 'desc' : 'asc';
+		} else {
+			$orderTable = 'profiles';
+		}
+		
+        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')->orderBy($orderTable . '.' . $orderBy, $orderSQL)->with('profile')->get();
+		
+        return view('players.index', compact('players', 'orderBy', 'order'));
     }
 
     public function create()

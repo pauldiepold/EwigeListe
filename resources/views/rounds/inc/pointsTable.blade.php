@@ -7,7 +7,7 @@
                 @php $header = $colRound->shift(); @endphp
                 <tr class="border-bottom-thick">
                     @foreach ($header as $item)
-                        <th><a class="text-dark" href="/players/{{ $item->get('1') }}">{{$item->first()}}</a></th>
+                        <th><a class="text-dark" href="/profiles/{{ $item->get('1') }}">{{$item->first()}}</a></th>
                     @endforeach
                     <th class="text-dark">Punkte</th>
                 </tr>

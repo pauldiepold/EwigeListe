@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Profile;
+use App\Player;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller {
@@ -34,9 +35,13 @@ class ProfileController extends Controller {
         //
     }
 
-    public function show(Profile $profile)
+    public function show(Player $player)
     {
-        //
+        $profile = $player->profile;
+
+        $rounds = $player->rounds()->orderBy('created_at', 'asc')->with(['games', 'players'])->paginate(10);
+
+        return view('players.show', compact('player', 'profile', 'rounds'));
     }
 
     public function edit(Profile $profile)

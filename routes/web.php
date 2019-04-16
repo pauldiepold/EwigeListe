@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('players/{orderBy?}/{order?}', 'PlayerController@index');
+Route::get('profiles/{player}', 'ProfileController@show');
 Route::resource('/players','PlayerController');
 
 Route::get('/rounds/current', function() {
