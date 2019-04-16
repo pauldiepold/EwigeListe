@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top" id="navbar">
     <div class="row w-100 justify-content-center mx-auto">
         <div class="col text-center text-light">
             <h3 class="site-title">Ewige Liste</h3>
