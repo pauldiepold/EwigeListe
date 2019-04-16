@@ -10664,6 +10664,15 @@ body {
   background-color: #21295C;
 }
 
+.link-unstyled,
+.link-unstyled:visited,
+.link-unstyled:hover,
+.link-unstyled:active,
+.link-unstyled:focus,
+.link-unstyled:active:hover {
+  text-decoration: none;
+}
+
 .site-title {
   font-family: Raleway;
   font-weight: 300;

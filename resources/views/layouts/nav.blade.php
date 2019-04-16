@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary fixed-top" id="navbar">
     <div class="row w-100 justify-content-center mx-auto">
-        <div class="col text-center text-light">
-            <h3 class="site-title">Ewige Liste</h3>
+        <div class="col">
+            <a href="/" class="link-unstyled">
+                <h3 class="site-title text-light">Ewige Liste</h3>
+            </a>
         </div>
         <div class="w-100"></div>
         <div class="col">
