@@ -12,7 +12,7 @@
 
     <div class="container">
 
-        <h3 class="mb-4 site-title">
+        <h3 class="mb-4 site-title text-uppercase">
             @yield('heading')
         </h3>
 
