@@ -20,7 +20,11 @@ class PlayerController extends Controller {
 			$orderTable = 'profiles';
 		}
 		
-        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')->orderBy($orderTable . '.' . $orderBy, $orderSQL)->with('profile')->get();
+        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
+			->orderBy($orderTable . '.' . $orderBy, $orderSQL)
+			->where('profiles.games', '>=', '10')
+			->with('profile')
+			->get();
 		
         return view('players.index', compact('players', 'orderBy', 'order'));
     }

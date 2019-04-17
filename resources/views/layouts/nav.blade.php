@@ -19,18 +19,22 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/home">Startseite</a>
                     </li>
+					@auth
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds/current">Aktuelle Runde</a>
                     </li>
+					@endauth
                     <li class="nav-item">
                         <a class="nav-link" href="/players">Ewige Liste</a>
                     </li>
+					@auth
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds/create">Neue Runde starten</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds">Rundenarchiv</a>
                     </li>
+					@endauth
 
                     <li class="nav-item">
                         @guest

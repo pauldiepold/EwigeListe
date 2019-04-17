@@ -8,7 +8,10 @@ class Player extends Model {
 
     protected $attributes = [
         'hide' => false,
+		'old_id' => 0,
     ];
+	
+	protected $fillable = ['surname', 'name'];
 
     public function rounds()
     {
@@ -29,4 +32,9 @@ class Player extends Model {
     {
         return $this->hasOne(Profile::class);
     }
+	
+	public function invites()
+	{
+		return $this->hasMany(Invite::class);	
+	}
 }

@@ -130,18 +130,4 @@ class RoundController extends Controller {
         return redirect('/rounds/' . $round->id);
     }
 
-    public function edit(Round $round)
-    {
-        //
-    }
-
-    public function update(Request $request, Round $round)
-    {
-        //
-    }
-
-    public function destroy(Round $round)
-    {
-        //
-    }
 }

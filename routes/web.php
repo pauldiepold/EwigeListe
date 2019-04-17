@@ -2,42 +2,54 @@
 
 use Illuminate\Support\Facades\Auth;
 /*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
+Verb          Path                        Action  Route Name
+GET           /users                      index   users.index
+GET           /users/create               create  users.create
+POST          /users                      store   users.store
+GET           /users/{user}               show    users.show
+GET           /users/{user}/edit          edit    users.edit
+PUT|PATCH     /users/{user}               update  users.update
+DELETE        /users/{user}               destroy users.destroy
 */
-
-Route::get('/', 'HomeController@index');
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('players/{orderBy?}/{order?}', 'PlayerController@index');
-Route::get('profiles/{player}', 'ProfileController@show');
-Route::resource('/players','PlayerController');
-
-Route::get('/rounds/current', function() {
-    $lastRound = Auth::user()->player->games()->latest()->first()->round;
-    return redirect('/rounds/' . $lastRound->id);
-});
-Route::resource('/rounds','RoundController');
-Route::get('/rounds/create/{numberOfPlayers?}', 'RoundController@create');
-
-Route::resource('/games','GameController')->only([
-    'destroy', 'update'
-]);
-Route::get('/rounds/{round}/game/create', 'GameController@create');
-Route::post('/rounds/{round}/game', 'GameController@store');
-Route::patch('/rounds/{round}/game', 'GameController@update');
-Route::get('/games/delete/{round}', 'GameController@showDelete');
-
-Route::get('/profiles/updateAll', 'ProfileController@updateAll');
-
-Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete');
 
 Auth::routes();
 
-Route::get('/test', 'TestController@test');
+/* *********** Home ************** */
+Route::get(      '/',                                     'HomeController@index');
+Route::get(      '/home',                                 'HomeController@index')->name('home');
+
+
+/* *********** Players *********** */
+Route::get(      'players/{orderBy?}/{order?}',           'PlayerController@index');
+Route::get(      'profiles/{player}',                     'ProfileController@show')  ->middleware('auth');
+
+
+/* *********** Rounds ************ */
+Route::get(     '/rounds/current', 
+function() {	
+    $lastRound = Auth::user()->player->games()->latest()->first()->round;
+    return redirect('/rounds/' . $lastRound->id);
+})                                                                                   ->middleware('auth');
+
+Route::get(     '/rounds',                                'RoundController@index')   ->middleware('auth');
+Route::get(     '/rounds/create/{numberOfPlayers?}',      'RoundController@create')  ->middleware('auth');
+Route::post(    '/rounds',                                'RoundController@store')   ->middleware('auth');
+Route::get(     '/rounds/{round}',                        'RoundController@show')    ->middleware('auth');
+
+
+/* *********** Games ************** */
+Route::get(      '/rounds/{round}/game/create',           'GameController@create')   ->middleware('auth');
+Route::post(     '/rounds/{round}/game',                  'GameController@store')    ->middleware('auth');
+Route::patch(    '/games/{game}',                         'GameController@update')   ->middleware('auth');
+Route::delete(   '/games/{game}',                         'GameController@destroy')  ->middleware('auth');
+
+
+/* *********** Invites ************ */
+Route::get(      '/invites',                              'InviteController@index')  ->middleware('auth')     ->name('showInvites');
+Route::post(      '/invites',                             'InviteController@store')  ->middleware('auth');
+Route::get(      '/invites/delete',                       'InviteController@destroy')->middleware('auth');
+
+
+Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');
+
+Route::get(      '/test',                                 'TestController@test')     ->middleware('auth');
