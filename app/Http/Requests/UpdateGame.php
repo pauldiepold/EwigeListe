@@ -27,6 +27,7 @@ class UpdateGame extends FormRequest {
     {
         return [
             'updateWinners' => 'required|max:3|array',
+            'updateWinners.*' => 'integer',
             'updatePoints' => 'required|integer|nullable|between:-4,16',
         ];
     }

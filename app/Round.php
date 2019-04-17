@@ -67,6 +67,7 @@ class Round extends Model {
         $game = Game::create([
             'points' => $pointsRound,
             'solo' => $solo,
+            'dealerIndex' => $this->getDealerIndex(),
         ]);
         $game->round()->associate($this)->save();
 

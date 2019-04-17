@@ -20,42 +20,15 @@ class ProfileController extends Controller {
         return view('profiles.updated');
     }
 
-    public function index()
-    {
-        //
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
     public function show(Player $player)
     {
         $profile = $player->profile;
 
-        $rounds = $player->rounds()->orderBy('created_at', 'asc')->with(['games', 'players'])->paginate(10);
+        $rounds = $player->rounds()
+            ->orderBy('created_at', 'asc')
+            ->with(['games', 'players'])
+            ->paginate(10);
 
-        return view('players.show', compact('player', 'profile', 'rounds'));
-    }
-
-    public function edit(Profile $profile)
-    {
-        //
-    }
-
-    public function update(Request $request, Profile $profile)
-    {
-        //
-    }
-
-    public function destroy(Profile $profile)
-    {
-        //
+        return view('profiles.show', compact('player', 'profile', 'rounds'));
     }
 }

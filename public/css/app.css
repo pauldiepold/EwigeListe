@@ -10659,9 +10659,22 @@ body {
   margin-top: 110px;
 }
 
+/* ***** Navbar ******* */
+
 .nav-item:hover,
-#navbar-toggler:hover {
+#navbar-toggler:hover,
+.dropdown-item:hover {
   background-color: #21295C;
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler {
+  border: none;
 }
 
 .link-unstyled,
@@ -10676,16 +10689,6 @@ body {
 .site-title {
   font-family: Raleway;
   font-weight: 300;
-}
-
-.navbar-toggler:focus,
-.navbar-toggler:active {
-  outline: none;
-  box-shadow: none;
-}
-
-.navbar-toggler {
-  border: none;
 }
 
 .table-borderless tr,

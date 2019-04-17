@@ -10,7 +10,7 @@
     @include('include.back')
 
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5 col-xl-4">
+        <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
             <table class="table table-sm table-borderless text-left">
                 <tr>
                     <td>Aktuelle Punktzahl:</td>

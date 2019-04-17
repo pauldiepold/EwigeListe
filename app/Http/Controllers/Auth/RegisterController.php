@@ -7,11 +7,12 @@ use App\Player;
 use App\Invite;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
-class RegisterController extends Controller
-{
+class RegisterController extends Controller {
+
     /*
     |--------------------------------------------------------------------------
     | Register Controller
@@ -45,43 +46,59 @@ class RegisterController extends Controller
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'surname' => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
+            'surname' => ['required', 'string', 'max:255',
+                          function ($attribute, $value, $fail)
+                          {
+                              if (strpos($value, ' ') !== false)
+                              {
+                                  $fail('Der Vorname darf kein Leerzeichen enthalten!');
+                              }
+                          }
+            ],
+            'name' => ['required', 'string', 'max:255',
+                       function ($attribute, $value, $fail)
+                       {
+                           if (strpos($value, ' ') !== false)
+                           {
+                               $fail('Der Name darf kein Leerzeichen enthalten!');
+                              }
+                       }
+            ],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
-			'pin' => ['required', 'integer', 'digits:4', 'exists:invites,pin'],
+            'pin' => ['required', 'integer', 'digits:4', 'exists:invites,pin'],
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      * @return \App\User
      */
     protected function create(array $data)
     {
-		$player = Player::create([
-			'surname' => $data['surname'],
-			'name' => $data['name']
-		]);
-		
+        $player = Player::create([
+            'surname' => $data['surname'],
+            'name' => $data['name']
+        ]);
+
         $user = User::create([
-			'player_id' => $player->id,
+            'player_id' => $player->id,
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-		
-		$player->user()->save($user);
-		
-		Invite::where('pin', $data['pin'])->first()->delete();
-		
-		return $user;
+
+        $player->user()->save($user);
+
+        Invite::where('pin', $data['pin'])->first()->delete();
+
+        return $user;
     }
 }

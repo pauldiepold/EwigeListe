@@ -79,7 +79,7 @@
                             <label for="pin" class="col-sm-5 col-form-label text-sm-right font-weight-bold">Einladungs-PIN:</label>
 
                             <div class="col-sm-6">
-                                <input id="pin" type="number" class="mx-auto form-control{{ $errors->has('pin') ? ' is-invalid' : '' }}" name="pin" required>
+                                <input id="pin" type="number" class="mx-auto form-control{{ $errors->has('pin') ? ' is-invalid' : '' }}" name="pin" value="{{ old('pin') }}" required>
 
                                 @if ($errors->has('pin'))
                                     <span class="invalid-feedback" role="alert">

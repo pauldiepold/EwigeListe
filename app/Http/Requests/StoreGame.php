@@ -27,6 +27,7 @@ class StoreGame extends FormRequest {
     {
         return [
             'winners' => 'required|max:3|array',
+            'winners.*' => 'integer',
             'points' => 'required|integer|nullable|between:-4,16',
         ];
     }

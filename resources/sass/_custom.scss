@@ -3,9 +3,20 @@ body {
   margin-top: 110px;
 }
 
+/* ***** Navbar ******* */
 .nav-item:hover,
-#navbar-toggler:hover {
+#navbar-toggler:hover,
+.dropdown-item:hover{
   background-color: $dark;
+}
+
+.navbar-toggler:focus, .navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler {
+  border: none;
 }
 
 .link-unstyled {
@@ -24,14 +35,7 @@ body {
   font-weight: 300;
 }
 
-.navbar-toggler:focus, .navbar-toggler:active {
-  outline: none;
-  box-shadow: none;
-}
 
-.navbar-toggler {
-  border: none;
-}
 
 .table-borderless tr, .table-borderless td{
   border: none !important;

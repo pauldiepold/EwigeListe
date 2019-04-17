@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model {
 
-    protected $fillable = ['points', 'solo'];
+    protected $fillable = ['points', 'solo', 'dealerIndex'];
 
     protected $attributes = [
 

@@ -14,7 +14,8 @@ class SearchController extends Controller {
             ->get();
 
         $modifiedData = collect();
-        foreach ($data as $item) {
+        foreach ($data as $item)
+        {
             $modifiedData->push($item->surname . ' ' . $item->name);
         }
 

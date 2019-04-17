@@ -14,7 +14,7 @@
                 <i id="fa-times" class="fas fa-times" style="display:none;"></i>
             </button>
 
-            <div class="collapse navbar-collapse justify-content-md-center" id="navbarCollapse">
+            <div class="collapse navbar-collapse justify-content-md-center text-light" id="navbarCollapse">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <a class="nav-link" href="/home">Startseite</a>
@@ -35,23 +35,13 @@
                         <a class="nav-link" href="/rounds">Rundenarchiv</a>
                     </li>
 					@endauth
-
-                    <li class="nav-item">
-                        @guest
-                            <a class="nav-link" href="/login">Login</a>
-                        @endguest
-                        @auth
-                            <a class="nav-link" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                {{ __('Logout') }}
-                            </a>
-
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                  style="display: none;">
-                                @csrf
-                            </form>
-                        @endauth
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sonstiges
+                        </a>
+                        <div class="dropdown-menu bg-secondary text-light" id="navbarDropdown">
+                            <a href="/invites" class="dropdown-item">Einladungen</a>
+                        </div>
                     </li>
 
                 </ul>

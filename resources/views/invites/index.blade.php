@@ -21,7 +21,7 @@
             </div>
             <div class="card-body">
                 <h4 class="card-title  font-weight-bold">{{ $invite->pin }}</h4>
-                Gültig bis: {{ date("H:i \U\h\\r \a\m j.n.Y",  strtotime($invite->valid_until)) }}
+                Gültig bis: {{ date("H:i \U\h\\r \- j.n.y",  strtotime($invite->valid_until)) }}
             </div>
             <div class="card-footer py-1">
                 <form action="/invites/{{ $invite->id }}" method="POST">

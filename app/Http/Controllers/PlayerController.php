@@ -11,21 +11,23 @@ class PlayerController extends Controller {
 
     public function index($orderBy = 'games', $order = 'down')
     {
-		$orderSQL = $order == 'up' ? 'asc' : 'desc';
-		
-		if ($orderBy == 'surname') {
-			$orderTable =  'players';
-			$orderSQL = $orderSQL == 'asc' ? 'desc' : 'asc';
-		} else {
-			$orderTable = 'profiles';
-		}
-		
+        $orderSQL = $order == 'up' ? 'asc' : 'desc';
+
+        if ($orderBy == 'surname')
+        {
+            $orderTable = 'players';
+            $orderSQL = $orderSQL == 'asc' ? 'desc' : 'asc';
+        } else
+        {
+            $orderTable = 'profiles';
+        }
+
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
-			->orderBy($orderTable . '.' . $orderBy, $orderSQL)
-			->where('profiles.games', '>=', '10')
-			->with('profile')
-			->get();
-		
+            ->orderBy($orderTable . '.' . $orderBy, $orderSQL)
+            ->where('profiles.games', '>=', '10')
+            ->with('profile')
+            ->get();
+
         return view('players.index', compact('players', 'orderBy', 'order'));
     }
 

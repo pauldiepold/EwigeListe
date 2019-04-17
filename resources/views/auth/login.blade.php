@@ -73,8 +73,17 @@
                             @endif
                         </div>
                     </div>
-                </form>
+                    <div class="form-group row mb-0">
+                        <div class="col-sm-6 offset-sm-4">
+                            <hr>
+                            Noch kein Konto?<br>
+                            <a href="/register" class="btn btn-primary">
+                                Registrieren
+                            </a>
+                        </div>
+                    </div>
 
+                </form>
             </div>
         </div>
     </div>
