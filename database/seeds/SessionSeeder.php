@@ -31,7 +31,9 @@ class SessionSeeder extends Seeder
                 {
                     $player = App\Player::firstOrFail()->where('old_id', $row['spieler_' . $i])->first();
                     $round->players()->attach($player->id, [
-                        'index' => ($i - 1)
+                        'index' => ($i - 1),
+                        'created_at' => $row['created_at'],
+                        'updated_at' => $row['created_at'],
                     ]);
                 }
             }

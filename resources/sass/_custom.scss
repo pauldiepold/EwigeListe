@@ -6,7 +6,7 @@ body {
 /* ***** Navbar ******* */
 .nav-item:hover,
 #navbar-toggler:hover,
-.dropdown-item:hover{
+.dropdown-item:hover {
   background-color: $dark;
 }
 
@@ -17,6 +17,20 @@ body {
 
 .navbar-toggler {
   border: none;
+}
+
+.active-player {
+  border-radius: 0.5rem;
+  border: 0px solid $primary;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+  margin-left: 0;
+  margin-right: 0;
+  background-color: $primary-light;
 }
 
 .link-unstyled {
@@ -30,14 +44,16 @@ body {
   }
 }
 
+.line-through {
+  text-decoration: line-through;
+}
+
 .site-title {
   font-family: Raleway;
   font-weight: 300;
 }
 
-
-
-.table-borderless tr, .table-borderless td{
+.table-borderless tr, .table-borderless td {
   border: none !important;
 }
 
