@@ -25,8 +25,8 @@ Route::get(      'profiles/{player}',                     'ProfileController@sho
 
 
 /* *********** Rounds ************ */
-Route::get(     '/rounds/current', 
-function() {	
+Route::get(     '/rounds/current',
+function() {
     $lastRound = Auth::user()->player->games()->latest()->first()->round;
     return redirect('/rounds/' . $lastRound->id);
 })                                                                                   ->middleware('auth');
@@ -46,8 +46,9 @@ Route::delete(   '/games/{game}',                         'GameController@destro
 
 /* *********** Invites ************ */
 Route::get(      '/invites',                              'InviteController@index')  ->middleware('auth')     ->name('showInvites');
-Route::post(      '/invites',                             'InviteController@store')  ->middleware('auth');
-Route::get(      '/invites/delete',                       'InviteController@destroy')->middleware('auth');
+Route::post(     '/invites',                             'InviteController@store')   ->middleware('auth');
+Route::get(      '/invites/deleteOld',                'InviteController@destroyOld')->middleware('auth');
+Route::delete(   '/invites/{invite}',                    'InviteController@destroy')->middleware('auth');
 
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');
