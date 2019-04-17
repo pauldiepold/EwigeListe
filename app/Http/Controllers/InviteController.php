@@ -20,7 +20,7 @@ class InviteController extends Controller {
     {
         $oldInvites = Auth::user()->player->invites->count();
 
-        if ($oldInvites > 3)
+        if ($oldInvites >= 3)
         {
             return Redirect::back()->withErrors(['Du kannst nicht mehr als drei Einladungen erstellen!']);
         }

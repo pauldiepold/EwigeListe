@@ -47,7 +47,7 @@ Route::delete(   '/games/{game}',                         'GameController@destro
 /* *********** Invites ************ */
 Route::get(      '/invites',                              'InviteController@index')  ->middleware('auth')     ->name('showInvites');
 Route::post(     '/invites',                             'InviteController@store')   ->middleware('auth');
-Route::get(      '/invites/deleteOld',                'InviteController@destroyOld')->middleware('auth');
+Route::get(      '/invites/deleteOld',                'InviteController@destroyOld');
 Route::delete(   '/invites/{invite}',                    'InviteController@destroy')->middleware('auth');
 
 
