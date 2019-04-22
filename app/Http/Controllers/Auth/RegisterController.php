@@ -51,6 +51,18 @@ class RegisterController extends Controller {
      */
     protected function validator(array $data)
     {
+		$messages = [
+    		'surname.required'    => 'Es muss ein Vorname angegeben werden!',
+    		'name.required'    => 'Es muss ein Vorname angegeben werden!',
+    		'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
+    		'password.required'      => 'Es muss ein Passwort angegeben werden!',
+			'password.min'      => 'Das Passwort muss mindestens 6 Zeichen haben!',
+			'password.confirmed'      => 'Die Passworter stimmen nicht uberein!',
+			'pin.exists'      => 'Diese PIN ist ung&uuml;ltig!',
+			'pin.integer'      => 'Diese PIN darf nur aus Zahlen bestehen!',
+			'pin.digits'      => 'Die PIN muss vierstellig sein!',
+		];
+		
         return Validator::make($data, [
             'surname' => ['required', 'string', 'max:255',
                           function ($attribute, $value, $fail)
@@ -73,7 +85,7 @@ class RegisterController extends Controller {
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'pin' => ['required', 'integer', 'digits:4', 'exists:invites,pin'],
-        ]);
+        ], $messages);
     }
 
     /**

@@ -57,7 +57,7 @@
                             <label for="password" class="col-sm-5 col-form-label text-sm-right font-weight-bold">Passwort:</label>
 
                             <div class="col-sm-6">
-                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" required>
+                                <input id="password" type="password" class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}" name="password" value="{{ old('password') }}" required>
 
                                 @if ($errors->has('password'))
                                     <span class="invalid-feedback" role="alert">
@@ -79,7 +79,7 @@
                             <label for="pin" class="col-sm-5 col-form-label text-sm-right font-weight-bold">Einladungs-PIN:</label>
 
                             <div class="col-sm-6">
-                                <input id="pin" type="number" class="mx-auto form-control{{ $errors->has('pin') ? ' is-invalid' : '' }}" name="pin" value="{{ old('pin') }}" required>
+                                <input id="pin" type="number" class="mx-auto form-control{{ $errors->has('pin') ? ' is-invalid' : '' }}" name="pin" value="{{ old('pin') }}" style="width: 120px !important;" required>
 
                                 @if ($errors->has('pin'))
                                     <span class="invalid-feedback" role="alert">
@@ -91,7 +91,7 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-sm-6 offset-sm-5">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary mt-2">
                                      Registrieren
                                 </button>
                             </div>

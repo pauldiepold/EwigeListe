@@ -14,7 +14,7 @@ class RoundController extends Controller {
 
     public function index()
     {
-        $rounds = Round::oldest()->with(['games', 'players'])->paginate(50);
+        $rounds = Round::latest()->with(['games', 'players'])->paginate(50);
 
         return view('rounds.index', compact('rounds'));
     }
