@@ -46,9 +46,11 @@
 </div>
 
 @if(count($errors->create) > 0)
-    <script>
-        $(function () {
-            $('#createModal').modal({show: true});
-        });
-    </script>
+    @push('scripts')
+        <script>
+            $(function () {
+                $('#createModal').modal({show: true});
+            });
+        </script>
+    @endpush
 @endif

@@ -15,7 +15,6 @@ class TestController extends Controller {
 
     public function test()
     {
-        $now = Carbon::now();
-        dd($now);
+        return view('test.index');
     }
 }
