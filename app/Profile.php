@@ -18,6 +18,8 @@ class Profile extends Model {
         }
 
         $this->games = $games->count();
+        $gamesThisMonth = clone $games;
+        $this->gamesThisMonth = $gamesThisMonth->whereYear('created_at', date('Y'))->whereMonth('created_at', date('n'))->count();
         $gamesWon = clone $games;
         $gamesLost = clone $games;
         $this->gamesWon = $gamesWon->where('won', 1)->count();
@@ -37,6 +39,7 @@ class Profile extends Model {
         $soliLost = clone $soli;
         $this->soliWon = $soliWon->where('won', 1)->count();
         $this->soliLost = $soliLost->where('won', '0')->count();
+        $this->soloRate = $this->soli == 0 ? null : round($this->games / $this->soli);
         $this->soloWinrate = $this->soli == 0 ? null : $this->soliWon / $this->soli * 100;
         $this->soloPoints = $soli->sum('points');
 

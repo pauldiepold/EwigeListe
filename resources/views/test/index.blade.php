@@ -12,6 +12,12 @@
 
     <br><br>
     <ul>
-        <li v-for="name in names">@{{ name }}</li>
+        <li v-for="name in names" v-text="name"></li>
     </ul>
+
+    <br><br>
+
+    @php
+        echo date('n');
+    @endphp
 @endsection

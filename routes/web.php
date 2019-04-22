@@ -21,6 +21,7 @@ Route::get(      '/home',                                 'HomeController@index'
 
 /* *********** Players *********** */
 Route::get(      'players/{orderBy?}/{order?}',           'PlayerController@index');
+Route::get(      'profiles/update',                       'ProfileController@updateAll')  ->middleware('auth');
 Route::get(      'profiles/{player}',                     'ProfileController@show')  ->middleware('auth');
 
 

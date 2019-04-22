@@ -25,7 +25,7 @@ class ProfileController extends Controller {
         $profile = $player->profile;
 
         $rounds = $player->rounds()
-            ->orderBy('created_at', 'asc')
+            ->oldest()
             ->with(['games', 'players'])
             ->paginate(10);
 

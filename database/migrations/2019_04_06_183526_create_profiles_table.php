@@ -25,6 +25,7 @@ class CreateProfilesTable extends Migration
             $table->float('pointsPerLose', 3, 2)->nullable();
 
             $table->integer('games')->nullable();
+            $table->integer('gamesThisMonth')->nullable();
             $table->integer('gamesWon')->nullable();
             $table->integer('gamesLost')->nullable();
             $table->float('winrate', 4, 1)->nullable();
@@ -32,6 +33,7 @@ class CreateProfilesTable extends Migration
             $table->integer('soli')->nullable();
             $table->integer('soliWon')->nullable();
             $table->integer('soliLost')->nullable();
+            $table->integer('soloRate')->nullable();
             $table->float('soloWinrate', 4, 1)->nullable();
             $table->integer('soloPoints')->nullable();
 

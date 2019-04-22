@@ -43,11 +43,7 @@ class PlayerController extends Controller {
 
     public function show(Player $player)
     {
-        $profile = $player->profile;
 
-        $rounds = $player->rounds()->orderBy('created_at', 'asc')->with(['games', 'players'])->paginate(10);
-
-        return view('players.show', compact('player', 'profile', 'rounds'));
     }
 
     public function edit(Player $player)
