@@ -25,7 +25,8 @@ class InviteController extends Controller {
             return Redirect::back()->withErrors(['Du kannst nicht mehr als drei Einladungen erstellen!']);
         }
 
-        $valid_until = date("Y-m-d H:i:s", ceil((time() + 60 * 60 * 24) / 3600) * 3600);
+        //$valid_until = date("Y-m-d H:i:s", ceil((time() + 60 * 60 * 24) / 3600) * 3600);
+        $valid_until = date("Y-m-d H:i:s", time() + 60 * 60 * 24);
 
         $pin = rand(pow(10, 3), pow(10, 4) - 1);
 

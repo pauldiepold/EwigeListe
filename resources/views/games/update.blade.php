@@ -23,7 +23,8 @@
                                 <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
                                        id="updatePlayer{{ $player->id }}" name="updateWinners[]"
                                         {{ $player->pivot->won ? 'checked' : '' }}>
-                                <label class="custom-control-label font-weight-bold" for="updatePlayer{{ $player->id }}">
+                                <label class="custom-control-label font-weight-bold"
+                                       for="updatePlayer{{ $player->id }}">
                                     {{ $player->surname }} {{ $player->name }}
                                 </label>
                             </div>
@@ -32,7 +33,8 @@
                         <div class="form-row my-4 mx-auto justify-content-center">
                             <div class="col-xs-6 col-xs-offset-3">
                                 <input class="form-control{{ $errors->update->first('points') ? ' is-invalid' : '' }}"
-                                       type="number" min="-4" max="16" name="updatePoints" value="{{ $lastGame->points }}">
+                                       type="number" min="-4" max="16" name="updatePoints"
+                                       value="{{ $lastGame->points }}">
                                 <label for="updatePoints" class="control-label font-weight-bold">Punkte</label>
                             </div>
                         </div>
@@ -48,10 +50,12 @@
     </div>
 
     @if(count($errors->update) > 0)
-        <script>
-            $(function () {
-                $('#updateModal').modal({show: true});
-            });
-        </script>
+        @push('scripts')
+            <script>
+                $(function () {
+                    $('#updateModal').modal({show: true});
+                });
+            </script>
+        @endpush
     @endif
 @endif

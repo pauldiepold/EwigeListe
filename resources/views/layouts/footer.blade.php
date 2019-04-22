@@ -25,3 +25,6 @@
         <span class="text-muted">&copy; Paul Diepold &bull; {{ now()->year }}</span>
     </div>
 </footer>
+
+<script src="{{ mix('/js/app.js') }}?v={{ time() }}"></script>
+@stack('scripts');
