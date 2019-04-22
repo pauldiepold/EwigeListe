@@ -22,7 +22,7 @@ class CreatePlayersTable extends Migration {
             $table->boolean('hide');
             $table->timestamps();
 
-            $table->unique(['surname', 'name']);
+            //$table->unique(['surname', 'name']);
         });
     }
 
