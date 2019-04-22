@@ -29,6 +29,7 @@ window.Vue = require('vue');
  */
 
 
+
 const app = new Vue({
     el: '#app',
     data: {
@@ -36,3 +37,4 @@ const app = new Vue({
         names: ['Joe', 'Mary', 'Jane', 'Jack']
     }
 });
+Vue.config.productionTip = false;

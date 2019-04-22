@@ -6,17 +6,12 @@
 
 @section('content')
 
-    <div id="app">
-        <input type="text" id="input" v-model="message">
-    </div>
-    @{{ message}}
-    <p>The value of the input is:
+    <input type="text" id="input" v-model="message">
 
-    </p>
+    <p>The value of the input is: @{{ message}}</p>
 
     <br><br>
     <ul>
         <li v-for="name in names">@{{ name }}</li>
     </ul>
-
 @endsection

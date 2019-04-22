@@ -10,7 +10,7 @@
 
 @include('layouts.nav')
 
-<div class="container">
+<div class="container" id="app">
 
 <h5 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
 @yield('heading')

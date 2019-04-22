@@ -49098,6 +49098,7 @@ var app = new Vue({
     names: ['Joe', 'Mary', 'Jane', 'Jack']
   }
 });
+Vue.config.productionTip = false;
 
 /***/ }),
 

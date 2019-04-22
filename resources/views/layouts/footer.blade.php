@@ -26,5 +26,5 @@
     </div>
 </footer>
 
-<script src="{{ mix('/js/app.js') }}?v={{ time() }}"></script>
-@stack('scripts');
+<script src="{{ mix('/js/app.js') }}"></script>
+@stack('scripts')
