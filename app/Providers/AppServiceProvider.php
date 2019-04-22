@@ -30,5 +30,6 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
         Paginator::defaultView('pagination.pagination');
         date_default_timezone_set('Europe/Berlin');
+        setlocale(LC_TIME, 'German');
     }
 }
