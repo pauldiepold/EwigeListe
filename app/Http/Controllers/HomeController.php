@@ -239,7 +239,7 @@ class HomeController extends Controller {
         /* ***** Meiste Punkte dieser Monat *****/
         $mostPointsThisMonth = DB::table('game_player')
             ->selectRaw('SUM(points) as points, player_id')
-            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE())')
+            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
             ->groupBy('player_id')
             ->orderBy('points', 'desc')
             ->first();
@@ -248,7 +248,7 @@ class HomeController extends Controller {
         $colRow->push($mostPointsThisMonth->points);
         $player = Player::find($mostPointsThisMonth->player_id);
         $players = collect();
-        $players->push('<a href="/profiles/' . $player->player_id . '">' . $player->surname . '</a>');
+        $players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
         $colRow->push(niceCount($players));
         $colRow->push('margin');
         $colFP->push($colRow);
