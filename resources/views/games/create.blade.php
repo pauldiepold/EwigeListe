@@ -44,7 +44,7 @@
                     </label>
 					</div>
 						<a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
-					   data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit -2 Punkten gewertet, getätigte Ansagen werden hinzugerechnet. Dieses Ergebnis bitte oben eintragen.">
+					   data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen.">
 					<i class="fas fa-info-circle fa-lg"></i>
 					</a>
                 </form>
