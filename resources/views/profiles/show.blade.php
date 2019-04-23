@@ -137,9 +137,7 @@
         @push('scripts')
             <script>
                 $(document).ready(function () {
-                    $('html, body').animate({
-                        scrollTop: $('#lastRounds').offset().top
-                    }, 'fast');
+                    $('html, body').scrollTop($('#lastRounds').offset().top - 100);
                 });
             </script>
         @endpush
