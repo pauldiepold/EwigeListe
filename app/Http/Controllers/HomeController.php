@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Player;
 
 class HomeController extends Controller {
 
@@ -232,6 +233,24 @@ class HomeController extends Controller {
             $players->push('<a href="/profiles/' . $player->player_id . '">' . $player->surname . '</a>');
         }
         $colRow->push(niceCount($players));
+        $colRow->push('margin');
+        $colFP->push($colRow);
+
+        /* ***** Meiste Punkte dieser Monat *****/
+        $mostPointsThisMonth = DB::table('game_player')
+            ->selectRaw('SUM(points) as points, player_id')
+            ->whereRaw('created_at > date_sub(NOW(),INTERVAL 1 MONTH)')
+            ->groupBy('player_id')
+            ->orderBy('points', 'desc')
+            ->first();
+        $colRow = collect();
+        $colRow->push('Meiste Punkte in diesem Monat:');
+        $colRow->push($mostPointsThisMonth->points);
+        $player = Player::find($mostPointsThisMonth->player_id);
+        $players = collect();
+        $players->push('<a href="/profiles/' . $player->player_id . '">' . $player->surname . '</a>');
+        $colRow->push(niceCount($players));
+        $colRow->push('margin');
         $colFP->push($colRow);
 
 
