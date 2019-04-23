@@ -9,7 +9,7 @@
 @section('content')
     @include('include.back')
 
-    @if($profile->games > 10)
+    @if($profile->games >= 10)
         <div class="row justify-content-center">
             <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                 <table class="table table-sm table-borderless text-left">

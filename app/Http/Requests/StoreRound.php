@@ -24,20 +24,24 @@ class StoreRound extends FormRequest {
     public function rules()
     {
         return [
-            'player1' => 'required|integer|exists:players,id',
-            'player2' => 'required|integer|exists:players,id',
-            'player3' => 'required|integer|exists:players,id',
-            'player4' => 'required|integer|exists:players,id',
-            'player5' => 'integer|exists:players,id',
-            'player6' => 'integer|exists:players,id',
-            'player7' => 'integer|exists:players,id',
+			'players'   => 'required|between:4,7|array',
+			'players.*' => 'integer|exists:players,id',
         ];
     }
+	
+	public function withValidator($validator)
+	{
+    	$validator->after(function ($validator) {
+        	if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count() ) {
+        	    $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
+        	}
+    	});
+	}
 
     public function messages()
     {
         return [
-
+			
         ];
     }
 }

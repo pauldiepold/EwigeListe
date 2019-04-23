@@ -59,14 +59,16 @@ class Round extends Model {
         return $players;
     }
 
-    public function addGame($winners, $pointsRound)
+    public function addGame($winners, $pointsRound, $misplay)
     {
         $players = $this->getActivePlayers();
         $solo = (count($winners) != 2 ? true : false);
+		$solo = $misplay ? false : $solo;
 
         $game = Game::create([
             'points' => $pointsRound,
             'solo' => $solo,
+			'misplay' => $misplay,
             'dealerIndex' => $this->getDealerIndex(),
         ]);
         $game->round()->associate($this)->save();
@@ -79,12 +81,14 @@ class Round extends Model {
                 $soloist = true;
                 $won = true;
                 $points = 3 * $pointsRound;
+				$misplayed = false;
             } elseif (count($winners) == 3 &&
                       !in_array($player->id, $winners))    // Solo verloren
             {
-                $soloist = true;
+                $soloist = $misplay ? false : true;
                 $won = false;
                 $points = -3 * $pointsRound;
+				$misplayed = $misplay ? true : false;
             } elseif ((count($winners) == 2 &&
                        in_array($player->id, $winners)) ||
                       (count($winners) == 3 &&
@@ -93,6 +97,7 @@ class Round extends Model {
                 $soloist = false;
                 $won = true;
                 $points = 1 * $pointsRound;
+				$misplayed = false;
             } elseif ((count($winners) == 2 &&
                        !in_array($player->id, $winners)) ||
                       (count($winners) == 1 &&
@@ -101,12 +106,14 @@ class Round extends Model {
                 $soloist = false;
                 $won = false;
                 $points = -1 * $pointsRound;
+				$misplayed = false;
             }
 
             $game->players()->attach($player->id, [
                 'won' => $won,
                 'soloist' => $soloist,
-                'points' => $points
+                'points' => $points,
+				'misplayed' => $misplayed,
             ]);
         }
     }

@@ -23,8 +23,12 @@ class SpielSeeder extends Seeder
 		
         while ($row = $statement->fetch())
         {
+			$solo = ($row['solo'] == 1) ? true : false;
+			$misplay = ($row['solo'] == 2) ? true : false;
+			
             $game = App\Game::create([
-                'solo' => $row['solo'],
+                'solo' => $solo,
+				'misplay' => $misplay,
                 'points' => $row['punkte'],
                 'dealerIndex' => $row['geber'] - 1,
                 'created_at' => $row['created_at'],
@@ -52,15 +56,23 @@ class SpielSeeder extends Seeder
 
                     $player = App\Player::firstOrFail()->where('old_id', $old_player_id)->first();
 
-                    if ($row['s' . $i] == 3 || $row['s' . $i] == -3)
+                    if ( ($row['s' . $i] == 3 || $row['s' . $i] == -3) && $row['solo'] == 1)
                     {
                         $soloist = true;
                     } else
                     {
                         $soloist = false;
                     }
+					
+					if ( $row['s' . $i] == -3 && $row['solo'] == 2)
+                    {
+                        $misplayed = true;
+                    } else
+                    {
+                        $misplayed = false;
+                    }
 
-                    if ($row['s' . $i] > 0)
+                    if ($row['s' . $i] == 1 || $row['s' . $i] == 3)
                     {
                         $won = true;
                     } else
@@ -74,6 +86,7 @@ class SpielSeeder extends Seeder
                         'won' => $won,
                         'soloist' => $soloist,
                         'points' => $points,
+						'misplayed' => $misplayed,
                         'created_at' => $row['created_at'],
                         'updated_at' => $row['created_at']
                     ]);

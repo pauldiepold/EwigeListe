@@ -16,8 +16,9 @@ class CreateGamesTable extends Migration
         Schema::create('games', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('round_id')->nullable();
-            $table->Integer('points')->nullable();
+            $table->integer('points')->nullable();
             $table->boolean('solo');
+			$table->boolean('misplay');
             $table->integer('dealerIndex')->nullable();
             $table->timestamps();
 

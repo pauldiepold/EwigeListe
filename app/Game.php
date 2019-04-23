@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model {
 
-    protected $fillable = ['points', 'solo', 'dealerIndex'];
+    protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay'];
 
     protected $attributes = [
-
+		'misplay' => false,
     ];
 
     /*public function getDealerIndex()
@@ -29,6 +29,6 @@ class Game extends Model {
 
     public function players()
     {
-        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('points', 'soloist', 'won');
+        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('points', 'soloist', 'won', 'misplayed');
     }
 }

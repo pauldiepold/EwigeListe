@@ -29,8 +29,18 @@ class UpdateGame extends FormRequest {
             'updateWinners' => 'required|max:3|array',
             'updateWinners.*' => 'integer',
             'updatePoints' => 'required|integer|nullable|between:-4,16',
+			'updateMisplayed' => 'boolean'
         ];
     }
+	
+	public function withValidator($validator)
+	{
+    	$validator->after(function ($validator) {
+        	if ($this->input('updateMisplayed') && count($this->input('updateWinners')) != 3) {
+        	    $validator->errors()->add('updateMisplayed', 'Wenn sich jemand vergibt, muss dies als verlorenes Solo eingetragen werden!');
+        	}
+    	});
+	}
 
     public function messages()
     {

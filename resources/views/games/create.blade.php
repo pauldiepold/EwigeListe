@@ -35,6 +35,18 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
+					<hr>
+					<div class="custom-control custom-checkbox my-1">
+					<input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
+						   {{ old('misplayed') ? 'checked' : '' }}>
+					<label class="custom-control-label font-weight-bold" for="misplayed">
+                    	Falsch bedient?
+                    </label>
+					</div>
+						<a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
+					   data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit -2 Punkten gewertet, getätigte Ansagen werden hinzugerechnet. Dieses Ergebnis bitte oben eintragen.">
+					<i class="fas fa-info-circle fa-lg"></i>
+					</a>
                 </form>
 
             </div>
@@ -54,3 +66,24 @@
         </script>
     @endpush
 @endif
+
+@push('scripts')
+<script>
+$(function () {
+  $('[data-toggle="popover"]').popover();
+});
+</script>
+@endpush
+
+@push('scripts')
+<script>
+$('body').on('click', function (e) {
+    $('[data-toggle=popover]').each(function () {
+        // hide any open popovers when the anywhere else in the body is clicked
+        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+            $(this).popover('hide');
+        }
+    });
+});
+</script>
+@endpush

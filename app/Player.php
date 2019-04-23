@@ -20,7 +20,7 @@ class Player extends Model {
 
     public function games()
     {
-        return $this->belongsToMany(Game::class)->withTimestamps()->withPivot('points', 'soloist', 'won');
+        return $this->belongsToMany(Game::class)->withTimestamps()->withPivot('points', 'soloist', 'won', 'misplayed');
     }
 
     public function user()

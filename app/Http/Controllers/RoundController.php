@@ -6,9 +6,9 @@ use App\Round;
 use App\Player;
 use App\Game;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use App\Http\Requests\StoreRound;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class RoundController extends Controller {
 
@@ -25,6 +25,14 @@ class RoundController extends Controller {
         $activePlayerIDs = $activePlayers->pluck('id');
 
         $lastGame = $round->getLastGame();
+		if ($lastGame) {
+		$lastGamePlayers = $lastGame->players->sortBy(function ($player) use ($round){
+    		return DB::table('player_round')
+                ->where('round_id', $round->id)
+                ->where('player_id', $player->id)
+                ->first()->index;
+		});
+		}
 
         $colRound = collect();
         $colRow = collect();
@@ -77,17 +85,18 @@ class RoundController extends Controller {
             ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
 
             $game->solo ? $colRow->push('solo') : '';
+			$game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
         //dd($colRound);
-        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame'));
+        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame', 'lastGamePlayers'));
     }
 
     public function create($numberOfPlayers = 4)
     {
         if ($numberOfPlayers < 4 || $numberOfPlayers > 7)
         {
-            abort(404);
+            $numberOfPlayers = 4;
         }
 
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
@@ -96,37 +105,26 @@ class RoundController extends Controller {
             ->select('players.*')
             ->get();
 
-        return view('rounds.create', ['players' => $players, 'numberOfPlayers' => $numberOfPlayers]);
+        return view('rounds.create', compact('players', 'numberOfPlayers'));
     }
 
     public function store(StoreRound $request)
     {
-        $players_array = $request->validated();
-        $players_array = Arr::except($players_array, ['_token']);
-
-        if (count($players_array) != count(array_unique($players_array)))
-        {
-            return Redirect::back()->withInput()->withErrors(['Bitte keinen Namen doppelt auswählen!']);
-        }
+        $validated = collect($request->validated());
+		
+        $playerIDs = collect($validated->get('players'));
 
         $round = Round::create();
-
-        $players = Player::find($players_array);
-
-        //Spieler sortieren wie in $players_array
-        $players = $players->sortBy(function ($model) use ($players_array)
-        {
-            return array_search($model->getKey(), $players_array);
-        });
-
-        $index = 0;
-        foreach ($players as $player)
-        {
-            $round->players()->attach($player->id, [
+		
+		$index = 0;
+		foreach ($playerIDs as $playerID) {
+			$player = Player::find($playerID);
+			
+			$round->players()->attach($player->id, [
                 'index' => $index
             ]);
             $index++;
-        }
+		}
 
         return redirect('/rounds/' . $round->id);
     }

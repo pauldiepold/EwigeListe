@@ -21,6 +21,7 @@ class CreateGamePlayerTable extends Migration {
             $table->integer('points')->nullable();
             $table->boolean('soloist');
             $table->boolean('won');
+			$table->boolean('misplayed');
             $table->timestamps();
 
             $table->foreign('game_id')

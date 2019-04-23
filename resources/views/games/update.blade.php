@@ -18,7 +18,7 @@
                         @csrf
                         @method('PATCH')
 
-                        @foreach ($lastGame->players as $player)
+                        @foreach ($lastGamePlayers as $player)
                             <div class="custom-control custom-checkbox my-1">
                                 <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
                                        id="updatePlayer{{ $player->id }}" name="updateWinners[]"
@@ -39,6 +39,18 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Bestätigen</button>
+					<hr>
+					<div class="custom-control custom-checkbox my-1">
+					<input class="custom-control-input" type="checkbox" value="1" id="updateMisplayed" name="updateMisplayed"
+						    {{ $lastGame->misplay ? 'checked' : '' }}>
+					<label class="custom-control-label font-weight-bold" for="updateMisplayed">
+                    	Falsch bedient?
+                    </label>
+					</div>
+						<a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
+					   data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten gewertet, getätigte Ansagen werden hinzugerechnet. Dieses Ergebnis bitte oben eintragen.">
+					<i class="fas fa-info-circle fa-lg"></i>
+					</a>
                     </form>
 
                 </div>

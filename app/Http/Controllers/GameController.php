@@ -8,24 +8,18 @@ use App\Player;
 use App\Http\Requests\StoreGame;
 use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\DB;
 
 class   GameController extends Controller {
 
-    public function create(Round $round)
-    {
-        $this->authorize('update', $round);
-
-        $players = $round->getActivePlayers();
-
-        return view('games.create', ['round' => $round, 'players' => $players]);
-    }
 
     public function store(StoreGame $request, Round $round)
     {
         $this->authorize('update', $round);
 
         $validated = $request->validated();
-        $round->addGame($validated['winners'], $validated['points']);
+		$misplay = array_key_exists('misplayed', $validated) ? true : false;
+        $round->addGame($validated['winners'], $validated['points'], $misplay);
 
         return redirect('/rounds/' . $round->id);
     }
@@ -36,14 +30,17 @@ class   GameController extends Controller {
         $this->authorize('update', $round);
 
         $validated = $request->validated();
+		$misplay = array_key_exists('updateMisplayed', $validated) ? true : false;
         $winners = $validated['updateWinners'];
         $pointsRound = $validated['updatePoints'];
 
         $players = $game->players;
         $solo = (count($winners) != 2 ? true : false);
+		$solo = $misplay ? false : $solo;
 
         $game->points = $pointsRound;
         $game->solo = $solo;
+		$game->misplay = $misplay;
         $game->save();
 
         foreach ($players as $player)
@@ -54,12 +51,14 @@ class   GameController extends Controller {
                 $soloist = true;
                 $won = true;
                 $points = 3 * $pointsRound;
+				$misplayed = false;
             } elseif (count($winners) == 3 &&
                       !in_array($player->id, $winners))    // Solo verloren
             {
-                $soloist = true;
+                $soloist = $misplay ? false : true;
                 $won = false;
                 $points = -3 * $pointsRound;
+				$misplayed = $misplay ? true : false;
             } elseif ((count($winners) == 2 &&
                        in_array($player->id, $winners)) ||
                       (count($winners) == 3 &&
@@ -68,6 +67,7 @@ class   GameController extends Controller {
                 $soloist = false;
                 $won = true;
                 $points = 1 * $pointsRound;
+				$misplayed = false;
             } elseif ((count($winners) == 2 &&
                        !in_array($player->id, $winners)) ||
                       (count($winners) == 1 &&
@@ -76,11 +76,13 @@ class   GameController extends Controller {
                 $soloist = false;
                 $won = false;
                 $points = -1 * $pointsRound;
+				$misplayed = false;
             }
 
             $player->pivot->won = $won;
             $player->pivot->soloist = $soloist;
             $player->pivot->points = $points;
+			$player->pivot->misplayed = $misplayed;
             $player->pivot->save();
         }
         return redirect('/rounds/' . $round->id);
@@ -94,6 +96,8 @@ class   GameController extends Controller {
         {
             return Redirect::back()->withInput()->withErrors(['Du kannst nur das letzte Spiel einer Runde löschen!']);
         }
+		
+		DB::table('game_player')->where('game_id', $game->id)->delete();
 
         $game->delete();
 
