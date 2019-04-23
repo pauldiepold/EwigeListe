@@ -70,7 +70,7 @@ class HomeController extends Controller {
 
         /* ***** Winrate hoch *****/
         $highestWinrate = DB::table('profiles')
-            ->where('games', '>', 20)
+            ->where('games', '>', 50)
             ->max('winrate');
         $queryTemp = clone $query;
         $highestWinratePlayers = $queryTemp->where('profiles.winrate', $highestWinrate)->get();
@@ -87,7 +87,7 @@ class HomeController extends Controller {
 
         /* ***** Winrate niedrig *****/
         $lowestWinrate = DB::table('profiles')
-            ->where('games', '>', 20)
+            ->where('games', '>', 50)
             ->min('winrate');
         $queryTemp = clone $query;
         $lowestWinratePlayers = $queryTemp->where('profiles.winrate', $lowestWinrate)->get();
@@ -105,7 +105,7 @@ class HomeController extends Controller {
 
         /* ***** Winrate Solo hoch *****/
         $highestSoloWinRate = DB::table('profiles')
-            ->where('soli', '>', 5)
+            ->where('soli', '>', 10)
             ->max('soloWinrate');
         $queryTemp = clone $query;
         $highestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $highestSoloWinRate)->get();
@@ -122,7 +122,7 @@ class HomeController extends Controller {
 
         /* ***** Winrate Solo niedrig *****/
         $lowestSoloWinRate = DB::table('profiles')
-            ->where('soli', '>', 5)
+            ->where('soli', '>', 10)
             ->min('soloWinrate');
         $queryTemp = clone $query;
         $lowestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $lowestSoloWinRate)->get();
@@ -140,7 +140,7 @@ class HomeController extends Controller {
 
         /* ***** Wenigste Spiele bis Solo *****/
         $lowestSoloRate = DB::table('profiles')
-            ->where('soli', '>', 5)
+            ->where('soli', '>', 10)
             ->min('soloRate');
         $queryTemp = clone $query;
         $lowestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $lowestSoloRate)->get();
@@ -157,7 +157,7 @@ class HomeController extends Controller {
 
         /* ***** Meiste Spiele bis Solo *****/
         $highestSoloRate = DB::table('profiles')
-            ->where('soli', '>', 5)
+            ->where('soli', '>', 10)
             ->max('soloRate');
         $queryTemp = clone $query;
         $highestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $highestSoloRate)->get();
@@ -194,7 +194,7 @@ class HomeController extends Controller {
         $highestLoseStreakPlayers = $queryTemp->where('profiles.loseStreak', $highestLoseStreak)->get();
         $colRow = collect();
         $colRow->push('Längste Pech-Strähne:');
-        $colRow->push($highestWinStreak);
+        $colRow->push($highestLoseStreak);
         $players = collect();
         foreach ($highestLoseStreakPlayers as $player)
         {
