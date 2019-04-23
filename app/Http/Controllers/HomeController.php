@@ -239,7 +239,7 @@ class HomeController extends Controller {
         /* ***** Meiste Punkte dieser Monat *****/
         $mostPointsThisMonth = DB::table('game_player')
             ->selectRaw('SUM(points) as points, player_id')
-            ->whereRaw('created_at > date_sub(NOW(),INTERVAL 1 MONTH)')
+            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE())')
             ->groupBy('player_id')
             ->orderBy('points', 'desc')
             ->first();
