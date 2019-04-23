@@ -129,8 +129,20 @@
 
     @if($profile->games > 0)
         <hr>
-        <h4>Zuletzt gespielte Runden:</h4>
+        <h4 id="lastRounds">Zuletzt gespielte Runden:</h4>
         @include('rounds.inc.archiveTable')
+    @endif
+
+    @if(!$rounds->onFirstPage())
+        @push('scripts')
+            <script>
+                $(document).ready(function () {
+                    $('html, body').animate({
+                        scrollTop: $('#lastRounds').offset().top
+                    }, 'fast');
+                });
+            </script>
+        @endpush
     @endif
 
 @endsection
