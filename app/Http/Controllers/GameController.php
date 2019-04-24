@@ -155,7 +155,12 @@ class   GameController extends Controller {
 
         foreach ($game->players()->with('profile')->get() as $player)
         {
-            UpdateProfile::dispatch($player->profile);
+            if (!$player->profile->queued)
+            {
+                $player->profile->queued = true;
+                $player->profile->save();
+                UpdateProfile::dispatch($player->profile);
+            }
         }
 
         return redirect('/rounds/' . $round->id);
@@ -179,7 +184,12 @@ class   GameController extends Controller {
 
         foreach ($players as $player)
         {
-            UpdateProfile::dispatch($player->profile);
+            if (!$player->profile->queued)
+            {
+                $player->profile->queued = true;
+                $player->profile->save();
+                UpdateProfile::dispatch($player->profile);
+            }
         }
 
         return redirect('/rounds/' . $round->id);
