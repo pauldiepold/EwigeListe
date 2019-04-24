@@ -36,27 +36,29 @@ class HomeController extends Controller {
         }
         $colRow->push(niceCount($players));
         $colFP->push($colRow);
-		
-		/* ***** Meiste Spiele dieser Monat *****/
+
+        /* ***** Meiste Spiele dieser Monat *****/
         $mostGamesThisMonth = DB::table('game_player')
             ->selectRaw('Count(*) as games, player_id')
             ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
             ->groupBy('player_id')
             ->orderBy('games', 'desc')
             ->get();
-		if ($mostGamesThisMonth->count() > 0 ) {
-		$mostGamesThisMonth = $mostGamesThisMonth->where('games', $mostGamesThisMonth->first()->games);
-		}
-        $colRow = collect();
-        $colRow->push('Meiste Spiele in diesem Monat:');
-        $colRow->push($mostGamesThisMonth->first()->games);		
-        $players = collect();
-		foreach($mostGamesThisMonth as $playerID) {
-        	$player = Player::find($playerID->player_id);
-        	$players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
-		}
-        $colRow->push(niceCount($players));
-        $colFP->push($colRow);
+        if ($mostGamesThisMonth->count() > 0)
+        {
+            $mostGamesThisMonth = $mostGamesThisMonth->where('games', $mostGamesThisMonth->first()->games);
+            $colRow = collect();
+            $colRow->push('Meiste Spiele in diesem Monat:');
+            $colRow->push($mostGamesThisMonth->first()->games);
+            $players = collect();
+            foreach ($mostGamesThisMonth as $playerID)
+            {
+                $player = Player::find($playerID->player_id);
+                $players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
+            }
+            $colRow->push(niceCount($players));
+            $colFP->push($colRow);
+        }
 
 
         /* ***** Meiste Punkte dieser Monat *****/
@@ -66,21 +68,23 @@ class HomeController extends Controller {
             ->groupBy('player_id')
             ->orderBy('points', 'desc')
             ->get();
-		if ($mostPointsThisMonth->count() > 0 ) {
-		$mostPointsThisMonth = $mostPointsThisMonth->where('points', $mostPointsThisMonth->first()->points);
-		}
-        $colRow = collect();
-        $colRow->push('Meiste Punkte in diesem Monat:');
-        $colRow->push($mostPointsThisMonth->first()->points);
-        $players = collect();
-		foreach($mostPointsThisMonth as $playerID) {
-        	$player = Player::find($playerID->player_id);
-        	$players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
-		}
-        $colRow->push(niceCount($players));
-        $colRow->push('margin');
-        $colFP->push($colRow);
-		
+        if ($mostPointsThisMonth->count() > 0)
+        {
+            $mostPointsThisMonth = $mostPointsThisMonth->where('points', $mostPointsThisMonth->first()->points);
+            $colRow = collect();
+            $colRow->push('Meiste Punkte in diesem Monat:');
+            $colRow->push($mostPointsThisMonth->first()->points);
+            $players = collect();
+            foreach ($mostPointsThisMonth as $playerID)
+            {
+                $player = Player::find($playerID->player_id);
+                $players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
+            }
+            $colRow->push(niceCount($players));
+            $colRow->push('margin');
+            $colFP->push($colRow);
+        }
+
         /* ***** Punkte hoch *****/
         $highestPoints = DB::table('profiles')->max('highestPoints');
         $queryTemp = clone $query;
@@ -117,7 +121,8 @@ class HomeController extends Controller {
             ->where('games', '>', 50)
             ->max('winrate');
         $queryTemp = clone $query;
-        $highestWinratePlayers = $queryTemp->where('profiles.winrate', $highestWinrate)->get();
+        $highestWinratePlayers = $queryTemp->where('profiles.winrate', $highestWinrate)
+            ->where('profiles.games', '>', 50)->get();
         $colRow = collect();
         $colRow->push('Höchste Gewinnrate:');
         $colRow->push($highestWinrate . '%');
@@ -134,7 +139,8 @@ class HomeController extends Controller {
             ->where('games', '>', 50)
             ->min('winrate');
         $queryTemp = clone $query;
-        $lowestWinratePlayers = $queryTemp->where('profiles.winrate', $lowestWinrate)->get();
+        $lowestWinratePlayers = $queryTemp->where('profiles.winrate', $lowestWinrate)
+            ->where('profiles.games', '>', 50)->get();
         $colRow = collect();
         $colRow->push('Niedrigste Gewinnrate:');
         $colRow->push($lowestWinrate . '%');
@@ -152,7 +158,8 @@ class HomeController extends Controller {
             ->where('soli', '>', 10)
             ->max('soloWinrate');
         $queryTemp = clone $query;
-        $highestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $highestSoloWinRate)->get();
+        $highestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $highestSoloWinRate)
+            ->where('profiles.soli', '>', 10)->get();
         $colRow = collect();
         $colRow->push('Höchste Solo-Gewinnrate:');
         $colRow->push($highestSoloWinRate . '%');
@@ -169,7 +176,8 @@ class HomeController extends Controller {
             ->where('soli', '>', 10)
             ->min('soloWinrate');
         $queryTemp = clone $query;
-        $lowestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $lowestSoloWinRate)->get();
+        $lowestSoloWinRatePlayers = $queryTemp->where('profiles.soloWinrate', $lowestSoloWinRate)
+            ->where('profiles.soli', '>', 10)->get();
         $colRow = collect();
         $colRow->push('Niedrigste Solo-Gewinnrate:');
         $colRow->push($lowestSoloWinRate . '%');
