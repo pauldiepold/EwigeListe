@@ -1,8 +1,14 @@
 @extends('layouts.main')
 
+@if($current)
 @section('title', 'Aktuelle Runde')
 
 @section('heading', 'Aktuelle Runde')
+@else
+@section('title', 'Rundenübersicht')
+
+@section('heading', 'Rundenübersicht')
+@endif
 
 @section('content')
 
@@ -13,8 +19,8 @@
     @include('rounds.inc.pointsTable')
 
     @can('update', $round)
-            @include('games.update')
-            <br><br>
+        @include('games.update')
+        <br><br>
         @include('games.delete')
     @endcan
 

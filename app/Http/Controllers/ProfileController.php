@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Profile;
 use App\Player;
 use Illuminate\Http\Request;
+use App\Jobs\UpdateProfile;
 
 class ProfileController extends Controller {
 
@@ -14,7 +15,8 @@ class ProfileController extends Controller {
 
         foreach ($profiles as $profile)
         {
-            $profile->updateProfile();
+            UpdateProfile::dispatch($profile);
+			//$profile->updateProfile();
         }
 
         return view('profiles.updated');

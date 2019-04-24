@@ -33,7 +33,7 @@ function() {
 })                                                                                   ->middleware('auth');
 
 Route::get(     '/rounds',                                'RoundController@index')   ->middleware('auth');
-Route::get(     '/rounds/create/{numberOfPlayers?}',      'RoundController@create')  ->middleware('auth');
+Route::get(     '/rounds/create/{numberOfPlayers?}',      'RoundController@create')  ->middleware('auth')  ->where('numberOfPlayers', '[4-7]');
 Route::post(    '/rounds',                                'RoundController@store')   ->middleware('auth');
 Route::get(     '/rounds/{round}',                        'RoundController@show')    ->middleware('auth');
 
@@ -47,9 +47,9 @@ Route::delete(   '/games/{game}',                         'GameController@destro
 
 /* *********** Invites ************ */
 Route::get(      '/invites',                              'InviteController@index')  ->middleware('auth')     ->name('showInvites');
-Route::post(     '/invites',                             'InviteController@store')   ->middleware('auth');
-Route::get(      '/invites/deleteOld',                'InviteController@destroyOld');
-Route::delete(   '/invites/{invite}',                    'InviteController@destroy')->middleware('auth');
+Route::post(     '/invites',                              'InviteController@store')  ->middleware('auth');
+Route::get(      '/invites/deleteOld',                    'InviteController@destroyOld');
+Route::delete(   '/invites/{invite}',                     'InviteController@destroy')->middleware('auth');
 
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');

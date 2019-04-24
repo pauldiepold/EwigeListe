@@ -2,7 +2,7 @@
     <div class="container text-center">
         @auth
         <span class="text-muted">
-            @php $player = Auth::user()->player @endphp
+            @php $player = Auth::user()->player; @endphp
             Angemeldet: <a href="/profiles/{{ $player->id }}">{{ $player->surname }} {{ $player->name }}</a> &bull;
         </span>
 

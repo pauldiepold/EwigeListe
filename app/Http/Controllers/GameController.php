@@ -9,6 +9,7 @@ use App\Http\Requests\StoreGame;
 use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use App\Jobs\UpdateProfile;
 
 class   GameController extends Controller {
 
@@ -20,6 +21,9 @@ class   GameController extends Controller {
         $validated = $request->validated();
 		$misplay = array_key_exists('misplayed', $validated) ? true : false;
         $round->addGame($validated['winners'], $validated['points'], $misplay);
+		foreach($round->players()->with('profile')->get() as $player) {
+			UpdateProfile::dispatch($player->profile);
+		}
 
         return redirect('/rounds/' . $round->id);
     }

@@ -35,9 +35,52 @@ class HomeController extends Controller {
             $players->push('<a href="/profiles/' . $player->player_id . '">' . $player->surname . '</a>');
         }
         $colRow->push(niceCount($players));
-        $colRow->push('margin');
+        $colFP->push($colRow);
+		
+		/* ***** Meiste Spiele dieser Monat *****/
+        $mostGamesThisMonth = DB::table('game_player')
+            ->selectRaw('Count(*) as games, player_id')
+            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
+            ->groupBy('player_id')
+            ->orderBy('games', 'desc')
+            ->get();
+		if ($mostGamesThisMonth->count() > 0 ) {
+		$mostGamesThisMonth = $mostGamesThisMonth->where('games', $mostGamesThisMonth->first()->games);
+		}
+        $colRow = collect();
+        $colRow->push('Meiste Spiele in diesem Monat:');
+        $colRow->push($mostGamesThisMonth->first()->games);		
+        $players = collect();
+		foreach($mostGamesThisMonth as $playerID) {
+        	$player = Player::find($playerID->player_id);
+        	$players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
+		}
+        $colRow->push(niceCount($players));
         $colFP->push($colRow);
 
+
+        /* ***** Meiste Punkte dieser Monat *****/
+        $mostPointsThisMonth = DB::table('game_player')
+            ->selectRaw('SUM(points) as points, player_id')
+            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
+            ->groupBy('player_id')
+            ->orderBy('points', 'desc')
+            ->get();
+		if ($mostPointsThisMonth->count() > 0 ) {
+		$mostPointsThisMonth = $mostPointsThisMonth->where('points', $mostPointsThisMonth->first()->points);
+		}
+        $colRow = collect();
+        $colRow->push('Meiste Punkte in diesem Monat:');
+        $colRow->push($mostPointsThisMonth->first()->points);
+        $players = collect();
+		foreach($mostPointsThisMonth as $playerID) {
+        	$player = Player::find($playerID->player_id);
+        	$players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
+		}
+        $colRow->push(niceCount($players));
+        $colRow->push('margin');
+        $colFP->push($colRow);
+		
         /* ***** Punkte hoch *****/
         $highestPoints = DB::table('profiles')->max('highestPoints');
         $queryTemp = clone $query;
@@ -232,23 +275,6 @@ class HomeController extends Controller {
         {
             $players->push('<a href="/profiles/' . $player->player_id . '">' . $player->surname . '</a>');
         }
-        $colRow->push(niceCount($players));
-        $colRow->push('margin');
-        $colFP->push($colRow);
-
-        /* ***** Meiste Punkte dieser Monat *****/
-        $mostPointsThisMonth = DB::table('game_player')
-            ->selectRaw('SUM(points) as points, player_id')
-            ->whereRaw('MONTH(created_at) = MONTH(CURRENT_DATE()) AND YEAR(created_at) = YEAR(CURRENT_DATE())')
-            ->groupBy('player_id')
-            ->orderBy('points', 'desc')
-            ->first();
-        $colRow = collect();
-        $colRow->push('Meiste Punkte in diesem Monat:');
-        $colRow->push($mostPointsThisMonth->points);
-        $player = Player::find($mostPointsThisMonth->player_id);
-        $players = collect();
-        $players->push('<a href="/profiles/' . $player->id . '">' . $player->surname . '</a>');
         $colRow->push(niceCount($players));
         $colRow->push('margin');
         $colFP->push($colRow);

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreRound;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class RoundController extends Controller {
 
@@ -23,6 +24,9 @@ class RoundController extends Controller {
     {
         $activePlayers = $round->getActivePlayers();
         $activePlayerIDs = $activePlayers->pluck('id');
+		
+		$lastRound = Auth::user()->player->games()->latest()->first()->round;
+		$current = $lastRound->id == $round->id ? true : false;
 
         $lastGame = $round->getLastGame();
 		if ($lastGame) {
@@ -89,7 +93,7 @@ class RoundController extends Controller {
             $colRound->push($colRow);
         }
         //dd($colRound);
-        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame', 'lastGamePlayers'));
+        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame', 'lastGamePlayers', 'current'));
     }
 
     public function create($numberOfPlayers = 4)

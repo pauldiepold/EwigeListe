@@ -25,18 +25,9 @@ class Kernel extends ConsoleKernel {
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function ()
-        {
-            $invites = Invite::all();
-
-            foreach ($invites as $invite)
-            {
-                if (strtotime($invite->valid_until) <= time())
-                {
-                    $invite->delete();
-                }
-            }
-        })->everyMinute(); //hourlyAt(00);
+        $schedule->command('queue:work --tries=3')
+ 			->cron('* * * * * *')
+ 			->withoutOverlapping();
     }
 
     /**
