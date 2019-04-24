@@ -82,6 +82,8 @@ class   GameController extends Controller {
         {
             if (!$player->profile->queued)
             {
+                $player->profile->queued = true;
+                $player->profile->save();
                 UpdateProfile::dispatch($player->profile);
             }
         }
