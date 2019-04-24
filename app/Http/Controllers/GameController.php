@@ -13,17 +13,78 @@ use App\Jobs\UpdateProfile;
 
 class   GameController extends Controller {
 
-
     public function store(StoreGame $request, Round $round)
     {
         $this->authorize('update', $round);
 
         $validated = $request->validated();
-		$misplay = array_key_exists('misplayed', $validated) ? true : false;
-        $round->addGame($validated['winners'], $validated['points'], $misplay);
-		foreach($round->players()->with('profile')->get() as $player) {
-			UpdateProfile::dispatch($player->profile);
-		}
+        $misplay = array_key_exists('misplayed', $validated) ? true : false;
+        $winners = $validated['winners'];
+        $pointsRound = $validated['points'];
+
+        $players = $round->getActivePlayers();
+        $solo = (count($winners) != 2 ? true : false);
+        $solo = $misplay ? false : $solo;
+
+        $game = Game::create([
+            'points' => $pointsRound,
+            'solo' => $solo,
+            'misplay' => $misplay,
+            'dealerIndex' => $round->getDealerIndex(),
+        ]);
+        $game->round()->associate($round)->save();
+
+        foreach ($players as $player)
+        {
+            if (count($winners) == 1 &&
+                in_array($player->id, $winners))           // Solo gewonnen
+            {
+                $soloist = true;
+                $won = true;
+                $points = 3 * $pointsRound;
+                $misplayed = false;
+            } elseif (count($winners) == 3 &&
+                      !in_array($player->id, $winners))    // Solo verloren
+            {
+                $soloist = $misplay ? false : true;
+                $won = false;
+                $points = -3 * $pointsRound;
+                $misplayed = $misplay ? true : false;
+            } elseif ((count($winners) == 2 &&
+                       in_array($player->id, $winners)) ||
+                      (count($winners) == 3 &&
+                       in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
+            {
+                $soloist = false;
+                $won = true;
+                $points = 1 * $pointsRound;
+                $misplayed = false;
+            } elseif ((count($winners) == 2 &&
+                       !in_array($player->id, $winners)) ||
+                      (count($winners) == 1 &&
+                       !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
+            {
+                $soloist = false;
+                $won = false;
+                $points = -1 * $pointsRound;
+                $misplayed = false;
+            }
+
+            $game->players()->attach($player->id, [
+                'won' => $won,
+                'soloist' => $soloist,
+                'points' => $points,
+                'misplayed' => $misplayed,
+            ]);
+        }
+
+        foreach ($game->players()->with('profile')->get() as $player)
+        {
+            if (!$player->profile->queued)
+            {
+                UpdateProfile::dispatch($player->profile);
+            }
+        }
 
         return redirect('/rounds/' . $round->id);
     }
@@ -34,17 +95,17 @@ class   GameController extends Controller {
         $this->authorize('update', $round);
 
         $validated = $request->validated();
-		$misplay = array_key_exists('updateMisplayed', $validated) ? true : false;
+        $misplay = array_key_exists('updateMisplayed', $validated) ? true : false;
         $winners = $validated['updateWinners'];
         $pointsRound = $validated['updatePoints'];
 
         $players = $game->players;
         $solo = (count($winners) != 2 ? true : false);
-		$solo = $misplay ? false : $solo;
+        $solo = $misplay ? false : $solo;
 
         $game->points = $pointsRound;
         $game->solo = $solo;
-		$game->misplay = $misplay;
+        $game->misplay = $misplay;
         $game->save();
 
         foreach ($players as $player)
@@ -55,14 +116,14 @@ class   GameController extends Controller {
                 $soloist = true;
                 $won = true;
                 $points = 3 * $pointsRound;
-				$misplayed = false;
+                $misplayed = false;
             } elseif (count($winners) == 3 &&
                       !in_array($player->id, $winners))    // Solo verloren
             {
                 $soloist = $misplay ? false : true;
                 $won = false;
                 $points = -3 * $pointsRound;
-				$misplayed = $misplay ? true : false;
+                $misplayed = $misplay ? true : false;
             } elseif ((count($winners) == 2 &&
                        in_array($player->id, $winners)) ||
                       (count($winners) == 3 &&
@@ -71,7 +132,7 @@ class   GameController extends Controller {
                 $soloist = false;
                 $won = true;
                 $points = 1 * $pointsRound;
-				$misplayed = false;
+                $misplayed = false;
             } elseif ((count($winners) == 2 &&
                        !in_array($player->id, $winners)) ||
                       (count($winners) == 1 &&
@@ -80,32 +141,46 @@ class   GameController extends Controller {
                 $soloist = false;
                 $won = false;
                 $points = -1 * $pointsRound;
-				$misplayed = false;
+                $misplayed = false;
             }
 
             $player->pivot->won = $won;
             $player->pivot->soloist = $soloist;
             $player->pivot->points = $points;
-			$player->pivot->misplayed = $misplayed;
+            $player->pivot->misplayed = $misplayed;
             $player->pivot->save();
         }
+
+        foreach ($game->players()->with('profile')->get() as $player)
+        {
+            UpdateProfile::dispatch($player->profile);
+        }
+
         return redirect('/rounds/' . $round->id);
     }
 
     public function destroy(Game $game)
     {
-        $this->authorize('update', $game->round);
+        $round = $game->round;
+        $players = $game->players()->with('profile')->get();
 
-        if ($game->isNot($game->round->getLastGame()))
+        $this->authorize('update', $round);
+
+        if ($game->isNot($round->getLastGame()))
         {
             return Redirect::back()->withInput()->withErrors(['Du kannst nur das letzte Spiel einer Runde löschen!']);
         }
-		
-		DB::table('game_player')->where('game_id', $game->id)->delete();
+
+        DB::table('game_player')->where('game_id', $game->id)->delete();
 
         $game->delete();
 
-        return redirect('/rounds/' . $game->round->id);
+        foreach ($players as $player)
+        {
+            UpdateProfile::dispatch($player->profile);
+        }
+
+        return redirect('/rounds/' . $round->id);
     }
 
 }

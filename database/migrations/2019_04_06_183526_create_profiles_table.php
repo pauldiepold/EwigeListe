@@ -19,6 +19,8 @@ class CreateProfilesTable extends Migration
             $table->unsignedInteger('player_id')->nullable();
             $table->foreign('player_id')->references('id')->on('players');
 
+            $table->boolean('queued')->nullable();
+
             $table->integer('points')->nullable();
             $table->float('pointsPerGame', 3, 2)->nullable();
             $table->float('pointsPerWin', 3, 2)->nullable();

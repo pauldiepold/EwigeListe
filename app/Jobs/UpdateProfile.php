@@ -151,6 +151,7 @@ class UpdateProfile implements ShouldQueue
             }
         }
 
+        $this->profile->queued = false;
         $this->profile->save();
 
 

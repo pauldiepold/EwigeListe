@@ -61,61 +61,7 @@ class Round extends Model {
 
     public function addGame($winners, $pointsRound, $misplay)
     {
-        $players = $this->getActivePlayers();
-        $solo = (count($winners) != 2 ? true : false);
-		$solo = $misplay ? false : $solo;
 
-        $game = Game::create([
-            'points' => $pointsRound,
-            'solo' => $solo,
-			'misplay' => $misplay,
-            'dealerIndex' => $this->getDealerIndex(),
-        ]);
-        $game->round()->associate($this)->save();
-
-        foreach ($players as $player)
-        {
-            if (count($winners) == 1 &&
-                in_array($player->id, $winners))           // Solo gewonnen
-            {
-                $soloist = true;
-                $won = true;
-                $points = 3 * $pointsRound;
-				$misplayed = false;
-            } elseif (count($winners) == 3 &&
-                      !in_array($player->id, $winners))    // Solo verloren
-            {
-                $soloist = $misplay ? false : true;
-                $won = false;
-                $points = -3 * $pointsRound;
-				$misplayed = $misplay ? true : false;
-            } elseif ((count($winners) == 2 &&
-                       in_array($player->id, $winners)) ||
-                      (count($winners) == 3 &&
-                       in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
-            {
-                $soloist = false;
-                $won = true;
-                $points = 1 * $pointsRound;
-				$misplayed = false;
-            } elseif ((count($winners) == 2 &&
-                       !in_array($player->id, $winners)) ||
-                      (count($winners) == 1 &&
-                       !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
-            {
-                $soloist = false;
-                $won = false;
-                $points = -1 * $pointsRound;
-				$misplayed = false;
-            }
-
-            $game->players()->attach($player->id, [
-                'won' => $won,
-                'soloist' => $soloist,
-                'points' => $points,
-				'misplayed' => $misplayed,
-            ]);
-        }
     }
 
     public function games()

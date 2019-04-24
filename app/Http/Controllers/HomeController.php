@@ -195,7 +195,8 @@ class HomeController extends Controller {
             ->where('soli', '>', 10)
             ->min('soloRate');
         $queryTemp = clone $query;
-        $lowestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $lowestSoloRate)->get();
+        $lowestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $lowestSoloRate)
+            ->where('profiles.soli', '>', 10)->get();
         $colRow = collect();
         $colRow->push('Wenigste Spiele bis Solo:');
         $colRow->push($lowestSoloRate);
@@ -212,7 +213,8 @@ class HomeController extends Controller {
             ->where('soli', '>', 10)
             ->max('soloRate');
         $queryTemp = clone $query;
-        $highestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $highestSoloRate)->get();
+        $highestSoloRatePlayers = $queryTemp->where('profiles.soloRate', $highestSoloRate)
+            ->where('profiles.soli', '>', 10)->get();
         $colRow = collect();
         $colRow->push('Meiste Spiele bis Solo:');
         $colRow->push($highestSoloRate);
