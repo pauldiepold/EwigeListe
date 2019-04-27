@@ -9,6 +9,7 @@ use App\Http\Requests\StoreGame;
 use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Jobs\UpdateProfile;
 
 class   GameController extends Controller {
@@ -31,8 +32,9 @@ class   GameController extends Controller {
             'solo' => $solo,
             'misplay' => $misplay,
             'dealerIndex' => $round->getDealerIndex(),
+            'created_by' => Auth::user()->player->id,
+            'round_id' => $round->id,
         ]);
-        $game->round()->associate($round)->save();
 
         foreach ($players as $player)
         {

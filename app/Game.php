@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model {
 
-    protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay'];
+    protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay', 'created_by', 'round_id'];
 
     protected $attributes = [
 		'misplay' => false,
@@ -30,5 +30,10 @@ class Game extends Model {
     public function players()
     {
         return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('points', 'soloist', 'won', 'misplayed');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo('App\Player', 'created_by');
     }
 }

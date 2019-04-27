@@ -31,6 +31,7 @@ class SpielSeeder extends Seeder
 				'misplay' => $misplay,
                 'points' => $row['punkte'],
                 'dealerIndex' => $row['geber'] - 1,
+                'created_by' => null,
                 'created_at' => $row['created_at'],
                 'updated_at' => $row['created_at']
             ]);

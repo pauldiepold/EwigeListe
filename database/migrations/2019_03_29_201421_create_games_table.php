@@ -20,10 +20,13 @@ class CreateGamesTable extends Migration
             $table->boolean('solo');
 			$table->boolean('misplay');
             $table->integer('dealerIndex')->nullable();
+            $table->unsignedInteger('created_by')->nullable();
             $table->timestamps();
 
             $table->foreign('round_id')
                 ->references('id')->on('rounds');
+            $table->foreign('created_by')
+                ->references('id')->on('players');
         });
     }
 

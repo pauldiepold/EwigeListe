@@ -24,19 +24,24 @@ class RoundController extends Controller {
     {
         $activePlayers = $round->getActivePlayers();
         $activePlayerIDs = $activePlayers->pluck('id');
-		
-		$lastRound = Auth::user()->player->games()->latest()->first()->round;
-		$current = $lastRound->id == $round->id ? true : false;
+
+        $lastRound = Auth::user()->player->games()->latest()->first()->round;
+        $current = $lastRound->id == $round->id ? true : false;
 
         $lastGame = $round->getLastGame();
-		if ($lastGame) {
-		$lastGamePlayers = $lastGame->players->sortBy(function ($player) use ($round){
-    		return DB::table('player_round')
-                ->where('round_id', $round->id)
-                ->where('player_id', $player->id)
-                ->first()->index;
-		});
-		}
+        if ($lastGame)
+        {
+            $lastGamePlayers = $lastGame->players->sortBy(function ($player) use ($round)
+            {
+                return DB::table('player_round')
+                    ->where('round_id', $round->id)
+                    ->where('player_id', $player->id)
+                    ->first()->index;
+            });
+        } else
+        {
+            $lastGamePlayers = null;
+        }
 
         $colRound = collect();
         $colRow = collect();
@@ -49,7 +54,7 @@ class RoundController extends Controller {
             $colItem->push($player->surname);
             $colItem->push($player->id);
             $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
-            $activePlayerIDs->contains($player->id) && $round->players->count() > 5 ?  $colItem->push('active') : '';
+            $activePlayerIDs->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
 
             $colRow->push($colItem);
         }
@@ -89,9 +94,10 @@ class RoundController extends Controller {
             ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
 
             $game->solo ? $colRow->push('solo') : '';
-			$game->misplay ? $colRow->push('misplay') : '';
+            $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
+
         //dd($colRound);
         return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame', 'lastGamePlayers', 'current'));
     }
@@ -115,20 +121,18 @@ class RoundController extends Controller {
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
-		
         $playerIDs = collect($validated->get('players'));
 
-        $round = Round::create(['created_by' => Auth::id()]);
-		
-		$index = 0;
-		foreach ($playerIDs as $playerID) {
-			$player = Player::find($playerID);
-			
-			$round->players()->attach($player->id, [
+        $round = Round::create(['created_by' => Auth::user()->player->id]);
+
+        $index = 0;
+        foreach ($playerIDs as $playerID)
+        {
+            $round->players()->attach(Player::find($playerID)->id, [
                 'index' => $index
             ]);
             $index++;
-		}
+        }
 
         return redirect('/rounds/' . $round->id);
     }
