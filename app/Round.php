@@ -59,11 +59,6 @@ class Round extends Model {
         return $players;
     }
 
-    public function addGame($winners, $pointsRound, $misplay)
-    {
-
-    }
-
     public function games()
     {
         return $this->hasMany(Game::class);

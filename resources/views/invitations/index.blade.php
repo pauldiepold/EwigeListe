@@ -7,26 +7,24 @@
 @section('content')
 
     @include('include.error')
-
-    <form method="POST" action="/invites">
-        @csrf
-        <button class="btn btn-primary my-2" type="submit">Neue Einladungs-PIN erstellen</button>
-    </form>
-@php $invite = $invites->count() > 0 ? $invites->first() : ''; @endphp
-@if($invite)
-
+    @if(!$invitation)
+        <form method="POST" action="/invitations">
+            @csrf
+            <button class="btn btn-primary my-2" type="submit">Einladungs-PIN erstellen</button>
+        </form>
+    @endif
+    @if($invitation)
         <div class="card mx-auto my-3" style="width: 18rem;">
             <div class="card-header font-weight-bold">
                 Einladungs-PIN
             </div>
             <div class="card-body">
-                <h4 class="card-title  font-weight-bold">{{ $invite->pin }}</h4>
+                <h4 class="card-title  font-weight-bold">{{ $invitation->pin }}</h4>
 
                 Gültig: <span id="demo"></span>
-                <!-- {{ date("H:i \U\h\\r \- j.n.y",  strtotime($invite->valid_until)) }} -->
             </div>
             <div class="card-footer py-1">
-                <form action="/invites/{{ $invite->id }}" method="POST">
+                <form action="/invitations/{{ $invitation->id }}" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-danger btn btn-link"><i class="fas fa-trash fa-lg"></i></button>
@@ -34,11 +32,11 @@
             </div>
         </div>
 
-@endif
+    @endif
 
     <script>
         // Set the date we're counting down to
-		var countDownDate = new Date("{{ $invite? $invite->valid_until : '' }}").getTime();
+        var countDownDate = new Date("{{ $invitation ? $invitation->valid_until : '' }}").getTime();
 
         // Update the count down every 1 second
         var x = setInterval(function () {
@@ -61,7 +59,7 @@
             // If the count down is finished, write some text
             if (distance < 0) {
                 clearInterval(x);
-                document.getElementById("demo").innerHTML = "EXPIRED";
+                document.getElementById("demo").innerHTML = "Abgelaufen";
             }
         }, 1000);
     </script>

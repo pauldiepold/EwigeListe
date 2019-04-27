@@ -32,9 +32,19 @@ class Player extends Model {
     {
         return $this->hasOne(Profile::class);
     }
+
+    public function createdRounds()
+    {
+        return $this->hasMany('App\Round', 'created_by');
+    }
+
+    public function createdGames()
+    {
+        return $this->hasMany('App\Game', 'created_by');
+    }
 	
-	public function invites()
+	public function invitation()
 	{
-		return $this->hasMany(Invite::class);	
+		return $this->hasOne(Invitation::class);
 	}
 }

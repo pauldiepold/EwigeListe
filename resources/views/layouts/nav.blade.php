@@ -44,7 +44,7 @@
                             Sonstiges
                         </a>
                         <div class="dropdown-menu bg-secondary text-light" id="navbarDropdown">
-                            <a href="/invites" class="dropdown-item">Einladungen</a>
+                            <a href="/invitations" class="dropdown-item">Einladung</a>
                         </div>
                     </li>
 					@endauth

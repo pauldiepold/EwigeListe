@@ -46,10 +46,10 @@ Route::delete(   '/games/{game}',                         'GameController@destro
 
 
 /* *********** Invites ************ */
-Route::get(      '/invites',                              'InviteController@index')  ->middleware('auth')     ->name('showInvites');
-Route::post(     '/invites',                              'InviteController@store')  ->middleware('auth');
-Route::get(      '/invites/deleteOld',                    'InviteController@destroyOld');
-Route::delete(   '/invites/{invite}',                     'InviteController@destroy')->middleware('auth');
+Route::get(      '/invitations',                              'InvitationController@index')  ->middleware('auth')     ->name('showInvitation');
+Route::post(     '/invitations',                              'InvitationController@store')  ->middleware('auth');
+Route::get(      '/invitations/deleteOld',                    'InvitationController@destroyOld');
+Route::delete(   '/invitations/{invitation}',                 'InvitationController@destroy')->middleware('auth');
 
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');

@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Invite extends Model
+class Invitation extends Model
 {
-	protected $fillable = ['pin', 'valid_until'];
+	protected $fillable = ['pin', 'valid_until', 'player_id'];
 	
 	public function player()
 	{
