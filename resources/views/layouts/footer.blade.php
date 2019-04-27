@@ -2,7 +2,11 @@
     <div class="container text-center">
         @auth
         <span class="text-muted">
-            @php $player = Auth::user()->player; @endphp
+            @php
+			$player = Illuminate\Support\Facades\Cache::remember('player' . Auth::id(), 60*60, function () {
+				return Auth::user()->player;
+			});
+			@endphp
             Angemeldet: <a href="/profiles/{{ $player->id }}">{{ $player->surname }} {{ $player->name }}</a> &bull;
         </span>
 

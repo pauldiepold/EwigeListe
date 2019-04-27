@@ -118,7 +118,7 @@ class RoundController extends Controller {
 		
         $playerIDs = collect($validated->get('players'));
 
-        $round = Round::create();
+        $round = Round::create(['created_by' => Auth::id()]);
 		
 		$index = 0;
 		foreach ($playerIDs as $playerID) {

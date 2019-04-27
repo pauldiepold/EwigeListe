@@ -3,7 +3,7 @@
 @section('title', 'Spielerprofil')
 
 @section('heading')
-    Spielerprofil von {{ $player->surname }} {{ $player->name }}
+    Spielerprofil von <br class="d-block d-sm-none">{{ $player->surname }} {{ $player->name }}
 @endsection
 
 @section('content')

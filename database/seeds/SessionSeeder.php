@@ -19,10 +19,12 @@ class SessionSeeder extends Seeder
         $statement->execute(array());
         while ($row = $statement->fetch())
         {
+			$playerID = App\Player::where('old_id', $row['created_by'])->firstOrFail()->id;
             $round = App\Round::create([
                 'old_id' => $row['id'],
                 'created_at' => $row['created_at'],
-                'updated_at' => $row['created_at']
+                'updated_at' => $row['created_at'],
+				'created_by' => $playerID
             ]);
 
             for ($i = 1; $i <= 5; $i++)

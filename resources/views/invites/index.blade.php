@@ -12,8 +12,8 @@
         @csrf
         <button class="btn btn-primary my-2" type="submit">Neue Einladungs-PIN erstellen</button>
     </form>
-
-    @foreach ($invites as $invite)
+@php $invite = $invites->count() > 0 ? $invites->first() : ''; @endphp
+@if($invite)
 
         <div class="card mx-auto my-3" style="width: 18rem;">
             <div class="card-header font-weight-bold">
@@ -34,11 +34,11 @@
             </div>
         </div>
 
-    @endforeach
+@endif
 
     <script>
         // Set the date we're counting down to
-        var countDownDate = new Date("{{ $invite->valid_until }}").getTime();
+		var countDownDate = new Date("{{ $invite? $invite->valid_until : '' }}").getTime();
 
         // Update the count down every 1 second
         var x = setInterval(function () {

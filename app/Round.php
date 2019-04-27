@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class Round extends Model {
 
-    protected $fillable = [];
+    protected $fillable = ['created_by'];
 
     protected $attributes = [
         'old_id' => null,
@@ -67,6 +67,11 @@ class Round extends Model {
     public function games()
     {
         return $this->hasMany(Game::class);
+    }
+	
+	public function createdBy()
+    {
+        return $this->belongsTo('App\Player', 'created_by');
     }
 
     public function players()

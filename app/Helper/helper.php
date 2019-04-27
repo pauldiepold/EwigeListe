@@ -22,7 +22,7 @@ if (!function_exists('nice_count'))
 if (!function_exists('niceCount'))
 {
 
-    function niceCount($input)
+    function niceCount($input, $spacer = ', ')
     {
         if ($input->count() == 0)
         {
@@ -33,6 +33,26 @@ if (!function_exists('niceCount'))
             return $input->get(0);
         }
 
-        return $input->implode(', ');
+        return $input->implode($spacer);
+    }
+}
+
+if (!function_exists('printDate'))
+{
+
+    function printDate($input)
+    {
+		if ($input->isToday()) {
+			$date = 'heute ';
+		} elseif ($input->isYesterday()) {
+			$date = 'gestern';
+		} else {
+			$date = 'am ' . date('j.n.Y', strtotime($input));
+		}
+		$time =	' um ' . 
+			date('H:i', strtotime($input)) .
+			' Uhr';
+
+        return $date . $time;
     }
 }

@@ -18,6 +18,8 @@
 
     @include('rounds.inc.pointsTable')
 
+	@include('rounds.inc.info')
+
     @can('update', $round)
         @include('games.update')
         <br><br>

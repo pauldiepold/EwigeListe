@@ -27,6 +27,11 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/players">Ewige Liste</a>
                     </li>
+					@guest
+					<li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+					@endguest
 					@auth
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds/create">Neue Runde starten</a>
@@ -34,7 +39,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds">Rundenarchiv</a>
                     </li>
-					@endauth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Sonstiges
@@ -43,7 +47,7 @@
                             <a href="/invites" class="dropdown-item">Einladungen</a>
                         </div>
                     </li>
-
+					@endauth
                 </ul>
             </div>
         </div>
