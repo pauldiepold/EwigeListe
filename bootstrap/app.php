@@ -1,5 +1,5 @@
 <?php
-setlocale(LC_TIME, 'de_DE');
+setlocale(LC_TIME, 'German');
 /*
 |--------------------------------------------------------------------------
 | Create The Application
