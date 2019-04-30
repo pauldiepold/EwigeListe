@@ -35,6 +35,16 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
+					<button type="submit" class="btn btn-primary">
+						<div class="d-flex vertical-align-center">
+							<span>
+								<i class="fa fa-spinner fa-spin text-lg" style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
+							</span>
+							<span class="ml-2">
+								Speichern
+							</span>
+						</div>
+					</button>
 					<hr>
 					<div class="custom-control custom-checkbox my-1">
 					<input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
