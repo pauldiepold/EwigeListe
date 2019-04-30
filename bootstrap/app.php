@@ -1,5 +1,6 @@
 <?php
 setlocale(LC_TIME, 'German');
+Carbon\Carbon::setLocale('de');
 /*
 |--------------------------------------------------------------------------
 | Create The Application
