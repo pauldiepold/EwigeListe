@@ -14,7 +14,7 @@
     export default {
         props: ['round_id'],
         mounted() {
-            axios.get('/charts/' + this.round_id)
+            axios.get('/charts/round/' + this.round_id)
                 .then(function (response) {
                     let data = response.data;
                     Chart.defaults.global.defaultFontFamily = '"Open Sans"';

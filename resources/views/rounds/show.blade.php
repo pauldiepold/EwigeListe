@@ -31,7 +31,7 @@
 
     @if($round->games->count() >= 4)
         <hr>
-        <graph :round_id="{{ $round->id }}"></graph>
+        <graph_round :round_id="{{ $round->id }}"></graph_round>
     @endif
 
     <div class="text-small">
@@ -39,7 +39,3 @@
     </div>
 
 @endsection
-
-@push('scripts')
-    <!--<script src="{{ mix('/js/roundChart.js') }}"></script>-->
-@endpush

@@ -13,7 +13,7 @@
                 </tr>
 
                 @foreach ($colRound as $row)
-                    <tr class="{{ $row->contains('solo') ? 'bg-light' : ''}}{{ $row->contains('misplay') ? 'bg-danger' : ''}}{{ $row->contains('endOfRound') ? 'border-bottom-thick' : ''}}">
+                    <tr class="{{ $row->contains('solo') ? 'bg-light' : ''}}{{ $row->contains('misplay') ? ' bg-danger-light ' : ''}}{{ $row->contains('endOfRound') ? 'border-bottom-thick' : ''}}">
                         @php $row->contains('solo') || $row->contains('endOfRound') ? $row->pop() : ''; @endphp
 
                         @foreach  ($round->players as $player)

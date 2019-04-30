@@ -16504,3 +16504,7 @@ input[type=number] {
   font-size: 0.87rem;
 }
 
+.bg-danger-light {
+  background-color: rgba(227, 52, 47, 0.25);
+}
+

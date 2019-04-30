@@ -53,7 +53,7 @@ Route::delete(   '/invitations/{invitation}',             'InvitationController@
 
 
 /* *********** Charts ************** */
-Route::get(      '/charts/{round}/',           'ChartController@roundChart')         ->middleware('auth');
+Route::get(      '/charts/round/{round}/',           'ChartController@roundChart')         ->middleware('auth');
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');
 
