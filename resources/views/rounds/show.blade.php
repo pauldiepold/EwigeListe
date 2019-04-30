@@ -29,11 +29,9 @@
         </div>
     @endcan
 
-    @if(false)
+    @if($round->games->count() >= 4)
         <hr>
-        <div id="containerDiagramRound">
-            <canvas id="roundChart" height="500"></canvas>
-        </div>
+        <graph :round_id="{{ $round->id }}"></graph>
     @endif
 
     <div class="text-small">
@@ -43,5 +41,5 @@
 @endsection
 
 @push('scripts')
-    <script src="{{ mix('/js/roundChart.js') }}"></script>
+    <!--<script src="{{ mix('/js/roundChart.js') }}"></script>-->
 @endpush
