@@ -123,6 +123,10 @@
                 </table>
             </div>
         </div>
+
+        <hr>
+
+        <profile-graphs :player_id="{{ $profile->player_id }}"></profile-graphs>
     @else
         <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
     @endif

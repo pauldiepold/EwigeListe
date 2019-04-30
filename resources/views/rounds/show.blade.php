@@ -31,7 +31,7 @@
 
     @if($round->games->count() >= 4)
         <hr>
-        <graph_round :round_id="{{ $round->id }}"></graph_round>
+        <round-graph :round_id="{{ $round->id }}"></round-graph>
     @endif
 
     <div class="text-small">

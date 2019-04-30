@@ -3,9 +3,14 @@ require('./scripts/custom.js');
 
 import Vue from 'vue';
 
-Vue.component('graph_round', require('./components/RoundGraph.vue').default);
+import RoundGraph from './components/RoundGraph.vue';
+import ProfileGraphs from './components/ProfileGraphs.vue';
 
 new Vue({
-    el: '#app'
+    el: '#app',
+    components: {
+        RoundGraph,
+        ProfileGraphs
+    }
 });
 Vue.config.productionTip = false;
