@@ -1,8 +1,8 @@
 {{-- Input: collection $colRound --}}
-<div class="row justify-content-center my-4">
+<div class="row justify-content-center mt-4">
     <div class="col col-xl-6 col-lg-8 col-md-10 col-sm-12">
         <div class="table-responsive">
-            <table class="table">
+            <table class="table mb-1">
 
                 @php $header = $colRound->shift(); @endphp
                 <tr class="border-bottom-thick">

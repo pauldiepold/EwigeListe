@@ -16500,8 +16500,7 @@ input[type=number] {
   display: inline-block;
 }
 
-.small-text {
-  font-size: 0.85rem;
-  line-height: 0.5rem;
+.text-small {
+  font-size: 0.87rem;
 }
 

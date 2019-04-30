@@ -97,9 +97,15 @@ class RoundController extends Controller {
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
-
         //dd($colRound);
-        return view('rounds.show', compact('round', 'colRound', 'activePlayers', 'lastGame', 'lastGamePlayers', 'current'));
+        return view('rounds.show', compact(
+            'round',
+            'colRound',
+            'activePlayers',
+            'lastGame',
+            'lastGamePlayers',
+            'current'
+        ));
     }
 
     public function create($numberOfPlayers = 4)

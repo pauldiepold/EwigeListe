@@ -19,7 +19,7 @@
                     </td>
                     <td>
                         <a href="/rounds/{{ $round->id }}">
-                            {{ nice_count($round->players->sortBy('index')->pluck('surname')->toArray()) }}
+                            {{ nice_count($round->players->pluck('surname')->toArray()) }}
                         </a>
                     </td>
                 </tr>

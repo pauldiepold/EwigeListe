@@ -71,6 +71,6 @@ class Round extends Model {
 
     public function players()
     {
-        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('index');
+        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('index')->orderBy('pivot_index');
     }
 }
