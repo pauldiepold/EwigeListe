@@ -57,6 +57,7 @@ class MyOwnResetPassword extends Notification
         }
 
         return (new MailMessage)
+
             ->subject('Passwort Zurücksetzen')
             ->line(Lang::getFromJson('You are receiving this email because we received a password reset request for your account.'))
             ->action(Lang::getFromJson('Reset Password'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))

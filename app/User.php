@@ -39,7 +39,7 @@ class User extends Authenticatable {
 
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new App\Notifications\MyOwnResetPassword($token));
+        $this->notify(new Notifications\MyOwnResetPassword($token));
     }
 
     public function player() {
