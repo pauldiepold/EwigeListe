@@ -19,7 +19,7 @@ class ChartController extends Controller {
         //Kopfzeile
         foreach ($round->players as $player)
         {
-            $points->put($player->id, collect());
+            $points->put($player->id, collect(0));
             $names->push($player->surname);
         }
 
