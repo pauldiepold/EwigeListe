@@ -10,7 +10,7 @@
                 <th>Teilnehmende Spieler</th>
             </tr>
             @foreach ($rounds as $round)
-                <tr>
+                <tr{!! $round->players->pluck('id')->contains(Auth::user()->player->id) && $profile != Auth::user()->player->id ? ' class="bg-primary-light"' : '' !!}>
                     <td>
                         {{ date("d.m.Y - H:i", strtotime($round->created_at)) }}
                     </td>

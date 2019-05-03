@@ -134,7 +134,8 @@
     @if($profile->games > 0)
         <hr>
         <h4 id="lastRounds">Zuletzt gespielte Runden:</h4>
-        @include('rounds.inc.archiveTable')
+
+        @include('rounds.inc.archiveTable', ['profile' => $profile->player_id])
     @endif
 
     @if(!$rounds->onFirstPage())

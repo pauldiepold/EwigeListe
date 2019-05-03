@@ -6,6 +6,6 @@
 
 @section('content')
 
-    @include('rounds.inc.archiveTable')
+    @include('rounds.inc.archiveTable', ['profile' => 0])
 
 @endsection

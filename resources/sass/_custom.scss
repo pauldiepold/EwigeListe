@@ -35,40 +35,7 @@ body {
   border: none;
 }
 
-.active-player {
-  border-radius: 0.5rem;
-  border: 0px solid $primary;
-  padding-top: 0.1rem;
-  padding-bottom: 0.1rem;
-  padding-left: 0.4rem;
-  padding-right: 0.4rem;
-  margin-top: 0.4rem;
-  margin-bottom: 0.4rem;
-  margin-left: 0;
-  margin-right: 0;
-  background-color: $primary-light;
-}
-
-.link-unstyled {
-  &,
-  &:visited,
-  &:hover,
-  &:active,
-  &:focus,
-  &:active:hover {
-    text-decoration: none;
-  }
-}
-
-.line-through {
-  text-decoration: line-through;
-}
-
-.site-title {
-  font-family: Raleway;
-  font-weight: 300;
-}
-
+/* ***** Table ******* */
 .table-borderless tr, .table-borderless td {
   border: none !important;
 }
@@ -97,6 +64,37 @@ table {
   margin: 0 auto;
 }
 
+.active-player {
+  border-radius: 0.5rem;
+  border: 0px solid $primary;
+  padding: 0.1rem 0.4rem;
+  margin: 0.4rem 0;
+  background-color: $primary-light;
+}
+
+
+
+.link-unstyled {
+  &,
+  &:visited,
+  &:hover,
+  &:active,
+  &:focus,
+  &:active:hover {
+    text-decoration: none;
+  }
+}
+
+.line-through {
+  text-decoration: line-through;
+}
+
+.site-title {
+  font-family: Raleway;
+  font-weight: 300;
+}
+
+
 input[type=number] {
   width: 90px;
   text-align: center;
@@ -112,4 +110,7 @@ input[type=number] {
 
 .bg-danger-light {
   background-color: $danger-light;
+}
+.bg-primary-light {
+  background-color: $primary-light;
 }

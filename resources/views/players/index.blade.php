@@ -55,7 +55,7 @@
 
         @foreach ($players as $player)
             @php $profile = $player->profile; @endphp
-            <tr{!! $player->id == Auth::user()->player->id ? ' class="bg-light"' : ''!!}>
+            <tr{!! $player->id == Auth::user()->player->id ? ' class="bg-primary-light"' : ''!!}>
                 <td>
                     <a href="/profiles/{{ $player->id }}">
                         {{ $player->surname }} {{ $player->name }}
