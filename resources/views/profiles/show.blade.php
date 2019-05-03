@@ -77,7 +77,7 @@
 
                     <tr>
                         <td class="pb-4">Meiste Spiele in einem Monat:
-                            <span class="small-text"><br>(im {{ date('F Y', strtotime($profile->mostGamesMonthDate)) }})</span>
+                            <span class="small-text"><br>(im {{ $profile->mostGamesMonthDate->formatLocalized('%B %Y') }})</span>
                         </td>
                         <td class="font-weight-bold">{{ $profile->mostGamesMonth }}</td>
                     </tr>

@@ -25,10 +25,13 @@ class PlayerController extends Controller {
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
             ->orderBy($orderTable . '.' . $orderBy, $orderSQL)
             ->where('profiles.games', '>=', '10')
+			->where('players.hide', '0')
             ->with('profile')
             ->get();
+		
+		$playersCount = Player::where('players.hide', '0')->count();
 
-        return view('players.index', compact('players', 'orderBy', 'order'));
+        return view('players.index', compact('players', 'playersCount', 'orderBy', 'order'));
     }
 
     public function create()

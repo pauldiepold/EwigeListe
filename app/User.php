@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Notifications\MyOwnResetPassword;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -39,7 +40,7 @@ class User extends Authenticatable {
 
     public function sendPasswordResetNotification($token)
     {
-        $this->notify(new Notifications\MyOwnResetPassword($token));
+        $this->notify(new MyOwnResetPassword($token));
     }
 
     public function player() {

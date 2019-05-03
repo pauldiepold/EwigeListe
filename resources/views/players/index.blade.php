@@ -55,8 +55,7 @@
 
         @foreach ($players as $player)
             @php $profile = $player->profile; @endphp
-            @if (!$player->hide)
-            <tr>
+            <tr{!! $player->id == Auth::user()->player->id ? ' class="bg-light"' : ''!!}>
                 <td>
                     <a href="/profiles/{{ $player->id }}">
                         {{ $player->surname }} {{ $player->name }}
@@ -75,9 +74,11 @@
                     {{ $profile->soli }}
                 </td>
             </tr>
-            @endif
         @endforeach
     </table>
+		<p class="mt-4">
+			Anzahl registrierter Spieler: {{ $playersCount }}
+		</p>
     </div>
 </div>
 @endsection

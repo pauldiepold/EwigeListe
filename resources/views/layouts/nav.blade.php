@@ -31,6 +31,9 @@
 					<li class="nav-item">
                         <a class="nav-link" href="/login">Login</a>
                     </li>
+					<li class="nav-item">
+                        <a class="nav-link" href="/register">Registrieren</a>
+                    </li>
 					@endguest
 					@auth
                     <li class="nav-item">
@@ -39,15 +42,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/rounds">Rundenarchiv</a>
                     </li>
+					@endauth
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Sonstiges
                         </a>
-                        <div class="dropdown-menu bg-secondary text-light" id="navbarDropdown">
+						
+                        <div class="dropdown-menu bg-secondary text-light">
+							@auth
                             <a href="/invitations" class="dropdown-item">Einladung</a>
+							@endauth
+                            <a href="/impressum" class="dropdown-item">Impressum</a>
+                            <a href="/datenschutz" class="dropdown-item">Datenschutz</a>
                         </div>
                     </li>
-					@endauth
                 </ul>
             </div>
         </div>

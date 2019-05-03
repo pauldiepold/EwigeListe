@@ -1,10 +1,12 @@
 @component('mail::layout')
     {{-- Header --}}
+	@if(false)
     @slot('header')
         @component('mail::header', ['url' => config('app.url')])
             {{ config('app.name') }}
         @endcomponent
     @endslot
+	@endif
 
     {{-- Body --}}
     {{ $slot }}
@@ -21,7 +23,7 @@
     {{-- Footer --}}
     @slot('footer')
         @component('mail::footer')
-            © {{ date('Y') }} Paul Diepold
+            © {{ date('Y') }} &bull; Paul Diepold
         @endcomponent
     @endslot
 @endcomponent

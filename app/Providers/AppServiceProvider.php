@@ -30,8 +30,8 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         Paginator::defaultView('pagination.pagination');
-        date_default_timezone_set('Europe/Berlin');
-        Carbon::setLocale(config('app.locale'));
-        setlocale(LC_TIME, 'German');
+		setlocale(LC_TIME, "de_DE");
+		Carbon::setLocale(config('app.locale'));
+		Carbon::setUtf8(true);
     }
 }

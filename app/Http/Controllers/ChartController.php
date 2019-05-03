@@ -76,25 +76,25 @@ class ChartController extends Controller {
             {
                 $points->push($points->last() + $game->pivot->points);
             }
-            $dates->push($currentDate->format('j. M Y'));
+            $dates->push(($currentDate->formatLocalized('%e %h %Y')));
 
             if ($i == 0)
             {
                 $date = $currentDate->startOfDay();
-                $gameDates->push($currentDate->format('j. M Y'));
+                $gameDates->push(($currentDate->formatLocalized('%e %h %Y')));
                 $gameCounter->push($i);
             }
 
             while ($date->lessThan($currentDate->startOfDay()))
             {
-                $gameDates->push($date->format('j. M Y'));
+                $gameDates->push(($date->formatLocalized('%e %h %Y')));
                 $gameCounter->push($i+1);
                 $date->addDay();
             }
 
             $i++;
         }
-        $gameDates->push($currentDate->format('j. M Y'));
+        $gameDates->push(($currentDate->formatLocalized('%e %h %Y')));
         $gameCounter->push($i);
 
         $data = collect();
@@ -103,6 +103,6 @@ class ChartController extends Controller {
         $data->put('gameDates', $gameDates);
         $data->put('gameCounter', $gameCounter);
 
-        return $data->toArray();
+        return ($data->toArray());
     }
 }

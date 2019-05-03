@@ -29,7 +29,7 @@ class ProfileController extends Controller {
         $rounds = $player->rounds()
             ->latest()
             ->with(['games', 'players'])
-            ->paginate(10);
+            ->paginate(15);
 
         return view('profiles.show', compact('player', 'profile', 'rounds'));
     }

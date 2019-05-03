@@ -56,6 +56,14 @@ Route::delete(   '/invitations/{invitation}',             'InvitationController@
 Route::get(      '/charts/round/{round}/',           'ChartController@roundChart')         ->middleware('auth');
 Route::get(      '/charts/profile/{player}/',           'ChartController@profileChart')         ->middleware('auth');
 
+
+/* *********** Sonstiges ************** */
+Route::view(      '/datenschutz/',           'sonstiges.datenschutz');
+Route::view(      '/impressum/',           'sonstiges.impressum');
+Route::get(      '/charts/profile/{player}/',           'ChartController@profileChart')         ->middleware('auth');
+
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');
 
 Route::get(      '/test',                                 'TestController@test')     ->middleware('auth');
+
+

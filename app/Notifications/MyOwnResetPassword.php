@@ -1,6 +1,6 @@
 <?php
 
-namespace Illuminate\Auth\Notifications;
+namespace App\Notifications;
 
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Notifications\Notification;
@@ -57,12 +57,11 @@ class MyOwnResetPassword extends Notification
         }
 
         return (new MailMessage)
-
+			->greeting('Hallo!')
             ->subject('Passwort Zurücksetzen')
-            ->line(Lang::getFromJson('You are receiving this email because we received a password reset request for your account.'))
-            ->action(Lang::getFromJson('Reset Password'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))
-            ->line(Lang::getFromJson('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.users.expire')]))
-            ->line(Lang::getFromJson('If you did not request a password reset, no further action is required.'));
+            ->line(Lang::getFromJson('warum hast du Trottel dein Passwort vergessen? Um mit einem neuen Passwort weiterhin Doppelkopf zu spielen, setze dein Passwort zurück:'))
+            ->action(Lang::getFromJson('Passwort zurücksetzen'), url(config('app.url').route('password.reset', ['token' => $this->token], false)))
+            ->line(Lang::getFromJson('Dieser Link ist :count Minuten gültig.', ['count' => config('auth.passwords.users.expire')]));
     }
 
     /**

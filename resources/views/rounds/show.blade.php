@@ -34,8 +34,7 @@
         <round-graph :round_id="{{ $round->id }}"></round-graph>
     @endif
 
-    <div class="text-small">
-        @include('rounds.inc.info')
-    </div>
+    
+    @include('rounds.inc.info')
 
 @endsection

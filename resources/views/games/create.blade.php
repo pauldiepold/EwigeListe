@@ -35,6 +35,7 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
+					{{--
 					<button type="submit" class="btn btn-primary">
 						<div class="d-flex vertical-align-center">
 							<span>
@@ -44,7 +45,7 @@
 								Speichern
 							</span>
 						</div>
-					</button>
+					</button>--}}
 					<hr>
 					<div class="custom-control custom-checkbox my-1">
 					<input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
