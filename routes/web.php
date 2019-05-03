@@ -60,7 +60,7 @@ Route::get(      '/charts/profile/{player}/',           'ChartController@profile
 /* *********** Sonstiges ************** */
 Route::view(      '/datenschutz/',           'sonstiges.datenschutz');
 Route::view(      '/impressum/',           'sonstiges.impressum');
-Route::get(      '/charts/profile/{player}/',           'ChartController@profileChart')         ->middleware('auth');
+Route::view(      '/regeln/',           'sonstiges.regeln');
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')    ->middleware('auth');
 
