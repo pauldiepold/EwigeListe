@@ -7,3 +7,21 @@
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
 <title>@yield('title')</title>
+
+<script type="text/javascript">
+    var _paq = window._paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['setCustomDimension', 1, @auth'{{ Auth::user()->player->surname }} {{ Auth::user()->player->name }}'@endauth @guest'Anonym'@endguest]);
+    _paq.push(['enableLinkTracking']);
+    (function () {
+        var u = "https://matomo.pauldiepold.de/";
+        _paq.push(['setTrackerUrl', u + 'matomo.php']);
+        _paq.push(['setSiteId', '3']);
+        var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.defer = true;
+        g.src = u + 'matomo.js';
+        s.parentNode.insertBefore(g, s);
+    })();
+</script>
