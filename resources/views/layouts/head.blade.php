@@ -10,8 +10,8 @@
 
 <script type="text/javascript">
     var _paq = window._paq || [];
-    _paq.push(['trackPageView']);
     _paq.push(['setCustomDimension', 1, @auth'{{ Auth::user()->player->surname }} {{ Auth::user()->player->name }}'@endauth @guest'Anonym'@endguest]);
+    _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function () {
         var u = "https://matomo.pauldiepold.de/";
