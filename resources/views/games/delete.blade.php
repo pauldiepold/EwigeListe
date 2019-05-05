@@ -1,4 +1,3 @@
-@if ($round->games->count() != 0)
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
         Letztes Spiel löschen
     </button>
@@ -31,4 +30,3 @@
             </div>
         </div>
     </div>
-@endif

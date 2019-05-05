@@ -97,6 +97,7 @@ class RoundController extends Controller {
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
+
         //dd($colRound);
         return view('rounds.show', compact(
             'round',
@@ -141,6 +142,20 @@ class RoundController extends Controller {
         }
 
         return redirect('/rounds/' . $round->id);
+    }
+
+    public function destroy(Round $round)
+    {
+        $this->authorize('update', $round);
+
+        if ($round->games->count() != 0)
+        {
+            return Redirect::back()->with('deleteError', 'Du kannst nur eine Runde ohne Spiele löschen!');
+        }
+
+        $round->delete();
+
+        return redirect('/rounds/create');
     }
 
 }

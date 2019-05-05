@@ -19,14 +19,22 @@
     @include('rounds.inc.pointsTable')
 
     @can('update', $round)
-        <div class="d-flex flex-sm-row flex-column justify-content-center">
-            <div class="mx-2 mt-3">
-                @include('games.update')
+        @if ($round->games->count() != 0)
+            <div class="d-flex flex-sm-row flex-column justify-content-center">
+                <div class="mx-2 mt-3">
+                    @include('games.update')
+                </div>
+                <div class="mx-2 mt-3">
+                    @include('games.delete')
+                </div>
             </div>
-            <div class="mx-2 mt-3">
-                @include('games.delete')
-            </div>
-        </div>
+        @else
+            <form method="POST" action="/rounds/{{ $round->id }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-primary mt-4">Runde löschen</button>
+            </form>
+        @endif
     @endcan
 
     @if($round->games->count() >= 4)
@@ -34,7 +42,7 @@
         <round-graph :round_id="{{ $round->id }}"></round-graph>
     @endif
 
-    
+
     @include('rounds.inc.info')
 
 @endsection
