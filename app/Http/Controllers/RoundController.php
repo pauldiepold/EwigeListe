@@ -64,32 +64,25 @@ class RoundController extends Controller {
         foreach ($round->games()->oldest()->with('players')->get() as $game)
         {
             $colRow = collect();
-
-            foreach ($game->players as $player)
-            {
-                $colItem = collect();
-
-                $playerPoints->put($player->id, $playerPoints->get($player->id) + $player->pivot->points);
-                $colItem->push($playerPoints->get($player->id));
-
-                $player->pivot->won ? $colItem->push('won') : '';
-
-                $colRow->put($player->id, $colItem);
-            }
-
             foreach ($round->players as $player)
             {
-                if (!$colRow->has($player->id))
+                $colItem = collect();
+                if ($game->players->pluck('id')->contains($player->id))
                 {
-                    $colItem = collect();
+                    $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
+                    $colItem->push($playerPoints->get($player->id));
+
+                    $game->players->where('id', $player->id)->first()->pivot->won ? $colItem->push('won') : '';
+                } else
+                {
                     $colItem->push('-');
-                    $colRow->put($player->id, $colItem);
                 }
+                $colRow->push($colItem);
             }
 
             $colItem = collect();
             $colItem->push($game->points);
-            $colRow->put('points', $colItem);
+            $colRow->push($colItem);
 
             ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
 
@@ -98,7 +91,7 @@ class RoundController extends Controller {
             $colRound->push($colRow);
         }
 
-        //dd($colRound);
+        //dd($colRound->toArray());
         return view('rounds.show', compact(
             'round',
             'colRound',

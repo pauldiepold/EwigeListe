@@ -16,15 +16,11 @@
                     <tr class="{{ $row->contains('solo') ? 'bg-light' : ''}}{{ $row->contains('misplay') ? ' bg-danger-light ' : ''}}{{ $row->contains('endOfRound') ? 'border-bottom-thick' : ''}}">
                         @php $row->contains('solo') || $row->contains('endOfRound') ? $row->pop() : ''; @endphp
 
-                        @foreach  ($round->players as $player)
-                            @php $item = $row->get($player->id); @endphp
-                            <td {!! $item->contains('won') ? ' class="font-weight-bold"' : '' !!}>
+                        @foreach  ($row as $item)
+                            <td{!! $item->count() == 2 ? ' class="font-weight-bold"' : '' !!}>
                                 {{ $item->first() }}
                             </td>
                         @endforeach
-
-                        <td>{{ $row->get('points')->first() }}</td>
-
                     </tr>
                 @endforeach
 
