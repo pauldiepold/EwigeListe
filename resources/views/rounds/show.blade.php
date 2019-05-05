@@ -1,13 +1,11 @@
 @extends('layouts.main')
 
-@if($current)
+@if($isCurentRound)
     @section('title', 'Aktuelle Runde')
-
-@section('heading', 'Aktuelle Runde')
+    @section('heading', 'Aktuelle Runde')
 @else
     @section('title', 'Rundenübersicht')
-
-@section('heading', 'Rundenübersicht')
+    @section('heading', 'Rundenübersicht')
 @endif
 
 @section('content')
