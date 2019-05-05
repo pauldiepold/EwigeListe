@@ -9,9 +9,7 @@ class Round extends Model {
 
     protected $fillable = ['created_by'];
 
-    protected $attributes = [
-        'old_id' => null,
-    ];
+    protected $attributes = [];
 
     public function getLastGame()
     {

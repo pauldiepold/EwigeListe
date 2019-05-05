@@ -8,7 +8,6 @@ class Player extends Model {
 
     protected $attributes = [
         'hide' => false,
-		'old_id' => 0,
     ];
 	
 	protected $fillable = ['surname', 'name'];
