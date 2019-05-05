@@ -44,14 +44,13 @@ class RoundController extends Controller {
         }
 
         $colRound = collect();
-        $colRow = collect();
         $playerPoints = collect();
 
         //Kopfzeile
+        $colRow = collect();
         foreach ($round->players as $player)
         {
-            $colItem = collect();
-            $colItem->push($player->surname);
+            $colItem = collect($player->surname);
             $colItem->push($player->id);
             $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
             $activePlayerIDs->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
@@ -66,22 +65,20 @@ class RoundController extends Controller {
             $colRow = collect();
             foreach ($round->players as $player)
             {
-                $colItem = collect();
                 if ($game->players->pluck('id')->contains($player->id))
                 {
                     $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
-                    $colItem->push($playerPoints->get($player->id));
+                    $colItem = collect($playerPoints->get($player->id));
 
                     $game->players->where('id', $player->id)->first()->pivot->won ? $colItem->push('won') : '';
                 } else
                 {
-                    $colItem->push('-');
+                    $colItem = collect('-');
                 }
                 $colRow->push($colItem);
             }
 
-            $colItem = collect();
-            $colItem->push($game->points);
+            $colItem = collect($game->points);
             $colRow->push($colItem);
 
             ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
