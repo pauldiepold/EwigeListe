@@ -25,23 +25,9 @@ class RoundController extends Controller {
         $activePlayers = $round->getActivePlayers();
         $activePlayerIDs = $activePlayers->pluck('id');
 
-        $lastRound = Auth::user()->player->games()->latest()->first()->round;
-        $current = $lastRound->id == $round->id ? true : false;
+        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
 
         $lastGame = $round->getLastGame();
-        if ($lastGame)
-        {
-            $lastGamePlayers = $lastGame->players->sortBy(function ($player) use ($round)
-            {
-                return DB::table('player_round')
-                    ->where('round_id', $round->id)
-                    ->where('player_id', $player->id)
-                    ->first()->index;
-            });
-        } else
-        {
-            $lastGamePlayers = null;
-        }
 
         $colRound = collect();
         $playerPoints = collect();
@@ -94,8 +80,7 @@ class RoundController extends Controller {
             'colRound',
             'activePlayers',
             'lastGame',
-            'lastGamePlayers',
-            'current'
+            'isCurrentRound'
         ));
     }
 

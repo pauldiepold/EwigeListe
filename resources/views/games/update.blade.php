@@ -17,7 +17,7 @@
                     @csrf
                     @method('PATCH')
 
-                    @foreach ($lastGamePlayers as $player)
+                    @foreach ($lastGame->players as $player)
                         <div class="custom-control custom-checkbox my-1">
                             <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
                                    id="updatePlayer{{ $player->id }}" name="updateWinners[]"
