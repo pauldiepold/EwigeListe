@@ -23,11 +23,8 @@ class RoundController extends Controller {
     public function show(Round $round)
     {
         $activePlayers = $round->getActivePlayers();
-        $activePlayerIDs = $activePlayers->pluck('id');
-
-        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
-
         $lastGame = $round->getLastGame();
+        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
 
         $colRound = collect();
         $playerPoints = collect();
@@ -39,7 +36,7 @@ class RoundController extends Controller {
             $colItem = collect($player->surname);
             $colItem->push($player->id);
             $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
-            $activePlayerIDs->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
+            $activePlayers->pluck('id')->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
 
             $colRow->push($colItem);
         }
@@ -64,8 +61,7 @@ class RoundController extends Controller {
                 $colRow->push($colItem);
             }
 
-            $colItem = collect($game->points);
-            $colRow->push($colItem);
+            $colRow->push(collect($game->points));
 
             ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
 
@@ -74,7 +70,6 @@ class RoundController extends Controller {
             $colRound->push($colRow);
         }
 
-        //dd($colRound->toArray());
         return view('rounds.show', compact(
             'round',
             'colRound',

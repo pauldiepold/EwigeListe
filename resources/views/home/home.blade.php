@@ -21,7 +21,7 @@
 	<div class="card-body p-2">
 <span class=""style="font-size: 0.8rem;">
 	<a href="/rounds/{{ $round->id }}"><i class="fas fa-eye fa-2x text-dark"></i></a><br>
-	Letztes Spiel eingetragen {{ printDate($currentGames->get($loop->index)->created_at) }}
+	Letztes Spiel eingetragen {{ printDate($round->games()->latest()->first()->created_at) }}
 </span>
 	</div>
 </div>

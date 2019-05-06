@@ -372,6 +372,6 @@ class HomeController extends Controller {
             $currentRounds->push($game->round);
         }
 
-        return view('home.home', compact('colFP', 'colStats', 'currentRounds', 'currentGames'));
+        return view('home.home', compact('colFP', 'colStats', 'currentRounds'));
     }
 }

@@ -14,15 +14,13 @@ class DatabaseSeeder extends Seeder {
     public function run()
     {
 		$this->call([
-        	BenutzerSeeder::class,
-       		SessionSeeder::class,
-        	SpielSeeder::class,
+        	PlayerSeeder::class,
     	]);
-
+		
         $profiles = Profile::all();
         foreach ($profiles as $profile)
         {
             $profile->updateProfile();
-        }
+        }		
     }
 }

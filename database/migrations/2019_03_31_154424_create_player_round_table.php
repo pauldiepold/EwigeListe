@@ -21,7 +21,9 @@ class CreatePlayerRoundTable extends Migration
             $table->timestamps();
 
             $table->foreign('round_id')
-                ->references('id')->on('rounds');
+                ->references('id')
+				->on('rounds')
+				->onDelete('cascade');
 
             $table->foreign('player_id')
                 ->references('id')->on('players');

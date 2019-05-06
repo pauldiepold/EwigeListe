@@ -16,11 +16,11 @@ class CreateRoundsTable extends Migration
         Schema::create('rounds', function (Blueprint $table) {
             $table->increments('id');
 			$table->unsignedInteger('created_by');
-            $table->unsignedInteger('old_id')->nullable();
             $table->timestamps();
 
             $table->foreign('created_by')
-                ->references('id')->on('players');
+                ->references('id')
+				->on('players');
         });
     }
 

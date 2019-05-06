@@ -180,8 +180,6 @@ class   GameController extends Controller {
             return Redirect::back()->withInput()->withErrors(['Du kannst nur das letzte Spiel einer Runde löschen!']);
         }
 
-        DB::table('game_player')->where('game_id', $game->id)->delete();
-
         $game->delete();
 
         foreach ($players as $player)
