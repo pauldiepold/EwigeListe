@@ -2,4 +2,4 @@
 
 @section('title', 'Server nicht erreichbar')
 @section('code', '503')
-@section('message', 'Der Server ist vorrübergehend nicht erreichbar')
+@section('message', 'Server nicht erreichbar')
