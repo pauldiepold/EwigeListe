@@ -16,7 +16,7 @@ class ProfileController extends Controller {
         foreach ($profiles as $profile)
         {
             //UpdateProfile::dispatch($profile);
-			$profile->updateProfile();
+            $profile->updateProfile();
         }
 
         return view('profiles.updated');

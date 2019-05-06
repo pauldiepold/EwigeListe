@@ -97,15 +97,18 @@
                 <h3>Sonderregeln</h3>
                 <ul>
                     <li><b>Herz-Zehn:</b> Die Zweite sticht die Erste, außer im letzten Stich.</li>
-                    <li><b>Superschwein:</b> Befinden sich beide Karo-Asse auf einer Hand und wird mit dem Ersten ein Stich
+                    <li><b>Superschwein:</b> Befinden sich beide Karo-Asse auf einer Hand und wird mit dem Ersten ein
+                        Stich
                         gemacht (vom Mitspieler mitgenommen reicht nicht), so ist das zweite das Superschwein (mit
                         Ankündigung) und damit der höchste Trumpf.
                     </li>
-                    <li><b>Soli:</b> Sonderpunkte werden nicht angerechnet; der Solo-Spieler bekommt den Spielwert dreifach
+                    <li><b>Soli:</b> Sonderpunkte werden nicht angerechnet; der Solo-Spieler bekommt den Spielwert
+                        dreifach
                         angerechnet (sowohl positiv als auch negativ). Ausnahme: Verdeckte Hochzeit, hier gelten alle
                         regulären Sonderpunkte.
                     </li>
-                    <li><b>Falsch bekannt:</b> Der Spieler wird mit mindestens 6 Minuspunkten bestraft und bereits getätigte
+                    <li><b>Falsch bekannt:</b> Der Spieler wird mit mindestens 6 Minuspunkten bestraft und bereits
+                        getätigte
                         Ansagen werden extra angerechnet.  Außerdem muss der Spieler seinen Mitspielern einen Kuchen
                         backen. Beim Eingeben des Spiels in die Liste muss das falsche Bekennen angegeben werden.
                     </li>

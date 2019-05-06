@@ -43,7 +43,8 @@ class User extends Authenticatable {
         $this->notify(new MyOwnResetPassword($token));
     }
 
-    public function player() {
+    public function player()
+    {
         return $this->belongsTo(Player::class);
     }
 }

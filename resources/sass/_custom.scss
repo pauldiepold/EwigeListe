@@ -12,12 +12,13 @@ body {
 
 .dropdown-item,
 .nav-link,
-.dropdown-menu{
+.dropdown-menu {
   color: rgba(255, 255, 255, 0.6) !important;
   border: none;
   border-radius: 0px;
   text-align: center;
 }
+
 .dropdown-menu {
   margin-top: 0px;
 }
@@ -73,7 +74,6 @@ table {
 }
 
 
-
 .link-unstyled {
   &,
   &:visited,
@@ -111,6 +111,7 @@ input[type=number] {
 .bg-danger-light {
   background-color: $danger-light;
 }
+
 .bg-primary-light {
   background-color: $primary-light;
 }

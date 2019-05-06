@@ -42,16 +42,19 @@ if (!function_exists('printDate'))
 
     function printDate($input)
     {
-		if ($input->isToday()) {
-			$date = 'heute ';
-		} elseif ($input->isYesterday()) {
-			$date = 'gestern';
-		} else {
-			$date = 'am ' . date('j.n.Y', strtotime($input));
-		}
-		$time =	' um ' . 
-			date('H:i', strtotime($input)) .
-			' Uhr';
+        if ($input->isToday())
+        {
+            $date = 'heute ';
+        } elseif ($input->isYesterday())
+        {
+            $date = 'gestern';
+        } else
+        {
+            $date = 'am ' . date('j.n.Y', strtotime($input));
+        }
+        $time = ' um ' .
+                date('H:i', strtotime($input)) .
+                ' Uhr';
 
         return $date . $time;
     }

@@ -8,10 +8,10 @@ use App\Game;
 
 class Profile extends Model {
 
-	protected $dates = [
+    protected $dates = [
         'mostGamesMonthDate',
     ];
-	
+
     public function updateProfile()
     {
         $games = DB::table('game_player')->where('player_id', $this->player_id);

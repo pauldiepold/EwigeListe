@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInvitationsTable extends Migration
-{
+class CreateInvitationsTable extends Migration {
+
     /**
      * Run the migrations.
      *
@@ -13,14 +13,15 @@ class CreateInvitationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('invitations', function (Blueprint $table) {
+        Schema::create('invitations', function (Blueprint $table)
+        {
             $table->increments('id');
-			$table->unsignedInteger('pin');
-			$table->unsignedInteger('player_id')->nullable();
-			$table->datetime('valid_until');
+            $table->unsignedInteger('pin');
+            $table->unsignedInteger('player_id')->nullable();
+            $table->datetime('valid_until');
             $table->timestamps();
-			
-			$table->foreign('player_id')->references('id')->on('players');
+
+            $table->foreign('player_id')->references('id')->on('players');
         });
     }
 

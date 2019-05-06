@@ -61,8 +61,8 @@ class Round extends Model {
     {
         return $this->hasMany(Game::class);
     }
-	
-	public function createdBy()
+
+    public function createdBy()
     {
         return $this->belongsTo('App\Player', 'created_by');
     }

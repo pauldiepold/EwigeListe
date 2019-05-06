@@ -1,12 +1,12 @@
 @component('mail::layout')
     {{-- Header --}}
-	@if(false)
-    @slot('header')
-        @component('mail::header', ['url' => config('app.url')])
-            {{ config('app.name') }}
-        @endcomponent
-    @endslot
-	@endif
+    @if(false)
+        @slot('header')
+            @component('mail::header', ['url' => config('app.url')])
+                {{ config('app.name') }}
+            @endcomponent
+        @endslot
+    @endif
 
     {{-- Body --}}
     {{ $slot }}

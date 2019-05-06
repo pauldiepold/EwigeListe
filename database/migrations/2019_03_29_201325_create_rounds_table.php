@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRoundsTable extends Migration
-{
+class CreateRoundsTable extends Migration {
+
     /**
      * Run the migrations.
      *
@@ -13,14 +13,15 @@ class CreateRoundsTable extends Migration
      */
     public function up()
     {
-        Schema::create('rounds', function (Blueprint $table) {
+        Schema::create('rounds', function (Blueprint $table)
+        {
             $table->increments('id');
-			$table->unsignedInteger('created_by');
+            $table->unsignedInteger('created_by');
             $table->timestamps();
 
             $table->foreign('created_by')
                 ->references('id')
-				->on('players');
+                ->on('players');
         });
     }
 

@@ -6,9 +6,10 @@
 
 @section('content')
 
-<p>
-	Beim Registrieren neuer Spieler wird eine <b>Einladungs-PIN</b> benötigt. <br class="d-none d-md-block">Diese wird hier erstellt und eingesehen!
-</p>
+    <p>
+        Beim Registrieren neuer Spieler wird eine <b>Einladungs-PIN</b> benötigt. <br class="d-none d-md-block">Diese
+        wird hier erstellt und eingesehen!
+    </p>
 
     @include('include.error')
     @if(!$invitation)

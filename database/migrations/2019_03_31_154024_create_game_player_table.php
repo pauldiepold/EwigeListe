@@ -21,17 +21,17 @@ class CreateGamePlayerTable extends Migration {
             $table->integer('points')->nullable();
             $table->boolean('soloist');
             $table->boolean('won');
-			$table->boolean('misplayed');
+            $table->boolean('misplayed');
             $table->timestamps();
 
             $table->foreign('game_id')
                 ->references('id')
-				->on('games')
+                ->on('games')
                 ->onDelete('cascade');
 
             $table->foreign('player_id')
                 ->references('id')
-				->on('players');
+                ->on('players');
         });
     }
 

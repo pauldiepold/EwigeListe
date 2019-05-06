@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddUserForeignKey extends Migration
-{
+class AddUserForeignKey extends Migration {
+
     /**
      * Run the migrations.
      *
@@ -13,7 +13,7 @@ class AddUserForeignKey extends Migration
      */
     public function up()
     {
-        Schema::table('users', function(Blueprint $table)
+        Schema::table('users', function (Blueprint $table)
         {
             $table->foreign('player_id')->references('id')->on('players');
         });
@@ -26,7 +26,7 @@ class AddUserForeignKey extends Migration
      */
     public function down()
     {
-        Schema::table('users', function(Blueprint $table)
+        Schema::table('users', function (Blueprint $table)
         {
             $table->dropForeign('users_player_id_foreign');
         });

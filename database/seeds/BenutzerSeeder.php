@@ -6,8 +6,8 @@ use App\Player;
 use App\Profile;
 use Illuminate\Support\Facades\Hash;
 
-class BenutzerSeeder extends Seeder
-{
+class BenutzerSeeder extends Seeder {
+
     /**
      * Run the database seeds.
      *
@@ -16,8 +16,8 @@ class BenutzerSeeder extends Seeder
     public function run()
     {
         $pdo = new PDO('mysql:host=localhost;dbname=' . env('DB_DATABASE_old'), env('DB_USERNAME_old'), env('DB_PASSWORD_old'));
-		
-		$statement = $pdo->prepare("SELECT * FROM benutzer");
+
+        $statement = $pdo->prepare("SELECT * FROM benutzer");
         $statement->execute(array());
         while ($row = $statement->fetch())
         {

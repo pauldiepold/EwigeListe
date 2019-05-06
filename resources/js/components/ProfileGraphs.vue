@@ -98,8 +98,7 @@
                                     ticks: {
                                         maxTicksLimit: 10,
                                     },
-                                    gridLines: {
-                                    }
+                                    gridLines: {}
                                 }],
                             },
                             elements: {

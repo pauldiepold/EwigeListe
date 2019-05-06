@@ -1,62 +1,63 @@
 @component('mail::message')
-{{-- Greeting --}}
-@if (! empty($greeting))
-# {{ $greeting }}
-@else
-@if ($level === 'error')
-# @lang('Whoops!')
-@else
-# @lang('Hello!')
-@endif
-@endif
+    {{-- Greeting --}}
+    @if (! empty($greeting))
+        # {{ $greeting }}
+    @else
+        @if ($level === 'error')
+            # @lang('Whoops!')
+        @else
+            # @lang('Hello!')
+        @endif
+    @endif
 
-{{-- Intro Lines --}}
-@foreach ($introLines as $line)
-{{ $line }}
+    {{-- Intro Lines --}}
+    @foreach ($introLines as $line)
+        {{ $line }}
 
-@endforeach
+    @endforeach
 
-{{-- Action Button --}}
-@isset($actionText)
-<?php
-    switch ($level) {
-        case 'success':
-        case 'error':
-            $color = $level;
-            break;
-        default:
-            $color = 'primary';
-    }
-?>
-@component('mail::button', ['url' => $actionUrl, 'color' => $color])
-{{ $actionText }}
-@endcomponent
-@endisset
+    {{-- Action Button --}}
+    @isset($actionText)
+        <?php
+        switch ($level)
+        {
+            case 'success':
+            case 'error':
+                $color = $level;
+                break;
+            default:
+                $color = 'primary';
+        }
+        ?>
+        @component('mail::button', ['url' => $actionUrl, 'color' => $color])
+            {{ $actionText }}
+        @endcomponent
+    @endisset
 
-{{-- Outro Lines --}}
-@foreach ($outroLines as $line)
-{{ $line }}
+    {{-- Outro Lines --}}
+    @foreach ($outroLines as $line)
+        {{ $line }}
 
-@endforeach
+    @endforeach
 
-{{-- Salutation --}}
-@if (! empty($salutation))
-{{ $salutation }}
-@else
-@lang('Beste Grüße'),<br>deine Ewige Liste
-@endif
+    {{-- Salutation --}}
+    @if (! empty($salutation))
+        {{ $salutation }}
+    @else
+        @lang('Beste Grüße'),<br>deine Ewige Liste
+    @endif
 
-{{-- Subcopy --}}
-@isset($actionText)
-@slot('subcopy')
-@lang(
-    "Wenn du Probleme hast den \":actionText\" Button anzuklicken, füge diese URL".
-    'in deinen Browser ein: [:actionURL](:actionURL)',
-    [
-        'actionText' => $actionText,
-        'actionURL' => $actionUrl,
-    ]
-)
-@endslot
-@endisset
+    {{-- Subcopy --}}
+    @isset($actionText)
+        @slot('subcopy')
+            @lang(
+                "Wenn du Probleme hast den \":actionText\" Button anzuklicken, füge diese URL".
+                'in deinen Browser ein: [:actionURL](:actionURL)',
+                [
+                    'actionText' => $actionText,
+                    'actionURL' => $actionUrl,
+                ]
+            )
+        @endslot
+    @endisset
 @endcomponent

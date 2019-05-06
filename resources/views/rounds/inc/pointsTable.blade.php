@@ -7,7 +7,9 @@
                 @php $header = $colRound->shift(); @endphp
                 <tr class="border-bottom-thick">
                     @foreach ($header as $item)
-                        <th><a class="{{ !$item->contains('dealer') ? 'text-dark ' : '' }}{{ $item->contains('active') ? 'active-player' : '' }}" href="/profiles/{{ $item->get('1') }}">{{$item->first()}}</a></th>
+                        <th>
+                            <a class="{{ !$item->contains('dealer') ? 'text-dark ' : '' }}{{ $item->contains('active') ? 'active-player' : '' }}"
+                               href="/profiles/{{ $item->get('1') }}">{{$item->first()}}</a></th>
                     @endforeach
                     <th class="text-dark">Punkte</th>
                 </tr>

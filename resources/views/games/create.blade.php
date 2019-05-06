@@ -35,29 +35,29 @@
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
-					{{--
-					<button type="submit" class="btn btn-primary">
-						<div class="d-flex vertical-align-center">
-							<span>
-								<i class="fa fa-spinner fa-spin text-lg" style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
-							</span>
-							<span class="ml-2">
-								Speichern
-							</span>
-						</div>
-					</button>--}}
-					<hr>
-					<div class="custom-control custom-checkbox my-1">
-					<input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
-						   {{ old('misplayed') ? 'checked' : '' }}>
-					<label class="custom-control-label font-weight-bold" for="misplayed">
-                    	Falsch bedient?
-                    </label>
-					</div>
-						<a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
-					   data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen.">
-					<i class="fas fa-info-circle fa-lg"></i>
-					</a>
+                    {{--
+                    <button type="submit" class="btn btn-primary">
+                        <div class="d-flex vertical-align-center">
+                            <span>
+                                <i class="fa fa-spinner fa-spin text-lg" style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
+                            </span>
+                            <span class="ml-2">
+                                Speichern
+                            </span>
+                        </div>
+                    </button>--}}
+                    <hr>
+                    <div class="custom-control custom-checkbox my-1">
+                        <input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
+                                {{ old('misplayed') ? 'checked' : '' }}>
+                        <label class="custom-control-label font-weight-bold" for="misplayed">
+                            Falsch bedient?
+                        </label>
+                    </div>
+                    <a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
+                       data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen.">
+                        <i class="fas fa-info-circle fa-lg"></i>
+                    </a>
                 </form>
 
             </div>
@@ -79,22 +79,22 @@
 @endif
 
 @push('scripts')
-<script>
-$(function () {
-  $('[data-toggle="popover"]').popover();
-});
-</script>
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+    </script>
 @endpush
 
 @push('scripts')
-<script>
-$('body').on('click', function (e) {
-    $('[data-toggle=popover]').each(function () {
-        // hide any open popovers when the anywhere else in the body is clicked
-        if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-            $(this).popover('hide');
-        }
-    });
-});
-</script>
+    <script>
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+    </script>
 @endpush

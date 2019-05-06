@@ -88,7 +88,7 @@ class ChartController extends Controller {
             while ($date->lessThan($currentDate->startOfDay()))
             {
                 $gameDates->push(($date->formatLocalized('%e %h %Y')));
-                $gameCounter->push($i+1);
+                $gameCounter->push($i + 1);
                 $date->addDay();
             }
 
