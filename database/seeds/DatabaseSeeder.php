@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Player;
 use App\Profile;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class DatabaseSeeder extends Seeder {
 
@@ -14,13 +15,20 @@ class DatabaseSeeder extends Seeder {
     public function run()
     {
         $this->call([
-            PlayerSeeder::class,
+            TablesSeeder::class,
         ]);
-
+        $this->command->comment('updating: profiles');
         $profiles = Profile::all();
+        $output = new ConsoleOutput();
+        $bar = new ProgressBar($output, $profiles->count());
+        $bar->start();
+
         foreach ($profiles as $profile)
         {
             $profile->updateProfile();
+            $bar->advance();
         }
+        $bar->finish();
+        $this->command->info(' updated: profiles');
     }
 }
