@@ -2,8 +2,10 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-class PlayerSeeder extends Seeder {
+class TablesSeeder extends Seeder {
 
     /**
      * Run the database seeds.
@@ -12,15 +14,11 @@ class PlayerSeeder extends Seeder {
      */
     public function run()
     {
-        $tables = [
-            'players',
-            'users',
-            'rounds',
-            'games',
-        ];
+        $output = new ConsoleOutput();
+
+        $this->command->comment('seeding: players table');
 
         $rows = DB::connection('seed')->table('players')->get();
-
         foreach ($rows as $row)
         {
             DB::table('players')->insert([
@@ -32,11 +30,11 @@ class PlayerSeeder extends Seeder {
                 'updated_at' => $row->updated_at
             ]);
         }
-        $this->command->info('players table seeded');
 
+        $this->command->info('seeded: players table');
+        $this->command->comment('seeding: users table');
 
         $rows = DB::connection('seed')->table('users')->get();
-
         foreach ($rows as $row)
         {
             DB::table('users')->insert([
@@ -49,11 +47,11 @@ class PlayerSeeder extends Seeder {
                 'updated_at' => $row->updated_at
             ]);
         }
-        $this->command->info('users table seeded');
 
+        $this->command->info('seeded: users table');
+        $this->command->comment('seeding: invitations table');
 
         $rows = DB::connection('seed')->table('invitations')->get();
-
         foreach ($rows as $row)
         {
             DB::table('invitations')->insert([
@@ -65,11 +63,13 @@ class PlayerSeeder extends Seeder {
                 'updated_at' => $row->updated_at
             ]);
         }
-        $this->command->info('invitations table seeded');
 
+        $this->command->info('seeded: invitations table');
+        $this->command->comment('seeding: rounds table');
 
         $rows = DB::connection('seed')->table('rounds')->get();
-
+        $bar = new ProgressBar($output, $rows->count());
+        $bar->start();
         foreach ($rows as $row)
         {
             DB::table('rounds')->insert([
@@ -78,12 +78,16 @@ class PlayerSeeder extends Seeder {
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at
             ]);
+            $bar->advance();
         }
-        $this->command->info('rounds table seeded');
+        $bar->finish();
 
+        $this->command->info(' seeded: rounds table');
+        $this->command->comment('seeding: games table');
 
         $rows = DB::connection('seed')->table('games')->get();
-
+        $bar = new ProgressBar($output, $rows->count());
+        $bar->start();
         foreach ($rows as $row)
         {
             DB::table('games')->insert([
@@ -97,12 +101,16 @@ class PlayerSeeder extends Seeder {
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at
             ]);
+            $bar->advance();
         }
-        $this->command->info('games table seeded');
+        $bar->finish();
 
+        $this->command->info(' seeded: games table');
+        $this->command->comment('seeding: game_player table');
 
         $rows = DB::connection('seed')->table('game_player')->get();
-
+        $bar = new ProgressBar($output, $rows->count());
+        $bar->start();
         foreach ($rows as $row)
         {
             DB::table('game_player')->insert([
@@ -116,12 +124,16 @@ class PlayerSeeder extends Seeder {
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at
             ]);
+            $bar->advance();
         }
-        $this->command->info('game_player table seeded');
+        $bar->finish();
 
+        $this->command->info('seeded: game_player table');
+        $this->command->comment('seeding: player_round table');
 
         $rows = DB::connection('seed')->table('player_round')->get();
-
+        $bar = new ProgressBar($output, $rows->count());
+        $bar->start();
         foreach ($rows as $row)
         {
             DB::table('player_round')->insert([
@@ -132,12 +144,15 @@ class PlayerSeeder extends Seeder {
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at
             ]);
+            $bar->advance();
         }
-        $this->command->info('player_round table seeded');
+        $bar->finish();
+
+        $this->command->info(' seeded: player_round table');
+        $this->command->comment('seeding: password_resets table');
 
 
         $rows = DB::connection('seed')->table('password_resets')->get();
-
         foreach ($rows as $row)
         {
             DB::table('password_resets')->insert([
@@ -146,11 +161,11 @@ class PlayerSeeder extends Seeder {
                 'created_at' => $row->created_at,
             ]);
         }
-        $this->command->info('password_resets table seeded');
 
+        $this->command->info('seeded: password_resets table');
+        $this->command->comment('seeding: profiles table');
 
         $rows = DB::connection('seed')->table('profiles')->get();
-
         foreach ($rows as $row)
         {
             DB::table('profiles')->insert([
@@ -161,6 +176,7 @@ class PlayerSeeder extends Seeder {
                 'updated_at' => $row->updated_at
             ]);
         }
-        $this->command->info('profiles table seeded');
+        $this->command->info('seeded: profiles table');
+
     }
 }
