@@ -5,6 +5,7 @@
 <link rel="icon" href="{{ asset('img/favicon_192x192.png') }}" sizes="192x192"/>
 
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+@stack('scriptsHead')
 
 <title>@yield('title')</title>
 
