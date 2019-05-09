@@ -68,6 +68,6 @@ Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete'
 
 Route::get(      '/test',                                 'TestController@test')     ->middleware('auth');
 
-Route::get(      '/report',                                 'ReportController@report')     ->middleware('auth');
+Route::get(      '/report',                                 'ReportController@report')     ->middleware(['auth', 'admin']);
 
 
