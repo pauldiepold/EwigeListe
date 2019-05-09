@@ -5,6 +5,7 @@
 @section('heading', 'Ewige Liste')
 
 @section('content')
+	@include('include.back')
 <div class="">
 <table id="profilesTable" class="table table-striped nowrap myDataTable" style="width:100%">
 	<thead>
@@ -21,7 +22,7 @@
 	</thead>
 	<tbody>
 		@foreach($profiles as $profile)
-			<tr>				
+			<tr{!! $profile->player->id == Auth::user()->player->id ? ' class="bg-primary-light"' : ''!!}>
 				<td>
 					<a href="profiles/{{ $profile->player->id }}">
 						{{ $profile->player->surname }}
@@ -107,6 +108,7 @@
         		scrollX:        true,
         		scrollCollapse: true,
 				fixedColumns: true,
+				paging: false,
 				dom: 't<"my-3"p><"my-3"l>',
 				info: false,
 				searching: false,
@@ -118,7 +120,6 @@
         				next:       "Weiter",
         				previous:   "Zurück"
    					},
-					
         		}
 			});
 		} );

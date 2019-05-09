@@ -5,6 +5,7 @@
 @section('heading', 'Ewige Liste')
 
 @section('content')
+<a href="/profiles" class="btn btn-primary">Ausführliche Statistiken</a>
 
     <div class="row justify-content-center my-4">
         <div class="col col-xl-7 col-lg-8 col-md-9">
