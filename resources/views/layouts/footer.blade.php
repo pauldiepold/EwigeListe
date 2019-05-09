@@ -24,6 +24,11 @@
         @guest
             <a href="/login">Login</a>
         @endguest
+        @auth
+            @if(Auth::user()->player->id == 1)
+                <br><a href="/report">Admin Tools</a>
+            @endif
+        @endauth
         <br>
 
         <span class="text-muted">&copy; Paul Diepold &bull; {{ now()->year }}</span>
