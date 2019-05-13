@@ -63,13 +63,13 @@ class RoundController extends Controller {
 
             $colRow->push(collect($game->points));
 
-            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo ? $colRow->push('endOfRound') : '';
+            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo && !$game->misplay? $colRow->push('endOfRound') : '';
 
             $game->solo ? $colRow->push('solo') : '';
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
-
+		//dd($colRound->toArray());
         return view('rounds.show', compact(
             'round',
             'colRound',

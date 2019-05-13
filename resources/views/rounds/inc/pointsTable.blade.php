@@ -16,10 +16,14 @@
 
                 @foreach ($colRound as $row)
                     <tr class="{{ $row->contains('solo') ? 'bg-light' : ''}}{{ $row->contains('misplay') ? ' bg-danger-light ' : ''}}{{ $row->contains('endOfRound') ? 'border-bottom-thick' : ''}}">
-                        @php $row->contains('solo') || $row->contains('endOfRound') ? $row->pop() : ''; @endphp
+                        @php
+							$row->contains('misplay') ? $row->pop() : '';
+							$row->contains('solo') ? $row->pop() : '';
+							$row->contains('endOfRound') ? $row->pop() : '';
+						@endphp
 
                         @foreach  ($row as $item)
-                            <td{!! $item->count() == 2 ? ' class="font-weight-bold"' : '' !!}>
+                            <td class="{{ $item->count() == 2 ? 'font-weight-bold' : '' }}">
                                 {{ $item->first() }}
                             </td>
                         @endforeach
