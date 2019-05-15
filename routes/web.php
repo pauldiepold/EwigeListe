@@ -55,8 +55,9 @@ Route::delete(   '/invitations/{invitation}',             'InvitationController@
 
 
 /* *********** Charts ************** */
-Route::get(      '/charts/round/{round}/',           'ChartController@roundChart')         ->middleware('auth');
-Route::get(      '/charts/profile/{player}/',           'ChartController@profileChart')         ->middleware('auth');
+Route::get(      '/charts/round/{round}/',                'ChartController@roundChart')  ->middleware('auth');
+Route::get(      '/charts/profile/{player}/',             'ChartController@profileChart')->middleware('auth');
+Route::get(      '/charts/home',                          'ChartController@homeChart')   ->middleware('auth');
 
 
 /* *********** Sonstiges ************** */
