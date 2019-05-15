@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Round;
 use App\Player;
+use App\Game;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -76,30 +77,67 @@ class ChartController extends Controller {
             {
                 $points->push($points->last() + $game->pivot->points);
             }
-            $dates->push(($currentDate->formatLocalized('%e %h %Y')));
+            $dates->push(($currentDate->formatLocalized('%e. %h %Y')));
 
             if ($i == 0)
             {
                 $date = $currentDate->startOfDay();
-                $gameDates->push(($currentDate->formatLocalized('%e %h %Y')));
+                $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
                 $gameCounter->push($i);
             }
 
             while ($date->lessThan($currentDate->startOfDay()))
             {
-                $gameDates->push(($date->formatLocalized('%e %h %Y')));
+                $gameDates->push(($date->formatLocalized('%e. %h %Y')));
                 $gameCounter->push($i + 1);
                 $date->addDay();
             }
 
             $i++;
         }
-        $gameDates->push(($currentDate->formatLocalized('%e %h %Y')));
+        $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
         $gameCounter->push($i);
 
         $data = collect();
         $data->put('dates', $dates);
         $data->put('points', $points);
+        $data->put('gameDates', $gameDates);
+        $data->put('gameCounter', $gameCounter);
+
+        return ($data->toArray());
+    }
+
+    public function homeChart()
+    {
+        $games = Game::all();
+
+        $gameDates = collect();
+        $gameCounter = collect();
+        $i = 0;
+        foreach ($games as $game)
+        {
+            $currentDate = Carbon::parse($game->created_at);
+
+            if ($i == 0)
+            {
+                $date = $currentDate->startOfDay();
+                $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+                $gameCounter->push($i);
+            }
+
+            while ($date->lessThan($currentDate->startOfDay()))
+            {
+                $gameDates->push(($date->formatLocalized('%e. %h %Y')));
+                $gameCounter->push($i + 1);
+                $date->addDay();
+            }
+
+            $i++;
+        }
+        $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+        $gameCounter->push($i);
+
+        $data = collect();
         $data->put('gameDates', $gameDates);
         $data->put('gameCounter', $gameCounter);
 

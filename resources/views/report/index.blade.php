@@ -6,6 +6,8 @@
 
 @section('content')
 
+        <div class="row justify-content-center">
+            <div class="col-sm-10 col-md-8 col-lg-7 col-xl-6">
 <table class="table table-sm" id="reportTable">
 	<tr>
 		<th>Name</th>
@@ -36,6 +38,8 @@
 					<td>{{ $action['title'] }}:</td>
 					<td><a href="{{ str_replace('www.', '', $action['url']) }}">{{ substr(str_replace('www.', '', $action['url']), 22) }}</a></td>
 					<td>{{ array_key_exists('timeSpent', $action) ? ceil($action['timeSpent']/60) . "m " . $action['timeSpent']%60 . "s": '' }}</td>
+					<!-- <td>{{ Carbon\Carbon::createFromTimestamp($action['timestamp'], 'Europe/Amsterdam')->formatLocalized('%H:%M') }}</td> -->
+					<td>{{ substr($action['serverTimePretty'], 10) }}</td>
 				</tr>
 			@endforeach
 			</table>
@@ -44,6 +48,8 @@
 	@endif
 	@endforeach
 </table>
+			</div>
+</div>
 
 @endsection
 
