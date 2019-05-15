@@ -1,12 +1,14 @@
 <template>
     <div class="row justify-content-center mt-4">
         <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
+            <h5 class="my-3 font-weight-bold" style="font-family:Raleway">Punkteverlauf:</h5>
             <div>
-                <canvas id="profilePointChart" height="500"></canvas>
+                <canvas id="profilePointChart" height="560"></canvas>
             </div>
             <hr>
+            <h5 class="my-3 font-weight-bold" style="font-family:Raleway">Anzahl der Spiele</h5>
             <div>
-                <canvas id="profileGameChart" height="500"></canvas>
+                <canvas id="profileGameChart" height="560"></canvas>
             </div>
         </div>
     </div>

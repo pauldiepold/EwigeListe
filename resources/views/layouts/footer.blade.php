@@ -26,7 +26,7 @@
         @endguest
         @auth
             @if(Auth::user()->player->id == 1)
-                <br><a href="/report">Admin Tools</a>
+                <br><a href="https://dev.ewige-liste.de/report">Admin Tools</a>
             @endif
         @endauth
         <br>

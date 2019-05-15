@@ -70,4 +70,8 @@
         </div>
     </div>
 
+    <hr>
+    <h5 class="my-3 font-weight-bold" style="font-family:Raleway">Anzahl der Spiele:</h5>
+    <home-graph></home-graph>
+
 @endsection

@@ -22,7 +22,7 @@ class ReportController extends Controller
 			$actionData->push(date("d.m.y",strtotime($action->get('serverDate'))));		
 			$actionData->push($action->get('serverTimePrettyFirstAction'));
 			$actionData->push($action->get('serverTimePretty'));
-			$actionData->push(count($action->get('actionDetails')));			
+			if ($actionData->push(count($action->get('actionDetails')));
 			$actionData->push(collect($action->get('actionDetails')));
 			
 			$reportData->push($actionData);

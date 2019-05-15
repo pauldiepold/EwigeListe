@@ -2,7 +2,7 @@
     <div class="row justify-content-center mt-4">
         <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
             <div>
-                <canvas id="homeGameChart" height="500"></canvas>
+                <canvas id="homeGameChart" height="700"></canvas>
             </div>
         </div>
     </div>
@@ -29,7 +29,7 @@
                         ]
                     };
 
-                    var ctx = $("#profileGameChart");
+                    var ctx = $("#homeGameChart");
 
                     var LineGraph = new Chart(ctx, {
                         type: 'line',
