@@ -1,6 +1,6 @@
-<div class="bg-dark py-2">
+<div class="py-2" style="background-color: #054b6d;">
     <a href="/" class="link-unstyled">
-        <h3 class="site-title text-light mb-0">Ewige Liste</h3>
+        <h3 class="site-title text-light mb-0" style="text-shadow: 0em 0.1em 0.17em #444444;">Ewige Liste</h3>
     </a>
 </div>
 <style>
