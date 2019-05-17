@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\User;
 use App\Player;
-use App\Invite;
+use App\Profile;
+use App\Invitation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -107,9 +108,11 @@ class RegisterController extends Controller {
             'password' => Hash::make($data['password']),
         ]);
 
-        $player->user()->save($user);
+$profile = Profile::create([
+'player_id' => $player->id
+]);
 
-        Invite::where('pin', $data['pin'])->first()->delete();
+        Invitation::where('pin', $data['pin'])->first()->delete();
 
         return $user;
     }

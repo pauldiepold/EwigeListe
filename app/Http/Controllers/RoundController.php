@@ -24,7 +24,9 @@ class RoundController extends Controller {
     {
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
-        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
+if (Auth::user()->player->games->count() > 0) {
+        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id  ? true : false;} else {
+$isCurrentRound = false; }
 
         $colRound = collect();
         $playerPoints = collect();

@@ -12,6 +12,8 @@ class Profile extends Model {
         'mostGamesMonthDate',
     ];
 
+protected $fillable = ['player_id'];
+
     public function updateProfile()
     {
         $games = DB::table('game_player')->where('player_id', $this->player_id);
