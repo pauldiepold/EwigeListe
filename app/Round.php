@@ -94,4 +94,9 @@ $playerIndices->push($currentDealerIndex);
     {
         return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('index')->orderBy('pivot_index');
     }
+	
+	public function comments()
+    {
+        return $this->morphMany('App\Comment', 'commentable');
+    }
 }

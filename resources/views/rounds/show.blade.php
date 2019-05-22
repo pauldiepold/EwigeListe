@@ -43,4 +43,8 @@
 
     @include('rounds.inc.info')
 
+	<hr>
+
+	@include('comments.index', ['comments' => $round->comments])
+
 @endsection

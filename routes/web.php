@@ -60,6 +60,10 @@ Route::get(      '/charts/profile/{player}/',             'ChartController@profi
 Route::get(      '/charts/home',                          'ChartController@homeChart');
 
 
+/* *********** Comments ************** */
+Route::post(    '/comments',                              'CommentController@store')     ->middleware('auth');
+
+
 /* *********** Sonstiges ************** */
 Route::view(      '/datenschutz/',           'sonstiges.datenschutz');
 Route::view(      '/impressum/',           'sonstiges.impressum');

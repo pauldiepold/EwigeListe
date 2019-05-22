@@ -140,5 +140,10 @@ protected $fillable = ['player_id'];
     {
         return $this->belongsTo(Player::class);
     }
+	
+	public function comments()
+    {
+        return $this->morphMany('App\Comment', 'commentable');
+    }
 
 }
