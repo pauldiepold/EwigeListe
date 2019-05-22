@@ -129,7 +129,6 @@ class Profile extends Model {
                     $this->loseStreakStart = $loseStreakStart;
                     $this->loseStreakEnd = $game->created_at;
                 }
-
             }
         }
 

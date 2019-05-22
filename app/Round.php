@@ -26,23 +26,6 @@ class Round extends Model {
         $dealerIndex = $this->getDealerIndex();
         $countPlayers = $this->players->count();
 
-        /*   $playerIndices = collect();
-
-           for ($i = 0; $i < 4; $i++)
-           {
-               if ($dealerIndex < $this->players->count() - 1)
-               {
-                   $dealerIndex++;
-               } else
-               {
-                   $dealerIndex = 0;
-               }
-               $playerIndices->push($dealerIndex);
-           }
-    */
-
-        $playerIndices = collect();
-
         if ($countPlayers == 4 || $countPlayers == 5)
         {
             $increments = collect([1, 2, 3, 4]);
@@ -54,6 +37,7 @@ class Round extends Model {
             $increments = collect([1, 3, 5, 6]);
         }
 
+        $playerIndices = collect();
         foreach ($increments as $increment)
         {
             $currentDealerIndex = $increment + $dealerIndex;

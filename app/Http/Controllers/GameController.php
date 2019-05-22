@@ -194,5 +194,4 @@ class   GameController extends Controller {
 
         return redirect('/rounds/' . $round->id);
     }
-
 }
