@@ -24,9 +24,13 @@ class RoundController extends Controller {
     {
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
-if (Auth::user()->player->games->count() > 0) {
-        $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id  ? true : false;} else {
-$isCurrentRound = false; }
+        if (Auth::user()->player->games->count() > 0)
+        {
+            $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
+        } else
+        {
+            $isCurrentRound = false;
+        }
 
         $colRound = collect();
         $playerPoints = collect();
@@ -65,13 +69,14 @@ $isCurrentRound = false; }
 
             $colRow->push(collect($game->points));
 
-            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo && !$game->misplay? $colRow->push('endOfRound') : '';
+            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo && !$game->misplay ? $colRow->push('endOfRound') : '';
 
             $game->solo ? $colRow->push('solo') : '';
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
-		//dd($colRound->toArray());
+
+        //dd($colRound->toArray());
         return view('rounds.show', compact(
             'round',
             'colRound',

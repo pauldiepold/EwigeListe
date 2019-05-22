@@ -40,11 +40,10 @@
         <round-graph :round_id="{{ $round->id }}"></round-graph>
     @endif
 
-
     @include('rounds.inc.info')
 
-	<hr>
+    <hr>
 
-	@include('comments.index', ['comments' => $round->comments])
+    @include('comments.index', ['comments' => $round->comments])
 
 @endsection

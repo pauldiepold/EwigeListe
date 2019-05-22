@@ -12,7 +12,7 @@ class Profile extends Model {
         'mostGamesMonthDate',
     ];
 
-protected $fillable = ['player_id'];
+    protected $fillable = ['player_id'];
 
     public function updateProfile()
     {
@@ -140,8 +140,8 @@ protected $fillable = ['player_id'];
     {
         return $this->belongsTo(Player::class);
     }
-	
-	public function comments()
+
+    public function comments()
     {
         return $this->morphMany('App\Comment', 'commentable');
     }

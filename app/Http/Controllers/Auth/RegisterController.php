@@ -108,9 +108,9 @@ class RegisterController extends Controller {
             'password' => Hash::make($data['password']),
         ]);
 
-$profile = Profile::create([
-'player_id' => $player->id
-]);
+        $profile = Profile::create([
+            'player_id' => $player->id
+        ]);
 
         Invitation::where('pin', $data['pin'])->first()->delete();
 

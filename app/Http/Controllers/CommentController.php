@@ -6,8 +6,8 @@ use App\Comment;
 use App\Round;
 use Illuminate\Http\Request;
 
-class CommentController extends Controller
-{
+class CommentController extends Controller {
+
     public function index()
     {
         //
@@ -21,21 +21,21 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'body'=>'required',
-			'round_id' => 'required|integer|exists:rounds,id',
+            'body' => 'required',
+            'round_id' => 'required|integer|exists:rounds,id',
         ]);
-   
+
         $input = $request->all();
-		
-		$round = Round::findOrFail($input['round_id']);
-    
+
+        $round = Round::findOrFail($input['round_id']);
+
         $comment = Comment::create([
-			'body' => $input['body'],
-			'created_by' => auth()->user()->player->id
-		]);
-		
-		$round->comments()->save($comment);
-		
+            'body' => $input['body'],
+            'created_by' => auth()->user()->player->id
+        ]);
+
+        $round->comments()->save($comment);
+
         return back();
     }
 

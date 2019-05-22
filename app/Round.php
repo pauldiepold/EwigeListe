@@ -24,43 +24,45 @@ class Round extends Model {
     public function getActivePlayers()
     {
         $dealerIndex = $this->getDealerIndex();
-$countPlayers = $this->players->count();
+        $countPlayers = $this->players->count();
 
-     /*   $playerIndices = collect();
+        /*   $playerIndices = collect();
 
-        for ($i = 0; $i < 4; $i++)
+           for ($i = 0; $i < 4; $i++)
+           {
+               if ($dealerIndex < $this->players->count() - 1)
+               {
+                   $dealerIndex++;
+               } else
+               {
+                   $dealerIndex = 0;
+               }
+               $playerIndices->push($dealerIndex);
+           }
+    */
+
+        $playerIndices = collect();
+
+        if ($countPlayers == 4 || $countPlayers == 5)
         {
-            if ($dealerIndex < $this->players->count() - 1)
-            {
-                $dealerIndex++;
-            } else
-            {
-                $dealerIndex = 0;
-            }
-            $playerIndices->push($dealerIndex);
+            $increments = collect([1, 2, 3, 4]);
+        } elseif ($countPlayers == 6)
+        {
+            $increments = collect([1, 2, 4, 5]);
+        } elseif ($countPlayers == 7)
+        {
+            $increments = collect([1, 3, 5, 6]);
         }
- */
 
-$playerIndices = collect();
-
-if ( $countPlayers == 4 || $countPlayers == 5)
-{
-$increments = collect([1,2,3,4]);
-} elseif ( $countPlayers == 6)
-{
-$increments = collect([1,2,4,5]);
-} elseif($countPlayers == 7)
-{
-$increments = collect([1,3,5,6]);
-}
-
-foreach ($increments as $increment) {
-$currentDealerIndex = $increment + $dealerIndex;
-if ($currentDealerIndex >= $countPlayers) {
-$currentDealerIndex -= $countPlayers;
-}
-$playerIndices->push($currentDealerIndex);
-}
+        foreach ($increments as $increment)
+        {
+            $currentDealerIndex = $increment + $dealerIndex;
+            if ($currentDealerIndex >= $countPlayers)
+            {
+                $currentDealerIndex -= $countPlayers;
+            }
+            $playerIndices->push($currentDealerIndex);
+        }
 
         $playerIndicesSorted = $playerIndices->sort();
         $playerIndicesSorted->values()->all();
@@ -94,8 +96,8 @@ $playerIndices->push($currentDealerIndex);
     {
         return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('index')->orderBy('pivot_index');
     }
-	
-	public function comments()
+
+    public function comments()
     {
         return $this->morphMany('App\Comment', 'commentable');
     }
