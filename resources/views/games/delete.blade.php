@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">
+<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#deleteModal">
     Letztes Spiel löschen
 </button>
 

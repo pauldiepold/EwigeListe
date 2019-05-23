@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateModal">
+<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#updateModal">
     Letztes Spiel ändern
 </button>
 

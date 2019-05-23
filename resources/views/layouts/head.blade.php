@@ -5,10 +5,24 @@
 <link rel="icon" href="{{ asset('img/favicon_192x192.png') }}" sizes="192x192"/>
 
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+<style>
+	   .card-header {
+		   border: 0;
+	   }
+	.card-footer {
+		border: 0;
+	}
+	.card {
+		    box-shadow: 0 4px 6px 0 hsla(0, 0%, 0%, 0.2);
+		border: 0px;
+	}
+	.h4, h4 {
+		font-size: 1.38rem;	
+	}
+</style>
+
 @stack('scriptsHead')
-
 <title>@yield('title')</title>
-
 @if(Auth::id() != 1)
     <script type="text/javascript">
         var _paq = window._paq || [];

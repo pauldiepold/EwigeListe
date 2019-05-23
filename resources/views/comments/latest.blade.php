@@ -1,6 +1,4 @@
-<div class="mx-auto" style="max-width: 20rem;">
-    <h5 class="mt-4 mb-3 font-weight-bold" style="font-family:Raleway" id="comments">Neue Kommentare</h5>
-	
+<div class="mx-auto" style="max-width: 17rem;">
 	@include('include.error')
 	
 	{{ $comments->links() }}

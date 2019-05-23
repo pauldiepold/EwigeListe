@@ -1,5 +1,4 @@
-<hr>
-<div style="font-size:0.83rem;">
+<div class="text-muted mt-4" style="font-size:0.88rem;">
     @if($lastGame)
         <p class="mb-0">
             Anzahl Spiele: {{ $round->games->count() }}

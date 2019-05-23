@@ -1,4 +1,4 @@
-<div class="mx-auto" style="max-width: 20rem;">
+<div class="mx-auto mt-5" style="max-width: 17rem;">
     <h4 class="mb-3" id="comments">Kommentare</h4>
 	
 	@include('include.error')

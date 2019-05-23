@@ -36,13 +36,10 @@
     @endcan
 
     @if($round->games->count() >= 4)
-        <hr>
-        <round-graph :round_id="{{ $round->id }}"></round-graph>
+        <round-graph class="mt-5" :round_id="{{ $round->id }}"></round-graph>
     @endif
 
     @include('rounds.inc.info')
-
-    <hr>
 
     @include('comments.index', ['comments' => $round->comments()->latest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
 

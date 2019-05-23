@@ -1,4 +1,4 @@
-<button type="button" class="btn btn-primary my-3" data-toggle="modal" data-target="#createCommentModal">
+<button type="button" class="btn btn-outline-primary my-3" data-toggle="modal" data-target="#createCommentModal">
     Kommentar hinzufügen
 </button>
 
