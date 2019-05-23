@@ -11,7 +11,7 @@
             <h4 class="mb-3">Momentan aktive Runden:</h4>
             <div class="mb-5">
                 @foreach($currentRounds as $round)
-                    <div class="card my-2 mx-auto" style="max-width: 24rem;">
+                    <div class="card mb-3 mx-auto" style="max-width: 24rem;">
                         <div class="card-header pb-2 font-weight-bold">
                             {{ niceCount($round->players->pluck('surname'), ' - ') }}
                         </div>

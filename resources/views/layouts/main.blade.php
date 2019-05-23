@@ -12,7 +12,7 @@
 
     <div class="container mt-3" id="app">
 
-        <h5 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+        <h6 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
             @yield('heading')
         </h5>
 

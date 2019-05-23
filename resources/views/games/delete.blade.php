@@ -24,7 +24,7 @@
                 @include('include.error')
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary mx-auto" data-dismiss="modal">Schließen
+                <button type="button" class="btn btn-outline-secondary mx-auto" data-dismiss="modal">Schließen
                 </button>
             </div>
         </div>

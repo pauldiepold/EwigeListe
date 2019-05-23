@@ -1,9 +1,5 @@
 <div class="text-muted mt-4" style="font-size:0.88rem;">
-    @if($lastGame)
-        <p class="mb-0">
-            Anzahl Spiele: {{ $round->games->count() }}
-        </p>
-    @endif
+
 
     {{--
 @if($round->games->count() >= 4)
@@ -27,6 +23,11 @@
         <p>
             Letztes Spiel eingetragen @if($lastGame->createdBy)von {{ $lastGame->createdBy->surname }}@endif
             <br class="d-block d-sm-none"> {{ printDate($lastGame->created_at) }}.
+        </p>
+    @endif
+    @if($lastGame)
+        <p class="mb-0 mt-4">
+            Anzahl Spiele: {{ $round->games->count() }}
         </p>
     @endif
 </div>
