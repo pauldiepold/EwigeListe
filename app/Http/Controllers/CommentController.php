@@ -4,58 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Round;
+use App\Profile;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller {
-
-    public function index()
-    {
-        //
-    }
-
-    public function create()
-    {
-        //
-    }
 
     public function store(Request $request)
     {
         $request->validate([
             'body' => 'required',
-            'round_id' => 'required|integer|exists:rounds,id',
+			'route' => 'required|string',
+			'profileID' => 'required_without:roundID|integer|exists:profiles,id',
+            'roundID' => 'required_without:profileID|integer|exists:rounds,id',
         ]);
 
         $input = $request->all();
 
-        $round = Round::findOrFail($input['round_id']);
+		if(!strcmp($input['route'], 'round')) {
+            $page = Round::findOrFail($input['roundID']);
+		} elseif(!strcmp($input['route'], 'profile')) {
+			$page = Profile::findOrFail($input['profileID']);
+		}
 
         $comment = Comment::create([
             'body' => $input['body'],
             'created_by' => auth()->user()->player->id
         ]);
 
-        $round->comments()->save($comment);
+        $page->comments()->save($comment);
 
         return back();
     }
 
-    public function show(Comment $comment)
-    {
-        //
-    }
-
-    public function edit(Comment $comment)
-    {
-        //
-    }
-
-    public function update(Request $request, Comment $comment)
-    {
-        //
-    }
-
     public function destroy(Comment $comment)
     {
-        //
+        if (Auth::user()->player->id != $comment->created_by)
+        {
+            return Redirect::back()->withErrors(['Du kannst nur deine eigenen Kommentare löschen!']);
+        }
+        $comment->delete();
+
+        return redirect()->back();
     }
 }

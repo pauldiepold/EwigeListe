@@ -71,6 +71,7 @@ Route::get('/charts/home', 'ChartController@homeChart');
 
 /* *********** Comments ************** */
 Route::post('/comments', 'CommentController@store')->middleware('auth');
+Route::delete('/comments/{comment}', 'CommentController@destroy')->middleware('auth');
 
 
 /* *********** Sonstiges ************** */

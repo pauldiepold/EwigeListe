@@ -133,16 +133,22 @@
 
     @if($profile->games > 0)
         <hr>
+
         <h4 id="lastRounds">Zuletzt gespielte Runden:</h4>
 
         @include('rounds.inc.archiveTable', ['profile' => $profile->player_id])
+
+    <hr>
+
+    @include('comments.index', ['comments' => $profile->comments()->latest()->paginate(8, ['*'], 'comments'), 'route' => 'profile'])
+
     @endif
 
     @if(!$rounds->onFirstPage())
         @push('scripts')
             <script>
                 $(document).ready(function () {
-                    $('html, body').scrollTop($('#lastRounds').offset().top - 100);
+                    $('html, body').scrollTop($('#lastRounds').offset().top - 50);
                 });
             </script>
         @endpush

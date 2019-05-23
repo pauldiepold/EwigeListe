@@ -7,15 +7,15 @@
 @section('content')
 
     <p style="font-size: 1.4rem;">Willkommen auf der Ewigen Liste!</p>
-    <hr>
-
+    
     @auth
+<hr>
         @if($currentRounds->count() > 0)
             <h5 class="mt-4 mb-3 font-weight-bold" style="font-family:Raleway">Momentan aktive Runden:</h5>
             <div class="mb-5">
                 @foreach($currentRounds as $round)
-                    <div class="card my-2 mx-auto" style="width: 22rem;">
-                        <div class="card-header">
+                    <div class="card my-2 mx-auto" style="max-width: 22rem;">
+                        <div class="card-header pb-2">
                             <span class="text-large"
                                   style="font-size: 1rem;">{{ niceCount($round->players->pluck('surname'), ' - ') }}</span>
                         </div>
@@ -29,7 +29,15 @@
                 @endforeach
             </div>
         @endif
+
+
+@if($comments->count() != 0)
+<hr>
+    @include('comments.latest', ['comments' => $comments])
+@endif
     @endauth
+
+<hr>
 
     <h5 class="mb-3 mt-4 font-weight-bold" style="font-family:Raleway">Rekorde:</h5>
     <div class="row justify-content-center">

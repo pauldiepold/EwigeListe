@@ -44,6 +44,6 @@
 
     <hr>
 
-    @include('comments.index', ['comments' => $round->comments])
+    @include('comments.index', ['comments' => $round->comments()->latest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
 
 @endsection

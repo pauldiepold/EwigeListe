@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Player;
 use App\Game;
 use App\Round;
+use App\Comment;
 
 class HomeController extends Controller {
 
@@ -19,6 +20,8 @@ class HomeController extends Controller {
 
     public function index()
     {
+		$comments = Comment::where('created_at', '>=', Carbon::now()->subDays(3))->latest()->paginate(5);
+		
         $colFP = collect();
 
         $query = DB::table('profiles')
@@ -372,6 +375,6 @@ class HomeController extends Controller {
             $currentRounds->push($game->round);
         }
 
-        return view('home.home', compact('colFP', 'colStats', 'currentRounds'));
+        return view('home.home', compact('colFP', 'colStats', 'currentRounds', 'comments'));
     }
 }
