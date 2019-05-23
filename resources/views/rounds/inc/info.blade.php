@@ -1,6 +1,4 @@
 <div class="text-muted mt-4" style="font-size:0.88rem;">
-
-
     {{--
 @if($round->games->count() >= 4)
     @php

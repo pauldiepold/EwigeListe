@@ -15,18 +15,20 @@ class CommentController extends Controller {
     {
         $request->validate([
             'body' => 'required',
-			'route' => 'required|string',
-			'profileID' => 'required_without:roundID|integer|exists:profiles,id',
+            'route' => 'required|string',
+            'profileID' => 'required_without:roundID|integer|exists:profiles,id',
             'roundID' => 'required_without:profileID|integer|exists:rounds,id',
         ]);
 
         $input = $request->all();
 
-		if(!strcmp($input['route'], 'round')) {
+        if (!strcmp($input['route'], 'round'))
+        {
             $page = Round::findOrFail($input['roundID']);
-		} elseif(!strcmp($input['route'], 'profile')) {
-			$page = Profile::findOrFail($input['profileID']);
-		}
+        } elseif (!strcmp($input['route'], 'profile'))
+        {
+            $page = Profile::findOrFail($input['profileID']);
+        }
 
         $comment = Comment::create([
             'body' => $input['body'],

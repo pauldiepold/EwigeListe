@@ -12,13 +12,13 @@
                 <form method="post" action="/comments">
                     @csrf
                     <textarea class="form-control" name="body" rows="3" id="bodytext" autofcus></textarea>
-					@if(!strcmp($route, 'round'))
+                    @if(!strcmp($route, 'round'))
                         <input type="hidden" name="roundID" value="{{ $round->id }}"/>
                         <input type="hidden" name="route" value="{{ $route }}"/>
-					@elseif(!strcmp($route, 'profile'))
+                    @elseif(!strcmp($route, 'profile'))
                         <input type="hidden" name="profileID" value="{{ $profile->id }}"/>
                         <input type="hidden" name="route" value="{{ $route }}"/>
-					@endif
+                    @endif
                     <input type="submit" class="btn btn-primary mx-auto mt-3" value="Speichern"/>
                 </form>
             </div>

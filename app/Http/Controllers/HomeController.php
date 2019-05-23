@@ -20,8 +20,8 @@ class HomeController extends Controller {
 
     public function index()
     {
-		$comments = Comment::where('created_at', '>=', Carbon::now()->subDays(3))->latest()->paginate(5);
-		
+        $comments = Comment::where('created_at', '>=', Carbon::now()->subDays(3))->latest()->paginate(5);
+
         $colFP = collect();
 
         $query = DB::table('profiles')

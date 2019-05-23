@@ -1,0 +1,35 @@
+.table-borderless tr, .table-borderless td {
+  border: none !important;
+}
+
+tr {
+  border-bottom: 1px solid #cfdfe1;
+}
+
+table, tbody, tr, th {
+  border-top: none !important;
+}
+
+.border-bottom-thick td,
+.border-bottom-thick th {
+  border-bottom: 1px solid $muted !important;
+}
+
+.table td, .table th {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+table {
+  margin: 0 auto;
+}
+
+.active-player {
+  border-radius: 0.5rem;
+  border: 0px solid $primary;
+  padding: 0.1rem 0.4rem;
+  margin: 0.4rem 0;
+  background-color: $primary-light;
+}
