@@ -86,20 +86,15 @@ class RoundController extends Controller {
         ));
     }
 
-    public function create($numberOfPlayers = 4)
+    public function create()
     {
-        if ($numberOfPlayers < 4 || $numberOfPlayers > 7)
-        {
-            $numberOfPlayers = 4;
-        }
-
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
             ->where('players.hide', '=', '0')
             ->orderBy('profiles.games', 'desc')
             ->select('players.*')
             ->get();
 
-        return view('rounds.create', compact('players', 'numberOfPlayers'));
+        return view('rounds.create', compact('players'));
     }
 
     public function store(StoreRound $request)

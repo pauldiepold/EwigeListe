@@ -43,7 +43,7 @@ Route::get('/rounds/current',
     })->middleware('auth');
 
 Route::get('/rounds', 'RoundController@index')->middleware('auth');
-Route::get('/rounds/create/{numberOfPlayers?}', 'RoundController@create')->middleware('auth')->where('numberOfPlayers', '[4-7]');
+Route::get('/rounds/create', 'RoundController@create')->middleware('auth');
 Route::post('/rounds', 'RoundController@store')->middleware('auth');
 Route::get('/rounds/{round}', 'RoundController@show')->middleware('auth');
 Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth');
