@@ -100,7 +100,8 @@ class RoundController extends Controller {
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
-        $playerIDs = collect($validated->get('players'));
+        $numberOfPlayers = $validated->get('numberOfPlayers');
+        $playerIDs = collect($validated->get('players'))->take($numberOfPlayers);
 
         $round = Round::create(['created_by' => Auth::user()->player->id]);
 
@@ -113,7 +114,7 @@ class RoundController extends Controller {
             $index++;
         }
 
-        return redirect('/rounds/' . $round->id);
+        return '/rounds/' . $round->id;
     }
 
     public function destroy(Round $round)

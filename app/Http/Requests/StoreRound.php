@@ -24,8 +24,9 @@ class StoreRound extends FormRequest {
     public function rules()
     {
         return [
-            'players' => 'required|between:4,7|array',
-            'players.*' => 'integer|exists:players,id',
+            'numberOfPlayers' => 'required|between:4,7|integer',
+            'players' => 'required|size:7|array',
+            'players.*' => 'exists:players,id',
         ];
     }
 
