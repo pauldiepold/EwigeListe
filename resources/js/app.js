@@ -6,6 +6,7 @@ import Vue from 'vue';
 import RoundGraph from './components/RoundGraph';
 import ProfileGraphs from './components/ProfileGraphs';
 import HomeGraph from './components/HomeGraph';
+import CreateRound from './components/CreateRound';
 import Alert from './components/Alert';
 
 import Form from './lib/Form';
@@ -16,6 +17,7 @@ new Vue({
         RoundGraph,
         ProfileGraphs,
         HomeGraph,
+        CreateRound,
         Alert
     },
     data: {

@@ -97,6 +97,21 @@ class RoundController extends Controller {
         return view('rounds.create', compact('players'));
     }
 
+    public function createNew()
+    {
+        $playersQuery = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
+            ->where('players.hide', '=', '0')
+            ->orderBy('profiles.games', 'desc')
+            ->select('players.id as id', 'players.surname as surname', 'players.name as name')
+            ->get();
+        $playersCombined = collect();
+        foreach ($playersQuery as $player) {
+            $playersCombined->push(collect(['id' => $player->id, 'name' => $player->surname . ' ' . $player->name]));
+        }
+        $players = $playersCombined->toArray();
+        return view('rounds.create-new', compact('players'));
+    }
+
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());

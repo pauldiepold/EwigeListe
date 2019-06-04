@@ -10,7 +10,7 @@
 
         <div class="col-2 p-0">
             <a @click="form.numberOfPlayers > 4 ? form.numberOfPlayers-- : ''">
-                <i v-bind:class="{ 'text-muted': form.numberOfPlayers <= 4}" class="fas fa-minus-square fa-2x text-primary"></i>
+                <i :class="{ 'text-muted': form.numberOfPlayers <= 4}" class="fas fa-minus-square fa-2x text-primary"></i>
             </a>
         </div>
 
@@ -22,7 +22,7 @@
 
         <div class="col-2 p-0">
             <a @click="form.numberOfPlayers < 7 ? form.numberOfPlayers++ : ''">
-                <i v-bind:class="{ 'text-muted': form.numberOfPlayers >= 7 }" class="fas fa-plus-square fa-2x text-primary"></i>
+                <i :class="{ 'text-muted': form.numberOfPlayers >= 7 }" class="fas fa-plus-square fa-2x text-primary"></i>
             </a>
         </div>
 
