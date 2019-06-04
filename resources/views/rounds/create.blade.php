@@ -9,8 +9,8 @@
     <div class="row align-items-center mx-auto my-4 no-gutters" style="max-width:230px">
 
         <div class="col-2 p-0">
-            <a @click="form.numberOfPlayers--" v-if="form.numberOfPlayers > 4">
-                <i class="fas fa-minus-square fa-2x text-primary"></i>
+            <a @click="form.numberOfPlayers > 4 ? form.numberOfPlayers-- : ''">
+                <i v-bind:class="{ 'text-muted': form.numberOfPlayers <= 4}" class="fas fa-minus-square fa-2x text-primary"></i>
             </a>
         </div>
 
@@ -21,15 +21,15 @@
         </div>
 
         <div class="col-2 p-0">
-            <a @click="form.numberOfPlayers++" v-if="form.numberOfPlayers < 7">
-                <i class="fas fa-plus-square fa-2x text-primary"></i>
+            <a @click="form.numberOfPlayers < 7 ? form.numberOfPlayers++ : ''">
+                <i v-bind:class="{ 'text-muted': form.numberOfPlayers >= 7 }" class="fas fa-plus-square fa-2x text-primary"></i>
             </a>
         </div>
 
     </div>
 
 
-    <alert v-if="form.errors.any()" v-bind:message="form.errors.get('players')"></alert>
+    <alert v-if="form.errors.any()" v-bind:message="form.errors.get('players')"  @click="form.errors.clear()"></alert>
 
     <form @submit.prevent="onSubmit">
         @csrf
@@ -41,7 +41,7 @@
                 <label for="player{{ $k }}"><b>Spieler {{ $k+1 }}:</b></label>
                 <select class="form-control" name="players[{{ $k }}]" v-model="form.players[{{ $k }}]">
                     @foreach ($players as $player)
-                        <option value="{{ $player->id }}" {{ (old("players")[$k] == $player->id || ($loop->index == $k && old("players")[$k] == null) ? "selected" : "") }}>
+                        <option value="{{ $player->id }}">
                             {{ $player->surname }} {{ $player->name }}
                         </option>
                     @endforeach
@@ -81,4 +81,18 @@
         </script>
     @endpush
 
+@push('scripts')
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover();
+        });
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
+    </script>
+@endpush
 @endsection

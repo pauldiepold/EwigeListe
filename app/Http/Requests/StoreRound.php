@@ -34,7 +34,7 @@ class StoreRound extends FormRequest {
     {
         $validator->after(function ($validator)
         {
-            if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count())
+            if (collect($this->input('players'))->take($this->input('numberOfPlayers'))->unique()->count() != $this->input('numberOfPlayers'))
             {
                 $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
             }
