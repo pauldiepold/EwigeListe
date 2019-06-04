@@ -77,7 +77,7 @@
     @endphp
     @push('scriptsBeforeJS')
         <script>
-            let preselectedPlayers = {{ json_encode($preselectedPlayers) }};
+            preselectedPlayers = {{ json_encode($preselectedPlayers) }};
         </script>
     @endpush
 

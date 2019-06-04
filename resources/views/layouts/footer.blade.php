@@ -34,7 +34,9 @@
         <span class="text-muted">&copy; Paul Diepold &bull; {{ now()->year }}</span>
     </div>
 </footer>
-
+<script>
+	let preselectedPlayers = 0;
+</script>
 @stack('scriptsBeforeJS')
 <script src="{{ mix('/js/app.js') }}"></script>
 @stack('scripts')
