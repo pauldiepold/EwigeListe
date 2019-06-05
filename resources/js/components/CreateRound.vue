@@ -1,8 +1,8 @@
 <template>
     <div class="form-autocomplete">
         <div class="bg-white rounded shadow-2 mx-auto my-4 p-3" style="max-width:19rem;" v-if="players.length < 7">
-            <input class="custom-input" :value="textSearch" @input="textSearch = $event.target.value" type="text"
-                   :placeholder="placeholder" @focus="show = true" @blur="show = true"/>
+            <input id="text-search" class="custom-input" :value="textSearch" @input="textSearch = $event.target.value" type="text"
+                   :placeholder="placeholder" @focus="showOptions" @blur="show = true"/>
 
             <div class="players-list" v-show="show">
                 <div class="player font-weight-bold mt-3 mx-1 text-left" v-for="(player, index) in filteredOptions"
@@ -83,6 +83,7 @@
             },
             showOptions() {
                 this.show = true;
+                $('html, body').scrollTop($('#text-search').offset().top - 70);
             },
 
             addPlayer(player) {

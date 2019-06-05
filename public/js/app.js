@@ -1979,6 +1979,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     showOptions: function showOptions() {
       this.show = true;
+      $('html, body').scrollTop($('#text-search').offset().top - 70);
     },
     addPlayer: function addPlayer(player) {
       if (!this.inSelectedPlayers(player.id)) {
@@ -69934,15 +69935,17 @@ var render = function() {
           [
             _c("input", {
               staticClass: "custom-input",
-              attrs: { type: "text", placeholder: _vm.placeholder },
+              attrs: {
+                id: "text-search",
+                type: "text",
+                placeholder: _vm.placeholder
+              },
               domProps: { value: _vm.textSearch },
               on: {
                 input: function($event) {
                   _vm.textSearch = $event.target.value
                 },
-                focus: function($event) {
-                  _vm.show = true
-                },
+                focus: _vm.showOptions,
                 blur: function($event) {
                   _vm.show = true
                 }
