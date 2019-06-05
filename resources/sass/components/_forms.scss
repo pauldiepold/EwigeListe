@@ -2,3 +2,53 @@ input[type=number] {
   width: 90px;
   text-align: center;
 }
+
+.search-icon {
+  position: relative;
+  color: #999999;
+  font-size: 1.5rem;
+  z-index: 1;
+  width: 0;
+}
+
+.custom-input {
+  width: 100%;
+  border: none;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  color: #495057;
+  background-color: #f3f3f3;
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+}
+
+.custom-input:focus {
+  outline: none;
+}
+
+.wrapperIcon input[type="text"] {
+  position: relative;
+}
+
+.wrapperIcon:before {
+  font-family: 'FontAwesome';
+  color:red;
+  position: relative;
+  left: -5px;
+  content: "\f007";
+}
+
+.player {
+  color: #363a50;
+}
+
+.flip-list-move {
+  transition: transform 0.4s;
+}
+
+
+.fade-enter-active {
+  transition: opacity .5s;
+}
+.fade-enter {
+  opacity: 0;
+}
