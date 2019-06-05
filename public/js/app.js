@@ -69992,7 +69992,14 @@ var render = function() {
                   }),
                   _vm._v(" "),
                   _vm.filteredOptions.length === 0
-                    ? _c("p", [_vm._v("Spieler wurde nicht gefunden")])
+                    ? _c(
+                        "p",
+                        {
+                          staticClass:
+                            "player font-weight-bold mt-3 mb-0 mx-1 text-left"
+                        },
+                        [_vm._v("Spieler wurde nicht gefunden")]
+                      )
                     : _vm._e()
                 ],
                 2

@@ -9,7 +9,7 @@
                      @click="addPlayer(player)">
                     {{player.name}}
                 </div>
-                <p v-if="filteredOptions.length===0">Spieler wurde nicht gefunden</p>
+                <p class="player font-weight-bold mt-3 mb-0 mx-1 text-left" v-if="filteredOptions.length===0">Spieler wurde nicht gefunden</p>
             </div>
         </div>
 
