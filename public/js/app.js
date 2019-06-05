@@ -69924,157 +69924,161 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "form-autocomplete" }, [
-    _vm.players.length < 7
-      ? _c(
-          "div",
-          {
-            staticClass: "bg-white rounded shadow-2 mx-auto my-4 p-3",
-            staticStyle: { "max-width": "19rem" }
-          },
-          [
-            _c("input", {
-              staticClass: "custom-input",
-              attrs: {
-                id: "text-search",
-                type: "text",
-                placeholder: _vm.placeholder
-              },
-              domProps: { value: _vm.textSearch },
-              on: {
-                input: function($event) {
-                  _vm.textSearch = $event.target.value
+  return _c(
+    "div",
+    { staticClass: "form-autocomplete", staticStyle: { "min-height": "75vh" } },
+    [
+      _vm.players.length < 7
+        ? _c(
+            "div",
+            {
+              staticClass: "bg-white rounded shadow-2 mx-auto my-4 p-3",
+              staticStyle: { "max-width": "19rem" }
+            },
+            [
+              _c("input", {
+                staticClass: "custom-input",
+                attrs: {
+                  id: "text-search",
+                  type: "text",
+                  placeholder: _vm.placeholder
                 },
-                focus: _vm.showOptions,
-                blur: function($event) {
-                  _vm.show = true
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.show,
-                    expression: "show"
+                domProps: { value: _vm.textSearch },
+                on: {
+                  input: function($event) {
+                    _vm.textSearch = $event.target.value
+                  },
+                  focus: _vm.showOptions,
+                  blur: function($event) {
+                    _vm.show = true
                   }
-                ],
-                staticClass: "players-list"
-              },
-              [
-                _vm._l(_vm.filteredOptions, function(player, index) {
-                  return _c(
-                    "div",
+                }
+              }),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  directives: [
                     {
-                      staticClass:
-                        "player font-weight-bold mt-3 mx-1 text-left",
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.show,
+                      expression: "show"
+                    }
+                  ],
+                  staticClass: "players-list"
+                },
+                [
+                  _vm._l(_vm.filteredOptions, function(player, index) {
+                    return _c(
+                      "div",
+                      {
+                        staticClass:
+                          "player font-weight-bold mt-3 mx-1 text-left",
+                        on: {
+                          click: function($event) {
+                            return _vm.addPlayer(player)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(player.name) +
+                            "\n            "
+                        )
+                      ]
+                    )
+                  }),
+                  _vm._v(" "),
+                  _vm.filteredOptions.length === 0
+                    ? _c("p", [_vm._v("Spieler wurde nicht gefunden")])
+                    : _vm._e()
+                ],
+                2
+              )
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.players.length !== 0
+        ? _c("h4", { staticClass: "mt-4" }, [_vm._v("Ausgewählte Spieler:")])
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "players-selected" },
+        [
+          _c(
+            "transition-group",
+            { attrs: { name: "flip-list" } },
+            _vm._l(_vm.players, function(player, key) {
+              return _c(
+                "div",
+                {
+                  key: player.id,
+                  staticClass:
+                    "player-selected rounded bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2",
+                  staticStyle: { "max-width": "19rem" }
+                },
+                [
+                  _c("span", { staticClass: "font-weight-bold" }, [
+                    _vm._v(
+                      "\n            " + _vm._s(player.name) + "\n            "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c("span", { staticStyle: { "font-size": "1.1rem" } }, [
+                    key !== 0
+                      ? _c("i", {
+                          staticClass: "fas fa-chevron-up mx-1 text-muted",
+                          on: {
+                            click: function($event) {
+                              return _vm.moveUp(player)
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    key !== _vm.players.length - 1
+                      ? _c("i", {
+                          staticClass: "fas fa-chevron-down mx-1 text-muted",
+                          on: {
+                            click: function($event) {
+                              return _vm.moveDown(player)
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _c("i", {
+                      staticClass: "fas fa-trash mx-1 text-danger",
                       on: {
                         click: function($event) {
-                          return _vm.addPlayer(player)
+                          return _vm.removePlayer(key)
                         }
                       }
-                    },
-                    [
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(player.name) +
-                          "\n            "
-                      )
-                    ]
-                  )
-                }),
-                _vm._v(" "),
-                _vm.filteredOptions.length === 0
-                  ? _c("p", [_vm._v("Spieler wurde nicht gefunden")])
-                  : _vm._e()
-              ],
-              2
-            )
-          ]
-        )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.players.length !== 0
-      ? _c("h4", { staticClass: "mt-4" }, [_vm._v("Ausgewählte Spieler:")])
-      : _vm._e(),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "players-selected" },
-      [
-        _c(
-          "transition-group",
-          { attrs: { name: "flip-list" } },
-          _vm._l(_vm.players, function(player, key) {
-            return _c(
-              "div",
-              {
-                key: player.id,
-                staticClass:
-                  "player-selected rounded bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2",
-                staticStyle: { "max-width": "19rem" }
-              },
-              [
-                _c("span", { staticClass: "font-weight-bold" }, [
-                  _vm._v(
-                    "\n            " + _vm._s(player.name) + "\n            "
-                  )
-                ]),
-                _vm._v(" "),
-                _c("span", { staticStyle: { "font-size": "1.1rem" } }, [
-                  key !== 0
-                    ? _c("i", {
-                        staticClass: "fas fa-chevron-up mx-1 text-muted",
-                        on: {
-                          click: function($event) {
-                            return _vm.moveUp(player)
-                          }
-                        }
-                      })
-                    : _vm._e(),
-                  _vm._v(" "),
-                  key !== _vm.players.length - 1
-                    ? _c("i", {
-                        staticClass: "fas fa-chevron-down mx-1 text-muted",
-                        on: {
-                          click: function($event) {
-                            return _vm.moveDown(player)
-                          }
-                        }
-                      })
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("i", {
-                    staticClass: "fas fa-trash mx-1 text-danger",
-                    on: {
-                      click: function($event) {
-                        return _vm.removePlayer(key)
-                      }
-                    }
-                  })
-                ])
-              ]
-            )
-          }),
-          0
-        )
-      ],
-      1
-    ),
-    _vm._v(" "),
-    _c(
-      "button",
-      {
-        staticClass: "btn btn-primary mt-4",
-        attrs: { disabled: _vm.players.length < 4 }
-      },
-      [_vm._v("Neue Runde starten")]
-    )
-  ])
+                    })
+                  ])
+                ]
+              )
+            }),
+            0
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-primary mt-4",
+          attrs: { disabled: _vm.players.length < 4 }
+        },
+        [_vm._v("Neue Runde starten")]
+      )
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

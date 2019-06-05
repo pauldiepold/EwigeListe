@@ -1,5 +1,5 @@
 <template>
-    <div class="form-autocomplete">
+    <div class="form-autocomplete" style="min-height: 75vh;">
         <div class="bg-white rounded shadow-2 mx-auto my-4 p-3" style="max-width:19rem;" v-if="players.length < 7">
             <input id="text-search" class="custom-input" :value="textSearch" @input="textSearch = $event.target.value" type="text"
                    :placeholder="placeholder" @focus="showOptions" @blur="show = true"/>
