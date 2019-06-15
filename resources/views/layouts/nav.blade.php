@@ -23,9 +23,11 @@
                 <a class="nav-link" href="/home">Startseite</a>
             </li>
             @auth
+			@if(Auth::user()->player->rounds->count() != 0)
                 <li class="nav-item">
                     <a class="nav-link" href="/rounds/current">Aktuelle Runde</a>
                 </li>
+			@endif
             @endauth
             <li class="nav-item">
                 <a class="nav-link" href="/players">Ewige Liste</a>

@@ -1,4 +1,4 @@
-<footer class="footer py-3 mt-4 bg-dark">
+<footer class="footer py-3 bg-dark position-absolute w-100" style="bottom: 0">
     <div class="container text-center">
         @auth
             <span class="text-muted">

@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" class="h-100">
 <head>
 
     @include('layouts.head')
 
 </head>
 
-<body class="text-center">
+<body class="text-center position-relative" style="min-height: 100%; padding-bottom: @auth6.5@endauth@guest5@endguestrem;">
 
     @include('layouts.nav')
 
