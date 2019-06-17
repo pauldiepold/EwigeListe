@@ -86,26 +86,37 @@ class RoundController extends Controller {
         ));
     }
 
-    public function create($numberOfPlayers = 4)
+    public function create()
     {
-        if ($numberOfPlayers < 4 || $numberOfPlayers > 7)
-        {
-            $numberOfPlayers = 4;
-        }
-
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
             ->where('players.hide', '=', '0')
             ->orderBy('profiles.games', 'desc')
             ->select('players.*')
             ->get();
 
-        return view('rounds.create', compact('players', 'numberOfPlayers'));
+        return view('rounds.create', compact('players'));
+    }
+
+    public function createNew()
+    {
+        $playersQuery = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
+            ->where('players.hide', '=', '0')
+            ->orderBy('profiles.games', 'desc')
+            ->select('players.id as id', 'players.surname as surname', 'players.name as name')
+            ->get();
+        $playersCombined = collect();
+        foreach ($playersQuery as $player) {
+            $playersCombined->push(collect(['id' => $player->id, 'name' => $player->surname . ' ' . $player->name]));
+        }
+        $players = $playersCombined->toArray();
+        return view('rounds.create-new', compact('players'));
     }
 
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
-        $playerIDs = collect($validated->get('players'));
+        $numberOfPlayers = $validated->get('numberOfPlayers');
+        $playerIDs = collect($validated->get('players'))->take($numberOfPlayers);
 
         $round = Round::create(['created_by' => Auth::user()->player->id]);
 
@@ -118,7 +129,7 @@ class RoundController extends Controller {
             $index++;
         }
 
-        return redirect('/rounds/' . $round->id);
+        return '/rounds/' . $round->id;
     }
 
     public function destroy(Round $round)

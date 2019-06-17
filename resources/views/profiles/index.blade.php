@@ -7,7 +7,7 @@
 @section('content')
 	@include('include.back')
 <div class="">
-<table id="profilesTable" class="table table-striped nowrap myDataTable" style="width:100%">
+<table id="profilesTable" class="table table-striped nowrap myDataTable w-100">
 	<thead>
 		<tr>
 			<th>

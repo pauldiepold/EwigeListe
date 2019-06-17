@@ -274,7 +274,28 @@ Sofern wir die Nutzer um eine Einwilligung bitten (z.B. im Rahmen einer Cookie-E
             <p></p>
             <p><span class="ts-muster-content">Wir binden die Schriftarten ("Google Fonts") des Anbieters Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland, ein. Nach Angaben von Google werden die Daten der Nutzer allein zu Zwecken der Darstellung der Schriftarten im Browser der Nutzer verwendet. Die Einbindung erfolgt auf Grundlage unserer berechtigten Interessen an einer technisch sicheren, wartungsfreien und effizienten Nutzung von Schriftarten, deren einheitlicher Darstellung sowie Berücksichtigung möglicher lizenzrechtlicher Restriktionen für deren Einbindung. Datenschutzerklärung: <a
                             target="_blank" href="https://www.google.com/policies/privacy/">https://www.google.com/policies/privacy/</a>.</span>
-            </p><a href="https://datenschutz-generator.de" class="dsg1-6" rel="nofollow" target="_blank">Erstellt mit
+            </p>
+
+            <h3>Reichweitenmessung mit Matomo</h3>
+            <p></p>
+            <p><span>Im Rahmen der Reichweitenanalyse von Matomo werden die folgenden Daten verarbeitet: der von Ihnen verwendete Browsertyp und die Browserversion, das von Ihnen verwendete Betriebssystem, Ihr Herkunftsland, Datum und Uhrzeit der Serveranfrage, die Anzahl der Besuche, Ihre Verweildauer auf der Website sowie die von Ihnen betätigten externen Links. Die IP-Adresse der Nutzer wird anonymisiert, bevor sie gespeichert wird. <br>
+<br>
+Matomo verwendet Cookies, die auf dem Computer der Nutzer gespeichert werden und die eine Analyse der Benutzung unseres Onlineangebotes durch die Nutzer ermöglichen. Dabei können aus den verarbeiteten Daten pseudonyme Nutzungsprofile der Nutzer erstellt werden. Die Cookies haben eine Speicherdauer von einer Woche. Die durch das Cookie erzeugten Informationen über Ihre Benutzung dieser Webseite werden nur auf unserem Server gespeichert und nicht an Dritte weitergegeben.<br>
+<br>
+Nutzer können der anonymisierten Datenerhebung durch das Programm Matomo jederzeit mit Wirkung für die Zukunft widersprechen, indem sie auf den untenstehenden Link klicken. In diesem Fall wird in ihrem Browser ein sog. Opt-Out-Cookie abgelegt, was zur Folge hat, dass Matomo keinerlei Sitzungsdaten mehr erhebt. Wenn Nutzer ihre Cookies löschen, so hat dies jedoch zur Folge, dass auch das Opt-Out-Cookie gelöscht wird und daher von den Nutzern erneut aktiviert werden muss.<br>
+<br>
+Die Logs mit den Daten der Nutzer werden nach spätestens 6 Monaten gelöscht.<br>
+<br>
+Sofern wir die Nutzer um eine Einwilligung bitten (z.B. im Rahmen einer Cookie-Einwilligung), ist die Rechtsgrundlage dieser Verarbeitung Art. 6 Abs. 1 lit. a. DSGVO. Ansonsten werden die personenbezogenen Daten der Nutzer auf Grundlage unserer berechtigten Interessen (d.h. Interesse an der Analyse, Optimierung und wirtschaftlichem Betrieb unseres Onlineangebotes im Sinne des Art. 6 Abs. 1 lit. f. DSGVO) verarbeitet.<br>
+<br>
+			<div class="embed-responsive embed-responsive-4by3">
+<iframe
+        class="embed-responsive-item"
+        src="https://matomo.pauldiepold.de/index.php?module=CoreAdminHome&action=optOut&language=de&fontfamily=%22Open%20Sans%22%2C%20sans-serif"
+></iframe>
+			</div>
+</span></p>
+            <a href="https://datenschutz-generator.de" rel="nofollow" target="_blank">Erstellt mit
                 Datenschutz-Generator.de von RA Dr. Thomas Schwenke</a>
         </div>
     </div>

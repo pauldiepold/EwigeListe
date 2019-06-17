@@ -77,7 +77,7 @@
                         <div class="col-sm-6 offset-sm-4">
                             <hr>
                             Noch kein Konto?<br>
-                            <a href="/register" class="btn btn-primary mt-2">
+                            <a href="/register" class="btn btn-outline-primary mt-2">
                                 Registrieren
                             </a>
                         </div>

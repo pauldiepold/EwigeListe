@@ -58,14 +58,15 @@ class RegisterController extends Controller {
             'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
             'password.required' => 'Es muss ein Passwort angegeben werden!',
             'password.min' => 'Das Passwort muss mindestens 6 Zeichen haben!',
-            'password.confirmed' => 'Die Passworter stimmen nicht uberein!',
-            'pin.exists' => 'Diese PIN ist ung&uuml;ltig!',
-            'pin.integer' => 'Diese PIN darf nur aus Zahlen bestehen!',
+            'password.confirmed' => 'Die Passwörter stimmen nicht überein!',
+            'pin.exists' => 'Die PIN ist ungültig!',
+            'pin.integer' => 'Die PIN darf nur aus Zahlen bestehen!',
             'pin.digits' => 'Die PIN muss vierstellig sein!',
         ];
 
         return Validator::make($data, [
-            'surname' => ['required', 'string', 'max:255',
+			/*
+			,
                           function ($attribute, $value, $fail)
                           {
                               if (strpos($value, ' ') !== false)
@@ -73,8 +74,7 @@ class RegisterController extends Controller {
                                   $fail('Der Vorname darf kein Leerzeichen enthalten!');
                               }
                           }
-            ],
-            'name' => ['required', 'string', 'max:255',
+						  ,
                        function ($attribute, $value, $fail)
                        {
                            if (strpos($value, ' ') !== false)
@@ -82,7 +82,10 @@ class RegisterController extends Controller {
                                $fail('Der Name darf kein Leerzeichen enthalten!');
                            }
                        }
-            ],
+            
+			*/
+            'surname' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
             'pin' => ['required', 'integer', 'digits:4', 'exists:invitations,pin'],

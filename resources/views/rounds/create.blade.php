@@ -6,46 +6,42 @@
 
 @section('content')
 
-
     <div class="row align-items-center mx-auto my-4 no-gutters" style="max-width:230px">
 
-        <div class="col-2" style="padding:0px;">
-            @if ($numberOfPlayers != 4)
-                <a href="/rounds/create/{{ $numberOfPlayers-1 }}">
-                    <i class="fas fa-minus-square fa-2x text-primary"></i>
-                </a>
-            @endif
+        <div class="col-2 p-0">
+            <a @click="form.numberOfPlayers > 4 ? form.numberOfPlayers-- : ''">
+                <i :class="{ 'text-muted': form.numberOfPlayers <= 4}" class="fas fa-minus-square fa-2x text-primary"></i>
+            </a>
         </div>
 
         <div class="col-8">
-				<span class="text-dark" style="font-size:1.15em">
-					@for($i=0; $i < $numberOfPlayers; $i++)
-                        <i class="fas fa-user"></i>
-                    @endfor
-				</span>
+            <span class="text-dark" style="font-size:1.15em">
+                <i v-for="index in form.numberOfPlayers" class="fas fa-user" style="margin: 0 0.1rem;"></i>
+            </span>
         </div>
 
-        <div class="col-2" style="padding:0px;">
-            @if ($numberOfPlayers != 7)
-                <a href="/rounds/create/{{ $numberOfPlayers+1 }}">
-                    <i class="fas fa-plus-square fa-2x text-primary"></i>
-                </a>
-            @endif
+        <div class="col-2 p-0">
+            <a @click="form.numberOfPlayers < 7 ? form.numberOfPlayers++ : ''">
+                <i :class="{ 'text-muted': form.numberOfPlayers >= 7 }" class="fas fa-plus-square fa-2x text-primary"></i>
+            </a>
         </div>
+
     </div>
 
-    @include('include.error')
 
-    <form method="POST" action="/rounds">
+    <alert v-if="form.errors.any()" v-bind:message="form.errors.get('players')"  @click="form.errors.clear()"></alert>
+
+    <form @submit.prevent="onSubmit">
         @csrf
 
-        @for ($k = 0; $k < $numberOfPlayers; $k++)
-            <div class="form-group mx-auto mt-4" style="max-width:200px;">
+        <input type="hidden" v-model="form.numberOfPlayers">
+
+        @for ($k = 0; $k < 7; $k++)
+            <div v-if="{{ $k }} < form.numberOfPlayers" class="form-group mx-auto mt-4" style="max-width:200px;">
                 <label for="player{{ $k }}"><b>Spieler {{ $k+1 }}:</b></label>
-                <select class="form-control" name="players[{{ $k }}]">
+                <select class="form-control" name="players[{{ $k }}]" v-model="form.players[{{ $k }}]">
                     @foreach ($players as $player)
-                        <option value="{{ $player->id }}" {{ (old("players")[$k] == $player->id || ($loop->index == $k && old("players")[$k] == null) ? "selected":"") }}>
-                            {{--  {{ (old("players")[$k] == $player->id || ($loop->index == $k && old("players")[$k] == null) ? "selected":"") }} --}}
+                        <option value="{{ $player->id }}">
                             {{ $player->surname }} {{ $player->name }}
                         </option>
                     @endforeach
@@ -53,7 +49,17 @@
             </div>
         @endfor
 
-        <button type="submit" class="btn btn-primary mt-3">Neue Runde Starten</button>
+        <button type="submit" class="btn btn-primary mt-3">
+            <div class="d-flex vertical-align-center">
+                 <span>
+                 <i v-if="form.loading" class="fa fa-spinner fa-spin text-lg mr-2"
+                    style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
+                 </span>
+                <span>
+                    Neue Runde starten
+                 </span>
+            </div>
+        </button>
     </form>
     <div class="mt-4">
         <a data-container="body" data-toggle="popover" data-placement="top"
@@ -62,14 +68,24 @@
         </a>
     </div>
 
-@endsection
+
+    @php
+        $preselectedPlayers = array();
+        for($k = 0; $k < 7; $k++) {
+            $preselectedPlayers[$k] = $players[$k]->id;
+        }
+    @endphp
+    @push('scriptsBeforeJS')
+        <script>
+            preselectedPlayers = {{ json_encode($preselectedPlayers) }};
+        </script>
+    @endpush
 
 @push('scripts')
     <script>
         $(function () {
             $('[data-toggle="popover"]').popover();
         });
-
         $('body').on('click', function (e) {
             $('[data-toggle=popover]').each(function () {
                 if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
@@ -79,3 +95,4 @@
         });
     </script>
 @endpush
+@endsection

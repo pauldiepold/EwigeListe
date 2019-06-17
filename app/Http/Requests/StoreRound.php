@@ -24,8 +24,9 @@ class StoreRound extends FormRequest {
     public function rules()
     {
         return [
-            'players' => 'required|between:4,7|array',
-            'players.*' => 'integer|exists:players,id',
+            'numberOfPlayers' => 'required|between:4,7|integer',
+            'players' => 'required|size:7|array',
+            'players.*' => 'exists:players,id',
         ];
     }
 
@@ -33,7 +34,7 @@ class StoreRound extends FormRequest {
     {
         $validator->after(function ($validator)
         {
-            if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count())
+            if (collect($this->input('players'))->take($this->input('numberOfPlayers'))->unique()->count() != $this->input('numberOfPlayers'))
             {
                 $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
             }

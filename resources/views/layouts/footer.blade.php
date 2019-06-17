@@ -1,4 +1,4 @@
-<footer class="footer py-3 mt-4 bg-dark">
+<footer class="footer py-3 bg-dark position-absolute w-100" style="bottom: 0">
     <div class="container text-center">
         @auth
             <span class="text-muted">
@@ -34,6 +34,9 @@
         <span class="text-muted">&copy; Paul Diepold &bull; {{ now()->year }}</span>
     </div>
 </footer>
-
+<script>
+	let preselectedPlayers = 0;
+</script>
+@stack('scriptsBeforeJS')
 <script src="{{ mix('/js/app.js') }}"></script>
 @stack('scripts')

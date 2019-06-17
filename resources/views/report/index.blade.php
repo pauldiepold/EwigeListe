@@ -37,7 +37,7 @@
 				<tr>
 					<td>{{ $action['title'] }}:</td>
 					<td><a href="{{ str_replace('www.', '', $action['url']) }}">{{ substr(str_replace('www.', '', $action['url']), 22) }}</a></td>
-					<td>{{ array_key_exists('timeSpent', $action) ? ceil($action['timeSpent']/60) . "m " . $action['timeSpent']%60 . "s": '' }}</td>
+					<td>{{ array_key_exists('timeSpent', $action) ? floor($action['timeSpent']/60) . "m " . $action['timeSpent']%60 . "s": '' }}</td>
 					<!-- <td>{{ Carbon\Carbon::createFromTimestamp($action['timestamp'], 'Europe/Amsterdam')->formatLocalized('%H:%M') }}</td> -->
 					<td>{{ substr($action['serverTimePretty'], 10) }}</td>
 				</tr>
@@ -52,11 +52,3 @@
 </div>
 
 @endsection
-
-@push('scriptsHead')
-<style>
-	tr.collapsing {
-		transition: none;	
-	}
-</style>
-@endpush
