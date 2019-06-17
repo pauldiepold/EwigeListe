@@ -70155,14 +70155,9 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "row justify-content-center mt-4" }, [
       _c("div", { staticClass: "col col-xl-8 col-lg-9 col-md-12 col-sm-12" }, [
-        _c(
-          "h5",
-          {
-            staticClass: "my-3 font-weight-bold",
-            staticStyle: { "font-family": "Raleway" }
-          },
-          [_vm._v("Punkteverlauf:")]
-        ),
+        _c("h5", { staticClass: "my-3 font-weight-bold" }, [
+          _vm._v("Punkteverlauf:")
+        ]),
         _vm._v(" "),
         _c("div", [
           _c("canvas", { attrs: { id: "profilePointChart", height: "560" } })
@@ -70170,14 +70165,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("hr"),
         _vm._v(" "),
-        _c(
-          "h5",
-          {
-            staticClass: "my-3 font-weight-bold",
-            staticStyle: { "font-family": "Raleway" }
-          },
-          [_vm._v("Anzahl der Spiele")]
-        ),
+        _c("h5", { staticClass: "my-3 font-weight-bold" }, [
+          _vm._v("Anzahl der Spiele")
+        ]),
         _vm._v(" "),
         _c("div", [
           _c("canvas", { attrs: { id: "profileGameChart", height: "560" } })

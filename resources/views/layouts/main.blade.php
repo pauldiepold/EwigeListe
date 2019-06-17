@@ -6,11 +6,12 @@
 
 </head>
 
-<body class="text-center position-relative" style="min-height: 100%; padding-bottom: @auth6.5@endauth@guest5@endguestrem;">
+<body class="text-center position-relative"
+      style="min-height: 100%; padding-bottom: 6.5rem;">
 
     @include('layouts.nav')
 
-    <div class="container mt-3" id="app">
+    <div class="container my-3" id="app">
 
         <h6 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
             @yield('heading')

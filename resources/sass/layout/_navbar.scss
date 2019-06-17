@@ -4,6 +4,12 @@
   background-color: $dark;
 }
 
+
+#navbar-toggler:active,
+#havbar-toggler:hover {
+  background-color: transparent;
+}
+
 .dropdown-item,
 .nav-link,
 .dropdown-menu {

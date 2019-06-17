@@ -33,3 +33,7 @@ table {
   margin: 0.4rem 0;
   background-color: $primary-light;
 }
+
+tr.collapsing {
+  transition: none;
+}

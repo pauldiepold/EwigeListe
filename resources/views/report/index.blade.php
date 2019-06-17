@@ -52,11 +52,3 @@
 </div>
 
 @endsection
-
-@push('scriptsHead')
-<style>
-	tr.collapsing {
-		transition: none;	
-	}
-</style>
-@endpush

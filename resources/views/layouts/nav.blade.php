@@ -1,14 +1,8 @@
 <div class="py-2" style="background-color: #054b6d;">
     <a href="/" class="link-unstyled">
-        <h3 class="site-title text-light mb-0" style="text-shadow: 0em 0.1em 0.17em #444444;">Ewige Liste</h3>
+        <h3 class="site-title text-light mb-0">Ewige Liste</h3>
     </a>
 </div>
-<style>
-    #navbar-toggler:active,
-    #havbar-toggler:hover {
-        background-color: transparent;
-    }
-</style>
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary sticky-top" id="navbar">
     <button class="navbar-toggler mx-auto" id="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarCollapse"
