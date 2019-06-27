@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Game;
+use Carbon\Carbon;
 
 class Profile extends Model {
 
@@ -30,6 +31,7 @@ class Profile extends Model {
         $gamesLost = clone $games;
         $this->gamesWon = $gamesWon->where('won', 1)->count();
         $this->gamesLost = $gamesLost->where('won', '0')->count();
+		$this->gamesPerDay = $this->player->created_at->diffInDays(Carbon::now()) < 5 ? null : $this->games / $this->player->created_at->diffInDays(Carbon::now());
 
         $this->points = $games->sum('points');
         $this->pointsPerGame = $this->games == 0 ? null : $this->points / $this->games;
