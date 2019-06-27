@@ -37,6 +37,12 @@
                         <td>Spiele in diesem Monat:</td>
                         <td class="font-weight-bold">{{ $profile->gamesThisMonth }}</td>
                     </tr>
+					@if ($profile->gamesPerDay != null)
+                    <tr>
+						<td>Spiele pro Tag:</td>
+                        <td class="font-weight-bold">{{ $profile->gamesPerDay }}</td>
+                    </tr>
+					@endif
                     <tr>
                         <td>Gewonnen / Verloren:</td>
                         <td class="font-weight-bold">{{ $profile->gamesWon }} / {{ $profile->gamesLost }}</td>
@@ -112,7 +118,7 @@
                     </tr>
 
                     <tr>
-                        <td>Längste Pech-Strähne:
+                        <td class="">Längste Pech-Strähne:
                             @if( strcmp(date('j.n.Y', strtotime($profile->loseStreakStart)), date('j.n.Y', strtotime($profile->loseStreakEnd))) )
                                 <span class="small-text"><br>({{ date('j.n', strtotime($profile->loseStreakStart)) }} - {{ date('j.n.Y', strtotime($profile->loseStreakEnd)) }})</span>
                             @else

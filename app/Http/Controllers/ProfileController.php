@@ -36,6 +36,7 @@ class ProfileController extends Controller {
 		$columns->push(collect(['Solopunkte', 'soloPoints']));
 		$columns->push(collect(['Meiste Spiele Tag', 'mostGamesDay']));
 		$columns->push(collect(['Meiste Spiele Monat', 'mostGamesMonth']));
+		$columns->push(collect(['Spiele pro Tag', 'gamesPerDay']));
 		$columns->push(collect(['Höchste Punktzahl', 'highestPoints']));
 		$columns->push(collect(['Niedrigste Punktzahl', 'lowestPoints']));
 		$columns->push(collect(['Siegsträhne', 'winStreak']));
