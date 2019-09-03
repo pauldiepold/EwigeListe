@@ -56,7 +56,7 @@
 
                 @foreach ($players as $player)
                     @php $profile = $player->profile; @endphp
-                    <tr @auth{!! $player->id == Auth::user()->player->id ? ' class="bg-primary-light"' : ''!!} @endauth>
+                    <tr class="{{ $player->id == Auth::user()->player->id ? ' bg-primary-light' : ''}}" style="{{ $player->payment == 1 ? 'background-color: #eeffe6;' : ''}}">
                         <td>
                             <a href="/profiles/{{ $player->id }}">
                                 {{ $player->surname }} {{ $player->name }}
