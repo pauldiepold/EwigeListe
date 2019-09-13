@@ -5,7 +5,7 @@ use App\Profile;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class DatabaseSeeder extends Seeder {
+class DatabaseSeederOld extends Seeder {
 
     /**
      * Seed the application's database.
