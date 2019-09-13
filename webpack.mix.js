@@ -1,5 +1,12 @@
 const mix = require('laravel-mix');
 
+let webpack = require("webpack");
+mix.webpackConfig({
+    plugins: [
+        new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /de/)
+    ]
+});
+
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
