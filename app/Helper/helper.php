@@ -2,7 +2,6 @@
 
 if (!function_exists('nice_count'))
 {
-
     function nice_count($input = array())
     {
         if (count($input) == 0)

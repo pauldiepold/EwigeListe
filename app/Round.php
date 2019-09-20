@@ -5,11 +5,16 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Round extends Model {
+class Round extends Model
+{
 
     protected $fillable = ['created_by'];
 
     protected $attributes = [];
+
+    public function path() {
+        return "/rounds/{$this->id}";
+    }
 
     public function getLastGame()
     {
@@ -18,7 +23,7 @@ class Round extends Model {
 
     public function getDealerIndex()
     {
-        return $this->games->where('solo', 0)->where('misplay', 0)->count() % $this->players->count();
+        return $this->games()->where('solo', 0)->where('misplay', 0)->count() % $this->players()->count();
     }
 
     public function getActivePlayers()
@@ -26,7 +31,8 @@ class Round extends Model {
         $dealerIndex = $this->getDealerIndex();
         $countPlayers = $this->players->count();
 
-        if ($countPlayers == 4 || $countPlayers == 5)
+        if ($countPlayers == 4
+            || $countPlayers == 5)
         {
             $increments = collect([1, 2, 3, 4]);
         } elseif ($countPlayers == 6)
@@ -68,7 +74,7 @@ class Round extends Model {
 
     public function games()
     {
-        return $this->hasMany(Game::class);
+        return $this->hasMany(Game::class)->orderBy('id', 'asc');
     }
 
     public function createdBy()
@@ -84,5 +90,10 @@ class Round extends Model {
     public function comments()
     {
         return $this->morphMany('App\Comment', 'commentable');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class)->withTimestamps();
     }
 }

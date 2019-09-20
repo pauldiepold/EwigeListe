@@ -26,6 +26,9 @@
             <li class="nav-item">
                 <a class="nav-link" href="/players">Ewige Liste</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/groups">Gruppen</a>
+            </li>
             @guest
                 <li class="nav-item">
                     <a class="nav-link" href="/login">Login</a>

@@ -6,7 +6,7 @@
 
 @section('content')
 
-<create-round :all-players="{{ json_encode($players) }}">
+<create-round :all-players="{{ json_encode($allPlayers) }}">
 
 
 

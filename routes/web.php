@@ -25,6 +25,7 @@ Route::get('players/{orderBy?}/{order?}', 'PlayerController@index');
 Route::get('profiles/', 'ProfileController@index')->middleware('auth');
 Route::get('profiles/update', 'ProfileController@updateAll')->middleware('auth');
 Route::get('profiles/{player}', 'ProfileController@show')->middleware('auth');
+Route::get('profil/{player}', 'PlayerController@show')->middleware('auth');
 
 
 /* *********** Rounds ************ */
@@ -55,6 +56,15 @@ Route::get('/rounds/{round}/game/create', 'GameController@create')->middleware('
 Route::post('/rounds/{round}/game', 'GameController@store')->middleware('auth');
 Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
 Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
+
+
+/* *********** Groups ************** */
+Route::get('/groups', 'GroupController@index')->middleware('auth');
+Route::get('/groups/create', 'GroupController@create')->middleware('auth');
+Route::get('/groups/{group}', 'GroupController@show')->middleware('auth');
+Route::post('/groups', 'GroupController@store')->middleware('auth');
+//Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
+//Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 
 
 /* *********** Invites ************ */

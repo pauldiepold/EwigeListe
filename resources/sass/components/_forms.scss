@@ -13,7 +13,6 @@ input[type=number] {
 
 .custom-input {
   width: 100%;
-  border: none;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   color: #495057;
   background-color: #f3f3f3;
@@ -22,7 +21,6 @@ input[type=number] {
 }
 
 .custom-input:focus {
-  outline: none;
 }
 
 .wrapperIcon input[type="text"] {

@@ -4,13 +4,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Player extends Model {
+class Player extends Model
+{
 
     protected $attributes = [
         'hide' => false,
     ];
 
     protected $fillable = ['surname', 'name'];
+
+    public function path()
+    {
+        return "/profil/{$this->id}";
+    }
 
     public function rounds()
     {
@@ -50,5 +56,15 @@ class Player extends Model {
     public function invitation()
     {
         return $this->hasOne(Invitation::class);
+    }
+
+    public function createdGroups()
+    {
+        return $this->hasMany(Group::class, 'created_by');
+    }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class)->withTimestamps();
     }
 }

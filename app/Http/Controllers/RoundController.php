@@ -49,7 +49,7 @@ class RoundController extends Controller {
         $colRound->push($colRow);
 
         //Spiele
-        foreach ($round->games()->oldest()->with('players')->get() as $game)
+        foreach ($round->games()->with('players')->get() as $game)
         {
             $colRow = collect();
             foreach ($round->players as $player)
@@ -86,7 +86,7 @@ class RoundController extends Controller {
         ));
     }
 
-    public function create()
+    public function createAlt()
     {
         $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
             ->where('players.hide', '=', '0')
@@ -97,24 +97,22 @@ class RoundController extends Controller {
         return view('rounds.create', compact('players'));
     }
 
-    public function createNew()
+    public function create()
     {
-        $playersQuery = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
+        $allPlayers = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
             ->where('players.hide', '=', '0')
             ->orderBy('profiles.games', 'desc')
-            ->select('players.id as id', 'players.surname as surname', 'players.name as name')
+            ->select('players.*')
+            ->with('groups')
             ->get();
-        $playersCombined = collect();
-        foreach ($playersQuery as $player) {
-            $playersCombined->push(collect(['id' => $player->id, 'name' => $player->surname . ' ' . $player->name]));
-        }
-        $players = $playersCombined->toArray();
-        return view('rounds.create-new', compact('players'));
+
+        return view('rounds.create-new', compact('allPlayers'));
     }
 
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
+
         $numberOfPlayers = $validated->get('numberOfPlayers');
         $playerIDs = collect($validated->get('players'))->take($numberOfPlayers);
 
@@ -129,7 +127,7 @@ class RoundController extends Controller {
             $index++;
         }
 
-        return '/rounds/' . $round->id;
+        return $round->path();
     }
 
     public function destroy(Round $round)

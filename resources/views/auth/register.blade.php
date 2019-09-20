@@ -88,6 +88,7 @@
                         </div>
                     </div>
 
+                    <!--
                     <div class="form-group row">
                         <label for="pin"
                                class="col-sm-5 col-form-label text-sm-right font-weight-bold">Einladungs-PIN:</label>
@@ -113,6 +114,7 @@
                         </div>
 
                     </div>
+                    -->
 
                     <div class="form-group row mb-0">
                         <div class="col-sm-6 offset-sm-5">

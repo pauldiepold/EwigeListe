@@ -1,3 +1,9 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @import url('https://fonts.googleapis.com/css?family=Raleway');
@@ -9,11 +15,13 @@
 @import '~bootstrap/scss/bootstrap';
 
 // Fontawesome
-//@import '~@fortawesome/fontawesome-free/scss/regular';
+$fa-font-path: "../webfonts";
+@import '~@fortawesome/fontawesome-free/scss/regular';
 @import '~@fortawesome/fontawesome-free/scss/solid';
-@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
 
 // Custom CSS
+@import 'custom/createRound';
 @import 'abstracts/variables';
 
 @import 'base/typography';

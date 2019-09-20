@@ -24,9 +24,10 @@ class StoreRound extends FormRequest {
     public function rules()
     {
         return [
-            'numberOfPlayers' => 'required|between:4,7|integer',
-            'players' => 'required|size:7|array',
+            'players' => 'required|between:4,7|array',
             'players.*' => 'exists:players,id',
+            'groups' => 'required|min:1|array',
+            'groups.*' => 'exists:groups,id'
         ];
     }
 
@@ -34,7 +35,7 @@ class StoreRound extends FormRequest {
     {
         $validator->after(function ($validator)
         {
-            if (collect($this->input('players'))->take($this->input('numberOfPlayers'))->unique()->count() != $this->input('numberOfPlayers'))
+            if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count())
             {
                 $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
             }
@@ -44,7 +45,7 @@ class StoreRound extends FormRequest {
     public function messages()
     {
         return [
-
+            'groups.required' => 'Es muss mindestens eine Gruppe ausgewählt werden!'
         ];
     }
 }

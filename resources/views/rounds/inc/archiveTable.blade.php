@@ -10,7 +10,7 @@
                 <th>Teilnehmende Spieler</th>
             </tr>
             @foreach ($rounds as $round)
-                <tr{!! $round->players->pluck('id')->contains(Auth::user()->player->id) && $profile != Auth::user()->player->id ? ' class="bg-primary-light"' : '' !!}>
+                <tr class="{{ $round->players->pluck('id')->contains(Auth::user()->player->id) ? 'bg-primary-light' : '' }}">
                     <td>
                         {{ date("d.m.Y - H:i", strtotime($round->created_at)) }}
                     </td>
@@ -18,7 +18,7 @@
                         {{ $round->games->count() }}
                     </td>
                     <td>
-                        <a href="/rounds/{{ $round->id }}">
+                        <a href="{{ $round->path() }}">
                             {{ nice_count($round->players->pluck('surname')->toArray()) }}
                         </a>
                     </td>

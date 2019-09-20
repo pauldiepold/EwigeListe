@@ -7,7 +7,8 @@ use App\Round;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class PlayerController extends Controller {
+class PlayerController extends Controller
+{
 
     public function index($orderBy = 'games', $order = 'down')
     {
@@ -34,33 +35,17 @@ class PlayerController extends Controller {
         return view('players.index', compact('players', 'playersCount', 'orderBy', 'order'));
     }
 
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
     public function show(Player $player)
     {
+        $rounds = $player->rounds()
+            ->latest()
+            ->with(['games', 'players'])
+            ->paginate(15);
+
+        $groups = $player->groups;
+
+        return view('players.show', compact('player', 'rounds', 'groups'));
 
     }
 
-    public function edit(Player $player)
-    {
-        //
-    }
-
-    public function update(Request $request, Player $player)
-    {
-        //
-    }
-
-    public function destroy(Player $player)
-    {
-        //
-    }
 }

@@ -1,4 +1,4 @@
-const mix = require('laravel-mix');
+let mix = require('laravel-mix');
 
 let webpack = require("webpack");
 mix.webpackConfig({
@@ -6,6 +6,8 @@ mix.webpackConfig({
         new webpack.ContextReplacementPlugin(/moment[\/\\]locale$/, /de/)
     ]
 });
+
+require('laravel-mix-tailwind');
 
 /*
  |--------------------------------------------------------------------------
@@ -19,6 +21,7 @@ mix.webpackConfig({
  */
 
 mix.js('resources/js/app.js', 'public/js')
-    //.js('resources/js/charts/roundChart.js', 'public/js')
+//.js('resources/js/charts/roundChart.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
+    .tailwind()
     .version();

@@ -21,18 +21,24 @@ new Vue({
         Alert
     },
     data: {
+    },
+
+    methods: {
+    }
+});
+
+/* How to use Form.js
+
         form: new Form({
             players: preselectedPlayers,
             numberOfPlayers: 4,
         }),
-    },
 
-    methods: {
         onSubmit() {
             this.form.post('/rounds')
                 .then(response => window.location.href = response)
                 .catch(errors => console.log(errors));
         }
-    }
-});
+ */
+
 Vue.config.productionTip = false;
