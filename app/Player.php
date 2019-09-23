@@ -33,11 +33,6 @@ class Player extends Model
         return $this->hasOne(User::class);
     }
 
-    public function profile()
-    {
-        return $this->hasOne(Profile::class);
-    }
-
     public function createdRounds()
     {
         return $this->hasMany('App\Round', 'created_by');
@@ -65,6 +60,10 @@ class Player extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class)->withTimestamps();
+        return $this->belongsToMany(Group::class, 'profiles')->withTimestamps()->using(Profile::class);
+    }
+
+    public function profiles() {
+        return $this->hasMany(Profile::class);
     }
 }

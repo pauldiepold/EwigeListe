@@ -16,10 +16,10 @@
                             {{ niceCount($round->players->pluck('surname'), ' - ') }}
                         </div>
                         <div class="card-body p-2">
-<span class="text-muted" style="font-size: 0.8rem;">
-	<a href="/rounds/{{ $round->id }}"><i class="fas fa-eye fa-2x text-dark"></i></a><br>
-	Letztes Spiel: {{ printDate($round->games()->latest()->first()->created_at) }}
-</span>
+                            <span class="text-muted" style="font-size: 0.8rem;">
+                                <a href="/rounds/{{ $round->id }}"><i class="fas fa-eye fa-2x text-dark"></i></a><br>
+                                Letztes Spiel: {{ printDate($round->games()->latest()->first()->created_at) }}
+                            </span>
                         </div>
                     </div>
                 @endforeach
@@ -27,33 +27,12 @@
         @endif
 
 
-@if($comments->count() != 0)
-    <h4 class="mt-4 mb-3" id="comments">Neue Kommentare</h4>
-    @include('comments.latest', ['comments' => $comments])
-@endif
+        @if($comments->count() != 0)
+            <h4 class="mt-4 mb-3" id="comments">Neue Kommentare</h4>
+            @include('comments.latest', ['comments' => $comments])
+        @endif
     @endauth
 
-
-    <h4 class="mb-3 mt-5">Rekorde:</h4>
-    <div class="row justify-content-center">
-        <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
-            <table class="table table-sm table-borderless text-left">
-                @foreach($colFP as $row)
-                    <tr>
-                        <td{!! $row->contains('margin') ? ' class="pb-3"' : '' !!}>
-                            {!! $row->shift() !!}
-                        </td>
-                        <td>
-                            <b>{{ $row->shift() }}</b>
-                        </td>
-                        <td>
-                            {!! $row->shift() !!}
-                        </td>
-                    </tr>
-                @endforeach
-            </table>
-        </div>
-    </div>
 
     <h4 class="my-3">Statistiken:</h4>
     <div class="row justify-content-center">

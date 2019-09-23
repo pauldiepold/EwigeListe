@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Round;
 use App\Player;
+use App\Profile;
 use App\Game;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class ChartController extends Controller {
+class ChartController extends Controller
+{
 
     public function roundChart(Round $round)
     {
@@ -57,9 +59,17 @@ class ChartController extends Controller {
         return $data->toArray();
     }
 
-    public function profileChart(Player $player)
+    public function profileChart(Profile $profile)
     {
-        $games = $player->games()->oldest()->get();
+        $games = DB::table('game_player as g')
+            ->join('games', 'g.game_id', '=', 'games.id')
+            ->join('rounds', 'games.round_id', '=', 'rounds.id')
+            ->join('group_round', 'rounds.id', '=', 'group_round.round_id')
+            ->where('group_round.group_id', $profile->group_id)
+            ->where('g.player_id', $profile->player_id)
+            ->select('games.created_at as created_at', 'g.points as points')
+            ->orderBy('games.created_at', 'asc')
+            ->get();
 
         $dates = collect();
         $points = collect();
@@ -71,11 +81,11 @@ class ChartController extends Controller {
             $currentDate = Carbon::parse($game->created_at);
             if ($i == 0)
             {
-                $points->push($game->pivot->points);
+                $points->push($game->points);
 
             } else
             {
-                $points->push($points->last() + $game->pivot->points);
+                $points->push($points->last() + $game->points);
             }
             $dates->push(($currentDate->formatLocalized('%e. %h %Y')));
 

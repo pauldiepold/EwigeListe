@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Comment;
 use App\Round;
-use App\Profile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Http\Request;
@@ -16,7 +15,7 @@ class CommentController extends Controller {
         $request->validate([
             'body' => 'required',
             'route' => 'required|string',
-            'profileID' => 'required_without:roundID|integer|exists:profiles,id',
+            //'profileID' => 'required_without:roundID|integer|exists:profiles,id',
             'roundID' => 'required_without:profileID|integer|exists:rounds,id',
         ]);
 
@@ -27,7 +26,7 @@ class CommentController extends Controller {
             $page = Round::findOrFail($input['roundID']);
         } elseif (!strcmp($input['route'], 'profile'))
         {
-            $page = Profile::findOrFail($input['profileID']);
+            //$page = Profile::findOrFail($input['profileID']);
         }
 
         $comment = Comment::create([

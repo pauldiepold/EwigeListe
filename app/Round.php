@@ -23,7 +23,13 @@ class Round extends Model
 
     public function getDealerIndex()
     {
-        return $this->games()->where('solo', 0)->where('misplay', 0)->count() % $this->players()->count();
+        return $this->games()
+                   ->where('solo', 0)
+                   ->where('misplay', 0)
+                   ->count()
+               % $this
+                   ->players()
+                   ->count();
     }
 
     public function getActivePlayers()

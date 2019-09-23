@@ -15,25 +15,23 @@ class PlayerSeeder extends Seeder
     public function run()
     {
         $testUser = factory('App\User')->create(['email' => 'test@test.de']);
-        $testUser->player->profile()->save(factory('App\Profile')->create());
 
-        factory('App\User', 25)->create()
-            ->each(function ($user)
-            {
-                $user->player->profile()->save(factory('App\Profile')->create());
-            });
+        factory('App\User', env('SEEDED_USERS', 20))->create();
 
         $allPlayers = App\Player::all();
 
-        for ($i = 0; $i<10; $i++) {
-            factory('App\Group')->create(['created_by' => $allPlayers->random()])->addPlayers($allPlayers->random(rand(3,7)));
+        for ($i = 0; $i < env('SEEDED_GROUPS', 4); $i++)
+        {
         }
+        $group = factory('App\Group')->create(['created_by' => $allPlayers->random(), 'name' => 'Ewige Liste']);
+        $group->addPlayers($allPlayers);
 
-        for ($i = 0; $i < 20; $i++)
+        for ($i = 0; $i < env('SEEDED_ROUNDS', 20); $i++)
         {
             $playerInRound = $allPlayers->random(rand(4, 7));
 
             $round = factory('App\Round')->create(['created_by' => $playerInRound->random()]);
+            $round->groups()->save($group);
 
             $index = 0;
             foreach ($playerInRound as $player)
@@ -43,7 +41,6 @@ class PlayerSeeder extends Seeder
                 ]);
                 $index++;
             }
-
 
             for ($k = 0; $k < rand(10, 25); $k++)
             {
@@ -109,13 +106,6 @@ class PlayerSeeder extends Seeder
                 }
 
             }
-        }
-
-        $profiles = App\Profile::all();
-
-        foreach ($profiles as $profile)
-        {
-            $profile->updateProfile();
         }
     }
 }

@@ -29,11 +29,11 @@ class ManageGroupsTest extends TestCase {
 
         $attributes = factory('App\Group')->raw(['created_by' => auth()->user()->player->id]);
 
-        $this->post('groups', $attributes)->assertRedirect('/groups');
+        $this->post('groups', $attributes)->assertRedirect('/groups/1');
 
         $this->assertDatabaseHas('groups', $attributes);
 
-        $this->get('groups')->assertSee($attributes['name']);
+        $this->get('groups')->assertSee(e($attributes['name']));
     }
 
     /** @test */
@@ -58,7 +58,7 @@ class ManageGroupsTest extends TestCase {
 
         $group = factory('App\Group')->create();
 
-        $this->get($group->path())->assertSee($group->name);
+        $this->get($group->path())->assertSee(e($group->name));
     }
 
     /** @test */

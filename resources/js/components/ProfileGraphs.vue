@@ -17,9 +17,9 @@
 <script>
 
     export default {
-        props: ['player_id'],
+        props: ['profile_id'],
         mounted() {
-            axios.get('/charts/profile/' + this.player_id)
+            axios.get('/charts/profile/' + this.profile_id)
                 .then(function (response) {
                     let data = response.data;
                     console.log(data);

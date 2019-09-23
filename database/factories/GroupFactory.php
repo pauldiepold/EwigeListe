@@ -8,7 +8,7 @@ use Faker\Generator as Faker;
 $factory->define(Group::class, function (Faker $faker)
 {
     return [
-        'name' => $faker->sentence,
+        'name' => $faker->company,
         'created_by' => function ()
         {
             return factory('App\Player')->create()->id;

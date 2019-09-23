@@ -1,16 +1,17 @@
 <template>
     <div class="form-autocomplete">
+
         <div class="bg-white rounded shadow-2 mx-auto my-4 px-3 pb-2 pt-3" style="max-width:19rem;"
              v-if="players.length < 7">
             <input id="text-search" class="custom-input" :value="textSearch" @input="textSearch = $event.target.value"
-                   type="text" :placeholder="placeholder"/>
+                   type="text" placeholder="Bitte Namen eingeben"/>
 
-            <div class="mt-2 tw-bg-grey">
+            <div class="mt-1 tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto">
                 <div class="py-2 px-1 text-left sm:hover:tw-bg-gray-200" v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
                     {{player.surname.concat(' ', player.name)}}
                 </div>
-                <div class="py-2 px-1 text-left" v-if="filteredPlayers.length===0">
+                <div class="py-2 px-1 text-left tw-mt-1" v-if="filteredPlayers.length===0">
                     Spieler wurde nicht gefunden.
                 </div>
             </div>
@@ -35,18 +36,6 @@
             </div>
         </transition-group>
 
-        <h4 class="mt-5" v-if="uniqueGroups.length !== 0">Runde wird diesen {{uniqueGroups.length}}
-            Gruppen hinzugefügt:</h4>
-        <div class="rounded bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
-             style="max-width: 19rem;" v-for="(group, key) in uniqueGroups" v-bind:key="group.id" @click="deselectGroup(group)">
-            <span class="font-weight-bold">
-                {{group.name}} - {{ key }}
-            </span>
-            <span style="font-size: 1.1rem;" class="tw-cursor-default">
-                <i class="fas fa-trash mx-1 text-danger tw-cursor-pointer"></i>
-            </span>
-        </div>
-
         <form @submit.prevent="onSubmit">
             <button type="submit" class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto"
                     :disabled="players.length < 4">
@@ -59,6 +48,21 @@
                  </span>
             </button>
         </form>
+
+        <h4 class="mt-5" v-if="groups.length !== 0">Runde wird diesen {{selectedGroups.length}}
+            Gruppen hinzugefügt:</h4>
+        <div
+            class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2 tw-cursor-pointer"
+            style="max-width: 24rem;" v-for="(group) in groups"
+            @click="inSelectedGroups(group.id) ? deselectGroup(group) : selectGroup(group)">
+            <span class="font-weight-bold" :class="{'tw-text-gray-500': !inSelectedGroups(group.id)}">
+                {{group.name}}
+            </span>
+            <i class="fas fa-2x mx-1 tw-text-gray-600"
+               :class="{'fa-toggle-on': inSelectedGroups(group.id), 'fa-toggle-off': !inSelectedGroups(group.id)}">
+            </i>
+        </div>
+
     </div>
 </template>
 
@@ -70,44 +74,39 @@
                 default() {
                     return [];
                 }
-            },
-            placeholder: {
-                type: String,
-                default: 'Bitte Namen eingeben',
             }
         },
         data() {
             return {
                 textSearch: '',
                 loading: false,
-                players: [],
                 deselectedGroups: [],
+                players: []
             }
         },
+        //https://proton.efelle.co/#/documentation/components/sortable
         computed: {
             filteredPlayers() {
-                return this.allPlayers.filter(player => this.fullName(player).toLowerCase().includes(this.textSearch.toLowerCase()) && !this.inSelectedPlayers(player.id)).slice(0, 4);
+                return this.allPlayers.filter(player => this.fullName(player).toLowerCase().includes(this.textSearch.toLowerCase()) && !this.inSelectedPlayers(player.id));//.slice(0, 4);
             },
-            selectedPlayers() {
+            selectedPlayerIDs() {
                 return this.players.map(v => v.id);
             },
-            selectedGroups() {
-                return this.uniqueGroups.map(v => v.id);
+            selectedGroupIDs() {
+                return this.selectedGroups.map(v => v.id);
             },
             groups() {
-                let output = [];
+                let output1 = [];
                 this.players.forEach(function (player) {
                     player.groups.forEach(function (group) {
-                        output.push(group);
+                        output1.push(group);
                     });
                 });
-                return output;
-            },
-            uniqueGroups() {
+
                 let output = [];
                 let keys = [];
 
-                this.groups.forEach(function (group) {
+                output1.forEach(function (group) {
                     let key = group.id;
 
                     if (keys.indexOf(key) === -1) {
@@ -116,11 +115,13 @@
                     }
                 });
 
-                //.filter(x => !this.deselectedGroups.includes(x))
+                output.sort((a, b) => a.id - b.id);
+
                 return output;
             },
-            diffGroups() {
-                return this.deselectedGroups;
+
+            selectedGroups() {
+                return this.groups.filter(x => !this.deselectedGroups.includes(x));
             }
         },
         methods: {
@@ -128,7 +129,10 @@
                 return player.surname.concat(' ', player.name);
             },
             inSelectedPlayers(id) {
-                return this.selectedPlayers.includes(id);
+                return this.selectedPlayerIDs.includes(id);
+            },
+            inSelectedGroups(id) {
+                return this.selectedGroupIDs.includes(id);
             },
             moveUp(player) {
                 let tempIndex = this.players.indexOf(player);
@@ -151,7 +155,15 @@
                 this.players.splice(index, 1);
             },
             deselectGroup(group) {
-                this.deselectedGroups.push(group);
+                if (this.inSelectedGroups(group.id)) {
+                    this.deselectedGroups.push(group);
+                }
+            },
+            selectGroup(group) {
+                let index = this.deselectedGroups.indexOf(group);
+                if (index > -1) {
+                    this.deselectedGroups.splice(index, 1);
+                }
             },
             onSubmit() {
                 this.submit()
@@ -161,7 +173,7 @@
             submit() {
                 this.loading = true;
                 return new Promise((resolve, reject) => {
-                    axios.post('/rounds', {'players': this.selectedPlayers, 'groups': this.selectedGroups})
+                    axios.post('/rounds', {'players': this.selectedPlayerIDs, 'groups': this.selectedGroupIDs})
                         .then(response => {
                             //this.onSuccess(response.data);
 

@@ -59,36 +59,13 @@ class RegisterController extends Controller {
             'password.required' => 'Es muss ein Passwort angegeben werden!',
             'password.min' => 'Das Passwort muss mindestens 6 Zeichen haben!',
             'password.confirmed' => 'Die Passwörter stimmen nicht überein!',
-            //'pin.exists' => 'Die PIN ist ungültig!',
-            //'pin.integer' => 'Die PIN darf nur aus Zahlen bestehen!',
-            //'pin.digits' => 'Die PIN muss vierstellig sein!',
         ];
 
         return Validator::make($data, [
-			/*
-			,
-                          function ($attribute, $value, $fail)
-                          {
-                              if (strpos($value, ' ') !== false)
-                              {
-                                  $fail('Der Vorname darf kein Leerzeichen enthalten!');
-                              }
-                          }
-						  ,
-                       function ($attribute, $value, $fail)
-                       {
-                           if (strpos($value, ' ') !== false)
-                           {
-                               $fail('Der Name darf kein Leerzeichen enthalten!');
-                           }
-                       }
-
-			*/
             'surname' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
-            //'pin' => ['required', 'integer', 'digits:4', 'exists:invitations,pin'],
         ], $messages);
     }
 
@@ -110,12 +87,6 @@ class RegisterController extends Controller {
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
-
-        $profile = Profile::create([
-            'player_id' => $player->id
-        ]);
-
-        //Invitation::where('pin', $data['pin'])->first()->delete();
 
         return $user;
     }

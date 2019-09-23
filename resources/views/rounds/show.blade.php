@@ -41,6 +41,21 @@
 
     @include('rounds.inc.info')
 
-    @include('comments.index', ['comments' => $round->comments()->latest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
+    <div class="mx-auto mt-5">
+        <h4 class="mb-3" id="comments">Gruppen:</h4>
+        @forelse($round->groups as $group)
+            <div
+                class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
+                style="max-width: 24rem;">
+                <a href="{{ $group->path() }}" class="font-weight-bold tw-text-black">
+                    {{ $group->name }}
+                </a>
+            </div>
+        @empty
+            <p>Diese Runde ist in keiner Gruppe.</p>
+        @endforelse
+    </div>
+
+    @include('comments.index', ['comments' => $round->comments()->oldest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
 
 @endsection

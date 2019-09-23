@@ -10,7 +10,7 @@ use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Jobs\UpdateProfile;
+//use App\Jobs\UpdateProfile;
 
 class   GameController extends Controller {
 
@@ -80,6 +80,7 @@ class   GameController extends Controller {
             ]);
         }
 
+        /*
         foreach ($game->players()->with('profile')->get() as $player)
         {
             if (!$player->profile->queued)
@@ -88,7 +89,7 @@ class   GameController extends Controller {
                 $player->profile->save();
                 UpdateProfile::dispatch($player->profile);
             }
-        }
+        }*/
 
         return redirect('/rounds/' . $round->id);
     }
@@ -155,6 +156,7 @@ class   GameController extends Controller {
             $player->pivot->save();
         }
 
+        /*
         foreach ($game->players()->with('profile')->get() as $player)
         {
             if (!$player->profile->queued)
@@ -163,7 +165,7 @@ class   GameController extends Controller {
                 $player->profile->save();
                 UpdateProfile::dispatch($player->profile);
             }
-        }
+        }*/
 
         return redirect('/rounds/' . $round->id);
     }
@@ -171,7 +173,6 @@ class   GameController extends Controller {
     public function destroy(Game $game)
     {
         $round = $game->round;
-        $players = $game->players()->with('profile')->get();
 
         $this->authorize('update', $round);
 
@@ -182,6 +183,8 @@ class   GameController extends Controller {
 
         $game->delete();
 
+        //$players = $game->players()->with('profile')->get();
+        /*
         foreach ($players as $player)
         {
             if (!$player->profile->queued)
@@ -190,7 +193,7 @@ class   GameController extends Controller {
                 $player->profile->save();
                 UpdateProfile::dispatch($player->profile);
             }
-        }
+        }*/
 
         return redirect('/rounds/' . $round->id);
     }

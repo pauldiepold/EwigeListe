@@ -29,7 +29,6 @@ class AuthTest extends TestCase
 
         $this->assertInstanceOf('App\Player', auth()->user()->player);
         $this->assertInstanceOf('App\User', auth()->user());
-        $this->assertInstanceOf('App\Profile', auth()->user()->player->profile);
     }
 
     /** @test */

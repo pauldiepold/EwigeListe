@@ -4,10 +4,10 @@
             <span class="text-muted">
             @php
                 $player = Illuminate\Support\Facades\Cache::remember('player' . Auth::id(), 60*60, function () {
-                    return Auth::user()->player;
+                    return auth()->user()->player;
                 });
             @endphp
-            Angemeldet: <a href="/profiles/{{ $player->id }}">{{ $player->surname }} {{ $player->name }}</a> &bull;
+            Angemeldet: <a href="{{ $player->path() }}">{{ $player->surname }} {{ $player->name }}</a> &bull;
         </span>
 
             <a href="{{ route('logout') }}"
@@ -20,15 +20,15 @@
                   style="display: none;">
                 @csrf
             </form>
-        @endauth
-        @guest
-            <a href="/login">Login</a>
-        @endguest
-        @auth
+
             @if(Auth::user()->player->id == 1)
                 <br><a href="https://dev.ewige-liste.de/report">Admin Tools</a>
             @endif
+
         @endauth
+            @guest
+                <a href="/login">Login</a>
+            @endguest
         <br>
 
         <span class="text-muted">&copy; Paul Diepold &bull; {{ now()->year }}</span>

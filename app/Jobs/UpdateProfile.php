@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Profile;
 use App\Game;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Queueable;
@@ -22,7 +21,7 @@ class UpdateProfile implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct(Profile $profile)
+    public function __construct($profile)
     {
         $this->profile = $profile;
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Player;
+use App\Group;
 use App\Round;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,41 +11,29 @@ use Illuminate\Support\Facades\DB;
 class PlayerController extends Controller
 {
 
-    public function index($orderBy = 'games', $order = 'down')
+    public function index()
     {
-        $orderSQL = $order == 'up' ? 'asc' : 'desc';
+        $players = Player::all();
 
-        if ($orderBy == 'surname')
-        {
-            $orderTable = 'players';
-            $orderSQL = $orderSQL == 'asc' ? 'desc' : 'asc';
-        } else
-        {
-            $orderTable = 'profiles';
-        }
-
-        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
-            ->orderBy($orderTable . '.' . $orderBy, $orderSQL)
-            ->where('profiles.games', '>=', '10')
-            ->where('players.hide', '0')
-            ->with('profile')
-            ->get();
-
-        $playersCount = Player::where('players.hide', '0')->count();
-
-        return view('players.index', compact('players', 'playersCount', 'orderBy', 'order'));
+        return view('players.index', compact('players'));
     }
 
-    public function show(Player $player)
+    public function show(Player $player, Group $group = null)
     {
+        $selectedGroup = !$group ? Group::find(1) : $group;
+
+        $player->load(['profiles.group', 'groups', 'rounds', 'games']);
+
+        $profile = $player->profiles->where('group_id', $selectedGroup->id)->first();
+
         $rounds = $player->rounds()
             ->latest()
-            ->with(['games', 'players'])
+            ->with(['games', 'players', 'groups'])
             ->paginate(15);
 
         $groups = $player->groups;
 
-        return view('players.show', compact('player', 'rounds', 'groups'));
+        return view('players.show', compact('player', 'profile', 'rounds', 'groups', 'selectedGroup'));
 
     }
 

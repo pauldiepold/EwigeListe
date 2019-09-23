@@ -19,18 +19,17 @@ class ManageRoundTest extends TestCase
 
         $this->seed('PlayerSeeder');
 
-        $players = Player::all()->random(7);
+        $players = Player::all()->random(rand(4,7));
 
-        $groups = factory('App\Group',4)->create();
+        $groups = factory('App\Group',rand(2,4))->create();
 
         $this->actingAs($players->first()->user);
 
         $this->post('/rounds', [
-            'numberOfPlayers' => rand(4, 7),
             'players' => $players->pluck('id')->toArray(),
             'groups' => $groups->pluck('id')->toArray()
         ])
-            ->assertSee('/rounds')->assertStatus(200);
+            ->assertSee('/rounds/')->assertStatus(200);
 
     }
 }

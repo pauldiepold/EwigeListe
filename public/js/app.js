@@ -1954,6 +1954,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     allPlayers: {
@@ -1961,63 +1965,63 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return [];
       }
-    },
-    placeholder: {
-      type: String,
-      "default": 'Bitte Namen eingeben'
     }
   },
   data: function data() {
     return {
       textSearch: '',
       loading: false,
-      players: [],
-      deselectedGroups: []
+      deselectedGroups: [],
+      players: []
     };
   },
+  //https://proton.efelle.co/#/documentation/components/sortable
   computed: {
     filteredPlayers: function filteredPlayers() {
       var _this = this;
 
       return this.allPlayers.filter(function (player) {
         return _this.fullName(player).toLowerCase().includes(_this.textSearch.toLowerCase()) && !_this.inSelectedPlayers(player.id);
-      }).slice(0, 4);
+      }); //.slice(0, 4);
     },
-    selectedPlayers: function selectedPlayers() {
+    selectedPlayerIDs: function selectedPlayerIDs() {
       return this.players.map(function (v) {
         return v.id;
       });
     },
-    selectedGroups: function selectedGroups() {
-      return this.uniqueGroups.map(function (v) {
+    selectedGroupIDs: function selectedGroupIDs() {
+      return this.selectedGroups.map(function (v) {
         return v.id;
       });
     },
     groups: function groups() {
-      var output = [];
+      var output1 = [];
       this.players.forEach(function (player) {
         player.groups.forEach(function (group) {
-          output.push(group);
+          output1.push(group);
         });
       });
-      return output;
-    },
-    uniqueGroups: function uniqueGroups() {
       var output = [];
       var keys = [];
-      this.groups.forEach(function (group) {
+      output1.forEach(function (group) {
         var key = group.id;
 
         if (keys.indexOf(key) === -1) {
           keys.push(key);
           output.push(group);
         }
-      }); //.filter(x => !this.deselectedGroups.includes(x))
-
+      });
+      output.sort(function (a, b) {
+        return a.id - b.id;
+      });
       return output;
     },
-    diffGroups: function diffGroups() {
-      return this.deselectedGroups;
+    selectedGroups: function selectedGroups() {
+      var _this2 = this;
+
+      return this.groups.filter(function (x) {
+        return !_this2.deselectedGroups.includes(x);
+      });
     }
   },
   methods: {
@@ -2025,7 +2029,10 @@ __webpack_require__.r(__webpack_exports__);
       return player.surname.concat(' ', player.name);
     },
     inSelectedPlayers: function inSelectedPlayers(id) {
-      return this.selectedPlayers.includes(id);
+      return this.selectedPlayerIDs.includes(id);
+    },
+    inSelectedGroups: function inSelectedGroups(id) {
+      return this.selectedGroupIDs.includes(id);
     },
     moveUp: function moveUp(player) {
       var tempIndex = this.players.indexOf(player);
@@ -2048,7 +2055,16 @@ __webpack_require__.r(__webpack_exports__);
       this.players.splice(index, 1);
     },
     deselectGroup: function deselectGroup(group) {
-      this.deselectedGroups.push(group);
+      if (this.inSelectedGroups(group.id)) {
+        this.deselectedGroups.push(group);
+      }
+    },
+    selectGroup: function selectGroup(group) {
+      var index = this.deselectedGroups.indexOf(group);
+
+      if (index > -1) {
+        this.deselectedGroups.splice(index, 1);
+      }
     },
     onSubmit: function onSubmit() {
       this.submit().then(function (response) {
@@ -2058,19 +2074,19 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     submit: function submit() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.loading = true;
       return new Promise(function (resolve, reject) {
         axios.post('/rounds', {
-          'players': _this2.selectedPlayers,
-          'groups': _this2.selectedGroups
+          'players': _this3.selectedPlayerIDs,
+          'groups': _this3.selectedGroupIDs
         }).then(function (response) {
           //this.onSuccess(response.data);
           resolve(response.data);
         })["catch"](function (error) {
           //this.onFail(error.response.data.errors);
-          _this2.loading = false;
+          _this3.loading = false;
           reject(error.response);
         });
       });
@@ -2182,9 +2198,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['player_id'],
+  props: ['profile_id'],
   mounted: function mounted() {
-    axios.get('/charts/profile/' + this.player_id).then(function (response) {
+    axios.get('/charts/profile/' + this.profile_id).then(function (response) {
       var data = response.data;
       console.log(data);
       var chartdataPoints = {
@@ -57328,7 +57344,7 @@ var render = function() {
                 attrs: {
                   id: "text-search",
                   type: "text",
-                  placeholder: _vm.placeholder
+                  placeholder: "Bitte Namen eingeben"
                 },
                 domProps: { value: _vm.textSearch },
                 on: {
@@ -57340,7 +57356,10 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "div",
-                { staticClass: "mt-2 tw-bg-grey" },
+                {
+                  staticClass:
+                    "mt-1 tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto"
+                },
                 [
                   _vm._l(_vm.filteredPlayers, function(player) {
                     return _c(
@@ -57365,11 +57384,15 @@ var render = function() {
                   }),
                   _vm._v(" "),
                   _vm.filteredPlayers.length === 0
-                    ? _c("div", { staticClass: "py-2 px-1 text-left" }, [
-                        _vm._v(
-                          "\n                Spieler wurde nicht gefunden.\n            "
-                        )
-                      ])
+                    ? _c(
+                        "div",
+                        { staticClass: "py-2 px-1 text-left tw-mt-1" },
+                        [
+                          _vm._v(
+                            "\n                Spieler wurde nicht gefunden.\n            "
+                          )
+                        ]
+                      )
                     : _vm._e()
                 ],
                 2
@@ -57453,46 +57476,6 @@ var render = function() {
         0
       ),
       _vm._v(" "),
-      _vm.uniqueGroups.length !== 0
-        ? _c("h4", { staticClass: "mt-5" }, [
-            _vm._v(
-              "Runde wird diesen " +
-                _vm._s(_vm.uniqueGroups.length) +
-                "\n        Gruppen hinzugefügt:"
-            )
-          ])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm._l(_vm.uniqueGroups, function(group, key) {
-        return _c(
-          "div",
-          {
-            key: group.id,
-            staticClass:
-              "rounded bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2",
-            staticStyle: { "max-width": "19rem" },
-            on: {
-              click: function($event) {
-                return _vm.deselectGroup(group)
-              }
-            }
-          },
-          [
-            _c("span", { staticClass: "font-weight-bold" }, [
-              _vm._v(
-                "\n            " +
-                  _vm._s(group.name) +
-                  " - " +
-                  _vm._s(key) +
-                  "\n        "
-              )
-            ]),
-            _vm._v(" "),
-            _vm._m(0, true)
-          ]
-        )
-      }),
-      _vm._v(" "),
       _c(
         "form",
         {
@@ -57530,30 +57513,58 @@ var render = function() {
             ]
           )
         ]
-      )
+      ),
+      _vm._v(" "),
+      _vm.groups.length !== 0
+        ? _c("h4", { staticClass: "mt-5" }, [
+            _vm._v(
+              "Runde wird diesen " +
+                _vm._s(_vm.selectedGroups.length) +
+                "\n        Gruppen hinzugefügt:"
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm._l(_vm.groups, function(group) {
+        return _c(
+          "div",
+          {
+            staticClass:
+              "rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2 tw-cursor-pointer",
+            staticStyle: { "max-width": "24rem" },
+            on: {
+              click: function($event) {
+                _vm.inSelectedGroups(group.id)
+                  ? _vm.deselectGroup(group)
+                  : _vm.selectGroup(group)
+              }
+            }
+          },
+          [
+            _c(
+              "span",
+              {
+                staticClass: "font-weight-bold",
+                class: { "tw-text-gray-500": !_vm.inSelectedGroups(group.id) }
+              },
+              [_vm._v("\n            " + _vm._s(group.name) + "\n        ")]
+            ),
+            _vm._v(" "),
+            _c("i", {
+              staticClass: "fas fa-2x mx-1 tw-text-gray-600",
+              class: {
+                "fa-toggle-on": _vm.inSelectedGroups(group.id),
+                "fa-toggle-off": !_vm.inSelectedGroups(group.id)
+              }
+            })
+          ]
+        )
+      })
     ],
     2
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "span",
-      {
-        staticClass: "tw-cursor-default",
-        staticStyle: { "font-size": "1.1rem" }
-      },
-      [
-        _c("i", {
-          staticClass: "fas fa-trash mx-1 text-danger tw-cursor-pointer"
-        })
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 

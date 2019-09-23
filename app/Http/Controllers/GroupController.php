@@ -38,7 +38,12 @@ class GroupController extends Controller
 
     public function show(Group $group)
     {
-        return view('groups.show', compact('group'));
+        $rounds = $group->rounds()
+            ->latest()
+            ->with(['games', 'players'])
+            ->paginate(15);
+
+        return view('groups.show', compact('group', 'rounds'));
     }
 
 

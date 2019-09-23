@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Round;
 use App\Player;
+use App\Group;
 use App\Game;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreRound;
@@ -22,6 +23,7 @@ class RoundController extends Controller {
 
     public function show(Round $round)
     {
+        $round->load('players', 'groups');
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
         if (Auth::user()->player->games->count() > 0)
@@ -34,14 +36,15 @@ class RoundController extends Controller {
 
         $colRound = collect();
         $playerPoints = collect();
+        $dealerIndex = $round->getDealerIndex();
 
         //Kopfzeile
         $colRow = collect();
         foreach ($round->players as $player)
         {
             $colItem = collect($player->surname);
-            $colItem->push($player->id);
-            $player->pivot->index == $round->getDealerIndex() ? $colItem->push('dealer') : '';
+            $colItem->push($player->path());
+            $player->pivot->index == $dealerIndex ? $colItem->push('dealer') : '';
             $activePlayers->pluck('id')->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
 
             $colRow->push($colItem);
@@ -76,7 +79,6 @@ class RoundController extends Controller {
             $colRound->push($colRow);
         }
 
-        //dd($colRound->toArray());
         return view('rounds.show', compact(
             'round',
             'colRound',
@@ -86,24 +88,10 @@ class RoundController extends Controller {
         ));
     }
 
-    public function createAlt()
-    {
-        $players = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
-            ->where('players.hide', '=', '0')
-            ->orderBy('profiles.games', 'desc')
-            ->select('players.*')
-            ->get();
-
-        return view('rounds.create', compact('players'));
-    }
-
     public function create()
     {
-        $allPlayers = Player::join('profiles', 'players.id', '=', 'profiles.player_id')
-            ->where('players.hide', '=', '0')
-            ->orderBy('profiles.games', 'desc')
-            ->select('players.*')
-            ->with('groups')
+        $allPlayers = Player::where('hide', '=', '0')
+            ->with('groups.players')
             ->get();
 
         return view('rounds.create-new', compact('allPlayers'));
@@ -113,18 +101,25 @@ class RoundController extends Controller {
     {
         $validated = collect($request->validated());
 
-        $numberOfPlayers = $validated->get('numberOfPlayers');
-        $playerIDs = collect($validated->get('players'))->take($numberOfPlayers);
+        $players = Player::find($validated->get('players'));
+        $groups = Group::find($validated->get('groups'));
 
-        $round = Round::create(['created_by' => Auth::user()->player->id]);
+        $round = Round::create(['created_by' => auth()->user()->player->id]);
 
         $index = 0;
-        foreach ($playerIDs as $playerID)
+        foreach ($players as $player)
         {
-            $round->players()->attach(Player::find($playerID)->id, [
+            $round->players()->save($player, [
                 'index' => $index
             ]);
             $index++;
+        }
+
+        $round->groups()->saveMany($groups);
+
+        foreach ($groups as $group)
+        {
+            $group->addPlayers($players);
         }
 
         return $round->path();

@@ -22,10 +22,17 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 /* *********** Players *********** */
 Route::get('players/{orderBy?}/{order?}', 'PlayerController@index');
-Route::get('profiles/', 'ProfileController@index')->middleware('auth');
-Route::get('profiles/update', 'ProfileController@updateAll')->middleware('auth');
-Route::get('profiles/{player}', 'ProfileController@show')->middleware('auth');
-Route::get('profil/{player}', 'PlayerController@show')->middleware('auth');
+Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
+Route::get('updateProfil', function ()
+{
+    $profiles = App\Profile::all();
+    foreach ($profiles as $profile)
+    {
+        $profile->updateProfile();
+    }
+
+    return redirect('/players');
+});
 
 
 /* *********** Rounds ************ */
@@ -38,7 +45,8 @@ Route::get('/rounds/current',
             $lastRound = Auth::user()->player->games()->latest()->first()->round;
 
             return redirect('/rounds/' . $lastRound->id);
-        } else {
+        } else
+        {
             return redirect('/rounds/create');
         }
     })->middleware('auth');
@@ -76,7 +84,7 @@ Route::delete('/invitations/{invitation}', 'InvitationController@destroy')->midd
 
 /* *********** Charts ************** */
 Route::get('/charts/round/{round}/', 'ChartController@roundChart')->middleware('auth');
-Route::get('/charts/profile/{player}/', 'ChartController@profileChart')->middleware('auth');
+Route::get('/charts/profile/{profile}/', 'ChartController@profileChart')->middleware('auth');
 Route::get('/charts/home', 'ChartController@homeChart');
 
 
