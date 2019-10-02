@@ -22,7 +22,7 @@
             </form>
 
             @if(Auth::user()->player->id == 1)
-                <br><a href="https://dev.ewige-liste.de/report">Admin Tools</a>
+                <br><a href="https://dev.ewige-liste.de/report">Admin Tools</a> <span class="text-muted">&bull;</span> <a href="/telescope">Telescope</a>
             @endif
 
         @endauth

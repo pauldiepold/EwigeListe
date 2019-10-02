@@ -47,7 +47,7 @@ class Profile extends Pivot
 
     }
 
-    public function updateProfile()
+    public function calculate()
     {
         $games = DB::table('game_player as g')
             ->join('games', 'g.game_id', '=', 'games.id')

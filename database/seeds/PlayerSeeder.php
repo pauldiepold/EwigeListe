@@ -14,24 +14,24 @@ class PlayerSeeder extends Seeder
      */
     public function run()
     {
-        $testUser = factory('App\User')->create(['email' => 'test@test.de']);
+        factory('App\User')->create(['email' => 'test@test.de']);
 
-        factory('App\User', env('SEEDED_USERS', 20))->create();
+        factory('App\User', intval(config('database.seed.players')))->create();
 
         $allPlayers = App\Player::all();
 
-        for ($i = 0; $i < env('SEEDED_GROUPS', 4); $i++)
-        {
-        }
         $group = factory('App\Group')->create(['created_by' => $allPlayers->random(), 'name' => 'Ewige Liste']);
         $group->addPlayers($allPlayers);
 
-        for ($i = 0; $i < env('SEEDED_ROUNDS', 20); $i++)
+        $groups = factory('App\Group', intval(config('database.seed.groups')))->create(['created_by' => $allPlayers->random()]);
+
+        for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)
         {
             $playerInRound = $allPlayers->random(rand(4, 7));
 
             $round = factory('App\Round')->create(['created_by' => $playerInRound->random()]);
             $round->groups()->save($group);
+
 
             $index = 0;
             foreach ($playerInRound as $player)
@@ -40,6 +40,13 @@ class PlayerSeeder extends Seeder
                     'index' => $index
                 ]);
                 $index++;
+            }
+
+            for ($u = 0; $u < rand(0, 1); $u++)
+            {
+                $group_temp = $groups->random()->load('players');
+                $round->groups()->save($group_temp);
+                $group_temp->addPlayers($playerInRound);
             }
 
             for ($k = 0; $k < rand(10, 25); $k++)
@@ -107,5 +114,9 @@ class PlayerSeeder extends Seeder
 
             }
         }
+        App\Profile::all()->each(function ($profile, $key)
+        {
+            $profile->calculate();
+        });
     }
 }

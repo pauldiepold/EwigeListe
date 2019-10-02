@@ -15,6 +15,13 @@ return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
+    // SEEDING
+    'seed' => [
+        'players' => env('DB_SEEDING_PLAYERS', 40),
+        'rounds' => env('DB_SEEDING_ROUNDS', 60),
+        'groups' => env('DB_SEEDING_GROUPS', 10),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections
