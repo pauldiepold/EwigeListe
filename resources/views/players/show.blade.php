@@ -176,7 +176,7 @@
     <hr>
     <h4>Gruppen:</h4>
     @forelse($groups as $group)
-        <p><a href="{{ $group->path() }}">{{ $group->name }}</a></p>
+        <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
 
     @empty
         Der Spiele ist bisher in keiner Gruppe.

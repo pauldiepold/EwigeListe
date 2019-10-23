@@ -18,7 +18,7 @@ new Vue({
         ProfileGraphs,
         HomeGraph,
         CreateRound,
-        Alert
+        Alert,
     },
     data: {
     },

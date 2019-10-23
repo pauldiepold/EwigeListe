@@ -4,9 +4,10 @@
 <link rel="icon" href="{{ asset('img/favicon_32x32.png') }}" sizes="32x32"/>
 <link rel="icon" href="{{ asset('img/favicon_192x192.png') }}" sizes="192x192"/>
 
+@stack('scriptsHead')
+
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
-@stack('scriptsHead')
 <title>@yield('title')</title>
 @if(Auth::id() != 1)
     <script type="text/javascript">

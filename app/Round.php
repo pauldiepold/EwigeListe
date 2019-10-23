@@ -102,4 +102,8 @@ class Round extends Model
     {
         return $this->belongsToMany(Group::class)->withTimestamps();
     }
+
+    public function roundsOfGroup( $groupID ) {
+        return ;
+    }
 }

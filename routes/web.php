@@ -21,7 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 /* *********** Players *********** */
-Route::get('players/{orderBy?}/{order?}', 'PlayerController@index');
+Route::get('players', 'GroupController@show');
 Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
 Route::get('updateProfil', function ()
 {
@@ -69,6 +69,7 @@ Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 /* *********** Groups ************** */
 Route::get('/groups', 'GroupController@index')->middleware('auth');
 Route::get('/groups/create', 'GroupController@create')->middleware('auth');
+Route::get('/groups/{group}/rounds', 'Roundcontroller@index')->middleware('auth');
 Route::get('/groups/{group}', 'GroupController@show')->middleware('auth');
 Route::post('/groups', 'GroupController@store')->middleware('auth');
 //Route::patch('/games/{game}', 'GameController@update')->middleware('auth');

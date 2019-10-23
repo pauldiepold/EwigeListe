@@ -27,6 +27,7 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
-        "chart.js": "^2.8.0"
+        "chart.js": "^2.8.0",
+        "vue-slicksort": "^1.1.3"
     }
 }

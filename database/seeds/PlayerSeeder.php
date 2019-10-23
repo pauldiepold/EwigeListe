@@ -1,6 +1,7 @@
 <?php
 
 use App\Game;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,9 +28,15 @@ class PlayerSeeder extends Seeder
 
         for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)
         {
+            $date = Carbon::now()->subMinutes(rand(0, 60 * 24 * 300));
+
             $playerInRound = $allPlayers->random(rand(4, 7));
 
-            $round = factory('App\Round')->create(['created_by' => $playerInRound->random()]);
+            $round = factory('App\Round')->create([
+                'created_by' => $playerInRound->random(),
+                'created_at' => $date,
+                'updated_at' => $date
+            ]);
             $round->groups()->save($group);
 
 
@@ -37,7 +44,9 @@ class PlayerSeeder extends Seeder
             foreach ($playerInRound as $player)
             {
                 $round->players()->attach($player, [
-                    'index' => $index
+                    'index' => $index,
+                    'created_at' => $date,
+                    'updated_at' => $date
                 ]);
                 $index++;
             }
@@ -51,6 +60,8 @@ class PlayerSeeder extends Seeder
 
             for ($k = 0; $k < rand(10, 25); $k++)
             {
+                $date->addMinutes(8);
+
                 $activePlayers = $round->getActivePlayers();
                 $winners = $activePlayers->random(round(rand(140, 260) / 100))->pluck('id')->toArray();
                 $pointsRound = rand(-1, 10);
@@ -66,6 +77,8 @@ class PlayerSeeder extends Seeder
                     'dealerIndex' => $round->getDealerIndex(),
                     'created_by' => $playerInRound->first()->id,
                     'round_id' => $round->id,
+                    'created_at' => $date,
+                    'updated_at' => $date
                 ]);
 
                 foreach ($activePlayers as $player)
@@ -109,6 +122,8 @@ class PlayerSeeder extends Seeder
                         'soloist' => $soloist,
                         'points' => $points,
                         'misplayed' => $misplayed,
+                        'created_at' => $date,
+                        'updated_at' => $date
                     ]);
                 }
 

@@ -43,7 +43,7 @@
 
     <div class="mx-auto mt-5">
         <h4 class="mb-3" id="comments">Gruppen:</h4>
-        @forelse($round->groups as $group)
+        @forelse($round->groups->filter(function ($value, $key) { return $value->id != 1; }) as $group)
             <div
                 class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
                 style="max-width: 24rem;">

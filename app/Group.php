@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Player;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -34,5 +33,9 @@ class Group extends Model
     public function rounds()
     {
         return $this->belongsToMany(Round::class)->withTimestamps();
+    }
+
+    public function profiles() {
+        return $this->hasMany(Profile::class);
     }
 }

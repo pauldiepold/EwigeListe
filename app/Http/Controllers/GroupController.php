@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -36,14 +37,27 @@ class GroupController extends Controller
     }
 
 
-    public function show(Group $group)
+    public function show(Group $group = null)
     {
+        $group = isset($group) ? $group : Group::find(1);
+        $group->load(['players.profiles', 'profiles.player']);
+
+
+        $profiles = $group->profiles->sortByDesc('games');
+        $sorted = $profiles->values()->all();
+        //dd($profiles->first());
+
+
         $rounds = $group->rounds()
+            ->whereHas('groups', function (Builder $query) use ($group)
+            {
+                $query->where('groups.id', '=', $group->id);
+            })
             ->latest()
             ->with(['games', 'players'])
             ->paginate(15);
 
-        return view('groups.show', compact('group', 'rounds'));
+        return view('groups.show', compact('group', 'rounds', 'profiles'));
     }
 
 

@@ -1,13 +1,20 @@
 <template>
     <div class="form-autocomplete">
 
-        <div class="bg-white rounded shadow-2 mx-auto my-4 px-3 pb-2 pt-3" style="max-width:19rem;"
-             v-if="players.length < 7">
-            <input id="text-search" class="custom-input" :value="textSearch" @input="textSearch = $event.target.value"
-                   type="text" placeholder="Bitte Namen eingeben"/>
+        <div v-if="players.length < 7"
+             class="bg-white rounded shadow-2 mx-auto my-4 px-3 pb-2 pt-3"
+             style="max-width:19rem;">
+
+            <input id="text-search"
+                   class="custom-input"
+                   :value="textSearch"
+                   @input="textSearch = $event.target.value"
+                   type="text"
+                   placeholder="Bitte Namen eingeben"/>
 
             <div class="mt-1 tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto">
-                <div class="py-2 px-1 text-left sm:hover:tw-bg-gray-200" v-for="(player) in filteredPlayers"
+                <div class="py-2 px-1 text-left sm:hover:tw-bg-gray-200"
+                     v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
                     {{player.surname.concat(' ', player.name)}}
                 </div>
@@ -17,45 +24,46 @@
             </div>
         </div>
 
-        <h4 class="mt-4" v-if="players.length !== 0">{{players.length}} Spieler:</h4>
-        <transition-group name="flip-list">
-            <div
-                class="rounded bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
-                style="max-width: 19rem;"
-                v-for="(player, key) in players" v-bind:key="player.id">
-                <span class="font-weight-bold">
-                    {{player.surname.concat(' ', player.name)}}
-                </span>
-                <span style="font-size: 1.1rem;" class="tw-cursor-default">
-                        <i class="fas fa-chevron-up mx-1 text-muted tw-cursor-pointer" @click="moveUp(player)"
-                           v-if="key !== 0"></i>
-                        <i class="fas fa-chevron-down mx-1 text-muted tw-cursor-pointer" @click="moveDown(player)"
-                           v-if="key !== players.length-1"></i>
-                        <i class="fas fa-trash mx-1 text-danger tw-cursor-pointer" @click="removePlayer(key)"></i>
-                    </span>
-            </div>
-        </transition-group>
+        <h4 class="mt-4" v-if="players.length !== 0">
+            {{players.length}} Spieler:
+        </h4>
+
+
+        <sortable-players-list lockAxis="y"
+                               :useDragHandle="true"
+                               v-model="players">
+            <sortable-player v-for="(player, index) in players"
+                             v-bind:key="player.id"
+                             :players="players"
+                             :player="player"
+                             :index="index"
+                             @remove-player="removePlayer"/>
+        </sortable-players-list>
+
 
         <form @submit.prevent="onSubmit">
-            <button type="submit" class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto"
-                    :disabled="players.length < 4">
-                 <span>
-                    <i v-if="loading" class="fa fa-spinner fa-spin text-lg mr-2"
+            <button :disabled="players.length < 4"
+                    type="submit"
+                    class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto">
+                <span>
+                    <i v-if="loading"
+                       class="fa fa-spinner fa-spin text-lg mr-2"
                        style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
-                 </span>
+                </span>
                 <span>
                     Neue Runde starten
-                 </span>
+                </span>
             </button>
         </form>
 
         <h4 class="mt-5" v-if="groups.length !== 0">Runde wird diesen {{selectedGroups.length}}
             Gruppen hinzugefügt:</h4>
-        <div
-            class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2 tw-cursor-pointer"
-            style="max-width: 24rem;" v-for="(group) in groups"
-            @click="inSelectedGroups(group.id) ? deselectGroup(group) : selectGroup(group)">
-            <span class="font-weight-bold" :class="{'tw-text-gray-500': !inSelectedGroups(group.id)}">
+        <div v-for="(group) in groups"
+             @click="inSelectedGroups(group.id) ? deselectGroup(group) : selectGroup(group)"
+             class="text-left d-flex align-items-center justify-content-between tw-cursor-pointer group"
+             style="max-width: 24rem;">
+            <span class="font-weight-bold"
+                  :class="{'tw-text-gray-500': !inSelectedGroups(group.id)}">
                 {{group.name}}
             </span>
             <i class="fas fa-2x mx-1 tw-text-gray-600"
@@ -67,7 +75,14 @@
 </template>
 
 <script>
+    import SortablePlayer from "./SortablePlayer";
+    import SortablePlayersList from "./SortablePlayersList";
+
     export default {
+        components: {
+            SortablePlayer,
+            SortablePlayersList,
+        },
         props: {
             allPlayers: {
                 type: Array,
@@ -104,7 +119,7 @@
                 });
 
                 let output = [];
-                let keys = [];
+                let keys = [1];
 
                 output1.forEach(function (group) {
                     let key = group.id;

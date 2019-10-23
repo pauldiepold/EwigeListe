@@ -11,7 +11,7 @@
     <div class="">
         @foreach ($groups as $group)
             <div
-                class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2 tw-flex"
+                class="group text-left d-flex align-items-center justify-content-between"
                 style="max-width: 30rem;">
                 <div class="tw-flex-1">
                     <a href="{{ $group->path() }}" class="font-weight-bold tw-text-black">

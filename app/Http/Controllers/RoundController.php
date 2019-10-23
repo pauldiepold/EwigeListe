@@ -7,16 +7,21 @@ use App\Player;
 use App\Group;
 use App\Game;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreRound;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-class RoundController extends Controller {
+class RoundController extends Controller
+{
 
-    public function index()
+    public function index($groupID = 1)
     {
-        $rounds = Round::latest()->with(['games', 'players'])->paginate(35);
+        $rounds = Round::whereHas('groups', function (Builder $query) use ($groupID)
+        {
+            $query->where('groups.id', '=', $groupID);
+        })->latest()->with(['games', 'players'])->paginate(35);
 
         return view('rounds.index', compact('rounds'));
     }
@@ -94,22 +99,24 @@ class RoundController extends Controller {
             ->with('groups.players')
             ->get();
 
-        return view('rounds.create-new', compact('allPlayers'));
+        return view('rounds.create', compact('allPlayers'));
     }
 
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
-
         $players = Player::find($validated->get('players'));
-        $groups = Group::find($validated->get('groups'));
+
+        $groups = Group::find(
+            collect($validated->get('groups'))->prepend(1)
+        );
 
         $round = Round::create(['created_by' => auth()->user()->player->id]);
 
         $index = 0;
-        foreach ($players as $player)
+        foreach ($validated->get('players') as $playerID)
         {
-            $round->players()->save($player, [
+            $round->players()->attach($playerID, [
                 'index' => $index
             ]);
             $index++;
