@@ -10,6 +10,11 @@ import CreateRound from './components/CreateRound';
 import Alert from './components/Alert';
 import Tabs from "./components/tabs/Tabs";
 import Tab from "./components/tabs/Tab";
+import VueScrollTo from 'vue-scrollto';
+
+Vue.use(VueScrollTo, {
+    offset: -70
+});
 
 import Form from './lib/Form';
 

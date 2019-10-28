@@ -1,6 +1,5 @@
 <template>
     <div class="form-autocomplete">
-
         <div v-if="players.length < 7"
              class="bg-white rounded shadow-2 mx-auto my-4 px-3 pb-2 pt-3"
              style="max-width:19rem;">
@@ -9,6 +8,7 @@
                    class="custom-input"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
+                   @focus="scrollTo('#text-search')"
                    ref="textSearch"
                    type="text"
                    placeholder="Bitte Namen eingeben"/>
@@ -62,7 +62,8 @@
         <div v-for="group in filteredGroups"
              @click="inSelectedGroups(group) ? removeGroup(group) : addGroup(group)"
              class="text-left d-flex align-items-center justify-content-between tw-cursor-pointer group"
-             style="max-width: 24rem;">
+             style="max-width: 24rem;"
+             id="groups">
             <span class="font-weight-bold"
                   :class="{'tw-text-gray-500': !inSelectedGroups(group)}">
                 {{group.name}}
@@ -136,6 +137,9 @@
             this.focusTextSearch();
         },
         methods: {
+            scrollTo(element) {
+                this.$scrollTo(element);
+            },
             fullName(player) {
                 return player.surname.concat(' ', player.name);
             },
@@ -147,8 +151,10 @@
             },
             addPlayer(player) {
                 if (!this.inSelectedPlayers(player)) {
+                    if (this.textSearch !== '') {
+                        this.$refs.textSearch.focus();
+                    }
                     this.textSearch = '';
-                    this.$refs.textSearch.focus();
                     this.players.push(player);
                 }
             },
