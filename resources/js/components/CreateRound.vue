@@ -134,7 +134,7 @@
             }
         },
         mounted() {
-            this.focusTextSearch();
+            //this.focusTextSearch();
         },
         methods: {
             scrollTo(element) {
