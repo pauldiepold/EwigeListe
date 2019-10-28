@@ -56,18 +56,18 @@
             </button>
         </form>
 
-        <h4 class="mt-5" v-if="groups.length !== 0">Runde wird diesen {{selectedGroups.length}}
-            Gruppen hinzugefügt:</h4>
-        <div v-for="(group) in groups"
-             @click="inSelectedGroups(group.id) ? deselectGroup(group) : selectGroup(group)"
+        <h4 class="mt-5" v-if="players.length !== 0">Runde wird {{ groupText }} hinzugefügt:</h4>
+
+        <div v-for="group in filteredGroups"
+             @click="inSelectedGroups(group) ? removeGroup(group) : addGroup(group)"
              class="text-left d-flex align-items-center justify-content-between tw-cursor-pointer group"
              style="max-width: 24rem;">
             <span class="font-weight-bold"
-                  :class="{'tw-text-gray-500': !inSelectedGroups(group.id)}">
+                  :class="{'tw-text-gray-500': !inSelectedGroups(group)}">
                 {{group.name}}
             </span>
             <i class="fas fa-2x mx-1 tw-text-gray-600"
-               :class="{'fa-toggle-on': inSelectedGroups(group.id), 'fa-toggle-off': !inSelectedGroups(group.id)}">
+               :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}">
             </i>
         </div>
 
@@ -83,6 +83,7 @@
             SortablePlayer,
             SortablePlayersList,
         },
+
         props: {
             allPlayers: {
                 type: Array,
@@ -95,89 +96,71 @@
             return {
                 textSearch: '',
                 loading: false,
-                deselectedGroups: [],
+                groups: [],
                 players: []
             }
         },
-        //https://proton.efelle.co/#/documentation/components/sortable
+
         computed: {
             filteredPlayers() {
-                return this.allPlayers.filter(player => this.fullName(player).toLowerCase().includes(this.textSearch.toLowerCase()) && !this.inSelectedPlayers(player.id));//.slice(0, 4);
+                return this.allPlayers.filter(player => this.fullName(player).toLowerCase().includes(this.textSearch.toLowerCase())
+                    && !this.inSelectedPlayers(player));
             },
-            selectedPlayerIDs() {
-                return this.players.map(v => v.id);
-            },
-            selectedGroupIDs() {
-                return this.selectedGroups.map(v => v.id);
-            },
-            groups() {
-                let output1 = [];
+            filteredGroups() {
+                let output = [];
+
                 this.players.forEach(function (player) {
                     player.groups.forEach(function (group) {
-                        output1.push(group);
+                        if (!output.map(v => v.id).includes(group.id) && group.id !== 1) {
+                            output.push(group);
+                        }
                     });
-                });
-
-                let output = [];
-                let keys = [1];
-
-                output1.forEach(function (group) {
-                    let key = group.id;
-
-                    if (keys.indexOf(key) === -1) {
-                        keys.push(key);
-                        output.push(group);
-                    }
                 });
 
                 output.sort((a, b) => a.id - b.id);
 
                 return output;
             },
-
-            selectedGroups() {
-                return this.groups.filter(x => !this.deselectedGroups.includes(x));
+            groupText() {
+                if (this.groups.length === 0) {
+                    return 'keiner Gruppe';
+                } else if (this.groups.length === 1) {
+                    return 'einer Gruppe';
+                } else {
+                    return this.groups.length + ' Gruppen'
+                }
             }
         },
         methods: {
             fullName(player) {
                 return player.surname.concat(' ', player.name);
             },
-            inSelectedPlayers(id) {
-                return this.selectedPlayerIDs.includes(id);
+            inSelectedPlayers(player) {
+                return this.players.includes(player);
             },
-            inSelectedGroups(id) {
-                return this.selectedGroupIDs.includes(id);
-            },
-            moveUp(player) {
-                let tempIndex = this.players.indexOf(player);
-                this.players.splice(tempIndex, 1);
-                this.players.splice(tempIndex - 1, 0, player);
-            },
-            moveDown(player) {
-                let tempIndex = this.players.indexOf(player);
-                this.players.splice(tempIndex, 1);
-                this.players.splice(tempIndex + 1, 0, player);
+            inSelectedGroups(group) {
+                return this.groups.includes(group);
             },
             addPlayer(player) {
-                if (!this.inSelectedPlayers(player.id)) {
+                if (!this.inSelectedPlayers(player)) {
                     this.textSearch = '';
                     this.players.push(player);
                 }
             },
-            removePlayer(index) {
+            removePlayer(player) {
                 this.textSearch = '';
+                let index = this.players.indexOf(player);
                 this.players.splice(index, 1);
             },
-            deselectGroup(group) {
-                if (this.inSelectedGroups(group.id)) {
-                    this.deselectedGroups.push(group);
+            addGroup(group) {
+                if (!this.inSelectedGroups(group)) {
+                    this.groups.push(group);
                 }
             },
-            selectGroup(group) {
-                let index = this.deselectedGroups.indexOf(group);
+            removeGroup(group) {
+                let index = this.groups.indexOf(group);
                 if (index > -1) {
-                    this.deselectedGroups.splice(index, 1);
+                    this.groups.splice(index, 1);
                 }
             },
             onSubmit() {
@@ -188,7 +171,10 @@
             submit() {
                 this.loading = true;
                 return new Promise((resolve, reject) => {
-                    axios.post('/rounds', {'players': this.selectedPlayerIDs, 'groups': this.selectedGroupIDs})
+                    axios.post('/rounds', {
+                        'players': this.players.map(v => v.id),
+                        'groups': this.groups.map(v => v.id)
+                    })
                         .then(response => {
                             //this.onSuccess(response.data);
 

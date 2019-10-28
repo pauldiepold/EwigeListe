@@ -6,6 +6,6 @@
 
 @section('content')
 
-    <create-round :all-players="{{ json_encode($allPlayers) }}" />
+    <create-round :all-players="{{ $allPlayers }}" />
 
 @endsection

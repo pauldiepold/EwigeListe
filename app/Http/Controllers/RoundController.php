@@ -21,7 +21,10 @@ class RoundController extends Controller
         $rounds = Round::whereHas('groups', function (Builder $query) use ($groupID)
         {
             $query->where('groups.id', '=', $groupID);
-        })->latest()->with(['games', 'players'])->paginate(35);
+        })
+            ->latest()
+            ->with(['games', 'players'])
+            ->get();
 
         return view('rounds.index', compact('rounds'));
     }
@@ -96,7 +99,7 @@ class RoundController extends Controller
     public function create()
     {
         $allPlayers = Player::where('hide', '=', '0')
-            ->with('groups.players')
+            ->with('groups')
             ->get();
 
         return view('rounds.create', compact('allPlayers'));

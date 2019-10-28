@@ -42,12 +42,6 @@ class GroupController extends Controller
         $group = isset($group) ? $group : Group::find(1);
         $group->load(['players.profiles', 'profiles.player']);
 
-
-        $profiles = $group->profiles->sortByDesc('games');
-        $sorted = $profiles->values()->all();
-        //dd($profiles->first());
-
-
         $rounds = $group->rounds()
             ->whereHas('groups', function (Builder $query) use ($group)
             {
@@ -55,9 +49,9 @@ class GroupController extends Controller
             })
             ->latest()
             ->with(['games', 'players'])
-            ->paginate(15);
+            ->get();
 
-        return view('groups.show', compact('group', 'rounds', 'profiles'));
+        return view('groups.show', compact('group', 'rounds'));
     }
 
 

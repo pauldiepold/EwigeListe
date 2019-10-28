@@ -1,0 +1,11 @@
+.tab {
+    @apply tw-inline-block tw-py-2 tw-px-2 tw-text-orange-600;
+}
+
+.tab-active {
+    @apply tw-border-l tw-border-t tw-border-r tw-rounded-t-lg tw-border-gray-400 tw-text-orange-700;
+}
+
+.tab-inactive {
+
+}

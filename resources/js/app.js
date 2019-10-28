@@ -8,6 +8,8 @@ import ProfileGraphs from './components/ProfileGraphs';
 import HomeGraph from './components/HomeGraph';
 import CreateRound from './components/CreateRound';
 import Alert from './components/Alert';
+import Tabs from "./components/tabs/Tabs";
+import Tab from "./components/tabs/Tab";
 
 import Form from './lib/Form';
 
@@ -19,6 +21,8 @@ new Vue({
         HomeGraph,
         CreateRound,
         Alert,
+        Tab,
+        Tabs
     },
     data: {
     },

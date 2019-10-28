@@ -52,9 +52,6 @@
                 </a>
 
                 <div class="dropdown-menu bg-secondary text-light">
-                    @auth
-                        <a href="/invitations" class="dropdown-item">Einladung</a>
-                    @endauth
                     <a href="/regeln" class="dropdown-item">Regeln</a>
                     <a href="/impressum" class="dropdown-item">Impressum</a>
                     <a href="/datenschutz" class="dropdown-item">Datenschutz</a>

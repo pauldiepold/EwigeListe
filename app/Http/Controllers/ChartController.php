@@ -126,7 +126,7 @@ class ChartController extends Controller
         $i = 0;
         foreach ($games as $game)
         {
-            $currentDate = Carbon::parse($game->created_at);
+            $currentDate = $game->created_at;
 
             if ($i == 0)
             {

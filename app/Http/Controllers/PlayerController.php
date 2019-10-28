@@ -5,18 +5,12 @@ namespace App\Http\Controllers;
 use App\Player;
 use App\Group;
 use App\Round;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PlayerController extends Controller
 {
-
-    public function index()
-    {
-        $players = Player::all();
-
-        return view('players.index', compact('players'));
-    }
 
     public function show(Player $player, Group $group = null)
     {
@@ -27,13 +21,15 @@ class PlayerController extends Controller
         $profile = $player->profiles->where('group_id', $selectedGroup->id)->first();
 
         $rounds = $player->rounds()
+            ->whereHas('groups', function (Builder $query) use ($selectedGroup)
+            {
+                $query->where('groups.id', '=', $selectedGroup->id);
+            })
             ->latest()
             ->with(['games', 'players', 'groups'])
-            ->paginate(15);
+            ->get();
 
-        $groups = $player->groups;
-
-        return view('players.show', compact('player', 'profile', 'rounds', 'groups', 'selectedGroup'));
+        return view('players.show', compact('player', 'profile', 'rounds', 'selectedGroup'));
 
     }
 

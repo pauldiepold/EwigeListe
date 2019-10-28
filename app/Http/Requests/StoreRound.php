@@ -26,7 +26,7 @@ class StoreRound extends FormRequest {
         return [
             'players' => 'required|between:4,7|array',
             'players.*' => 'exists:players,id',
-            'groups' => 'required|min:1|array',
+            'groups' => 'array',
             'groups.*' => 'exists:groups,id'
         ];
     }
@@ -45,7 +45,7 @@ class StoreRound extends FormRequest {
     public function messages()
     {
         return [
-            'groups.required' => 'Es muss mindestens eine Gruppe ausgewählt werden!'
+            //'groups.required' => 'Es muss mindestens eine Gruppe ausgewählt werden!'
         ];
     }
 }

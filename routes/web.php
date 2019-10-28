@@ -76,13 +76,6 @@ Route::post('/groups', 'GroupController@store')->middleware('auth');
 //Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 
 
-/* *********** Invites ************ */
-Route::get('/invitations', 'InvitationController@index')->middleware('auth')->name('showInvitation');
-Route::post('/invitations', 'InvitationController@store')->middleware('auth');
-Route::get('/invitations/deleteOld', 'InvitationController@destroyOld');
-Route::delete('/invitations/{invitation}', 'InvitationController@destroy')->middleware('auth');
-
-
 /* *********** Charts ************** */
 Route::get('/charts/round/{round}/', 'ChartController@roundChart')->middleware('auth');
 Route::get('/charts/profile/{profile}/', 'ChartController@profileChart')->middleware('auth');
