@@ -9,6 +9,7 @@
                    class="custom-input"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
+                   ref="textSearch"
                    type="text"
                    placeholder="Bitte Namen eingeben"/>
 
@@ -24,9 +25,9 @@
             </div>
         </div>
 
-        <h4 class="mt-4" v-if="players.length !== 0">
+        <h5 class="mt-4" v-if="players.length !== 0">
             {{players.length}} Spieler:
-        </h4>
+        </h5>
 
 
         <sortable-players-list lockAxis="y"
@@ -56,7 +57,7 @@
             </button>
         </form>
 
-        <h4 class="mt-5" v-if="players.length !== 0">Runde wird {{ groupText }} hinzugefügt:</h4>
+        <h5 class="mt-5" v-if="players.length !== 0">Runde wird {{ groupText }} hinzugefügt:</h5>
 
         <div v-for="group in filteredGroups"
              @click="inSelectedGroups(group) ? removeGroup(group) : addGroup(group)"
@@ -131,6 +132,9 @@
                 }
             }
         },
+        mounted() {
+            this.focusTextSearch();
+        },
         methods: {
             fullName(player) {
                 return player.surname.concat(' ', player.name);
@@ -144,6 +148,7 @@
             addPlayer(player) {
                 if (!this.inSelectedPlayers(player)) {
                     this.textSearch = '';
+                    this.$refs.textSearch.focus();
                     this.players.push(player);
                 }
             },
@@ -162,6 +167,9 @@
                 if (index > -1) {
                     this.groups.splice(index, 1);
                 }
+            },
+            focusTextSearch() {
+                this.$refs.textSearch.focus();
             },
             onSubmit() {
                 this.submit()
