@@ -49,7 +49,7 @@ Route::get('/rounds/current',
         {
             return redirect()->route('rounds.create');
         }
-    })->middleware('auth');
+    })->middleware('auth')->name('rounds.current');
 
 Route::get('/rundenarchiv/{group?}', 'RoundController@index')->middleware('auth')->name('rounds.index');
 Route::get('/runde/erstellen', 'RoundController@create')->middleware('auth')->name('rounds.create');

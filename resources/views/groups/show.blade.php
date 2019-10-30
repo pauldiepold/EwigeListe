@@ -10,7 +10,7 @@
 
 @section('content')
     <tabs>
-        <tab name="Mitglieder" :selected="true">
+        <tab name="fa-users" :selected="true">
             <div class="row justify-content-center my-4">
                 <div class="col col-xl-7 col-lg-8 col-md-9">
                     <table class="table nowrap myDataTable d-none table-responsive-sm">
@@ -61,10 +61,10 @@
 
         </tab>
 
-        <tab name="Statistiken">
+        <tab name="fa-chart-area">
         </tab>
 
-        <tab name="Runden">
+        <tab name="fa-history">
             @include('rounds.inc.archiveTable')
         </tab>
 

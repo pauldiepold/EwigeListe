@@ -1,9 +1,42 @@
-<div class="py-2" style="background-color: #054b6d;">
+<div class="py-2 tw-bg-blue-dark">
     <a href="/" class="link-unstyled">
         <h3 class="site-title text-light mb-0">Ewige Liste</h3>
     </a>
 </div>
 
+<nav class="tw-sticky tw-top-0 tw-z-50 tw-bg-blue tw-flex tw-justify-center" id="navbar">
+    <a href="/">
+        <nav-icon icon="fa-home"></nav-icon>
+    </a>
+    @auth
+        @if(Auth::user()->player->rounds->count() != 0)
+            <a href="{{ route('rounds.current') }}">
+                <nav-icon icon="fa-play-circle"></nav-icon>
+            </a>
+        @endif
+        <a href="{{ route('rounds.create') }}">
+            <nav-icon icon="fa-plus-circle"></nav-icon>
+        </a>
+    @endauth
+    <a href="{{ route('groups.index') }}">
+        <nav-icon icon="fa-list-alt"></nav-icon>
+    </a>
+    @auth
+        <a href="{{ route('rounds.index') }}">
+            <nav-icon icon="fa-history"></nav-icon>
+        </a>
+    @endauth
+    @guest
+        <a href="{{ route('rounds.index') }}">
+            <nav-icon icon="fa-sign-in-alt"></nav-icon>
+        </a>
+        <a href="{{ route('rounds.index') }}">
+            <nav-icon icon="fa-user-plus"></nav-icon>
+        </a>
+    @endguest
+</nav>
+
+{{--
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary sticky-top" id="navbar">
     <button class="navbar-toggler mx-auto" id="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarCollapse"
@@ -61,3 +94,4 @@
         </ul>
     </div>
 </nav>
+--}}

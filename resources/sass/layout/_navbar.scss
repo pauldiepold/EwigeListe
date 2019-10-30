@@ -1,3 +1,12 @@
+nav a {
+    @apply tw-no-underline tw-text-blue-lightest tw-mx-2;
+}
+
+nav a:hover {
+    @apply tw-no-underline tw-text-blue-lighter;
+}
+
+
 .nav-item:hover,
 #navbar-toggler:hover,
 .dropdown-item:hover {

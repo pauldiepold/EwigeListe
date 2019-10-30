@@ -3,15 +3,13 @@
 @section('title', 'Spielerprofil')
 
 @section('heading')
-    Spielerprofil von <br class="d-block d-sm-none">{{ $player->surname }} {{ $player->name }}
+    Profil von <br class="d-block d-sm-none">{{ $player->surname }} {{ $player->name }}
 @endsection
 
 @section('content')
-    @include('include.back')
-
     <tabs>
 
-        <tab name="Statistiken" :selected="true">
+        <tab name="fa-user" :selected="true">
 
             <div class="form-group">
                 <h5>Liste:</h5>
@@ -173,7 +171,7 @@
             @endif
         </tab>
 
-        <tab name="Runden">
+        <tab name="fa-history">
 
             <div class="form-group">
                 <h5>Liste:</h5>
@@ -193,7 +191,7 @@
             @endif
 
         </tab>
-        <tab name="Listen">
+        <tab name="fa-list-alt">
             <h4>Listen:</h4>
             @forelse($player->groups as $group)
                 <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
