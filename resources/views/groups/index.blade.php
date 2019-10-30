@@ -1,8 +1,8 @@
 @extends('layouts.main')
 
-@section('title', 'Gruppen')
+@section('title', 'Listen')
 
-@section('heading', 'Gruppen')
+@section('heading', 'Listen')
 
 @section('content')
 

@@ -5,11 +5,11 @@
              style="max-width:19rem;">
 
             <input id="text-search"
+                   ref="textSearch"
                    class="custom-input"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
                    @focus="scrollTo('#text-search')"
-                   ref="textSearch"
                    type="text"
                    placeholder="Bitte Namen eingeben"/>
 
@@ -123,19 +123,33 @@
 
                 return output;
             },
+            selectedGroups() {
+                let output = [];
+
+                let self = this;
+                this.groups.forEach(function (groupID) {
+                    if(self.filteredGroups.map(v => v.id).includes(groupID)) {
+                        output.push(groupID);
+                    }
+                });
+
+                return output;
+            },
             groupText() {
                 if (this.groups.length === 0) {
-                    return 'keiner Gruppe';
+                    return 'keiner Liste';
                 } else if (this.groups.length === 1) {
-                    return 'einer Gruppe';
+                    return 'einer Liste';
                 } else {
-                    return this.groups.length + ' Gruppen'
+                    return this.groups.length + ' Listen'
                 }
             }
         },
+
         mounted() {
             //this.focusTextSearch();
         },
+
         methods: {
             scrollTo(element) {
                 this.$scrollTo(element);
@@ -147,7 +161,7 @@
                 return this.players.includes(player);
             },
             inSelectedGroups(group) {
-                return this.groups.includes(group);
+                return this.groups.includes(group.id);
             },
             addPlayer(player) {
                 if (!this.inSelectedPlayers(player)) {
@@ -165,11 +179,11 @@
             },
             addGroup(group) {
                 if (!this.inSelectedGroups(group)) {
-                    this.groups.push(group);
+                    this.groups.push(group.id);
                 }
             },
             removeGroup(group) {
-                let index = this.groups.indexOf(group);
+                let index = this.groups.indexOf(group.id);
                 if (index > -1) {
                     this.groups.splice(index, 1);
                 }
@@ -187,7 +201,7 @@
                 return new Promise((resolve, reject) => {
                     axios.post('/rounds', {
                         'players': this.players.map(v => v.id),
-                        'groups': this.groups.map(v => v.id)
+                        'groups': this.selectedGroups
                     })
                         .then(response => {
                             //this.onSuccess(response.data);

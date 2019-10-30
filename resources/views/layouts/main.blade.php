@@ -9,19 +9,29 @@
 <body class="text-center position-relative"
       style="min-height: 100%; padding-bottom: 6.5rem;">
 
-    @include('layouts.nav')
+    <div id="app">
 
-    <div class="container my-3" id="app">
+        @include('layouts.nav')
 
-        <h6 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
-            @yield('heading')
-        </h6>
+        <div class="container my-3">
 
-        @yield('content')
+            <h6 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+                @yield('heading')
+            </h6>
+
+            @yield('content')
+
+        </div>
+
+        @include('layouts.footer')
 
     </div>
 
-    @include('layouts.footer')
+    @stack('scriptsBeforeJS')
+
+    <script src="{{ mix('/js/app.js') }}"></script>
+
+    @stack('scripts')
 
 </body>
 </html>

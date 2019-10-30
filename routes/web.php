@@ -21,7 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 
 /* *********** Players *********** */
-Route::get('players', 'GroupController@show');
+Route::get('liste', 'GroupController@show')->name('ewigeListe');
 Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
 Route::get('updateProfil', function ()
 {
@@ -44,19 +44,18 @@ Route::get('/rounds/current',
         {
             $lastRound = Auth::user()->player->games()->latest()->first()->round;
 
-            return redirect('/rounds/' . $lastRound->id);
+            return redirect($lastRound->path());
         } else
         {
-            return redirect('/rounds/create');
+            return redirect()->route('rounds.create');
         }
     })->middleware('auth');
 
-Route::get('/rounds', 'RoundController@index')->middleware('auth');
-Route::get('/rounds/create', 'RoundController@create')->middleware('auth');
-Route::get('/rounds/createNew', 'RoundController@createNew')->middleware('auth');
-Route::post('/rounds', 'RoundController@store')->middleware('auth');
-Route::get('/rounds/{round}', 'RoundController@show')->middleware('auth');
-Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth');
+Route::get('/rundenarchiv/{group?}', 'RoundController@index')->middleware('auth')->name('rounds.index');
+Route::get('/runde/erstellen', 'RoundController@create')->middleware('auth')->name('rounds.create');
+Route::post('/rounds', 'RoundController@store')->middleware('auth')->name('rounds.store');
+Route::get('/runde/{round}', 'RoundController@show')->middleware('auth')->name('rounds.show');
+Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth')->name('rounds.destroy');
 
 
 /* *********** Games ************** */
@@ -67,11 +66,10 @@ Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 
 
 /* *********** Groups ************** */
-Route::get('/groups', 'GroupController@index')->middleware('auth');
-Route::get('/groups/create', 'GroupController@create')->middleware('auth');
-Route::get('/groups/{group}/rounds', 'Roundcontroller@index')->middleware('auth');
-Route::get('/groups/{group}', 'GroupController@show')->middleware('auth');
-Route::post('/groups', 'GroupController@store')->middleware('auth');
+Route::get('/listen', 'GroupController@index')->middleware('auth')->name('groups.index');
+Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->name('groups.create');
+Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
+Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
 //Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
 //Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 

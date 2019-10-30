@@ -3,6 +3,7 @@
         <h3 class="site-title text-light mb-0">Ewige Liste</h3>
     </a>
 </div>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary sticky-top" id="navbar">
     <button class="navbar-toggler mx-auto" id="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbarCollapse"
@@ -17,17 +18,20 @@
                 <a class="nav-link" href="/home">Startseite</a>
             </li>
             @auth
-			@if(Auth::user()->player->rounds->count() != 0)
+                @if(Auth::user()->player->rounds->count() != 0)
+                    <li class="nav-item">
+                        <a class="nav-link" href="/rounds/current">Aktuelle Runde</a>
+                    </li>
+                @endif
                 <li class="nav-item">
-                    <a class="nav-link" href="/rounds/current">Aktuelle Runde</a>
+                    <a class="nav-link" href="{{ route('rounds.create') }}">Neue Runde</a>
                 </li>
-			@endif
             @endauth
-            <li class="nav-item">
-                <a class="nav-link" href="/players">Ewige Liste</a>
+             <li class="nav-item">
+                <a class="nav-link" href="{{ route('ewigeListe') }}">Ewige Liste</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/groups">Gruppen</a>
+                <a class="nav-link" href="{{ route('groups.index') }}">Listen</a>
             </li>
             @guest
                 <li class="nav-item">
@@ -39,10 +43,7 @@
             @endguest
             @auth
                 <li class="nav-item">
-                    <a class="nav-link" href="/rounds/create">Neue Runde starten</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/rounds">Rundenarchiv</a>
+                    <a class="nav-link" href="{{ route('rounds.index') }}">Archiv</a>
                 </li>
             @endauth
             <li class="nav-item dropdown">

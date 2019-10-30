@@ -16,17 +16,21 @@ use Illuminate\Support\Facades\Auth;
 class RoundController extends Controller
 {
 
-    public function index($groupID = 1)
+    public function index(Group $group = null)
     {
-        $rounds = Round::whereHas('groups', function (Builder $query) use ($groupID)
+        $selectedGroup = isset($group) ? $group : Group::find(1);
+
+        $groups = Group::all();
+
+        $rounds = Round::whereHas('groups', function (Builder $query) use ($selectedGroup)
         {
-            $query->where('groups.id', '=', $groupID);
+            $query->where('groups.id', '=', $selectedGroup->id);
         })
             ->latest()
             ->with(['games', 'players'])
             ->get();
 
-        return view('rounds.index', compact('rounds'));
+        return view('rounds.index', compact('rounds', 'groups', 'selectedGroup'));
     }
 
     public function show(Round $round)

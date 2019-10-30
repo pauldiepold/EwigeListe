@@ -1,8 +1,12 @@
 @extends('layouts.main')
 
-@section('title', 'Gruppe - ' . $group->name)
-
-@section('heading', 'Gruppe - ' . $group->name)
+@if($group->id == 1)
+    @section('heading', $group->name)
+    @section('title', $group->name)
+@else
+    @section('heading', 'Liste - ' . $group->name)
+    @section('title', 'Liste - ' . $group->name)
+@endif
 
 @section('content')
     <tabs>

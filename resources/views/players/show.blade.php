@@ -14,7 +14,7 @@
         <tab name="Statistiken" :selected="true">
 
             <div class="form-group">
-                <h5>Gruppe:</h5>
+                <h5>Liste:</h5>
                 <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
                         onchange="location = this.value">
                     @foreach($player->groups as $group)
@@ -176,7 +176,7 @@
         <tab name="Runden">
 
             <div class="form-group">
-                <h5>Gruppe:</h5>
+                <h5>Liste:</h5>
                 <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
                         onchange="location = this.value">
                     @foreach($player->groups as $group)
@@ -193,13 +193,13 @@
             @endif
 
         </tab>
-        <tab name="Gruppen">
-            <h4>Gruppen:</h4>
+        <tab name="Listen">
+            <h4>Listen:</h4>
             @forelse($player->groups as $group)
                 <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
 
             @empty
-                Der Spiele ist bisher in keiner Gruppe.
+                Der Spiele ist bisher in keiner Liste.
             @endforelse
         </tab>
     </tabs>

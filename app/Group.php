@@ -17,7 +17,7 @@ class Group extends Model
 
     public function path()
     {
-        return "/groups/{$this->id}";
+        return route('groups.show', ['group' => $this->id]);
     }
 
     public function created_by()

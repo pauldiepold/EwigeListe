@@ -12,8 +12,9 @@ class Round extends Model
 
     protected $attributes = [];
 
-    public function path() {
-        return "/rounds/{$this->id}";
+    public function path()
+    {
+        return route('rounds.show', ['round' => $this->id]);
     }
 
     public function getLastGame()
@@ -103,7 +104,8 @@ class Round extends Model
         return $this->belongsToMany(Group::class)->withTimestamps();
     }
 
-    public function roundsOfGroup( $groupID ) {
-        return ;
+    public function roundsOfGroup($groupID)
+    {
+        return;
     }
 }
