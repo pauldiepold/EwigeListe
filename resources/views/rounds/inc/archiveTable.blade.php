@@ -18,7 +18,7 @@
                             {{ date("d.m.y", strtotime($round->created_at)) }} <!-- - H:i -->
                             </td>
                             <td>
-                                {{ $round->games->count() }}
+                                {{ $round->games_count }}
                             </td>
                             <td>
                                 <a href="{{ $round->path() }}">

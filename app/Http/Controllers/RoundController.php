@@ -27,7 +27,8 @@ class RoundController extends Controller
             $query->where('groups.id', '=', $selectedGroup->id);
         })
             ->latest()
-            ->with(['games', 'players'])
+            ->with(['players'])
+            ->withCount('games')
             ->get();
 
         return view('rounds.index', compact('rounds', 'groups', 'selectedGroup'));

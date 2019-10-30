@@ -9,7 +9,7 @@
 @section('content')
     <tabs>
 
-        <tab name="fa-user" :selected="true">
+        <tab name="Statistiken" icon="fa-user" :selected="true">
 
             <div class="form-group">
                 <h5>Liste:</h5>
@@ -171,7 +171,7 @@
             @endif
         </tab>
 
-        <tab name="fa-history">
+        <tab name="Rundenarchiv" icon="fa-history">
 
             <div class="form-group">
                 <h5>Liste:</h5>
@@ -191,7 +191,8 @@
             @endif
 
         </tab>
-        <tab name="fa-list-alt">
+
+        <tab name="Listen" icon="fa-list-alt">
             <h4>Listen:</h4>
             @forelse($player->groups as $group)
                 <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>

@@ -8,7 +8,7 @@
                        :href="tab.href"
                        @click="selectTab(tab)">
                         <div class="tw-px-2 tw-py-1 tw-flex tw-flex-col">
-                            <i :class="tab.name"
+                            <i :class="tab.icon"
                                class="fas tw-text-2xl tw-align-middle"></i>
                         </div>
                     </a>
@@ -23,10 +23,12 @@
 
 <script>
     import NavIcon from "./NavIcon";
+    import RoundGraph from "../RoundGraph";
 
     export default {
         components: {
-            NavIcon
+            NavIcon,
+            RoundGraph
         },
         data() {
             return {

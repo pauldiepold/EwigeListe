@@ -5,9 +5,17 @@
 </template>
 
 <script>
+    import RoundGraph from "../RoundGraph";
+
     export default {
+        components: {
+            RoundGraph
+        },
         props: {
             name: {
+                required: true
+            },
+            icon: {
                 required: true
             },
             selected: {
