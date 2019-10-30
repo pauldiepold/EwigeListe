@@ -1,5 +1,5 @@
 <template>
-    <div class="tw-px-2 tw-py-2 tw-flex tw-flex-col">
+    <div class="tw-px-2 tw-py-3 tw-flex tw-flex-col">
         <i :class="icon"
             class="fas tw-text-2xl tw-align-middle"></i>
     </div>

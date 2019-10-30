@@ -4,36 +4,38 @@
     </a>
 </div>
 
-<nav class="tw-sticky tw-top-0 tw-z-50 tw-bg-blue tw-flex tw-justify-center" id="navbar">
-    <a href="/">
-        <nav-icon icon="fa-home"></nav-icon>
-    </a>
-    @auth
-        @if(Auth::user()->player->rounds->count() != 0)
-            <a href="{{ route('rounds.current') }}">
-                <nav-icon icon="fa-play-circle"></nav-icon>
+<nav class="tw-sticky tw-top-0 tw-z-50 tw-bg-blue" id="navbar">
+    <div class="md:tw-max-w-md tw-px-2 tw-flex tw-justify-around tw-mx-auto">
+        <a href="/">
+            <nav-icon icon="fa-home"></nav-icon>
+        </a>
+        @auth
+            @if(Auth::user()->player->rounds->count() != 0)
+                <a href="{{ route('rounds.current') }}">
+                    <nav-icon icon="fa-play-circle"></nav-icon>
+                </a>
+            @endif
+            <a href="{{ route('rounds.create') }}">
+                <nav-icon icon="fa-plus-circle"></nav-icon>
             </a>
-        @endif
-        <a href="{{ route('rounds.create') }}">
-            <nav-icon icon="fa-plus-circle"></nav-icon>
+        @endauth
+        <a href="{{ route('groups.index') }}">
+            <nav-icon icon="fa-list-alt"></nav-icon>
         </a>
-    @endauth
-    <a href="{{ route('groups.index') }}">
-        <nav-icon icon="fa-list-alt"></nav-icon>
-    </a>
-    @auth
-        <a href="{{ route('rounds.index') }}">
-            <nav-icon icon="fa-history"></nav-icon>
-        </a>
-    @endauth
-    @guest
-        <a href="{{ route('rounds.index') }}">
-            <nav-icon icon="fa-sign-in-alt"></nav-icon>
-        </a>
-        <a href="{{ route('rounds.index') }}">
-            <nav-icon icon="fa-user-plus"></nav-icon>
-        </a>
-    @endguest
+        @auth
+            <a href="{{ route('rounds.index') }}">
+                <nav-icon icon="fa-history"></nav-icon>
+            </a>
+        @endauth
+        @guest
+            <a href="{{ route('rounds.index') }}">
+                <nav-icon icon="fa-sign-in-alt"></nav-icon>
+            </a>
+            <a href="{{ route('rounds.index') }}">
+                <nav-icon icon="fa-user-plus"></nav-icon>
+            </a>
+        @endguest
+    </div>
 </nav>
 
 {{--
