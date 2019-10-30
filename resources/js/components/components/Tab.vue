@@ -1,16 +1,11 @@
 <template>
     <div v-show="isActive">
-        <slot></slot>
+        <slot :tabKey="tabKey"></slot>
     </div>
 </template>
 
 <script>
-    import RoundGraph from "../RoundGraph";
-
     export default {
-        components: {
-            RoundGraph
-        },
         props: {
             name: {
                 required: true
@@ -25,7 +20,9 @@
 
         data() {
             return {
-                isActive: false
+                isActive: false,
+                tabKey: 0,
+                route: window.location.hash,
             };
         },
 
@@ -36,7 +33,11 @@
         },
 
         mounted() {
-            this.isActive = this.selected;
+            if (this.route !== '') {
+                this.isActive = this.route === this.href;
+            } else {
+                this.isActive = this.selected;
+            }
         },
     };
 </script>

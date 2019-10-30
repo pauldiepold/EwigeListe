@@ -31,7 +31,7 @@
                                 <tr class="{{ $player->id == auth()->user()->player->id ? ' bg-primary-light' : ''}}">
 
                                     <td style="max-width: 8rem; white-space: normal;">
-                                        <a href="{{ $player->path() }}">
+                                        <a href="{{ $player->path() }}/{{ $group->id }}">
                                             {{ $player->surname }} {{ $player->name }}
                                         </a>
                                     </td>

@@ -38,18 +38,18 @@
             @endcan
         </tab>
 
-        <tab name="Statistiken" icon="fa-chart-area">
-            <h4>Statistiken</h4>
-            @if($round->games->count() >= 4)
-                Hallo
-                <round-graph :round_id="{{ $round->id }}"></round-graph>
-            @else
-                <p>
-                    Das Rundenverlaufs-Diagramm wird ab dem 4. Spiel angezeigt!
-                </p>
-            @endif
+        <tab name="Statistiken" icon="fa-chart-area" :selected="false">
+            <template v-slot:default="props">
+                @if($round->games->count() >= 4)
+                    <round-graph :round_id="{{ $round->id }}" :key="props.tabKey"></round-graph>
+                @else
+                    <p>
+                        Das Rundenverlaufs-Diagramm wird ab dem 4. Spiel angezeigt!
+                    </p>
+                @endif
 
-            @include('rounds.inc.info')
+                @include('rounds.inc.info')
+            </template>
         </tab>
 
         <tab name="Listen" icon="fa-list-alt">

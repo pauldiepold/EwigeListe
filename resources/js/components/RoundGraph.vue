@@ -1,5 +1,5 @@
 <template>
-    <div class="row justify-content-center mb-3">
+    <div class="row justify-content-center">
         <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
             <div id="containerDiagramRound">
                 <canvas id="roundChart" height="500"></canvas>
@@ -97,7 +97,10 @@
                             },
                             legend: {
                                 labels: {
-                                    boxWidth: 12
+                                    boxWidth: 12,
+                                    usePointStyle: true,
+                                    fontSize: 13,
+                                    padding: 20
                                 }
                             },
                         }

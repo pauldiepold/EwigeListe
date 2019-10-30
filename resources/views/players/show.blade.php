@@ -9,9 +9,8 @@
 @section('content')
     <tabs>
 
-        <tab name="Statistiken" icon="fa-user" :selected="true">
-
-            <div class="form-group">
+        <template v-slot:oben="props">
+            <div v-show="props.selectedTabName != 'Listen'">
                 <h5>Liste:</h5>
                 <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
                         onchange="location = this.value">
@@ -23,8 +22,10 @@
                     @endforeach
                 </select>
             </div>
+        </template>
 
-            @if($profile->games >= 10)
+        @if($profile->games >= 10)
+            <tab name="Statistiken" icon="fa-user" :selected="true">
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
@@ -162,29 +163,18 @@
                         </table>
                     </div>
                 </div>
+            </tab>
+            <tab name="Graphen" icon="fa-chart-area">
+                <template v-slot:default="props">
+                    <profile-graphs :profile_id="{{ $profile->id }}" :key="props.tabKey"></profile-graphs>
+                </template>
+            </tab>
 
-                <hr>
-
-                <profile-graphs :profile_id="{{ $profile->id }}"></profile-graphs>
-            @else
-                <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
-            @endif
-        </tab>
+        @else
+            <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
+        @endif
 
         <tab name="Rundenarchiv" icon="fa-history">
-
-            <div class="form-group">
-                <h5>Liste:</h5>
-                <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                        onchange="location = this.value">
-                    @foreach($player->groups as $group)
-                        <option value="{{ $player->path() . '/' . $group->id }}"
-                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
-                            {{ $group->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
 
             @if($player->games->count() > 0)
                 @include('rounds.inc.archiveTable')

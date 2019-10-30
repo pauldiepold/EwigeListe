@@ -91,7 +91,7 @@ class   GameController extends Controller {
             }
         }*/
 
-        return redirect('/rounds/' . $round->id);
+        return redirect($round->path());
     }
 
     public function update(UpdateGame $request, Game $game)
@@ -167,7 +167,7 @@ class   GameController extends Controller {
             }
         }*/
 
-        return redirect('/rounds/' . $round->id);
+        return redirect($round->path());
     }
 
     public function destroy(Game $game)
@@ -195,6 +195,6 @@ class   GameController extends Controller {
             }
         }*/
 
-        return redirect('/rounds/' . $round->id);
+        return redirect($round->path());
     }
 }

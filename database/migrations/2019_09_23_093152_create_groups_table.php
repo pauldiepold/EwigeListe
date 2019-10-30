@@ -83,8 +83,14 @@ class CreateGroupsTable extends Migration
 
             $table->unique(['round_id', 'group_id']);
 
-            $table->foreign('round_id')->references('id')->on('rounds');
-            $table->foreign('group_id')->references('id')->on('groups');
+            $table->foreign('round_id')
+                ->references('id')
+                ->on('rounds')
+                ->onDelete('cascade');
+
+            $table->foreign('group_id')
+                ->references('id')
+                ->on('groups');
         });
     }
 

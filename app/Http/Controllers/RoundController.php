@@ -151,7 +151,7 @@ class RoundController extends Controller
 
         $round->delete();
 
-        return redirect('/rounds/create');
+        return redirect()->route('rounds.create');
     }
 
 }

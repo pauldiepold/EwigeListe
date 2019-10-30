@@ -16,24 +16,21 @@
             </ul>
         </div>
         <div class="tabs-details">
-            <slot v-bind:route="route"></slot>
+            <slot name="oben" :selectedTabName="selectedTabName"></slot>
+            <slot :selectedTabName="selectedTabName"></slot>
+            <slot name="unten" :selectedTabName="selectedTabName"></slot>
         </div>
     </div>
 </template>
 
 <script>
-    import NavIcon from "./NavIcon";
-    import RoundGraph from "../RoundGraph";
 
     export default {
-        components: {
-            NavIcon,
-            RoundGraph
-        },
+        components: {},
         data() {
             return {
                 tabs: [],
-                route: window.location.hash,
+                selectedTabName: ''
             };
         },
 
@@ -45,7 +42,10 @@
             selectTab(selectedTab) {
                 this.tabs.forEach(tab => {
                     tab.isActive = (tab.href === selectedTab.href);
+                    tab.tabKey++;
                 });
+
+                this.selectedTabName = selectedTab.name;
             }
         }
     };

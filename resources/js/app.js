@@ -19,7 +19,7 @@ Vue.use(VueScrollTo, {
 
 import Form from './lib/Form';
 
-new Vue({
+var vm = new Vue({
     el: '#app',
     components: {
         RoundGraph,
@@ -37,6 +37,8 @@ new Vue({
     methods: {
     }
 });
+
+global.vm = vm;
 
 /* How to use Form.js
 
