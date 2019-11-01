@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="tabs">
-            <ul class="tw-flex tw-justify-center tw-mb-6 tw-border-b tw-border-gray-400">
+            <ul class="tw-flex tw-justify-center tw-mb-4 tw-border-b tw-border-gray-400">
                 <li class="tw-mx-1" v-for="tab in tabs">
                     <a class="tab"
                        :class="{ 'tab-active': tab.isActive }"

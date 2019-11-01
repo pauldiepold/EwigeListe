@@ -129,9 +129,15 @@ class PlayerSeeder extends Seeder
 
             }
         }
+
         App\Profile::all()->each(function ($profile, $key)
         {
             $profile->calculate();
+        });
+
+        App\Group::all()->each(function ($group, $key)
+        {
+            $group->calculate();
         });
     }
 }

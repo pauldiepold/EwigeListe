@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
 use App\Round;
 use App\Player;
 use App\Profile;
 use App\Game;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +29,12 @@ class ChartController extends Controller
         }
 
         //Spiele
-        foreach ($round->games()->oldest()->with('players')->get() as $game)
+        $games = $round->games()
+            ->oldest()
+            ->with('players')
+            ->get();
+
+        foreach ($games as $game)
         {
             foreach ($game->players as $player)
             {
@@ -61,14 +68,15 @@ class ChartController extends Controller
 
     public function profileChart(Profile $profile)
     {
-        $games = DB::table('game_player as g')
-            ->join('games', 'g.game_id', '=', 'games.id')
-            ->join('rounds', 'games.round_id', '=', 'rounds.id')
-            ->join('group_round', 'rounds.id', '=', 'group_round.round_id')
-            ->where('group_round.group_id', $profile->group_id)
-            ->where('g.player_id', $profile->player_id)
-            ->select('games.created_at as created_at', 'g.points as points')
-            ->orderBy('games.created_at', 'asc')
+        $games = Game::whereHas('round.groups', function (Builder $query) use ($profile)
+        {
+            $query->where('groups.id', '=', $profile->group_id);
+        })
+            ->whereHas('players', function (Builder $query) use ($profile)
+            {
+                $query->where('players.id', '=', $profile->player_id);
+            })
+            ->oldest()
             ->get();
 
         $dates = collect();
@@ -117,9 +125,14 @@ class ChartController extends Controller
         return ($data->toArray());
     }
 
-    public function homeChart()
+    public function homeChart(Group $group)
     {
-        $games = Game::all();
+        $games = Game::whereHas('round.groups', function (Builder $query) use ($group)
+        {
+            $query->where('groups.id', '=', $group->id);
+        })
+            ->oldest()
+            ->get();
 
         $gameDates = collect();
         $gameCounter = collect();

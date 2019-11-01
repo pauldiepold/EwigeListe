@@ -5,7 +5,7 @@
 </div>
 
 <nav class="tw-z-50 tw-bg-blue" id="navbar">
-    <div class="md:tw-max-w-md tw-px-2 tw-flex tw-justify-around tw-mx-auto">
+    <div class="sm:tw-max-w-md tw-px-2 tw-flex tw-justify-around tw-mx-auto">
         <a href="/">
             <nav-icon icon="fa-home"></nav-icon>
         </a>

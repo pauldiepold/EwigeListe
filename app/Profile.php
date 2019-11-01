@@ -12,6 +12,10 @@ class Profile extends Pivot
     protected $table = 'profiles';
     public $incrementing = true;
 
+    public function path() {
+        return "/profil/{$this->player_id}/{$this->group_id}";
+    }
+
     protected $dates = [
         'mostGamesDayDate',
         'mostGamesMonthDate',

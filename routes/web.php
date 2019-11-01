@@ -70,6 +70,17 @@ Route::get('/listen', 'GroupController@index')->middleware('auth')->name('groups
 Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->name('groups.create');
 Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
 Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
+Route::get('/liste/calculate/all', function() {
+    App\Group::all()->each(function ($group, $key)
+    {
+        $group->calculate();
+    });
+    return redirect('/listen');
+})->middleware('auth');
+Route::get('/liste/calculate/{group}', function(App\Group $group) {
+    $group->calculate();
+    return redirect($group->path() . '#statistiken');
+})->middleware('auth');
 //Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
 //Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
 
@@ -77,7 +88,7 @@ Route::post('/groups', 'GroupController@store')->middleware('auth')->name('group
 /* *********** Charts ************** */
 Route::get('/charts/round/{round}/', 'ChartController@roundChart')->middleware('auth');
 Route::get('/charts/profile/{profile}/', 'ChartController@profileChart')->middleware('auth');
-Route::get('/charts/home', 'ChartController@homeChart');
+Route::get('/charts/home/{group}', 'ChartController@homeChart');
 
 
 /* *********** Comments ************** */

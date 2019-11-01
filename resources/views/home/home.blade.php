@@ -54,6 +54,6 @@
 
 
     <h4 class="my-3">Anzahl der Spiele:</h4>
-    <home-graph></home-graph>
+    <group-graph group_id="1"></group-graph>
 
 @endsection

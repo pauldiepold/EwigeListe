@@ -47,8 +47,8 @@ class GroupController extends Controller
             {
                 $query->where('groups.id', '=', $group->id);
             })
-            ->latest()
-            ->with(['games', 'players'])
+            ->with('players')
+            ->withCount('games')
             ->get();
 
         return view('groups.show', compact('group', 'rounds'));

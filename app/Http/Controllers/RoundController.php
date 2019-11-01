@@ -26,8 +26,7 @@ class RoundController extends Controller
         {
             $query->where('groups.id', '=', $selectedGroup->id);
         })
-            ->latest()
-            ->with(['players'])
+            ->with('players')
             ->withCount('games')
             ->get();
 
@@ -39,6 +38,7 @@ class RoundController extends Controller
         $round->load('players', 'groups');
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
+
         if (Auth::user()->player->games->count() > 0)
         {
             $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;

@@ -5,7 +5,7 @@ import Vue from 'vue';
 
 import RoundGraph from './components/RoundGraph';
 import ProfileGraphs from './components/ProfileGraphs';
-import HomeGraph from './components/HomeGraph';
+import GroupGraph from './components/GroupGraph';
 import CreateRound from './components/CreateRound';
 import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
@@ -24,7 +24,7 @@ var vm = new Vue({
     components: {
         RoundGraph,
         ProfileGraphs,
-        HomeGraph,
+        GroupGraph,
         CreateRound,
         Alert,
         Tab,

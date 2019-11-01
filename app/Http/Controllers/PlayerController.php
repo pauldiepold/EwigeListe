@@ -25,8 +25,7 @@ class PlayerController extends Controller
             {
                 $query->where('groups.id', '=', $selectedGroup->id);
             })
-            ->latest()
-            ->with(['players'])
+            ->with('players')
             ->withCount('games')
             ->get();
 

@@ -1,22 +1,20 @@
 <template>
-    <div class="row justify-content-center mt-4">
-        <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
-            <div>
-                <canvas id="homeGameChart" height="700"></canvas>
-            </div>
-        </div>
+    <div class="tw-max-w-lg mx-auto">
+        <canvas id="groupChart"></canvas>
     </div>
 </template>
 
 <script>
 
     export default {
-        props: ['player_id'],
+        props: ['group_id'],
         mounted() {
-            axios.get('/charts/home/')
+            axios.get('/charts/home/' + this.group_id)
                 .then(function (response) {
                     let data = response.data;
-                    console.log(data);
+
+                    Chart.defaults.global.defaultFontFamily = '"Open Sans"';
+                    Chart.defaults.global.animation.duration = 0;
 
                     var chartdataGames = {
                         labels: data.gameDates,
@@ -29,7 +27,7 @@
                         ]
                     };
 
-                    var ctx = $("#homeGameChart");
+                    var ctx = $("#groupChart");
 
                     var LineGraph = new Chart(ctx, {
                         type: 'line',
@@ -39,7 +37,8 @@
                                 mode: 'index',
                                 intersect: false
                             },
-                            maintainAspectRatio: false,
+                            maintainAspectRatio: true,
+                            aspectRatio: 1.4,
                             scales: {
                                 xAxes: [{
                                     distribution: 'series',

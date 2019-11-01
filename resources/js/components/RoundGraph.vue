@@ -1,10 +1,6 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
-            <div id="containerDiagramRound">
-                <canvas id="roundChart" height="500"></canvas>
-            </div>
-        </div>
+    <div class="tw-mx-auto tw-max-w-xl">
+        <canvas id="roundChart" height="450"></canvas>
     </div>
 </template>
 
@@ -18,6 +14,7 @@
                 .then(function (response) {
                     let data = response.data;
                     Chart.defaults.global.defaultFontFamily = '"Open Sans"';
+                    Chart.defaults.global.animation.duration = 0;
                     let counter = [];
                     const colors = [
                         '#E37222',
@@ -97,7 +94,7 @@
                             },
                             legend: {
                                 labels: {
-                                    boxWidth: 12,
+                                    boxWidth: 10,
                                     usePointStyle: true,
                                     fontSize: 13,
                                     padding: 20

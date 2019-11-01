@@ -1,46 +1,8 @@
 nav a {
-    @apply tw-no-underline tw-text-blue-lightest tw-mx-2;
+    @apply tw-no-underline tw-text-blue-lightest;
 }
 
 nav a:hover {
     @apply tw-no-underline tw-text-blue-lighter;
 }
 
-
-.nav-item:hover,
-#navbar-toggler:hover,
-.dropdown-item:hover {
-  background-color: $dark;
-}
-
-
-#navbar-toggler:active,
-#havbar-toggler:hover {
-  background-color: transparent;
-}
-
-.dropdown-item,
-.nav-link,
-.dropdown-menu {
-  color: rgba(255, 255, 255, 0.6) !important;
-  border: none;
-  border-radius: 0px;
-  text-align: center;
-}
-
-.dropdown-menu {
-  margin-top: 0px;
-}
-
-.dropdown-toggle {
-  background-color: $secondary;
-}
-
-.navbar-toggler:focus, .navbar-toggler:active {
-  outline: none;
-  box-shadow: none;
-}
-
-.navbar-toggler {
-  border: none;
-}

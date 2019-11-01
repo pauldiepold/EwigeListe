@@ -1,15 +1,13 @@
 <template>
-    <div class="row justify-content-center mt-4">
-        <div class="col col-xl-8 col-lg-9 col-md-12 col-sm-12">
-            <h5 class="my-3 font-weight-bold">Punkteverlauf:</h5>
-            <div>
-                <canvas id="profilePointChart" height="560"></canvas>
-            </div>
-            <hr>
-            <h5 class="my-3 font-weight-bold">Anzahl der Spiele</h5>
-            <div>
-                <canvas id="profileGameChart" height="560"></canvas>
-            </div>
+    <div class="tw-mx-auto tw-max-w-lg">
+        <h5 class="tw-my-4 tw-font-bold">Punkteverlauf:</h5>
+        <div>
+            <canvas id="profilePointChart" height="400"></canvas>
+        </div>
+
+        <h5 class="tw-mt-6 tw-mb-4 tw-font-bold">Anzahl der Spiele</h5>
+        <div>
+            <canvas id="profileGameChart" height="400"></canvas>
         </div>
     </div>
 </template>
@@ -22,6 +20,8 @@
             axios.get('/charts/profile/' + this.profile_id)
                 .then(function (response) {
                     let data = response.data;
+                    Chart.defaults.global.defaultFontFamily = '"Open Sans"';
+                    Chart.defaults.global.animation.duration = 0;
                     console.log(data);
 
                     var chartdataPoints = {

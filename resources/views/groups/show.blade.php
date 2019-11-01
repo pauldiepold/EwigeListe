@@ -2,10 +2,10 @@
 
 @if($group->id == 1)
     @section('heading', $group->name)
-    @section('title', $group->name)
+@section('title', $group->name)
 @else
     @section('heading', 'Liste - ' . $group->name)
-    @section('title', 'Liste - ' . $group->name)
+@section('title', 'Liste - ' . $group->name)
 @endif
 
 @section('content')
@@ -62,6 +62,36 @@
         </tab>
 
         <tab name="Statistiken" icon="fa-chart-area">
+            <template v-slot:default="props">
+
+                <h4 class="mb-3 mt-5">Rekorde:</h4>
+                <div class="row justify-content-center">
+                    <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                        <table class="table table-sm table-borderless text-left">
+                            @foreach($group->records as $row)
+                                @php $row = collect($row); @endphp
+                                <tr>
+                                    <td class="tw-mb-4">
+                                        {!! $row->shift() !!}
+                                    </td>
+                                    <td>
+                                        <b>{{ $row->shift() }}</b>
+                                    </td>
+                                    <td>
+                                        {!! $row->shift() !!}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
+
+                <h4 class="my-3">Anzahl der Spiele:</h4>
+                <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
+
+                <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
+                    aktualisieren</a>
+            </template>
         </tab>
 
         <tab name="Rundenarchiv" icon="fa-history">
