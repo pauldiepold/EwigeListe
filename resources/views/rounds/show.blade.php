@@ -55,7 +55,7 @@
         <tab name="Listen" icon="fa-list-alt">
             <div class="mx-auto">
                 <h4>Listen</h4>
-                @forelse($round->groups->filter(function ($value, $key) { return $value->id != 1; }) as $group)
+                @forelse($round->groups as $group) <!-- ->filter(function ($value, $key) { return $value->id != 1; }) -->
                     <div
                         class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
                         style="max-width: 24rem;">

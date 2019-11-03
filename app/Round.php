@@ -19,12 +19,13 @@ class Round extends Model
 
     public function getLastGame()
     {
-        return $this->games()->latest()->first();
+        return $this->games->last();
     }
 
     public function getDealerIndex()
     {
-        return $this->games()
+        return $this
+                   ->games()
                    ->where('solo', 0)
                    ->where('misplay', 0)
                    ->count()

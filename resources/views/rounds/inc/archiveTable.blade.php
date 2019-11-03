@@ -14,8 +14,8 @@
                 <tbody>
                     @foreach ($rounds as $round)
                         <tr class="{{ $round->players->pluck('id')->contains(auth()->user()->player->id) ? 'bg-primary-light' : '' }}">
-                            <td data-sort="{{ $round->created_at }}">
-                            {{ date("d.m.y", strtotime($round->created_at)) }} <!-- - H:i -->
+                            <td data-sort="{{ $round->updated_at }}">
+                            {{ date("d.m.y", strtotime($round->updated_at)) }} <!-- - H:i -->
                             </td>
                             <td>
                                 {{ $round->games_count }}
