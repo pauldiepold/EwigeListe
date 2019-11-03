@@ -43,7 +43,7 @@
                             </tr>
                             <tr>
                                 <td class="pb-4">Punkte pro verlorenem Spiel:</td>
-                                <td class="font-weight-bold">{{ $profile->pointsPerLose }}</td>
+                                <td class="font-weight-bold pb-4">{{ $profile->pointsPerLose }}</td>
                             </tr>
                             <tr>
                                 <td>Spiele:</td>
@@ -65,7 +65,7 @@
                             </tr>
                             <tr>
                                 <td class="pb-4">Gewinnrate:</td>
-                                <td class="font-weight-bold">{{ $profile->winrate }}%</td>
+                                <td class="font-weight-bold pb-4">{{ $profile->winrate }}%</td>
                             </tr>
                             <tr>
                                 <td {!! $profile->soli == 0 ? 'class="pb-4"' : '' !!}>Soli:</td>
@@ -86,7 +86,7 @@
                                 </tr>
                                 <tr>
                                     <td class="pb-4">Punkte durch Soli:</td>
-                                    <td class="font-weight-bold">{{ $profile->soloPoints }}</td>
+                                    <td class="font-weight-bold pb-4">{{ $profile->soloPoints }}</td>
                                 </tr>
                             @endif
 
@@ -105,7 +105,7 @@
                                         <br>(im {{ $profile->mostGamesMonthDate->formatLocalized('%B %Y') }})
                                     </span>
                                 </td>
-                                <td class="font-weight-bold">{{ $profile->mostGamesMonth }}</td>
+                                <td class="font-weight-bold pb-4">{{ $profile->mostGamesMonth }}</td>
                             </tr>
 
                             <tr>
@@ -127,7 +127,7 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="font-weight-bold">{{ $profile->lowestPoints }}</td>
+                                <td class="font-weight-bold pb-4">{{ $profile->lowestPoints }}</td>
                             </tr>
 
                             <tr>
@@ -192,5 +192,8 @@
             @endforelse
         </tab>
     </tabs>
+
+    <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Statistiken
+        aktualisieren</a>
 
 @endsection

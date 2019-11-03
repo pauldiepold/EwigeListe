@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="{{ mix('/css/app.css') }}">
 
 <title>@yield('title')</title>
-@if(Auth::id() != 1)
+@if(true) <!-- Auth::id() != 1 -->
     <script type="text/javascript">
         var _paq = window._paq || [];
         _paq.push(['setCustomDimension', 1, @auth'{{ Auth::user()->player->surname }} {{ Auth::user()->player->name }}'@endauth @guest'Anonym'@endguest]);

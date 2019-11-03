@@ -2,27 +2,27 @@
 
 namespace App\Jobs;
 
-use App\Profile;
+use App\Group;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class UpdateProfile implements ShouldQueue {
+class UpdateGroup implements ShouldQueue {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $profile;
+    protected $group;
 
     /**
      * Create a new job instance.
      *
-     * @param Profile $profile
+     * @param $group
      */
-    public function __construct(Profile $profile)
+    public function __construct(Group $group)
     {
-        $this->profile = $profile;
+        $this->group = $group;
     }
 
     /**
@@ -32,9 +32,9 @@ class UpdateProfile implements ShouldQueue {
      */
     public function handle()
     {
-        $this->profile->calculate();
+        $this->group->calculate();
 
-        $this->profile->queued = false;
-        $this->profile->save();
+        $this->group->queued = false;
+        $this->group->save();
     }
 }

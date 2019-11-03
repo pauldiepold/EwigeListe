@@ -20,6 +20,8 @@ class CreateGroupsTable extends Migration
             $table->string('name');
             $table->unsignedInteger('created_by');
 
+            $table->boolean('queued')->nullable();
+
             $table->text('records')->nullable();
             $table->text('stats')->nullable();
 
@@ -54,6 +56,7 @@ class CreateGroupsTable extends Migration
             $table->unsignedInteger('group_id');
 
             $table->boolean('queued')->nullable();
+
             $table->integer('points')->nullable();
             $table->float('pointsPerGame', 4, 2)->nullable();
             $table->float('pointsPerWin', 4, 2)->nullable();

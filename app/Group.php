@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Jobs\UpdateGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +14,29 @@ class Group extends Model
         'name',
         'created_by'
     ];
+
+    public function updateStats()
+    {
+        if (!$this->queued)
+        {
+            $this->queued = true;
+            $this->save();
+            UpdateGroup::dispatch($this);
+        }
+    }
+
+    public static function updateManyStats(Collection $groups)
+    {
+        foreach ($groups as $group)
+        {
+            if (!$group->queued)
+            {
+                $group->queued = true;
+                $group->save();
+                UpdateGroup::dispatch($group);
+            }
+        }
+    }
 
     protected $dates = [
 
@@ -77,12 +101,14 @@ class Group extends Model
     private function getHighscoreCollection($column)
     {
         $minmax = $column->get(2);
-        $value = $this->profiles()->$minmax($column->get(1));
+        $value = $this->profiles()
+            ->where('profiles.' . $column->get(4), '>', $column->get(5))
+            ->$minmax($column->get(1));
 
         $profiles = $this->profiles()
-            ->with('player')
-            ->where($column->get(4), '>', $column->get(5))
+            ->where('profiles.' . $column->get(4), '>', $column->get(5))
             ->where('profiles.' . $column->get(1), $value)
+            ->with('player')
             ->get();
 
         $col = collect();

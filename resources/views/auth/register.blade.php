@@ -13,7 +13,7 @@
 
                     <div class="form-group row">
                         <label for="surname"
-                               class="col-sm-5 col-form-label text-sm-right font-weight-bold">Vorname:</label>
+                               class="col-sm-5 col-form-label text-sm-right">Vorname</label>
 
                         <div class="col-sm-6">
                             <input id="surname" type="text"
@@ -22,14 +22,14 @@
 
                             @if ($errors->has('surname'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('surname') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('surname') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label for="name" class="col-sm-5 col-form-label text-sm-right font-weight-bold">Name:</label>
+                        <label for="name" class="col-sm-5 col-form-label text-sm-right">Name</label>
 
                         <div class="col-sm-6">
                             <input id="name" type="text"
@@ -38,15 +38,15 @@
 
                             @if ($errors->has('name'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('name') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('name') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="email"
-                               class="col-sm-5 col-form-label text-sm-right font-weight-bold">E-Mail:</label>
+                               class="col-sm-5 col-form-label text-sm-right">E-Mail</label>
 
                         <div class="col-sm-6">
                             <input id="email" type="email"
@@ -55,15 +55,15 @@
 
                             @if ($errors->has('email'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="password"
-                               class="col-sm-5 col-form-label text-sm-right font-weight-bold">Passwort:</label>
+                               class="col-sm-5 col-form-label text-sm-right">Passwort</label>
 
                         <div class="col-sm-6">
                             <input id="password" type="password"
@@ -72,15 +72,14 @@
 
                             @if ($errors->has('password'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label for="password-confirm" class="col-sm-5 col-form-label text-sm-right font-weight-bold">Passwort
-                            best&auml;tigen:</label>
+                        <label for="password-confirm" class="col-sm-5 col-form-label text-sm-right">Passwort best&auml;tigen</label>
 
                         <div class="col-sm-6">
                             <input id="password-confirm" type="password" class="form-control"
@@ -88,7 +87,7 @@
                         </div>
                     </div>
 
-                    <!--
+                <!--
                     <div class="form-group row">
                         <label for="pin"
                                class="col-sm-5 col-form-label text-sm-right font-weight-bold">Einladungs-PIN:</label>
@@ -100,14 +99,14 @@
                                        name="pin" value="{{ old('pin') }}" style="width: 120px !important;" required>
 
                                 @if ($errors->has('pin'))
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('pin') }}</strong>
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('pin') }}</strong>
                                     </span>
                                 @endif
-                            </div>
-                            <div class="ml-3 align-self-center">
-                                <a data-container="body" data-toggle="popover" data-placement="top"
-                                   data-content="Jeder bereits registrierte Spieler kann unter &quot;Sonstiges/Einladungen&quot; eine Einladungs-PIN erstellen.">
+                    </div>
+                    <div class="ml-3 align-self-center">
+                        <a data-container="body" data-toggle="popover" data-placement="top"
+                           data-content="Jeder bereits registrierte Spieler kann unter &quot;Sonstiges/Einladungen&quot; eine Einladungs-PIN erstellen.">
                                     <i class="fas fa-info-circle fa-lg my-auto text-dark"></i>
                                 </a>
                             </div>

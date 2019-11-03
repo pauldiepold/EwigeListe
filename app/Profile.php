@@ -2,8 +2,11 @@
 
 namespace App;
 
+use App\Jobs\UpdateProfile;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Profile extends Pivot
@@ -12,8 +15,32 @@ class Profile extends Pivot
     protected $table = 'profiles';
     public $incrementing = true;
 
-    public function path() {
+    public function path()
+    {
         return "/profil/{$this->player_id}/{$this->group_id}";
+    }
+
+    public function updateStats()
+    {
+        if (!$this->queued)
+        {
+            $this->queued = true;
+            $this->save();
+            UpdateProfile::dispatch($this);
+        }
+    }
+
+    public static function updateManyStats(Collection $profiles)
+    {
+        foreach ($profiles as $profile)
+        {
+            if (!$profile->queued)
+            {
+                $profile->queued = true;
+                $profile->save();
+                UpdateProfile::dispatch($profile);
+            }
+        }
     }
 
     protected $dates = [
@@ -59,6 +86,7 @@ class Profile extends Pivot
             ->join('group_round', 'rounds.id', '=', 'group_round.round_id')
             ->where('group_round.group_id', $this->group_id)
             ->where('g.player_id', $this->player_id)
+            ->orderBy('g.created_at', 'asc')
             ->select('g.id as id',
                 'g.game_id as game_id',
                 'g.player_id as player_id',

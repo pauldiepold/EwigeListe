@@ -88,9 +88,6 @@
 
                 <h4 class="my-3">Anzahl der Spiele:</h4>
                 <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
-
-                <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
-                    aktualisieren</a>
             </template>
         </tab>
 
@@ -99,6 +96,9 @@
         </tab>
 
     </tabs>
+
+    <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
+        aktualisieren</a>
 @endsection
 
 @push('scripts')

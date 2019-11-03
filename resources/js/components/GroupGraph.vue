@@ -1,6 +1,6 @@
 <template>
-    <div class="tw-max-w-lg mx-auto">
-        <canvas id="groupChart"></canvas>
+    <div class="mx-auto tw-max-w-2xl">
+        <canvas id="groupChart" height="450"></canvas>
     </div>
 </template>
 
@@ -37,8 +37,7 @@
                                 mode: 'index',
                                 intersect: false
                             },
-                            maintainAspectRatio: true,
-                            aspectRatio: 1.4,
+                            maintainAspectRatio: false,
                             scales: {
                                 xAxes: [{
                                     distribution: 'series',

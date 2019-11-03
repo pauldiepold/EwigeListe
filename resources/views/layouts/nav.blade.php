@@ -28,10 +28,10 @@
             </a>
         @endauth
         @guest
-            <a href="{{ route('rounds.index') }}">
+            <a href="{{ route('login') }}">
                 <nav-icon icon="fa-sign-in-alt"></nav-icon>
             </a>
-            <a href="{{ route('rounds.index') }}">
+            <a href="{{ route('register') }}">
                 <nav-icon icon="fa-user-plus"></nav-icon>
             </a>
         @endguest

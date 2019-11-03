@@ -68,13 +68,11 @@ class ChartController extends Controller
 
     public function profileChart(Profile $profile)
     {
-        $games = Game::whereHas('round.groups', function (Builder $query) use ($profile)
-        {
-            $query->where('groups.id', '=', $profile->group_id);
-        })
-            ->whereHas('players', function (Builder $query) use ($profile)
+        $games = $profile->player
+            ->games()
+            ->whereHas('round.groups', function (Builder $query) use ($profile)
             {
-                $query->where('players.id', '=', $profile->player_id);
+                $query->where('groups.id', '=', $profile->group_id);
             })
             ->oldest()
             ->get();
@@ -89,11 +87,10 @@ class ChartController extends Controller
             $currentDate = Carbon::parse($game->created_at);
             if ($i == 0)
             {
-                $points->push($game->points);
-
+                $points->push($game->pivot->points);
             } else
             {
-                $points->push($points->last() + $game->points);
+                $points->push($points->last() + $game->pivot->points);
             }
             $dates->push(($currentDate->formatLocalized('%e. %h %Y')));
 

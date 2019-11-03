@@ -18,6 +18,12 @@ class Player extends Model
         return "/profil/{$this->id}";
     }
 
+    public function calculate() {
+        foreach ($this->profiles as $profile) {
+            $profile->calculate();
+        }
+    }
+
     public function rounds()
     {
         return $this->belongsToMany(Round::class)->withTimestamps()->withPivot('index');

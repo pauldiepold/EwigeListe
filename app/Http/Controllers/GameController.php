@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Game;
+use App\Group;
+use App\Profile;
 use App\Round;
 use App\Player;
 use App\Http\Requests\StoreGame;
@@ -10,9 +12,11 @@ use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 //use App\Jobs\UpdateProfile;
 
-class   GameController extends Controller {
+class   GameController extends Controller
+{
 
     public function store(StoreGame $request, Round $round)
     {
@@ -80,16 +84,14 @@ class   GameController extends Controller {
             ]);
         }
 
-        /*
-        foreach ($game->players()->with('profile')->get() as $player)
-        {
-            if (!$player->profile->queued)
-            {
-                $player->profile->queued = true;
-                $player->profile->save();
-                UpdateProfile::dispatch($player->profile);
-            }
-        }*/
+        $groups = $round->groups;
+
+        $profiles = Profile::whereIn('group_id', $groups->pluck('id'))
+            ->whereIn('player_id', $players->pluck('id'))
+            ->get();
+
+        Profile::updateManyStats($profiles);
+        Group::updateManyStats($groups);
 
         return redirect($round->path());
     }

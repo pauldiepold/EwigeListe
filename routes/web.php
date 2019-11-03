@@ -23,16 +23,23 @@ Route::get('/home', 'HomeController@index')->name('home');
 /* *********** Players *********** */
 Route::get('liste', 'GroupController@show')->name('ewigeListe');
 Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
-Route::get('updateProfil', function ()
-{
-    $profiles = App\Profile::all();
-    foreach ($profiles as $profile)
-    {
-        $profile->updateProfile();
-    }
 
-    return redirect('/players');
-});
+Route::get('/players/calculate', function ()
+{
+    App\Player::all()->each(function ($player, $key)
+    {
+        $player->calculate();
+    });
+
+    return redirect('/liste/1');
+})->middleware('auth');
+
+Route::get('/players/calculate/{player}', function (App\Player $player)
+{
+    $player->calculate();
+
+    return redirect($player->path());
+})->middleware('auth');
 
 
 /* *********** Rounds ************ */
@@ -70,15 +77,21 @@ Route::get('/listen', 'GroupController@index')->middleware('auth')->name('groups
 Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->name('groups.create');
 Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
 Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
-Route::get('/liste/calculate/all', function() {
+
+Route::get('/listen/calculate', function ()
+{
     App\Group::all()->each(function ($group, $key)
     {
         $group->calculate();
     });
+
     return redirect('/listen');
 })->middleware('auth');
-Route::get('/liste/calculate/{group}', function(App\Group $group) {
+
+Route::get('/liste/calculate/{group}', function (App\Group $group)
+{
     $group->calculate();
+
     return redirect($group->path() . '#statistiken');
 })->middleware('auth');
 //Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
