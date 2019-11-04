@@ -13,7 +13,7 @@
                 </thead>
                 <tbody>
                     @foreach ($rounds as $round)
-                        <tr class="{{ $round->players->pluck('id')->contains(auth()->user()->player->id) ? 'bg-primary-light' : '' }}">
+                        <tr class="{{ $round->players->pluck('id')->contains(auth()->user()->player->id) && (!isset($player) || auth()->user()->player->id != $player->id) ? 'bg-primary-light' : '' }}">
                             <td data-sort="{{ $round->updated_at }}">
                             {{ date("d.m.y", strtotime($round->updated_at)) }} <!-- - H:i -->
                             </td>

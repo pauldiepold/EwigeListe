@@ -94,8 +94,13 @@ Route::get('/liste/calculate/{group}', function (App\Group $group)
 
     return redirect($group->path() . '#statistiken');
 })->middleware('auth');
-//Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
-//Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
+
+Route::get('/liste/calculateBadges/{group}', function (App\Group $group)
+{
+    $group->calculateBadges();
+
+    return redirect($group->path() . '#abzeichen');
+})->middleware('auth');
 
 
 /* *********** Charts ************** */

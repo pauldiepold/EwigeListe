@@ -9,7 +9,7 @@
 @section('content')
     <tabs>
 
-        <template v-slot:oben="props">
+        {{--<template v-slot:oben="props">
             <div v-show="props.selectedTabName != 'Listen'">
                 <h5>Liste:</h5>
                 <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
@@ -22,10 +22,22 @@
                     @endforeach
                 </select>
             </div>
-        </template>
+        </template>--}}
 
         @if($profile->games >= 10)
             <tab name="Statistiken" icon="fa-user" :selected="true">
+
+                <h5>Liste:</h5>
+                <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
+                        onchange="location = this.value">
+                    @foreach($player->groups as $group)
+                        <option value="{{ $player->path() . '/' . $group->id . '#statistiken'}}"
+                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                            {{ $group->name }}
+                        </option>
+                    @endforeach
+                </select>
+
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
@@ -166,6 +178,18 @@
             </tab>
             <tab name="Graphen" icon="fa-chart-area">
                 <template v-slot:default="props">
+
+                    <h5>Liste:</h5>
+                    <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
+                            onchange="location = this.value">
+                        @foreach($player->groups as $group)
+                            <option value="{{ $player->path() . '/' . $group->id . '#graphen'}}"
+                                {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                                {{ $group->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
                     <profile-graphs :profile_id="{{ $profile->id }}" :key="props.tabKey"></profile-graphs>
                 </template>
             </tab>
@@ -176,11 +200,43 @@
 
         <tab name="Abzeichen" icon="fa-award">
 
-            Monatsrekorde
+            <h5>Liste:</h5>
+            <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
+                    onchange="location = this.value">
+                @foreach($player->groups as $group)
+                    <option value="{{ $player->path() . '/' . $group->id . '#abzeichen'}}"
+                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                        {{ $group->name }}
+                    </option>
+                @endforeach
+            </select>
 
+            <div class="tw-flex tw-flex-wrap tw-justify-center">
+                @foreach($badges as $badge)
+                    @isset($badge->player)
+                        <badge
+                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                            name="{{ $badge->player->surname }}"
+                            value="{{ $badge->value }}"
+                            type="{{ $badge->type }}"
+                        ></badge>
+                    @endisset
+                @endforeach
+            </div>
         </tab>
 
         <tab name="Rundenarchiv" icon="fa-history">
+
+            <h5>Liste:</h5>
+            <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
+                    onchange="location = this.value">
+                @foreach($player->groups as $group)
+                    <option value="{{ $player->path() . '/' . $group->id . '#rundenarchiv'}}"
+                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                        {{ $group->name }}
+                    </option>
+                @endforeach
+            </select>
 
             @if($player->games->count() > 0)
                 @include('rounds.inc.archiveTable')
@@ -199,7 +255,8 @@
         </tab>
     </tabs>
 
+    {{--
     <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Statistiken
-        aktualisieren</a>
+        aktualisieren</a>--}}
 
 @endsection

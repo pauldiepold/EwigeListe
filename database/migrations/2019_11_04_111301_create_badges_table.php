@@ -15,13 +15,13 @@ class CreateBadgesTable extends Migration
     {
         Schema::create('badges', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('player_id');
-            $table->unsignedInteger('group_id');
 
+            $table->unsignedInteger('group_id');
             $table->unsignedSmallInteger('year');
             $table->unsignedSmallInteger('month');
-
             $table->char('type');
+
+            $table->unsignedInteger('player_id')->nullable();
             $table->integer('value')->nullable();
 
             $table->timestamps();
@@ -34,12 +34,11 @@ class CreateBadgesTable extends Migration
                 ->references('id')
                 ->on('groups');
 
-            $table->unique(['player_id', 'group_id', 'year', 'month']);
-
             $table->index('player_id');
             $table->index('group_id');
             $table->index('year');
             $table->index('month');
+            $table->index('type');
 
         });
     }

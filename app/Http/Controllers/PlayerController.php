@@ -16,9 +16,16 @@ class PlayerController extends Controller
     {
         $selectedGroup = !$group ? Group::find(1) : $group;
 
-        $player->load(['profiles.group', 'groups', 'rounds', 'games']);
+        $player->load(['profiles.group', 'groups', 'rounds', 'games', 'badges']);
 
-        $profile = $player->profiles->where('group_id', $selectedGroup->id)->first();
+        $badges = $player->badges()
+            ->where('group_id', $selectedGroup->id)
+            ->with(['player', 'group'])
+            ->get();
+
+        $profile = $player->profiles()
+            ->where('group_id', $selectedGroup->id)
+            ->first();
 
         $rounds = $player->rounds()
             ->whereHas('groups', function (Builder $query) use ($selectedGroup)
@@ -29,7 +36,7 @@ class PlayerController extends Controller
             ->withCount('games')
             ->get();
 
-        return view('players.show', compact('player', 'profile', 'rounds', 'selectedGroup'));
+        return view('players.show', compact('player', 'profile', 'rounds', 'selectedGroup', 'badges'));
 
     }
 

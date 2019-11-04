@@ -9,7 +9,7 @@ class Game extends Model {
 
     protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay', 'created_by', 'round_id'];
 
-    protected $touches = ['round'];
+    //protected $touches = ['round'];
 
     protected $attributes = [
         'misplay' => false,
@@ -22,11 +22,18 @@ class Game extends Model {
 
     public function players()
     {
-        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('points', 'soloist', 'won', 'misplayed');
+        return $this->belongsToMany(Player::class)
+            ->withTimestamps()
+            ->withPivot('points', 'soloist', 'won', 'misplayed')
+            ->using(GamePlayer::class);
     }
 
     public function createdBy()
     {
-        return $this->belongsTo('App\Player', 'created_by');
+        return $this->belongsTo(Player::class, 'created_by');
+    }
+
+    public function gamePlayers() {
+        return $this->hasMany(GamePlayer::class);
     }
 }

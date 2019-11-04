@@ -9,9 +9,11 @@
                        :class="{ 'tab-active': tab.isActive }"
                        :href="tab.href"
                        @click="selectTab(tab)">
-                        <div class="tw-px-2 tw-py-1 tw-flex tw-flex-col">
+                        <div class="tw-px-2 tw-py-1 tw-flex tw-flex-col"
+                             :title="tab.name">
                             <i :class="tab.icon"
-                               class="fas tw-text-2xl tw-align-middle"></i>
+                               class="fas tw-text-2xl tw-align-middle"
+                            ></i>
                         </div>
                     </a>
                 </li>
@@ -58,10 +60,10 @@
                 this.selectedTab = selectedTab;
             },
             swipeLeft() {
-                this.selectTab(this.tabs[this.nextIndex('left')]);
+                this.selectTab(this.tabs[this.nextIndex('right')]);
             },
             swipeRight() {
-                this.selectTab(this.tabs[this.nextIndex('right')]);
+                this.selectTab(this.tabs[this.nextIndex('left')]);
             },
             currentIndex() {
                 return this.tabs.indexOf(this.selectedTab);

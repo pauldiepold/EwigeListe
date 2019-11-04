@@ -61,7 +61,8 @@
 
         <div v-for="group in filteredGroups"
              @click="inSelectedGroups(group) ? removeGroup(group) : addGroup(group)"
-             class="text-left d-flex align-items-center justify-content-between tw-cursor-pointer group"
+             class="text-left d-flex align-items-center justify-content-between group"
+             :class="{'tw-cursor-pointer': group.id !== 1}"
              style="max-width: 24rem;"
              id="groups">
             <span class="font-weight-bold"
@@ -69,7 +70,8 @@
                 {{group.name}}
             </span>
             <i class="fas fa-2x mx-1 tw-text-gray-600"
-               :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}">
+               :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}"
+               v-show="group.id !== 1">
             </i>
         </div>
 
@@ -98,7 +100,7 @@
             return {
                 textSearch: '',
                 loading: false,
-                groups: [],
+                groups: [1],
                 players: []
             }
         },
@@ -113,7 +115,7 @@
 
                 this.players.forEach(function (player) {
                     player.groups.forEach(function (group) {
-                        if (!output.map(v => v.id).includes(group.id) && group.id !== 1) {
+                        if (!output.map(v => v.id).includes(group.id)) { // && group.id !== 1
                             output.push(group);
                         }
                     });
@@ -128,7 +130,7 @@
 
                 let self = this;
                 this.groups.forEach(function (groupID) {
-                    if(self.filteredGroups.map(v => v.id).includes(groupID)) {
+                    if (self.filteredGroups.map(v => v.id).includes(groupID) && groupID !== 1) {
                         output.push(groupID);
                     }
                 });
@@ -183,9 +185,11 @@
                 }
             },
             removeGroup(group) {
-                let index = this.groups.indexOf(group.id);
-                if (index > -1) {
-                    this.groups.splice(index, 1);
+                if (group.id !== 1) {
+                    let index = this.groups.indexOf(group.id);
+                    if (index > -1) {
+                        this.groups.splice(index, 1);
+                    }
                 }
             },
             focusTextSearch() {

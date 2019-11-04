@@ -21,10 +21,19 @@ class PlayerSeeder extends Seeder
 
         $allPlayers = App\Player::all();
 
-        $group = factory('App\Group')->create(['created_by' => $allPlayers->random(), 'name' => 'Ewige Liste']);
+        $group = factory('App\Group')->create([
+            'created_by' => $allPlayers->random(),
+            'name' => 'Ewige Liste',
+            'created_at' => Carbon::now()->subMinutes(60*24*300),
+            'updated_at' => Carbon::now()->subMinutes(60*24*300),
+            ]);
         $group->addPlayers($allPlayers);
 
-        $groups = factory('App\Group', intval(config('database.seed.groups')))->create(['created_by' => $allPlayers->random()]);
+        $groups = factory('App\Group', intval(config('database.seed.groups')))->create([
+            'created_by' => $allPlayers->random(),
+            'created_at' => Carbon::now()->subMinutes(60*24*300),
+            'updated_at' => Carbon::now()->subMinutes(60*24*300),
+            ]);
 
         for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)
         {
@@ -125,6 +134,11 @@ class PlayerSeeder extends Seeder
                         'created_at' => $date,
                         'updated_at' => $date
                     ]);
+
+                    App\GamePlayer::where('game_id', $game->id)->update([
+                        'created_at' => $date,
+                        'updated_at' => $date
+                    ]);
                 }
 
             }
@@ -138,6 +152,7 @@ class PlayerSeeder extends Seeder
         App\Group::all()->each(function ($group, $key)
         {
             $group->calculate();
+            $group->calculateBadges();
         });
     }
 }

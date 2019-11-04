@@ -31,7 +31,10 @@ class Player extends Model
 
     public function games()
     {
-        return $this->belongsToMany(Game::class)->withTimestamps()->withPivot('points', 'soloist', 'won', 'misplayed');
+        return $this->belongsToMany(Game::class)
+            ->withTimestamps()
+            ->withPivot('points', 'soloist', 'won', 'misplayed')
+            ->using(GamePlayer::class);
     }
 
     public function user()
@@ -66,7 +69,9 @@ class Player extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'profiles')->withTimestamps()->using(Profile::class);
+        return $this->belongsToMany(Group::class, 'profiles')
+            ->withTimestamps()
+            ->using(Profile::class);
     }
 
     public function badges() {

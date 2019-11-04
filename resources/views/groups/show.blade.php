@@ -92,9 +92,18 @@
         </tab>
 
         <tab name="Abzeichen" icon="fa-award">
-
-            Monatsrekorde
-
+            <div class="tw-flex tw-flex-wrap tw-justify-center">
+                @foreach($group->badges as $badge)
+                    @isset($badge->player)
+                        <badge
+                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                            name="{{ $badge->player->surname }}"
+                            value="{{ $badge->value }}"
+                            type="{{ $badge->type }}"
+                        ></badge>
+                    @endisset
+                @endforeach
+            </div>
         </tab>
 
         <tab name="Rundenarchiv" icon="fa-history">
@@ -103,8 +112,11 @@
 
     </tabs>
 
-    <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
+    {{--<a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
         aktualisieren</a>
+    <a class="btn btn-primary tw-my-6" href="/liste/calculateBadges/{{ $group->id }}">Badges
+        aktualisieren</a>--}}
+
 @endsection
 
 @push('scripts')
@@ -123,7 +135,7 @@
                     {"orderSequence": ["desc", "asc"]},
                 ],
                 paging: {{ $group->players->count() > 15 ? "true" : "false" }},
-                pageLength: 15,
+                pageLength: -1,
                 lengthMenu: [[15, 30, -1], [15, 30, "Alle"]],
                 order: [1, "desc"],
                 language: {

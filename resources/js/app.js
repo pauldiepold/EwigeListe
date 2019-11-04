@@ -10,13 +10,14 @@ import CreateRound from './components/CreateRound';
 import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
 import Tab from "./components/components/Tab";
+import Badge from "./components/components/Badge";
 import NavIcon from "./components/components/NavIcon";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
 
 Vue.use(VueScrollTo, {offset: -70});
-Vue.use(Vue2TouchEvents);
+Vue.use(Vue2TouchEvents, {swipeTolerance: 50});
 
 import Form from './lib/Form';
 
@@ -30,7 +31,8 @@ var vm = new Vue({
         Alert,
         Tab,
         Tabs,
-        NavIcon
+        NavIcon,
+        Badge
     },
     data: {},
 

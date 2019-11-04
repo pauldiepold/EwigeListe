@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Jobs\UpdateGroup;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -62,8 +64,44 @@ class Group extends Model
         'gamesPerRound' => 'decimal:1'
     ];
 
+    public function calculateBadges()
+    {
+        $currentMonth = $this->created_at->startOfMonth();
+
+        while ($currentMonth->lessThan(Carbon::now()))
+        {
+            $this->calculateBadgesByMonth($currentMonth);
+            $currentMonth->addMonth();
+        }
+    }
+
+    public function calculateBadgesByMonth(Carbon $date)
+    {
+        $pointsBadge = Badge::firstOrCreate([
+            'group_id' => $this->id,
+            'year' => $date->year,
+            'month' => $date->month,
+            'type' => 'points'
+        ], [
+
+        ]);
+        $pointsBadge->calculate();
+
+        $gamesBadge = Badge::firstOrCreate([
+            'group_id' => $this->id,
+            'year' => $date->year,
+            'month' => $date->month,
+            'type' => 'games'
+        ], [
+
+        ]);
+        $gamesBadge->calculate();
+    }
+
     public function calculate()
     {
+        $this->calculateBadgesByMonth(Carbon::now());
+
         $columns = collect([
             collect(['mostGames', 'games', 'max', 'Meiste Spiele:', 'games', 0]),
             collect(['highestPoints', 'highestPoints', 'max', 'Höchste Punktzahl:', 'games', 0]),
@@ -161,7 +199,15 @@ class Group extends Model
         return $this->hasMany(Profile::class);
     }
 
-    public function badges() {
-        return $this->hasMany(Badge::class);
+    public function badges()
+    {
+        return $this->hasMany(Badge::class)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')            ;
+    }
+
+    public function games()
+    {
+
     }
 }
