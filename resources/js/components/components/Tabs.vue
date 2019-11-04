@@ -1,5 +1,6 @@
 <template>
-    <div v-touch:swipe.left="swipeLeft"
+    <div style="min-height: 50vh;"
+         v-touch:swipe.left="swipeLeft"
          v-touch:swipe.right="swipeRight">
         <div class="tabs">
             <ul class="tw-flex tw-justify-center tw-mb-4 tw-border-b tw-border-gray-400">
