@@ -1,12 +1,13 @@
-.dropdown-search:focus ~ .dropdown-content,
-.dropdown:hover .dropdown-content{
-    display: block;
-}
+/*
 ::-webkit-scrollbar {
     -webkit-appearance: none;
 }
 
 ::-webkit-scrollbar:horizontal {
+    height: 12px;
+}
+
+::-webkit-scrollbar:vertical {
     height: 12px;
 }
 
@@ -19,8 +20,4 @@
 ::-webkit-scrollbar-track {
     border-radius: 10px;
     @apply tw-bg-gray-300;
-}
-
-.custom-outline {
-    box-shadow: 0 0 0 1px #D16341;
-}
+}*/
