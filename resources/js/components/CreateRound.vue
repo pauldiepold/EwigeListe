@@ -1,34 +1,34 @@
 <template>
     <div class="form-autocomplete">
         <div v-if="players.length < 7"
-             class="bg-white rounded shadow-2 mx-auto my-4 px-3 pb-2 pt-3"
+             class="bg-white tw-rounded-lg shadow-2 mx-auto tw-my-6 tw-p-3"
              style="max-width:19rem;">
 
             <input id="text-search"
                    ref="textSearch"
-                   class="custom-input"
+                   class="tw-bg-gray-200 tw-rounded-lg tw-w-full tw-px-3 tw-py-2 tw-mb-3 tw-appearance-none focus:tw-outline-none focus:tw-shadow-outline focus:tw-border-purple-500 tw-border-1"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
                    @focus="scrollTo('#text-search')"
                    type="text"
                    placeholder="Bitte Namen eingeben"/>
 
-            <div class="mt-1 tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto">
-                <div class="py-2 px-1 text-left sm:hover:tw-bg-gray-200"
+            <div class=" tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto tw-bg-gray-200 tw-rounded-lg">
+                <div class="tw-px-3 tw-py-2 text-left"
                      v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
                     {{player.surname.concat(' ', player.name)}}
                 </div>
-                <div class="py-2 px-1 text-left tw-mt-1" v-if="filteredPlayers.length===0">
+                <div class="tw-px-3 tw-py-2 text-left" v-if="filteredPlayers.length===0">
                     Spieler wurde nicht gefunden.
                 </div>
             </div>
         </div>
 
+
         <h5 class="mt-4" v-if="players.length !== 0">
             {{players.length}} Spieler:
         </h5>
-
 
         <sortable-players-list lockAxis="y"
                                :useDragHandle="true"
@@ -66,10 +66,10 @@
              style="max-width: 24rem;"
              id="groups">
             <span class="font-weight-bold"
-                  :class="{'tw-text-gray-500': !inSelectedGroups(group)}">
+                  :class="{'tw-text-gray-600': !inSelectedGroups(group)}">
                 {{group.name}}
             </span>
-            <i class="fas fa-2x mx-1 tw-text-gray-600"
+            <i class="fas fa-2x mx-1 tw-text-gray-700"
                :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}"
                v-show="group.id !== 1">
             </i>
