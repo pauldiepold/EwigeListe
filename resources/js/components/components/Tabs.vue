@@ -1,5 +1,6 @@
 <template>
-    <div>
+    <div v-touch:swipe.left="swipeLeft"
+         v-touch:swipe.right="swipeRight">
         <div class="tabs">
             <ul class="tw-flex tw-justify-center tw-mb-4 tw-border-b tw-border-gray-400">
                 <li class="tw-mx-1" v-for="tab in tabs">
@@ -16,26 +17,34 @@
             </ul>
         </div>
         <div class="tabs-details">
-            <slot name="oben" :selectedTabName="selectedTabName"></slot>
-            <slot :selectedTabName="selectedTabName"></slot>
-            <slot name="unten" :selectedTabName="selectedTabName"></slot>
+            <slot name="oben" :selectedTabName="selectedTab.name"></slot>
+            <slot :selectedTabName="selectedTab.name"></slot>
+            <slot name="unten" :selectedTabName="selectedTab.name"></slot>
         </div>
     </div>
 </template>
 
 <script>
-
     export default {
         components: {},
         data() {
             return {
                 tabs: [],
-                selectedTabName: ''
+                selectedTab: ''
             };
         },
 
         created() {
             this.tabs = this.$children;
+        },
+
+        mounted() {
+            let self = this;
+            self.tabs.forEach(function (tab) {
+                if (tab.isActive === true) {
+                    self.selectedTab = tab;
+                }
+            });
         },
 
         methods: {
@@ -45,7 +54,34 @@
                     tab.tabKey++;
                 });
 
-                this.selectedTabName = selectedTab.name;
+                this.selectedTab = selectedTab;
+            },
+            swipeLeft() {
+                this.selectTab(this.tabs[this.nextIndex('left')]);
+            },
+            swipeRight() {
+                this.selectTab(this.tabs[this.nextIndex('right')]);
+            },
+            currentIndex() {
+                return this.tabs.indexOf(this.selectedTab);
+            },
+            nextIndex(direction) {
+                let length = this.tabs.length;
+                let index = this.currentIndex();
+
+                if (direction === 'left') {
+                    if (index > 0) {
+                        return index - 1;
+                    } else if (index === 0) {
+                        return length - 1;
+                    }
+                } else if (direction === 'right') {
+                    if (index < (length - 1)) {
+                        return index + 1;
+                    } else if (index === length - 1) {
+                        return 0;
+                    }
+                }
             }
         }
     };

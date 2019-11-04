@@ -16,6 +16,8 @@ class AddIndiceToPlayerRound extends Migration
         Schema::table('player_round', function (Blueprint $table) {
             $table->unique(['player_id', 'round_id']);
 
+            $table->index('player_id');
+            $table->index('round_id');
             $table->index('index');
         });
     }
@@ -28,6 +30,7 @@ class AddIndiceToPlayerRound extends Migration
     public function down()
     {
         Schema::table('player_round', function (Blueprint $table) {
+            $table->dropIndex('player_round_player_id_round_id_unique');
             $table->dropIndex('player_round_index_index');
         });
     }

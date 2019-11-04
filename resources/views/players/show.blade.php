@@ -174,6 +174,12 @@
             <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
         @endif
 
+        <tab name="Abzeichen" icon="fa-award">
+
+            Monatsrekorde
+
+        </tab>
+
         <tab name="Rundenarchiv" icon="fa-history">
 
             @if($player->games->count() > 0)

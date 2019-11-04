@@ -91,6 +91,12 @@
             </template>
         </tab>
 
+        <tab name="Abzeichen" icon="fa-award">
+
+            Monatsrekorde
+
+        </tab>
+
         <tab name="Rundenarchiv" icon="fa-history">
             @include('rounds.inc.archiveTable')
         </tab>

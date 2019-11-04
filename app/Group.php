@@ -160,4 +160,8 @@ class Group extends Model
     {
         return $this->hasMany(Profile::class);
     }
+
+    public function badges() {
+        return $this->hasMany(Badge::class);
+    }
 }

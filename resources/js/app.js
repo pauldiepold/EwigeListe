@@ -11,11 +11,12 @@ import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
 import Tab from "./components/components/Tab";
 import NavIcon from "./components/components/NavIcon";
-import VueScrollTo from 'vue-scrollto';
 
-Vue.use(VueScrollTo, {
-    offset: -70
-});
+import VueScrollTo from 'vue-scrollto';
+import Vue2TouchEvents from 'vue2-touch-events';
+
+Vue.use(VueScrollTo, {offset: -70});
+Vue.use(Vue2TouchEvents);
 
 import Form from './lib/Form';
 
@@ -31,11 +32,9 @@ var vm = new Vue({
         Tabs,
         NavIcon
     },
-    data: {
-    },
+    data: {},
 
-    methods: {
-    }
+    methods: {}
 });
 
 global.vm = vm;

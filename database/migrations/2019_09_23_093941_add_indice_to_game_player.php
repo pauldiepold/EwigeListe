@@ -16,6 +16,8 @@ class AddIndiceToGamePlayer extends Migration
         Schema::table('game_player', function (Blueprint $table) {
             $table->unique(['game_id', 'player_id']);
 
+            $table->index('game_id');
+            $table->index('player_id');
             $table->index('won');
             $table->index('soloist');
         });
@@ -29,6 +31,7 @@ class AddIndiceToGamePlayer extends Migration
     public function down()
     {
         Schema::table('game_player', function (Blueprint $table) {
+            $table->dropIndex('game_player_game_id_player_id_unique');
             $table->dropIndex('game_player_won_index');
             $table->dropIndex('game_player_soloist_index');
         });

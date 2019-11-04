@@ -96,6 +96,8 @@ class CreateGroupsTable extends Migration
             $table->timestamps();
 
             $table->unique(['player_id', 'group_id']);
+            $table->index('player_id');
+            $table->index('group_id');
 
             $table->foreign('player_id')
                 ->references('id')

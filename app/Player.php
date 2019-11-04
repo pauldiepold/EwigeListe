@@ -69,6 +69,10 @@ class Player extends Model
         return $this->belongsToMany(Group::class, 'profiles')->withTimestamps()->using(Profile::class);
     }
 
+    public function badges() {
+        return $this->hasMany(Badge::class);
+    }
+
     public function profiles() {
         return $this->hasMany(Profile::class);
     }
