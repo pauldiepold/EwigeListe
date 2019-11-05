@@ -55,7 +55,7 @@
                 info: false,
                 searching: false,
                 columns: [
-                    {orderSequence: ["asc", "desc"]},
+                    {orderSequence: ["desc", "asc"]},
                     {orderSequence: ["desc", "asc"]},
                     {orderable: false},
                 ],

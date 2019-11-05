@@ -144,6 +144,7 @@ module.exports = {
             '4': '1rem',
             '5': '1.25rem',
             '6': '1.5rem',
+            '7': '1.75rem',
             '8': '2rem',
             '10': '2.5rem',
             '12': '3rem',
@@ -323,6 +324,10 @@ module.exports = {
             screen: '100vh',
         },
         maxWidth: {
+            '5xs': '6rem',
+            '4xs': '8rem',
+            '3xs': '12rem',
+            '2xs': '16rem',
             xs: '20rem',
             sm: '24rem',
             md: '28rem',

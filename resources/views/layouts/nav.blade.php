@@ -7,32 +7,32 @@
 <nav class="tw-z-50 tw-bg-blue" id="navbar">
     <div class="sm:tw-max-w-md tw-px-2 tw-flex tw-justify-around tw-mx-auto">
         <a href="/">
-            <nav-icon icon="fa-home"></nav-icon>
+            <nav-icon icon="fa-home" tooltip="Startseite"></nav-icon>
         </a>
         @auth
             @if(Auth::user()->player->rounds->count() != 0)
                 <a href="{{ route('rounds.current') }}">
-                    <nav-icon icon="fa-play-circle"></nav-icon>
+                    <nav-icon icon="fa-play-circle" tooltip="Aktuelle Runde"></nav-icon>
                 </a>
             @endif
             <a href="{{ route('rounds.create') }}">
-                <nav-icon icon="fa-plus-circle"></nav-icon>
+                <nav-icon icon="fa-plus-circle" tooltip="Neue Runde"></nav-icon>
             </a>
         @endauth
         <a href="{{ route('groups.index') }}">
-            <nav-icon icon="fa-list-alt"></nav-icon>
+            <nav-icon icon="fa-list-alt" tooltip="Listen"></nav-icon>
         </a>
         @auth
             <a href="{{ route('rounds.index') }}">
-                <nav-icon icon="fa-history"></nav-icon>
+                <nav-icon icon="fa-history" tooltip="Rundenarchiv"></nav-icon>
             </a>
         @endauth
         @guest
             <a href="{{ route('login') }}">
-                <nav-icon icon="fa-sign-in-alt"></nav-icon>
+                <nav-icon icon="fa-sign-in-alt" tooltip="Login"></nav-icon>
             </a>
             <a href="{{ route('register') }}">
-                <nav-icon icon="fa-user-plus"></nav-icon>
+                <nav-icon icon="fa-user-plus" tooltip="Registrieren"></nav-icon>
             </a>
         @endguest
     </div>

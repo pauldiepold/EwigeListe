@@ -8,7 +8,7 @@
             {{ printDate($comment->created_at) }}
             @if(isset($link))
                 @if(!strcmp($comment->commentable_type, 'App\Round'))
-                    in <a href="/rounds/{{ $comment->commentable_id }}">dieser</a> Runde
+                    in <a href="/runde/{{ $comment->commentable_id }}">dieser</a> Runde
                 @elseif(!strcmp($comment->commentable_type, 'App\Profile'))
                     @php $surname = App\Profile::findOrFail($comment->commentable_id)->player->surname; @endphp
                     in

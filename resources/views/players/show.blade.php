@@ -9,35 +9,18 @@
 @section('content')
     <tabs>
 
-        {{--<template v-slot:oben="props">
-            <div v-show="props.selectedTabName != 'Listen'">
-                <h5>Liste:</h5>
-                <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                        onchange="location = this.value">
-                    @foreach($player->groups as $group)
-                        <option value="{{ $player->path() . '/' . $group->id }}"
-                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
-                            {{ $group->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-        </template>--}}
+        <tab name="Statistiken" icon="fa-user" :selected="true">
 
-        @if($profile->games >= 10)
-            <tab name="Statistiken" icon="fa-user" :selected="true">
+            <select-liste>
+                @foreach($player->groups as $group)
+                    <option value="{{ $player->path() . '/' . $group->id . '#statistiken'}}"
+                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                        {{ $group->name }}
+                    </option>
+                @endforeach
+            </select-liste>
 
-                <h5>Liste:</h5>
-                <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                        onchange="location = this.value">
-                    @foreach($player->groups as $group)
-                        <option value="{{ $player->path() . '/' . $group->id . '#statistiken'}}"
-                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
-                            {{ $group->name }}
-                        </option>
-                    @endforeach
-                </select>
-
+            @if($profile->games >= 10)
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
@@ -175,44 +158,45 @@
                         </table>
                     </div>
                 </div>
-            </tab>
-            <tab name="Graphen" icon="fa-chart-area">
-                <template v-slot:default="props">
 
-                    <h5>Liste:</h5>
-                    <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                            onchange="location = this.value">
-                        @foreach($player->groups as $group)
-                            <option value="{{ $player->path() . '/' . $group->id . '#graphen'}}"
-                                {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
-                                {{ $group->name }}
-                            </option>
-                        @endforeach
-                    </select>
+            @else
+                <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
+            @endif
+        </tab>
+        <tab name="Graphen" icon="fa-chart-area">
+            <template v-slot:default="props">
 
+                <select-liste>
+                    @foreach($player->groups as $group)
+                        <option value="{{ $player->path() . '/' . $group->id . '#graphen'}}"
+                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                            {{ $group->name }}
+                        </option>
+                    @endforeach
+                </select-liste>
+
+                @if($profile->games >= 10)
                     <profile-graphs :profile_id="{{ $profile->id }}" :key="props.tabKey"></profile-graphs>
-                </template>
-            </tab>
+                @else
+                    <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
+                @endif
+            </template>
+        </tab>
 
-        @else
-            <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
-        @endif
 
         <tab name="Abzeichen" icon="fa-award">
 
-            <h5>Liste:</h5>
-            <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                    onchange="location = this.value">
+            <select-liste>
                 @foreach($player->groups as $group)
                     <option value="{{ $player->path() . '/' . $group->id . '#abzeichen'}}"
                         {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                         {{ $group->name }}
                     </option>
                 @endforeach
-            </select>
+            </select-liste>
 
             <div class="tw-flex tw-flex-wrap tw-justify-center">
-                @foreach($badges as $badge)
+                @forelse($badges as $badge)
                     @isset($badge->player)
                         <badge
                             date="{{ $badge->date->formatLocalized('%B %Y') }}"
@@ -221,22 +205,22 @@
                             type="{{ $badge->type }}"
                         ></badge>
                     @endisset
-                @endforeach
+                @empty
+                    Bisher keine Abzeichen in dieser Runde.
+                @endforelse
             </div>
         </tab>
 
         <tab name="Rundenarchiv" icon="fa-history">
 
-            <h5>Liste:</h5>
-            <select class="form-control form-control-sm tw-max-w-xs tw-mx-auto tw-mb-8" name="group" id="group"
-                    onchange="location = this.value">
+            <select-liste>
                 @foreach($player->groups as $group)
                     <option value="{{ $player->path() . '/' . $group->id . '#rundenarchiv'}}"
                         {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                         {{ $group->name }}
                     </option>
                 @endforeach
-            </select>
+            </select-liste>
 
             @if($player->games->count() > 0)
                 @include('rounds.inc.archiveTable')
@@ -260,3 +244,10 @@
         aktualisieren</a>--}}
 
 @endsection
+<script>
+    import SelectListe from "../../js/components/components/SelectListe";
+
+    export default {
+        components: {SelectListe}
+    }
+</script>

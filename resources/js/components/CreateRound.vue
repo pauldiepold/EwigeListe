@@ -14,7 +14,7 @@
                    placeholder="Bitte Namen eingeben"/>
 
             <div class=" tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto tw-bg-gray-200 tw-rounded-lg">
-                <div class="tw-px-3 tw-py-2 text-left"
+                <div class="tw-px-2 tw-py-1 tw-mx-1 tw-my-2 text-left tw-cursor-pointer"
                      v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
                     {{player.surname.concat(' ', player.name)}}

@@ -57,11 +57,6 @@ class Player extends Model
         return $this->hasMany('App\Comment', 'created_by');
     }
 
-    public function invitation()
-    {
-        return $this->hasOne(Invitation::class);
-    }
-
     public function createdGroups()
     {
         return $this->hasMany(Group::class, 'created_by');

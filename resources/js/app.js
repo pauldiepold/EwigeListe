@@ -12,6 +12,7 @@ import Tabs from "./components/components/Tabs";
 import Tab from "./components/components/Tab";
 import Badge from "./components/components/Badge";
 import NavIcon from "./components/components/NavIcon";
+import SelectListe from "./components/components/SelectListe";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
@@ -32,7 +33,8 @@ var vm = new Vue({
         Tab,
         Tabs,
         NavIcon,
-        Badge
+        Badge,
+        SelectListe
     },
     data: {},
 
