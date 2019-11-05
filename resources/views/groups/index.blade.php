@@ -28,7 +28,11 @@
         @endforeach
     </div>
 
-    <a class="btn btn-primary tw-my-6 tw-block" href="/listen/calculate">Alle Gruppen aktualisieren</a>
-    <a class="btn btn-primary tw-my-6 tw-block" href="/players/calculate">Alle Spieler-Profile aktualisieren</a>
+    @auth
+        @if(auth()->user()->isAdmin())
+            <a class="btn btn-primary tw-my-6 tw-block" href="/listen/calculate">Alle Gruppen aktualisieren</a>
+            <a class="btn btn-primary tw-my-6 tw-block" href="/players/calculate">Alle Spieler-Profile aktualisieren</a>
+        @endif
+    @endauth
 
 @endsection

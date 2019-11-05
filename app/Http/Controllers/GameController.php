@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
-//use App\Jobs\UpdateProfile;
-
 class   GameController extends Controller
 {
 

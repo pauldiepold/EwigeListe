@@ -7,6 +7,7 @@ import RoundGraph from './components/RoundGraph';
 import ProfileGraphs from './components/ProfileGraphs';
 import GroupGraph from './components/GroupGraph';
 import CreateRound from './components/CreateRound';
+import UpdateGroups from './components/UpdateGroups';
 import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
 import Tab from "./components/components/Tab";
@@ -34,7 +35,8 @@ var vm = new Vue({
         Tabs,
         NavIcon,
         Badge,
-        SelectListe
+        SelectListe,
+        UpdateGroups
     },
     data: {},
 

@@ -42,7 +42,7 @@
         </sortable-players-list>
 
 
-        <form @submit.prevent="onSubmit">
+        <form @submit.prevent="submit">
             <button :disabled="players.length < 4"
                     type="submit"
                     class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto">
@@ -115,7 +115,7 @@
 
                 this.players.forEach(function (player) {
                     player.groups.forEach(function (group) {
-                        if (!output.map(v => v.id).includes(group.id)) { // && group.id !== 1
+                        if (!output.map(v => v.id).includes(group.id)) {
                             output.push(group);
                         }
                     });
@@ -130,7 +130,7 @@
 
                 let self = this;
                 this.groups.forEach(function (groupID) {
-                    if (self.filteredGroups.map(v => v.id).includes(groupID) && groupID !== 1) {
+                    if (self.filteredGroups.map(v => v.id).includes(groupID)) {
                         output.push(groupID);
                     }
                 });
@@ -195,30 +195,21 @@
             focusTextSearch() {
                 this.$refs.textSearch.focus();
             },
-            onSubmit() {
-                this.submit()
-                    .then(response => window.location.href = response)
-                    .catch(errors => console.log(errors));
-            },
             submit() {
                 this.loading = true;
-                return new Promise((resolve, reject) => {
-                    axios.post('/rounds', {
-                        'players': this.players.map(v => v.id),
-                        'groups': this.selectedGroups
+
+                axios.post('/rounds', {
+                    'players': this.players.map(v => v.id),
+                    'groups': this.selectedGroups
+                })
+                    .then(response => {
+                        window.location.href = response.data;
                     })
-                        .then(response => {
-                            //this.onSuccess(response.data);
+                    .catch(error => {
+                        console.log(error.response.data.errors)
 
-                            resolve(response.data);
-                        })
-                        .catch(error => {
-                            //this.onFail(error.response.data.errors);
-
-                            this.loading = false;
-                            reject(error.response);
-                        })
-                });
+                        this.loading = false;
+                    });
             }
         }
     };

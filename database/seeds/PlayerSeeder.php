@@ -4,6 +4,7 @@ use App\Game;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class PlayerSeeder extends Seeder
 {
@@ -15,6 +16,7 @@ class PlayerSeeder extends Seeder
      */
     public function run()
     {
+        factory('App\User')->create(['email' => 'paul@paul.de', 'password' => Hash::make('paul')]);
         factory('App\User')->create(['email' => 'test@test.de']);
 
         factory('App\User', intval(config('database.seed.players')))->create();

@@ -239,9 +239,13 @@
         </tab>
     </tabs>
 
-    {{--
-    <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Statistiken
-        aktualisieren</a>--}}
+
+    @auth
+        @if(auth()->user()->isAdmin())
+            <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Statistiken
+                aktualisieren</a>
+        @endif
+    @endauth
 
 @endsection
 <script>

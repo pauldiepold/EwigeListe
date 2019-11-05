@@ -131,10 +131,14 @@
 
     </tabs>
 
-    {{--<a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
-        aktualisieren</a>
-    <a class="btn btn-primary tw-my-6" href="/liste/calculateBadges/{{ $group->id }}">Badges
-        aktualisieren</a>--}}
+    @auth
+        @if(auth()->user()->isAdmin())
+            <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
+                aktualisieren</a>
+            <a class="btn btn-primary tw-my-6" href="/liste/calculateBadges/{{ $group->id }}">Badges
+                aktualisieren</a>
+        @endif
+    @endauth
 
 @endsection
 

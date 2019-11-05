@@ -1,12 +1,7 @@
 <footer class="footer py-3 tw-bg-blue-darker position-absolute w-100" style="bottom: 0">
     <div class="container text-center text-muted">
         @auth
-            @php
-                $player = Illuminate\Support\Facades\Cache::remember('player' . Auth::id(), 60*60, function () {
-                    return auth()->user()->player;
-                });
-            @endphp
-            Angemeldet: <a href="{{ $player->path() }}">{{ $player->surname }} {{ $player->name }}</a> &bull;
+            Angemeldet: <a href="{{ auth()->user()->player->path() }}">{{ auth()->user()->player->surname }} {{ auth()->user()->player->name }}</a> &bull;
 
             <a href="{{ route('logout') }}"
                onclick="event.preventDefault();

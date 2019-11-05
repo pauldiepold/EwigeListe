@@ -62,6 +62,7 @@ Route::get('/rundenarchiv/{group?}', 'RoundController@index')->middleware('auth'
 Route::get('/runde/erstellen', 'RoundController@create')->middleware('auth')->name('rounds.create');
 Route::post('/rounds', 'RoundController@store')->middleware('auth')->name('rounds.store');
 Route::get('/runde/{round}', 'RoundController@show')->middleware('auth')->name('rounds.show');
+Route::patch('/rounds/{round}', 'RoundController@update')->middleware('auth')->name('rounds.update');
 Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth')->name('rounds.destroy');
 
 

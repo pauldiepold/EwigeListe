@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateRound;
 use App\Round;
 use App\Player;
 use App\Group;
@@ -35,7 +36,7 @@ class RoundController extends Controller
 
     public function show(Round $round)
     {
-        $round->load('players', 'groups');
+        $round->load('players.groups', 'groups');
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
 
@@ -91,7 +92,7 @@ class RoundController extends Controller
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
-
+//dd($round->players);
         return view('rounds.show', compact(
             'round',
             'colRound',
@@ -116,7 +117,7 @@ class RoundController extends Controller
         $players = Player::find($validated->get('players'));
 
         $groups = Group::find(
-            collect($validated->get('groups'))->prepend(1)
+            $validated->get('groups')
         );
 
         $round = Round::create(['created_by' => auth()->user()->player->id]);
@@ -138,6 +139,28 @@ class RoundController extends Controller
         }
 
         return $round->path();
+    }
+
+    public function update(UpdateRound $request, Round $round) {
+        $this->authorize('update', $round);
+
+        $validated = collect($request->validated());
+
+        $groups = Group::find(
+            $validated->get('groups')
+        );
+
+        $players = $round->players;
+
+        $round->groups()->detach();
+        $round->groups()->saveMany($groups);
+
+        foreach ($groups as $group)
+        {
+            $group->addPlayers($players);
+        }
+
+        return 'success';
     }
 
     public function destroy(Round $round)
