@@ -115,9 +115,9 @@ Route::delete('/comments/{comment}', 'CommentController@destroy')->middleware('a
 
 
 /* *********** Sonstiges ************** */
-Route::view('/datenschutz/', 'sonstiges.datenschutz');
-Route::view('/impressum/', 'sonstiges.impressum');
-Route::view('/regeln/', 'sonstiges.regeln');
+Route::view('/datenschutz/', 'sonstiges.datenschutz')->name('datenschutz');
+Route::view('/impressum/', 'sonstiges.impressum')->name('impressum');
+Route::view('/regeln/', 'sonstiges.regeln')->name('regeln');
 
 Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')->middleware('auth');
 

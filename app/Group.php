@@ -103,19 +103,19 @@ class Group extends Model
         $this->calculateBadgesByMonth(Carbon::now());
 
         $columns = collect([
-            collect(['mostGames', 'games', 'max', 'Meiste Spiele:', 'games', 0]),
-            collect(['highestPoints', 'highestPoints', 'max', 'Höchste Punktzahl:', 'games', 0]),
-            collect(['lowestPoints', 'lowestPoints', 'min', 'Niedrigste Punktzahl:', 'games', 0]),
-            collect(['highestWinrate', 'winrate', 'max', 'Höchste Gewinnrate:', 'games', 50]),
-            collect(['lowestWinrate', 'winrate', 'min', 'Niedrigste Gewinnrate:', 'games', 50]),
-            collect(['highestSoloWinrate', 'soloWinrate', 'max', 'Höchste Solo-Gewinnrate:', 'soli', 10]),
-            collect(['lowestSoloWinrate', 'soloWinrate', 'min', 'Niedrigste Solo-Gewinnrate:', 'soli', 10]),
-            collect(['lowestSoloRate', 'soloRate', 'min', 'Wenigste Spiele bis Solo:', 'soli', 10]),
-            collect(['highestSoloRate', 'soloRate', 'max', 'Meiste Spiele bis Solo:', 'soli', 10]),
-            collect(['highestWinstreak', 'winStreak', 'max', 'Längste Sieges-Strähne:', 'games', 0]),
-            collect(['highestLosestreak', 'loseStreak', 'max', 'Längste Pech-Strähne:', 'games', 0]),
-            collect(['mostGamesDay', 'mostGamesDay', 'max', 'Meiste Spiele an einem Tag:', 'games', 0]),
-            collect(['mostGamesMonth', 'mostGamesMonth', 'max', 'Meiste Spiele in einem Monat:', 'games', 0])
+            collect(['mostGames', 'games', 'max', 'Meiste Spiele:', 'games', 0, '']),
+            collect(['highestPoints', 'highestPoints', 'max', 'Höchste Punktzahl:', 'games', 0, '']),
+            collect(['lowestPoints', 'lowestPoints', 'min', 'Niedrigste Punktzahl:', 'games', 0, '']),
+            collect(['highestWinrate', 'winrate', 'max', 'Höchste Gewinnrate:', 'games', 50, '%']),
+            collect(['lowestWinrate', 'winrate', 'min', 'Niedrigste Gewinnrate:', 'games', 50, '%']),
+            collect(['highestSoloWinrate', 'soloWinrate', 'max', 'Höchste Solo-Gewinnrate:', 'soli', 10, '%']),
+            collect(['lowestSoloWinrate', 'soloWinrate', 'min', 'Niedrigste Solo-Gewinnrate:', 'soli', 10, '%']),
+            collect(['lowestSoloRate', 'soloRate', 'min', 'Wenigste Spiele bis Solo:', 'soli', 10, '']),
+            collect(['highestSoloRate', 'soloRate', 'max', 'Meiste Spiele bis Solo:', 'soli', 10, '']),
+            collect(['highestWinstreak', 'winStreak', 'max', 'Längste Sieges-Strähne:', 'games', 0, '']),
+            collect(['highestLosestreak', 'loseStreak', 'max', 'Längste Pech-Strähne:', 'games', 0, '']),
+            collect(['mostGamesDay', 'mostGamesDay', 'max', 'Meiste Spiele an einem Tag:', 'games', 0, '']),
+            collect(['mostGamesMonth', 'mostGamesMonth', 'max', 'Meiste Spiele in einem Monat:', 'games', 0, ''])
         ]);
 
         $col = collect();
@@ -132,6 +132,7 @@ class Group extends Model
         }
 
         $this->records = $col;
+        $this->stats = $this->calcStats();
 
         $this->save();
     }
@@ -151,7 +152,7 @@ class Group extends Model
 
         $col = collect();
         $col->push($column->get(3));
-        $col->push($value);
+        $col->push($value . $column->get(6));
         $col->push($this->getPlayerLink($profiles));
 
         return $col;
@@ -167,6 +168,56 @@ class Group extends Model
         }
 
         return niceCount($links);
+    }
+
+    private function calcStats() {
+
+        $colStats = collect();
+        $groupID = $this->id;
+
+        /* ***** Spiele insgesamt *****/
+        $gamesAll = Game::whereHas('round.groups', function (Builder $query) use ($groupID)
+            {
+                $query->where('groups.id', '=', $groupID);
+            })
+            ->count();
+
+        $colRow = collect();
+        $colRow->push('Spiele insgesamt:');
+        $colRow->push($gamesAll);
+        $colStats->push($colRow);
+
+
+        /* ***** Punkte Durchschnitt *****/
+
+        $pointsAvg = Game::whereHas('round.groups', function (Builder $query) use ($groupID)
+            {
+                $query->where('groups.id', '=', $groupID);
+            })
+            ->avg('points');
+
+        $colRow = collect();
+        $colRow->push('∅ Punktzahl pro Spiel:');
+        $colRow->push(round($pointsAvg, 1));
+        $colStats->push($colRow);
+
+        /* ***** Spiele Schnitt pro Runde *****/
+
+        $gamesAvg = Round::whereHas('groups', function (Builder $query) use ($groupID)
+            {
+                $query->where('groups.id', '=', $groupID);
+            })
+            ->withCount('games')
+            ->get()
+            ->avg('games_count');
+
+        $colRow = collect();
+        $colRow->push('∅ Anzahl Spiele pro Runde:');
+        $colRow->push(round($gamesAvg, 1));
+        $colStats->push($colRow);
+
+        return $colStats;
+
     }
 
     public function addPlayers(Collection $players)
