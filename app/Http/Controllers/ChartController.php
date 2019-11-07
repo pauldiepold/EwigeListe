@@ -113,11 +113,14 @@ class ChartController extends Controller
         $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
         $gameCounter->push($i);
 
+        $n = ceil($i/700);
+
         $data = collect();
-        $data->put('dates', $dates);
-        $data->put('points', $points);
-        $data->put('gameDates', $gameDates);
-        $data->put('gameCounter', $gameCounter);
+        $data->put('dates', $dates->nth($n));
+        $data->put('points', $points->nth($n));
+        $data->put('gameDates', $gameDates->nth($n));
+        $data->put('gameCounter', $gameCounter->nth($n));
+
 
         return ($data->toArray());
     }
