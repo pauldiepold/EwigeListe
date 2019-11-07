@@ -45,7 +45,7 @@ class GroupController extends Controller
     public function show(Group $group = null)
     {
         $group = isset($group) ? $group : Group::find(1);
-        $group->load(['players.profiles', 'profiles.player']);
+        $group->load(['players.profiles', 'profiles.player', 'badges.player']);
 
         $rounds = $group->rounds()
             ->whereHas('groups', function (Builder $query) use ($group)
