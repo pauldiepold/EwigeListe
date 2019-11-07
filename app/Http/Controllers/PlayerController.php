@@ -27,16 +27,14 @@ class PlayerController extends Controller
             ->where('group_id', $selectedGroup->id)
             ->first();
 
-        $rounds = $player->rounds()
+        $rounds_count = $player->rounds()
             ->whereHas('groups', function (Builder $query) use ($selectedGroup)
             {
                 $query->where('groups.id', '=', $selectedGroup->id);
             })
-            ->with('players')
-            ->withCount('games')
-            ->get();
+            ->count();
 
-        return view('players.show', compact('player', 'profile', 'rounds', 'selectedGroup', 'badges'));
+        return view('players.show', compact('player', 'profile', 'rounds_count', 'selectedGroup', 'badges'));
 
     }
 

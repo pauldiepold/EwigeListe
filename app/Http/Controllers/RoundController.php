@@ -7,13 +7,11 @@ use App\Profile;
 use App\Round;
 use App\Player;
 use App\Group;
-use App\Game;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreRound;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
 {
@@ -24,15 +22,13 @@ class RoundController extends Controller
 
         $groups = Group::all();
 
-        $rounds = Round::whereHas('groups', function (Builder $query) use ($selectedGroup)
+        $rounds_count = Round::whereHas('groups', function (Builder $query) use ($selectedGroup)
         {
             $query->where('groups.id', '=', $selectedGroup->id);
         })
-            ->with('players')
-            ->withCount('games')
-            ->get();
+            ->count();
 
-        return view('rounds.index', compact('rounds', 'groups', 'selectedGroup'));
+        return view('rounds.index', compact('rounds_count', 'groups', 'selectedGroup'));
     }
 
     public function show(Round $round)
@@ -182,6 +178,39 @@ class RoundController extends Controller
         $round->delete();
 
         return redirect()->route('rounds.create');
+    }
+
+    public function archiveTable(Group $group, Player $player = null)
+    {
+        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group)
+        {
+            $query->where('groups.id', '=', $group->id);
+        })
+            ->with('players')
+            ->withCount('games');
+
+        if (isset($player))
+        {
+            $roundsQuery->whereHas('players', function (Builder $query) use ($player)
+            {
+                $query->where('players.id', '=', $player->id);
+            });
+        }
+
+        $rounds = $roundsQuery->get();
+
+        $roundsCol = collect();
+
+        foreach ($rounds as $round)
+        {
+            $roundsCol->push([
+                'date' => date("d.m.y", strtotime($round->updated_at)),
+                'games_count' => $round->games_count,
+                'players' => nice_count($round->players->pluck('surname')->toArray())
+            ]);
+        }
+
+        return Datatables::of($roundsCol)->make(true);
     }
 
 }

@@ -45,18 +45,17 @@ class GroupController extends Controller
     public function show(Group $group = null)
     {
         $group = isset($group) ? $group : Group::find(1);
+        $selectedGroup = $group;
         $group->load(['players.profiles', 'profiles.player', 'badges.player']);
 
-        $rounds = $group->rounds()
+        $rounds_count = $group->rounds()
             ->whereHas('groups', function (Builder $query) use ($group)
             {
                 $query->where('groups.id', '=', $group->id);
             })
-            ->with('players')
-            ->withCount('games')
-            ->get();
+            ->count();
 
-        return view('groups.show', compact('group', 'rounds'));
+        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup'));
     }
 
     public function update(Group $group)

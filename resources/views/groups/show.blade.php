@@ -28,14 +28,14 @@
                         </thead>
 
                         <tbody>
-                            @forelse ($group->players as $player)
-                                @php $profile = $player->profiles->where('group_id', $group->id)->first(); @endphp
+                            @forelse ($group->players as $groupPlayer)
+                                @php $profile = $groupPlayer->profiles->where('group_id', $group->id)->first(); @endphp
 
-                                <tr class="{{ $player->id == auth()->user()->player->id ? ' bg-primary-light' : ''}}">
+                                <tr class="{{ $groupPlayer->id == auth()->user()->player->id ? ' bg-primary-light' : ''}}">
 
                                     <td style="max-width: 8rem; white-space: normal;">
-                                        <a href="{{ $player->path() }}/{{ $group->id }}">
-                                            {{ $player->surname }} {{ $player->name }}
+                                        <a href="{{ $groupPlayer->path() }}/{{ $group->id }}">
+                                            {{ $groupPlayer->surname }} {{ $groupPlayer->name }}
                                         </a>
                                     </td>
                                     <td>
