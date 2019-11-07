@@ -38,6 +38,7 @@
                              :players="players"
                              :player="player"
                              :index="index"
+                             :logged-in-player-id="loggedInPlayerId"
                              @remove-player="removePlayer"/>
         </sortable-players-list>
 
@@ -93,9 +94,15 @@
                 type: Array,
                 default() {
                     return [];
-                }
+                },
+                required: true,
+            },
+            loggedInPlayerId: {
+                type: Number,
+                required: true
             }
         },
+
         data() {
             return {
                 textSearch: '',
@@ -103,6 +110,12 @@
                 groups: [1],
                 players: []
             }
+        },
+
+        created() {
+            let self = this;
+            let player = self.allPlayers.filter(player => player.id === self.loggedInPlayerId)
+            self.players.push(player[0]);
         },
 
         computed: {
@@ -120,8 +133,6 @@
                         }
                     });
                 });
-
-                output.sort((a, b) => a.id - b.id);
 
                 return output;
             },
@@ -146,10 +157,6 @@
                     return this.groups.length + ' Listen'
                 }
             }
-        },
-
-        mounted() {
-            //this.focusTextSearch();
         },
 
         methods: {

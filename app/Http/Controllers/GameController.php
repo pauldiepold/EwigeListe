@@ -82,14 +82,8 @@ class   GameController extends Controller
             ]);
         }
 
-        $groups = $round->groups;
-
-        $profiles = Profile::whereIn('group_id', $groups->pluck('id'))
-            ->whereIn('player_id', $players->pluck('id'))
-            ->get();
-
-        Profile::updateManyStats($profiles);
-        Group::updateManyStats($groups);
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
 
         return redirect($round->path());
     }
@@ -156,16 +150,8 @@ class   GameController extends Controller
             $player->pivot->save();
         }
 
-        /*
-        foreach ($game->players()->with('profile')->get() as $player)
-        {
-            if (!$player->profile->queued)
-            {
-                $player->profile->queued = true;
-                $player->profile->save();
-                UpdateProfile::dispatch($player->profile);
-            }
-        }*/
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
 
         return redirect($round->path());
     }
@@ -183,17 +169,8 @@ class   GameController extends Controller
 
         $game->delete();
 
-        //$players = $game->players()->with('profile')->get();
-        /*
-        foreach ($players as $player)
-        {
-            if (!$player->profile->queued)
-            {
-                $player->profile->queued = true;
-                $player->profile->save();
-                UpdateProfile::dispatch($player->profile);
-            }
-        }*/
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
 
         return redirect($round->path());
     }

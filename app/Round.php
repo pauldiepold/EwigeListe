@@ -102,11 +102,16 @@ class Round extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class)->withTimestamps();
+        return $this->belongsToMany(Group::class)
+            ->withTimestamps()
+            ->withCount('rounds')
+            ->orderByRaw('rounds_count desc');
     }
 
-    public function roundsOfGroup($groupID)
+    public function profiles()
     {
-        return;
+        return Profile::whereIn('group_id', $this->groups->pluck('id'))
+            ->whereIn('player_id', $this->players->pluck('id'))
+            ->get();
     }
 }

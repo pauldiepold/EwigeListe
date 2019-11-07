@@ -9,7 +9,7 @@ class Game extends Model {
 
     protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay', 'created_by', 'round_id'];
 
-    //protected $touches = ['round'];
+    protected $touches = ['round'];
 
     protected $attributes = [
         'misplay' => false,

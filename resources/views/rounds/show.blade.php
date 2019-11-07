@@ -49,9 +49,7 @@
                 @if($round->games->count() >= 4)
                     <round-graph :round_id="{{ $round->id }}" :key="props.tabKey"></round-graph>
                 @else
-                    <p>
-                        Das Rundenverlaufs-Diagramm wird ab dem 4. Spiel angezeigt!
-                    </p>
+                    <h5 class="tw-mb-8">Das Rundenverlaufs-Diagramm wird ab dem 4. Spiel angezeigt!</h5>
                 @endif
 
                 @include('rounds.inc.info')
@@ -60,32 +58,9 @@
 
         <tab name="Listen" icon="fa-list-alt">
             <template v-slot:default="props">
-
                 <update-groups :round-input="{{ $round }}"
                                :can-update="{{ auth()->user()->can('update', $round) ? 'true' : 'false'}}"
                                :key="props.tabKey"></update-groups>
-
-                @can('update', $round)
-                    <a data-container="body" data-toggle="popover" data-placement="top" title="Listen hinzufügen"
-                       data-content="Eine Runde kann nur Listen hinzugefügt werden, in denen mindestens einer der Spieler Mitglied ist. Erstelle eine neue Liste oder trete einer bestehende Liste bei, um die Runde auf die Liste zu schreiben.">
-                        <i class="fas fa-info-circle fa-lg tw-mt-6"></i>
-                    </a>
-                @endcan
-                {{--
-                <div class="mx-auto">
-                    <h4>Listen</h4>
-                    @forelse($round->groups as $group)
-                        <div
-                            class="rounded text-left bg-white px-3 py-2 my-3 mx-auto d-flex align-items-center justify-content-between shadow-2"
-                            style="max-width: 24rem;">
-                            <a href="{{ $group->path() }}" class="font-weight-bold tw-text-black">
-                                {{ $group->name }}
-                            </a>
-                        </div>
-                    @empty
-                        <p>Diese Runde ist in keiner Liste.</p>
-                    @endforelse
-                </div>--}}
             </template>
         </tab>
 

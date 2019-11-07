@@ -11,6 +11,9 @@
 @section('content')
     <tabs>
         <tab name="Mitglieder" icon="fa-users" :selected="true">
+            @if(!$group->players->contains(auth()->user()->player))
+                <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste beitreten</a>
+            @endif
             <div class="row justify-content-center my-4">
                 <div class="col col-xl-7 col-lg-8 col-md-9">
                     <table class="table nowrap myDataTable d-none table-responsive-sm">
@@ -49,7 +52,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                Diese Gruppe hat noch keine Mitglieder.
+                                <h5>Diese Gruppe hat noch keine Mitglieder.</h5>
                             @endforelse
                         </tbody>
                     </table>
@@ -68,7 +71,7 @@
                 <div class="row justify-content-center">
                     <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
                         <table class="table table-sm table-borderless text-left">
-                            @foreach($group->records as $row)
+                            @forelse($group->records as $row)
                                 @php $row = collect($row); @endphp
                                 <tr>
                                     <td class="tw-mb-4">
@@ -81,7 +84,9 @@
                                         {!! $row->shift() !!}
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <h5>Diese Gruppe hat noch keine Rekorde.</h5>
+                            @endforelse
                         </table>
                     </div>
                 </div>
@@ -90,7 +95,7 @@
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-7 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
-                            @foreach($group->stats as $row)
+                            @forelse($group->stats as $row)
                                 @php $row = collect($row); @endphp
                                 <tr>
                                     <td{!! $row->contains('margin') ? ' class="pb-3"' : '' !!}>
@@ -100,28 +105,34 @@
                                         <b>{{ $row->shift() }}</b>
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+
+                            @endforelse
                         </table>
                     </div>
                 </div>
 
-                <h4 class="tw-mt-8">Anzahl der Spiele:</h4>
-                <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
+                @if($group->rounds->count() >= 5)
+                    <h4 class="tw-mt-8">Anzahl der Spiele:</h4>
+                    <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
+                @endif
             </template>
         </tab>
 
         <tab name="Abzeichen" icon="fa-award">
             <div class="tw-flex tw-flex-wrap tw-justify-center">
-                @foreach($group->badges as $badge)
-                    @isset($badge->player)
+                @if($group->badges->count() >= 2 && $group->badges->get(1)->value != 0)
+                    @foreach($group->badges as $badge)
                         <badge
                             date="{{ $badge->date->formatLocalized('%B %Y') }}"
                             name="{{ $badge->player->surname }}"
                             value="{{ $badge->value }}"
                             type="{{ $badge->type }}"
                         ></badge>
-                    @endisset
-                @endforeach
+                    @endforeach
+                @else
+                    <h5>Diese Runde hat noch keine Abzeichen.</h5>
+                @endif
             </div>
         </tab>
 
@@ -133,7 +144,7 @@
 
     @auth
         @if(auth()->user()->isAdmin())
-            <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Statistiken
+            <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Gruppe
                 aktualisieren</a>
             <a class="btn btn-primary tw-my-6" href="/liste/calculateBadges/{{ $group->id }}">Badges
                 aktualisieren</a>

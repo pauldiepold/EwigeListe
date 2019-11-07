@@ -104,13 +104,19 @@ class Profile extends Pivot
         }
         $this->games = $games->count();
         $gamesThisMonth = clone $games;
-        $this->gamesThisMonth = $gamesThisMonth->whereYear('g.created_at', date('Y'))->whereMonth('g.created_at', date('n'))->count();
+        $this->gamesThisMonth = $gamesThisMonth->where('g.created_at', '>=', Carbon::now()->startOfMonth())
+            ->where('g.created_at', '<', Carbon::now()->startOfMonth()->addMonth())
+            ->count();
         $gamesWon = clone $games;
         $gamesLost = clone $games;
         $this->gamesWon = $gamesWon->where('g.won', 1)->count();
         $this->gamesLost = $gamesLost->where('g.won', '0')->count();
         $this->gamesPerDay = $this->player->created_at->diffInDays(Carbon::now()) < 5 ? null : $this->games / $this->player->created_at->diffInDays(Carbon::now());
         $this->points = $games->sum('g.points');
+        $pointsThisMonth = clone $games;
+        $this->pointsThisMonth = $pointsThisMonth->where('g.created_at', '>=', Carbon::now()->startOfMonth())
+            ->where('g.created_at', '<', Carbon::now()->startOfMonth()->addMonth())
+            ->sum('g.points');
         $this->pointsPerGame = $this->games == 0 ? null : $this->points / $this->games;
         $this->pointsPerWin = $this->gamesWon == 0 ? null : $gamesWon->sum('g.points') / $this->gamesWon;
         $this->pointsPerLose = $this->gamesLost == 0 ? null : $gamesLost->sum('g.points') / $this->gamesLost;

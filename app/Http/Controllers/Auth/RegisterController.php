@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Group;
 use App\User;
 use App\Player;
 use App\Profile;
@@ -87,6 +88,10 @@ class RegisterController extends Controller {
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        Group::find(1)->addPlayer($player);
+
+        $player->profiles->first()->calculate();
 
         return $user;
     }

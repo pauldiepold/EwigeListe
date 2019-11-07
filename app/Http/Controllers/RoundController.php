@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateRound;
+use App\Profile;
 use App\Round;
 use App\Player;
 use App\Group;
@@ -92,7 +93,7 @@ class RoundController extends Controller
             $game->misplay ? $colRow->push('misplay') : '';
             $colRound->push($colRow);
         }
-//dd($round->players);
+
         return view('rounds.show', compact(
             'round',
             'colRound',
@@ -106,6 +107,8 @@ class RoundController extends Controller
     {
         $allPlayers = Player::where('hide', '=', '0')
             ->with('groups')
+            ->withCount('gamePlayers')
+            ->orderByRaw('game_players_count desc')
             ->get();
 
         return view('rounds.create', compact('allPlayers'));
@@ -141,7 +144,8 @@ class RoundController extends Controller
         return $round->path();
     }
 
-    public function update(UpdateRound $request, Round $round) {
+    public function update(UpdateRound $request, Round $round)
+    {
         $this->authorize('update', $round);
 
         $validated = collect($request->validated());
@@ -159,6 +163,9 @@ class RoundController extends Controller
         {
             $group->addPlayers($players);
         }
+
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($groups, $round->updated_at);
 
         return 'success';
     }

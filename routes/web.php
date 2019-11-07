@@ -78,6 +78,7 @@ Route::get('/listen', 'GroupController@index')->middleware('auth')->name('groups
 Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->name('groups.create');
 Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
 Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
+Route::get('/liste/{group}/beitreten', 'GroupController@update')->middleware('auth')->name('groups.addPlayer');
 
 Route::get('/listen/calculate', function ()
 {

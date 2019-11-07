@@ -6,7 +6,8 @@
         </div>
         <div style="font-size: 1.1rem;" class="tw-cursor-default tw-flex">
             <div class="tw-px-2 tw-cursor-pointer "
-                 @click="$emit('remove-player', player)">
+                 @click="$emit('remove-player', player)"
+                 v-show="player.id !== loggedInPlayerId">
                 <i class="fas fa-trash text-danger"></i>
             </div>
             <div class="tw-pl-2 tw-pr-5 tw--mr-4 tw--my-2 tw-flex tw-items-center tw-cursor-pointer"
@@ -27,6 +28,7 @@
             'players',
             'player',
             'index',
+            'loggedInPlayerId'
         ],
         methods: {},
         directives: {

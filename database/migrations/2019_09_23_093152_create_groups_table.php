@@ -58,6 +58,7 @@ class CreateGroupsTable extends Migration
             $table->boolean('queued')->nullable();
 
             $table->integer('points')->nullable();
+            $table->integer('pointsThisMonth')->nullable();
             $table->float('pointsPerGame', 4, 2)->nullable();
             $table->float('pointsPerWin', 4, 2)->nullable();
             $table->float('pointsPerLose', 4, 2)->nullable();

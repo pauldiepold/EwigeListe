@@ -66,7 +66,9 @@ class Player extends Model
     {
         return $this->belongsToMany(Group::class, 'profiles')
             ->withTimestamps()
-            ->using(Profile::class);
+            ->using(Profile::class)
+            ->withCount('rounds')
+            ->orderByRaw('rounds_count desc');
     }
 
     public function badges() {
@@ -75,5 +77,9 @@ class Player extends Model
 
     public function profiles() {
         return $this->hasMany(Profile::class);
+    }
+
+    public function gamePlayers() {
+        return $this->hasMany(GamePlayer::class);
     }
 }

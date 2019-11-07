@@ -17,17 +17,17 @@ class Group extends Model
         'created_by'
     ];
 
-    public function updateStats()
+    public function updateStats($date = null)
     {
         if (!$this->queued)
         {
             $this->queued = true;
             $this->save();
-            UpdateGroup::dispatch($this);
+            UpdateGroup::dispatch($this, $date);
         }
     }
 
-    public static function updateManyStats(Collection $groups)
+    public static function updateManyStats(Collection $groups, $date = null)
     {
         foreach ($groups as $group)
         {
@@ -35,7 +35,7 @@ class Group extends Model
             {
                 $group->queued = true;
                 $group->save();
-                UpdateGroup::dispatch($group);
+                UpdateGroup::dispatch($group, $date);
             }
         }
     }
@@ -98,9 +98,10 @@ class Group extends Model
         $gamesBadge->calculate();
     }
 
-    public function calculate()
+    public function calculate($date = null)
     {
-        $this->calculateBadgesByMonth(Carbon::now());
+        $date = isset($date) ? $date : Carbon::now();
+        $this->calculateBadgesByMonth($date);
 
         $columns = collect([
             collect(['mostGames', 'games', 'max', 'Meiste Spiele:', 'games', 0, '']),
@@ -218,6 +219,10 @@ class Group extends Model
 
         return $colStats;
 
+    }
+
+    public function addPlayer($player) {
+        $this->players()->save($player);
     }
 
     public function addPlayers(Collection $players)

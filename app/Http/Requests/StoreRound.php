@@ -39,6 +39,11 @@ class StoreRound extends FormRequest {
             {
                 $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
             }
+
+            if (!collect($this->input('players'))->contains(auth()->user()->player->id))
+            {
+                $validator->errors()->add('players', 'Du selbst musst Teil der Runde sein!');
+            }
         });
     }
 

@@ -19,11 +19,9 @@ import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
 
 Vue.use(VueScrollTo, {offset: -70});
-Vue.use(Vue2TouchEvents, {swipeTolerance: 50});
+Vue.use(Vue2TouchEvents, {swipeTolerance: 70});
 
-import Form from './lib/Form';
-
-var vm = new Vue({
+global.vm = new Vue({
     el: '#app',
     components: {
         RoundGraph,
@@ -42,21 +40,5 @@ var vm = new Vue({
 
     methods: {}
 });
-
-global.vm = vm;
-
-/* How to use Form.js
-
-        form: new Form({
-            players: preselectedPlayers,
-            numberOfPlayers: 4,
-        }),
-
-        onSubmit() {
-            this.form.post('/rounds')
-                .then(response => window.location.href = response)
-                .catch(errors => console.log(errors));
-        }
- */
 
 Vue.config.productionTip = false;

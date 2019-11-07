@@ -35,9 +35,7 @@
         </div>
     </div>
 @else
-    <p class="tw-mt-6 tw-font-bold">
-        Es wurde keine Runde gefunden.
-    </p>
+    <h5>Bisher wurden keine Runden gespielt.</h5>
 @endif
 
 @push('scriptsHead')

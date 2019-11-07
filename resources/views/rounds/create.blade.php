@@ -6,6 +6,6 @@
 
 @section('content')
 
-    <create-round :all-players="{{ $allPlayers }}" />
+    <create-round :all-players="{{ $allPlayers }}" :logged-in-player-id="{{ auth()->user()->player->id }}"></create-round>
 
 @endsection

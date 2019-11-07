@@ -45,6 +45,16 @@
                 class="btn btn-outline-primary mt-4 mx-auto">
             Bearbeiten abbrechen
         </button>
+
+        <div v-show="canUpdate && edit">
+            <a data-container="body"
+               data-toggle="popover"
+               data-placement="top"
+               title="Listen hinzufügen"
+               data-content="Eine Runde kann nur Listen hinzugefügt werden, in denen mindestens einer der Spieler Mitglied ist. Erstelle eine neue Liste oder trete einer bestehende Liste bei, um die Runde auf die Liste zu schreiben.">
+                <i class="fas fa-info-circle fa-lg tw-mt-6"></i>
+            </a>
+        </div>
     </div>
 </template>
 
@@ -83,8 +93,6 @@
                 });
 
                 output = output.filter(group => this.edit || this.inSelectedGroups(group));
-
-                output.sort((a, b) => a.id - b.id);
 
                 return output;
             },

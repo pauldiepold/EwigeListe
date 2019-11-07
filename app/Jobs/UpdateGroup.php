@@ -14,15 +14,17 @@ class UpdateGroup implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $group;
+    protected $date;
 
     /**
      * Create a new job instance.
      *
      * @param $group
      */
-    public function __construct(Group $group)
+    public function __construct(Group $group, $date)
     {
         $this->group = $group;
+        $this->date = $date;
     }
 
     /**
@@ -32,7 +34,7 @@ class UpdateGroup implements ShouldQueue {
      */
     public function handle()
     {
-        $this->group->calculate();
+        $this->group->calculate($this->date);
 
         $this->group->queued = false;
         $this->group->save();

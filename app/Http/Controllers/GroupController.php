@@ -11,7 +11,10 @@ class GroupController extends Controller
 
     public function index()
     {
-        $groups = Group::with('players')->get();
+        $groups = Group::withCount('rounds')
+            ->withCount('players')
+            ->orderByRaw('rounds_count desc')
+            ->get();
 
         return view('groups.index', compact('groups'));
     }
@@ -32,6 +35,8 @@ class GroupController extends Controller
         $group = auth()->user()->player->createdGroups()->create($attributes);
 
         $group->players()->save(auth()->user()->player);
+
+        $group->calculate();
 
         return redirect($group->path());
     }
@@ -54,21 +59,17 @@ class GroupController extends Controller
         return view('groups.show', compact('group', 'rounds'));
     }
 
-
-    public function edit(Group $group)
+    public function update(Group $group)
     {
-        //
-    }
+        $player = auth()->user()->player;
 
+        if ($group->players->contains($player))
+        {
+            return redirect($group->path());
+        }
 
-    public function update(Request $request, Group $group)
-    {
-        //
-    }
+        $group->addPlayer($player);
 
-
-    public function destroy(Group $group)
-    {
-        //
+        return redirect($group->path());
     }
 }

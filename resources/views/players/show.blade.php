@@ -20,7 +20,7 @@
                 @endforeach
             </select-liste>
 
-            @if($profile->games >= 10)
+            @if(isset($profile->games) && $profile->games >= 10)
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
@@ -28,6 +28,12 @@
                                 <td>Aktuelle Punktzahl:</td>
                                 <td class="font-weight-bold">{{ $profile->points }}</td>
                             </tr>
+                            @if($profile->pointsThisMonth > 0)
+                                <tr>
+                                    <td>Punkte in diesem Monat:</td>
+                                    <td class="font-weight-bold">{{ $profile->pointsThisMonth }}</td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td>Punkte pro Spiel:</td>
                                 <td class="font-weight-bold">{{ $profile->pointsPerGame }}</td>
@@ -44,16 +50,16 @@
                                 <td>Spiele:</td>
                                 <td class="font-weight-bold">{{ $profile->games }}</td>
                             </tr>
-                            <tr>
-                                <td>Spiele in diesem Monat:</td>
-                                <td class="font-weight-bold">{{ $profile->gamesThisMonth }}</td>
-                            </tr>
-                            @if ($profile->gamesPerDay != null)
+                            @if ($profile->gamesThisMonth > 0)
                                 <tr>
-                                    <td>Spiele pro Tag:</td>
-                                    <td class="font-weight-bold">{{ $profile->gamesPerDay }}</td>
+                                    <td>Spiele in diesem Monat:</td>
+                                    <td class="font-weight-bold">{{ $profile->gamesThisMonth }}</td>
                                 </tr>
                             @endif
+                            <tr>
+                                <td>Spiele pro Tag:</td>
+                                <td class="font-weight-bold">{{ $profile->gamesPerDay }}</td>
+                            </tr>
                             <tr>
                                 <td>Gewonnen / Verloren:</td>
                                 <td class="font-weight-bold">{{ $profile->gamesWon }} / {{ $profile->gamesLost }}</td>
@@ -160,7 +166,7 @@
                 </div>
 
             @else
-                <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
+                <h5>Statistiken werden ab dem 10. Spiel angezeigt.</h5>
             @endif
         </tab>
         <tab name="Graphen" icon="fa-chart-area">
@@ -175,14 +181,13 @@
                     @endforeach
                 </select-liste>
 
-                @if($profile->games >= 10)
+                @if(isset($profile->games) && $profile->games >= 10)
                     <profile-graphs :profile_id="{{ $profile->id }}" :key="props.tabKey"></profile-graphs>
                 @else
-                    <h5 class="mt-2">Statistiken werden ab dem 10. Spiel angezeigt!</h5>
+                    <h5>Statistiken werden ab dem 10. Spiel angezeigt.</h5>
                 @endif
             </template>
         </tab>
-
 
         <tab name="Abzeichen" icon="fa-award">
 
@@ -206,7 +211,7 @@
                         ></badge>
                     @endisset
                 @empty
-                    Bisher keine Abzeichen in dieser Runde.
+                    <h5>Bisher keine Abzeichen in dieser Runde.</h5>
                 @endforelse
             </div>
         </tab>
@@ -222,9 +227,7 @@
                 @endforeach
             </select-liste>
 
-            @if($player->games->count() > 0)
-                @include('rounds.inc.archiveTable')
-            @endif
+            @include('rounds.inc.archiveTable')
 
         </tab>
 
@@ -234,7 +237,7 @@
                 <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
 
             @empty
-                Der Spiele ist bisher in keiner Liste.
+                <h5>Der Spiele ist bisher in keiner Liste.</h5>
             @endforelse
         </tab>
     </tabs>
@@ -242,7 +245,7 @@
 
     @auth
         @if(auth()->user()->isAdmin())
-            <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Statistiken
+            <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Profil
                 aktualisieren</a>
         @endif
     @endauth
