@@ -15,7 +15,7 @@
                 <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste
                     beitreten</a>
             @endif
-            @if($group->rounds->count() > 1 && $group->rounds->first()->games->count() > 0)
+            @if($group->rounds->count() >= 1 && $group->rounds->first()->games->count() > 0)
                 <div class="row justify-content-center my-4">
                     <div class="col col-xl-7 col-lg-8 col-md-9">
                         <table class="table myDataTable d-none table-responsive-sm">
@@ -66,7 +66,7 @@
                         href="{{ $group->profiles->first()->path() }}">{{ $group->players->first()->surname }}</a>
                     Mitglied dieser Liste.</h5>
             @else
-                <h5>Bisher wurde keine Runde auf dieser Liste gespielt.</h5>
+                <h5 class="tw-mt-8">Bisher wurde keine Runde auf dieser Liste gespielt.</h5>
             @endif
 
         </tab>
