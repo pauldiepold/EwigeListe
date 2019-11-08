@@ -143,12 +143,9 @@ Route::get('/umzug', function () {
 
     $group->addPlayers($players);
 
-    $profiles = App\Profile::all();
-    App\Profile::updateManyStats($profiles);
+    $rounds = App\Round::all();
 
-    $group->updateStats();
-    $group->calculateBadges();
-
+    $group->rounds()->saveMany($rounds);
 });
 
 
