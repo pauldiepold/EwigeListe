@@ -2,11 +2,11 @@
     <div style="min-height: 50vh;"
          v-touch:swipe.left="swipeLeft"
          v-touch:swipe.right="swipeRight">
-        <div class="tw-sticky tw-z-50 tw-pt-2 tw--mx-3" style="top: 48px; background-color: #f1f1ef;">
+        <div class="tw-sticky tw-z-50 tw-pt-2 tw--mx-2" style="top: 48px; background-color: #f1f1ef;">
             <ul class="tw-flex tw-justify-center tw-mb-4 tw-border-b tw-border-gray-400">
                 <li class="tw-mx-1" v-for="tab in tabs">
-                    <a class="tab"
-                       :class="{ 'tab-active': tab.isActive }"
+                    <a class="tw-inline-block tw-py-2 tw-px-2 tw-text-orange-600 tw-no-underline hover:tw-no-underline"
+                       :class="{ 'tw--mx-px tw--mt-px tw-border-l tw-border-t tw-border-r tw-rounded-t-lg tw-border-gray-400 tw-text-orange-700': tab.isActive }"
                        :href="tab.href"
                        @click="selectTab(tab)">
                         <div class="tw-px-2 tw-flex tw-flex-col"

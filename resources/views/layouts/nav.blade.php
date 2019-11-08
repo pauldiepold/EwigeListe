@@ -4,7 +4,7 @@
     </a>
 </div>
 
-<nav class="tw-z-50 tw-bg-blue tw-sticky tw-top-0 " id="navbar">
+<nav class="tw-bg-blue tw-sticky tw-top-0 tw-z-50">
     <div class="sm:tw-max-w-md tw-px-2 tw-flex tw-justify-around tw-mx-auto">
         <a href="/">
             <nav-icon icon="fa-home" tooltip="Startseite"></nav-icon>

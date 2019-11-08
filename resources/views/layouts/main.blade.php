@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de" class="h-100">
+<html lang="de" class="tw-h-full">
 <head>
 
     @include('layouts.head')
@@ -13,9 +13,9 @@
 
         @include('layouts.nav')
 
-        <div class="container tw-my-5">
+        <div class="container tw-py-4" id="app">
 
-            <h6 class="tw-mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+            <h6 class="tw-mb-4 text-uppercase font-weight-bold" style="letter-spacing: 5px;">
                 @yield('heading')
             </h6>
 

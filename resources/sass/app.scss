@@ -22,7 +22,6 @@ $fa-font-path: "../webfonts";
 @import '~@fortawesome/fontawesome-free/scss/fontawesome.scss';
 
 // Custom CSS
-@import 'custom/createRound';
 @import 'custom/fonts';
 @import 'abstracts/variables';
 
@@ -37,6 +36,5 @@ $fa-font-path: "../webfonts";
 @import 'components/table';
 
 @import 'layout/allgemein';
-@import 'layout/tabs';
 
 @import 'pages/pages';
