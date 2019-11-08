@@ -129,3 +129,26 @@ Route::get('/test', 'TestController@test')->middleware('auth');
 Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 
 
+Route::get('/umzug', function () {
+    $players = App\Player::all();
+
+    $date = Carbon\Carbon::createMidnightDate(2018, 03, 25);
+
+    $group = factory('App\Group')->create([
+        'created_by' => App\Player::find(1),
+        'name' => 'Ewige Liste',
+        'created_at' => $date,
+        'updated_at' => $date,
+    ]);
+
+    $group->addPlayers($players);
+
+    $profiles = App\Profile::all();
+    App\Profile::updateManyStats($profiles);
+
+    $group->updateStats();
+    $group->calculateBadges();
+
+});
+
+
