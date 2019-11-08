@@ -130,6 +130,7 @@ Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 
 
 Route::get('/umzug', function () {
+    /*
     $players = App\Player::all();
 
     $date = Carbon\Carbon::createMidnightDate(2018, 03, 25);
@@ -142,10 +143,10 @@ Route::get('/umzug', function () {
     ]);
 
     $group->addPlayers($players);
-
+    */
     $rounds = App\Round::all();
 
-    $group->rounds()->saveMany($rounds);
+    App\Group::find(1)->rounds()->saveMany($rounds);
 });
 
 
