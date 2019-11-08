@@ -21,7 +21,8 @@ class PlayerController extends Controller
         $badges = $player->badges()
             ->where('group_id', $selectedGroup->id)
             ->with(['player', 'group'])
-            ->get();
+            ->get()
+            ->groupBy('type');
 
         $profile = $player->profiles()
             ->where('group_id', $selectedGroup->id)

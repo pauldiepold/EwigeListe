@@ -4,6 +4,7 @@ use App\Game;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class PlayerSeeder extends Seeder
@@ -16,25 +17,32 @@ class PlayerSeeder extends Seeder
      */
     public function run()
     {
+        $date300 = Carbon::now()->subMinutes(60*24*300);
         factory('App\User')->create(['email' => 'paul@paul.de', 'password' => Hash::make('paul')]);
         factory('App\User')->create(['email' => 'test@test.de']);
 
-        factory('App\User', intval(config('database.seed.players')))->create();
+        factory('App\User', intval(config('database.seed.players')))->create([
+            'created_at' => $date300,
+            'updated_at' => $date300
+        ]);
+
+        DB::table('players')->update(['created_at' => $date300, 'updated_at' => $date300]);
 
         $allPlayers = App\Player::all();
 
         $group = factory('App\Group')->create([
             'created_by' => $allPlayers->random(),
             'name' => 'Ewige Liste',
-            'created_at' => Carbon::now()->subMinutes(60*24*300),
-            'updated_at' => Carbon::now()->subMinutes(60*24*300),
+            'created_at' => $date300,
+            'updated_at' => $date300,
             ]);
         $group->addPlayers($allPlayers);
+        DB::table('profiles')->update(['created_at' => $date300, 'updated_at' => $date300]);
 
         $groups = factory('App\Group', intval(config('database.seed.groups')))->create([
             'created_by' => $allPlayers->random(),
-            'created_at' => Carbon::now()->subMinutes(60*24*300),
-            'updated_at' => Carbon::now()->subMinutes(60*24*300),
+            'created_at' => $date300,
+            'updated_at' => $date300,
             ]);
 
         for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)

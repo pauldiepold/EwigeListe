@@ -1,3 +1,10 @@
+@push('scripts')
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+@endpush
+@push('scriptsHead')
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+@endpush
 @if($rounds_count > 0)
     <div class="row justify-content-center my-4 d-none" id="archiveTable">
         <div class="col col-xl-9 col-lg-10">
@@ -18,13 +25,7 @@
         </div>
     </div>
 
-    @push('scriptsHead')
-        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-    @endpush
-
     @push('scripts')
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
         <script>
             $(document).ready(function () {
                 $('.roundsTable').DataTable({
@@ -35,11 +36,13 @@
                         {
                             data: 'date',
                             name: 'date',
-                            orderSequence: ["desc", "asc"]},
+                            orderSequence: ["desc", "asc"]
+                        },
                         {
                             data: 'games_count',
                             name: 'games_count',
-                            orderSequence: ["desc", "asc"]},
+                            orderSequence: ["desc", "asc"]
+                        },
                         {
                             data: 'players',
                             name: 'players',

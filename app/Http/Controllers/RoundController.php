@@ -196,12 +196,13 @@ class RoundController extends Controller
         }
 
         $rounds = $roundsQuery
+            ->with('players')
             ->withCount('games');
 
         return Datatables::of($rounds)
             ->addColumn('players', function ($round)
             {
-                return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
+                return '<a href="' . $round->path . '">' . nice_count($round->players->pluck('surname')->toArray()) . '</a>';
             })
             ->addColumn('date', function ($round) {
                 return $round->updated_at->format('d.m.Y');

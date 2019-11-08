@@ -165,9 +165,11 @@
                     </div>
                 </div>
 
+
             @else
                 <h5>Statistiken werden ab dem 10. Spiel angezeigt.</h5>
             @endif
+            <p class="tw-mt-6">Registriert seit dem {{ $profile->created_at->format('d.m.Y') }}</p>
         </tab>
         <tab name="Graphen" icon="fa-chart-area">
             <template v-slot:default="props">
@@ -200,18 +202,22 @@
                 @endforeach
             </select-liste>
 
-            <div class="tw-flex tw-flex-wrap tw-justify-center">
-                @forelse($badges as $badge)
-                    @isset($badge->player)
-                        <badge
-                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
-                            name="{{ $badge->player->surname }}"
-                            value="{{ $badge->value }}"
-                            type="{{ $badge->type }}"
-                        ></badge>
-                    @endisset
+            <div class="sm:tw-flex tw-max-w-2xl tw-mx-auto">
+                @forelse($badges as $type)
+                    <div class="sm:tw-flex-1 tw-mb-10">
+                        @foreach($type as $badge)
+                            @isset($badge->player)
+                                <badge
+                                    date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                    name="{{ $badge->player->surname }}"
+                                    value="{{ $badge->value }}"
+                                    type="{{ $badge->type }}"
+                                ></badge>
+                            @endisset
+                        @endforeach
+                    </div>
                 @empty
-                    <h5>Bisher keine Abzeichen in dieser Runde.</h5>
+                    <h5 class="tw-mx-auto">Bisher keine Abzeichen auf dieser Liste.</h5>
                 @endforelse
             </div>
         </tab>
@@ -251,10 +257,3 @@
     @endauth
 
 @endsection
-<script>
-    import SelectListe from "../../js/components/components/SelectListe";
-
-    export default {
-        components: {SelectListe}
-    }
-</script>

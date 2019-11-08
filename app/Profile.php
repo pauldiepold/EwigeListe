@@ -80,23 +80,16 @@ class Profile extends Pivot
 
     public function calculate()
     {
-        $games = DB::table('game_player as g')
-            ->join('games', 'g.game_id', '=', 'games.id')
-            ->join('rounds', 'games.round_id', '=', 'rounds.id')
-            ->join('group_round', 'rounds.id', '=', 'group_round.round_id')
-            ->where('group_round.group_id', $this->group_id)
-            ->where('g.player_id', $this->player_id)
-            ->orderBy('g.created_at', 'asc')
-            ->select('g.id as id',
-                'g.game_id as game_id',
-                'g.player_id as player_id',
-                'g.points as points',
-                'g.soloist as soloist',
-                'g.won as won',
-                'g.misplayed as misplayed',
-                'g.created_at as created_at',
-                'g.updated_at as updated_at'
-            );
+        $groupID = $this->group_id;
+        $playerID = $this->player_id;
+
+        $games = GamePlayer::whereHas('game.round.groups', function (Builder $query) use ($groupID)
+        {
+            $query->where('groups.id', '=', $groupID);
+        })
+            ->where('player_id', $playerID)
+            ->orderBy('id', 'asc');
+
 
         if ($games->count() == 0)
         {
@@ -104,37 +97,40 @@ class Profile extends Pivot
         }
         $this->games = $games->count();
         $gamesThisMonth = clone $games;
-        $this->gamesThisMonth = $gamesThisMonth->where('g.created_at', '>=', Carbon::now()->startOfMonth())
-            ->where('g.created_at', '<', Carbon::now()->startOfMonth()->addMonth())
+        $this->gamesThisMonth = $gamesThisMonth->where('created_at', '>=', Carbon::now()->startOfMonth())
+            ->where('created_at', '<', Carbon::now()->startOfMonth()->addMonth())
             ->count();
         $gamesWon = clone $games;
         $gamesLost = clone $games;
-        $this->gamesWon = $gamesWon->where('g.won', 1)->count();
-        $this->gamesLost = $gamesLost->where('g.won', '0')->count();
+        $this->gamesWon = $gamesWon->where('won', 1)->count();
+        $this->gamesLost = $gamesLost->where('won', '0')->count();
         $this->gamesPerDay = $this->player->created_at->diffInDays(Carbon::now()) < 5 ? null : $this->games / $this->player->created_at->diffInDays(Carbon::now());
-        $this->points = $games->sum('g.points');
+        $this->points = $games->sum('points');
         $pointsThisMonth = clone $games;
-        $this->pointsThisMonth = $pointsThisMonth->where('g.created_at', '>=', Carbon::now()->startOfMonth())
-            ->where('g.created_at', '<', Carbon::now()->startOfMonth()->addMonth())
-            ->sum('g.points');
+        $this->pointsThisMonth = $pointsThisMonth->where('created_at', '>=', Carbon::now()->startOfMonth())
+            ->where('created_at', '<', Carbon::now()->startOfMonth()->addMonth())
+            ->sum('points');
         $this->pointsPerGame = $this->games == 0 ? null : $this->points / $this->games;
-        $this->pointsPerWin = $this->gamesWon == 0 ? null : $gamesWon->sum('g.points') / $this->gamesWon;
-        $this->pointsPerLose = $this->gamesLost == 0 ? null : $gamesLost->sum('g.points') / $this->gamesLost;
+        $this->pointsPerWin = $this->gamesWon == 0 ? null : $gamesWon->sum('points') / $this->gamesWon;
+        $this->pointsPerLose = $this->gamesLost == 0 ? null : $gamesLost->sum('points') / $this->gamesLost;
         $this->winrate = $this->games == 0 ? null : $this->gamesWon / $this->games * 100;
 
         /* Soli ************************************* */
         $soli = clone $games;
-        $this->soli = $soli->where('g.soloist', 1)->count();
+        $this->soli = $soli->where('soloist', 1)->count();
         $soliWon = clone $soli;
         $soliLost = clone $soli;
-        $this->soliWon = $soliWon->where('g.won', 1)->count();
-        $this->soliLost = $soliLost->where('g.won', '0')->count();
+        $this->soliWon = $soliWon->where('won', 1)->count();
+        $this->soliLost = $soliLost->where('won', '0')->count();
         $this->soloRate = $this->soli == 0 ? null : round($this->games / $this->soli);
         $this->soloWinrate = $this->soli == 0 ? null : $this->soliWon / $this->soli * 100;
-        $this->soloPoints = $soli->sum('g.points');
+        $this->soloPoints = $soli->sum('points');
 
         /* Meiste Spiele Tag ************************* */
-        $groupedByDay = $this->player->games()->latest()->get()->groupBy(function ($item)
+        $groupedByDay = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
+        {
+            $query->where('groups.id', '=', $groupID);
+        })->latest()->get()->groupBy(function ($item)
         {
             return $item->created_at->format('Y-m-d');
         });
@@ -146,7 +142,10 @@ class Profile extends Pivot
         $this->mostGamesDayDate = $groupedByDayCounted->keys()->last();
 
         /* Meiste Spiele Monat ************************* */
-        $groupedByMonth = $this->player->games()->latest()->get()->groupBy(function ($item)
+        $groupedByMonth = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
+        {
+            $query->where('groups.id', '=', $groupID);
+        })->latest()->get()->groupBy(function ($item)
         {
             return $item->created_at->format('Y-m');
         });

@@ -12,7 +12,7 @@
             <label for="name">Name der Gruppe:</label>
             <input type="text" class="form-control tw-max-w-sm tw-mx-auto" id="name" name="name" placeholder="Gruppenname">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Gruppe erstellen</button>
     </form>
 
 @endsection

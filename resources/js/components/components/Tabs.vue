@@ -2,14 +2,14 @@
     <div style="min-height: 50vh;"
          v-touch:swipe.left="swipeLeft"
          v-touch:swipe.right="swipeRight">
-        <div class="tabs">
+        <div class="tw-sticky tw-z-50 tw-pt-2 tw--mx-3" style="top: 48px; background-color: #f1f1ef;">
             <ul class="tw-flex tw-justify-center tw-mb-4 tw-border-b tw-border-gray-400">
                 <li class="tw-mx-1" v-for="tab in tabs">
                     <a class="tab"
                        :class="{ 'tab-active': tab.isActive }"
                        :href="tab.href"
                        @click="selectTab(tab)">
-                        <div class="tw-px-2 tw-py-1 tw-flex tw-flex-col"
+                        <div class="tw-px-2 tw-flex tw-flex-col"
                              :title="tab.name">
                             <i :class="tab.icon"
                                class="fas tw-text-2xl tw-align-middle"

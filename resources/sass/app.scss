@@ -7,6 +7,7 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://fonts.googleapis.com/css?family=Dancing+Script:700');
 
 // Variables
 @import 'abstracts/variables';
@@ -22,6 +23,7 @@ $fa-font-path: "../webfonts";
 
 // Custom CSS
 @import 'custom/createRound';
+@import 'custom/fonts';
 @import 'abstracts/variables';
 
 @import 'base/typography';
@@ -34,7 +36,7 @@ $fa-font-path: "../webfonts";
 @import 'components/sonstiges';
 @import 'components/table';
 
-@import 'layout/navbar';
+@import 'layout/allgemein';
 @import 'layout/tabs';
 
 @import 'pages/pages';

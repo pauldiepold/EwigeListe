@@ -22,7 +22,7 @@
                     let data = response.data;
                     Chart.defaults.global.defaultFontFamily = '"Open Sans"';
                     Chart.defaults.global.animation.duration = 0;
-                    console.log(data);
+                    //console.log(data);
 
                     var chartdataPoints = {
                         labels: data.dates,

@@ -55,7 +55,9 @@ class GroupController extends Controller
             })
             ->count();
 
-        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup'));
+        $badges = $group->badges->groupBy(['type', 'year']);
+
+        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges'));
     }
 
     public function update(Group $group)

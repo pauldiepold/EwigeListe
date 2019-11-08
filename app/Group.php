@@ -259,7 +259,8 @@ class Group extends Model
     {
         return $this->hasMany(Badge::class)
             ->orderBy('year', 'desc')
-            ->orderBy('month', 'desc')            ;
+            ->orderBy('month', 'desc')
+            ->where('player_id', '!=', 0);
     }
 
     public function games()

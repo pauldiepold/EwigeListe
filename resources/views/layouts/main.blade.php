@@ -13,9 +13,9 @@
 
         @include('layouts.nav')
 
-        <div class="container my-3">
+        <div class="container tw-my-5">
 
-            <h6 class="mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+            <h6 class="tw-mb-4 site-title text-uppercase font-weight-bold" style="letter-spacing: 5px;">
                 @yield('heading')
             </h6>
 

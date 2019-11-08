@@ -15,6 +15,10 @@ class Badge extends Model
         return Carbon::createMidnightDate($this->year, $this->month, 1);
     }
 
+    public function playerPath() {
+        return $this->player->path() . '/' . $this->group_id . '#abzeichen';
+    }
+
     public function calculate()
     {
         $group = $this->group;

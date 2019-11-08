@@ -72,7 +72,10 @@ class Player extends Model
     }
 
     public function badges() {
-        return $this->hasMany(Badge::class);
+        return $this->hasMany(Badge::class)
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->where('player_id', '!=', 0);
     }
 
     public function profiles() {
