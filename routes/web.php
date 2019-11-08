@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /*
 Verb          Path                        Action  Route Name
@@ -129,10 +130,8 @@ Route::get('/test', 'TestController@test')->middleware('auth');
 Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 
 
-Route::get('/umzug', function () {
-    /*
-    $players = App\Player::all();
-
+Route::get('/umzug1', function ()
+{
     $date = Carbon\Carbon::createMidnightDate(2018, 03, 25);
 
     $group = factory('App\Group')->create([
@@ -142,11 +141,51 @@ Route::get('/umzug', function () {
         'updated_at' => $date,
     ]);
 
-    $group->addPlayers($players);
-    */
+    $players = App\Player::all();
+
+    $group->players()->saveMany($players);
+
+    $players->each(function ($player, $key)
+    {
+        $date = $player->created_at;
+
+        DB::table('profiles')
+            ->where('player_id', $player->id)
+            ->update(['created_at' => $date, 'updated_at' => $date]);
+    });
+});
+
+Route::get('/umzug2', function ()
+{
+    $group = App\Group::find(1);
+
     $rounds = App\Round::all();
 
-    App\Group::find(1)->rounds()->saveMany($rounds);
+    $group->rounds()->saveMany($rounds);
+
+    $rounds->each(function ($round, $key)
+    {
+        $date = $round->created_at;
+
+        DB::table('group_round')
+            ->where('round_id', $round->id)
+            ->update(['created_at' => $date, 'updated_at' => $date]);
+    });
+});
+
+Route::get('/umzug3', function ()
+{
+    $group = App\Group::find(1);
+
+    $players = App\Player::all();
+
+    $players->each(function ($player, $key)
+    {
+        $player->calculate();
+    });
+
+    $group->calculate();
+    $group->calculateBadges();
 });
 
 
