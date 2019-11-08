@@ -142,9 +142,9 @@ Route::get('/umzug1', function ()
     ]);
 
     $players = App\Player::all();
+    $rounds = App\Round::all();
 
     $group->players()->saveMany($players);
-
     $players->each(function ($player, $key)
     {
         $date = $player->created_at;
@@ -153,16 +153,8 @@ Route::get('/umzug1', function ()
             ->where('player_id', $player->id)
             ->update(['created_at' => $date, 'updated_at' => $date]);
     });
-});
-
-Route::get('/umzug2', function ()
-{
-    $group = App\Group::find(1);
-
-    $rounds = App\Round::all();
 
     $group->rounds()->saveMany($rounds);
-
     $rounds->each(function ($round, $key)
     {
         $date = $round->created_at;
@@ -171,9 +163,11 @@ Route::get('/umzug2', function ()
             ->where('round_id', $round->id)
             ->update(['created_at' => $date, 'updated_at' => $date]);
     });
+
+    return redirect('/');
 });
 
-Route::get('/umzug3', function ()
+Route::get('/umzug2', function ()
 {
     $group = App\Group::find(1);
 
@@ -186,6 +180,8 @@ Route::get('/umzug3', function ()
 
     $group->calculate();
     $group->calculateBadges();
+
+    return redirect('/');
 });
 
 

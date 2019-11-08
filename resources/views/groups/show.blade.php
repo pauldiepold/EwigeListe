@@ -12,7 +12,8 @@
     <tabs>
         <tab name="Mitglieder" icon="fa-users" :selected="true">
             @if(!$group->players->contains(auth()->user()->player))
-                <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste beitreten</a>
+                <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste
+                    beitreten</a>
             @endif
             <div class="row justify-content-center my-4">
                 <div class="col col-xl-7 col-lg-8 col-md-9">
@@ -121,14 +122,16 @@
 
         <tab name="Abzeichen" icon="fa-award">
             <div class="tw-flex tw-flex-wrap tw-justify-center">
-                @if($group->badges->count() >= 2 && $group->badges->get(1)->value != 0)
+                @if($group->badges->count() >= 2 && $group->badges->get(1)->value != null)
                     @foreach($group->badges as $badge)
-                        <badge
-                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
-                            name="{{ $badge->player->surname }}"
-                            value="{{ $badge->value }}"
-                            type="{{ $badge->type }}"
-                        ></badge>
+                        @if($badge->value != null)
+                            <badge
+                                date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                name="{{ $badge->player->surname }}"
+                                value="{{ $badge->value }}"
+                                type="{{ $badge->type }}"
+                            ></badge>
+                        @endif
                     @endforeach
                 @else
                     <h5>Diese Runde hat noch keine Abzeichen.</h5>
