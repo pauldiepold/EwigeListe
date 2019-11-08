@@ -18,7 +18,7 @@
             @if($group->rounds->count() > 1 && $group->rounds->first()->games->count() > 0)
                 <div class="row justify-content-center my-4">
                     <div class="col col-xl-7 col-lg-8 col-md-9">
-                        <table class="table nowrap myDataTable d-none table-responsive-sm">
+                        <table class="table myDataTable d-none table-responsive-sm">
                             <thead>
                                 <tr class="border-bottom-thick" style="line-height:120%;">
                                     <th>Name</th>
