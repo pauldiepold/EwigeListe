@@ -10,11 +10,21 @@ class Round extends Model
 
     protected $fillable = ['created_by'];
 
+    protected $appends = ['players_string', 'path'];
+
     protected $attributes = [];
 
     public function path()
     {
         return route('rounds.show', ['round' => $this->id]);
+    }
+
+    public function getPlayersStringAttribute() {
+        return nice_count($this->players->pluck('surname')->toArray());
+    }
+
+    public function getPathAttribute() {
+        return $this->path();
     }
 
     public function getLastGame()

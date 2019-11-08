@@ -185,9 +185,7 @@ class RoundController extends Controller
         $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group)
         {
             $query->where('groups.id', '=', $group->id);
-        })
-            ->with('players')
-            ->withCount('games');
+        });
 
         if (isset($player))
         {
@@ -197,20 +195,20 @@ class RoundController extends Controller
             });
         }
 
-        $rounds = $roundsQuery->get();
+        $rounds = $roundsQuery
+            ->withCount('games');
 
-        $roundsCol = collect();
-
-        foreach ($rounds as $round)
-        {
-            $roundsCol->push([
-                'date' => date("d.m.y", strtotime($round->updated_at)),
-                'games_count' => $round->games_count,
-                'players' => nice_count($round->players->pluck('surname')->toArray())
-            ]);
-        }
-
-        return Datatables::of($roundsCol)->make(true);
+        return Datatables::of($rounds)
+            ->addColumn('players', function ($round)
+            {
+                return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
+            })
+            ->addColumn('date', function ($round) {
+                return $round->updated_at->format('d.m.Y');
+            })
+            ->escapeColumns([''])
+            ->orderColumn('date', 'updated_at $1')
+            ->make(true);
     }
 
 }

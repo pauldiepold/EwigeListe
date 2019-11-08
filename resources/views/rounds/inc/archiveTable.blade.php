@@ -32,10 +32,21 @@
                     serverSide: true,
                     ajax: '/rounds/ajax/{{ $selectedGroup->id }}/{{ isset($player) ? $player->id : '' }}',
                     columns: [
-                        {data: 'date', name: 'date', orderSequence: ["desc", "asc"]},
-                        {data: 'games_count', name: 'games_count', orderSequence: ["desc", "asc"]},
-                        {data: 'players', name: 'players', orderable: false},
+                        {
+                            data: 'date',
+                            name: 'date',
+                            orderSequence: ["desc", "asc"]},
+                        {
+                            data: 'games_count',
+                            name: 'games_count',
+                            orderSequence: ["desc", "asc"]},
+                        {
+                            data: 'players',
+                            name: 'players',
+                            orderable: false,
+                        },
                     ],
+                    deferRender: true,
                     stateSave: false,
                     dom: 't<"my-3"p><"my-3"l>',
                     info: false,

@@ -89,7 +89,7 @@ class PlayerSeeder extends Seeder
                     'created_by' => $playerInRound->first()->id,
                     'round_id' => $round->id,
                     'created_at' => $date,
-                    'updated_at' => $date
+                    'updated_at' => $date,
                 ]);
 
                 foreach ($activePlayers as $player)
@@ -144,6 +144,8 @@ class PlayerSeeder extends Seeder
                 }
 
             }
+            $round->updated_at = $date;
+            $round->save();
         }
 
         App\Profile::all()->each(function ($profile, $key)
