@@ -15,7 +15,7 @@
                 <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste
                     beitreten</a>
             @endif
-            @if($group->profiles->count() > 1)
+            @if($group->rounds->count() > 1 && $group->rounds->first()->games->count() > 0)
                 <div class="row justify-content-center my-4">
                     <div class="col col-xl-7 col-lg-8 col-md-9">
                         <table class="table nowrap myDataTable d-none table-responsive-sm">
@@ -62,7 +62,11 @@
             @elseif($group->players->count() == 1 && $group->players->first()->id == auth()->user()->player->id)
                 <h5>Nur du bist bisher Mitglied dieser Liste.</h5>
             @elseif($group->players->count() == 1)
-                <h5 class="tw-mt-8">Bisher ist nur <a href="{{ $group->profiles->first()->path() }}">{{ $group->players->first()->surname }}</a> Mitglied dieser Liste.</h5>
+                <h5 class="tw-mt-8">Bisher ist nur <a
+                        href="{{ $group->profiles->first()->path() }}">{{ $group->players->first()->surname }}</a>
+                    Mitglied dieser Liste.</h5>
+            @else
+                <h5>Bisher wurde keine Runde auf dieser Liste gespielt.</h5>
             @endif
 
         </tab>
@@ -168,7 +172,7 @@
         $(document).ready(function () {
             $('.myDataTable').DataTable({
                 stateSave: true,
-                dom: 'ft<"my-3"p><"my-3"l>',
+                dom: '{{ $group->players->count() > 30 ? 'f' : '' }}t<"my-3"p><"my-3"l>',
                 info: false,
                 searching: true,
                 columns: [

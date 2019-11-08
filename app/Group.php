@@ -66,7 +66,11 @@ class Group extends Model
 
     public function calculateBadges()
     {
-        $currentMonth = $this->created_at->startOfMonth();
+        $currentMonth = $this->rounds()
+            ->orderBy('created_at', 'asc')
+            ->first()
+            ->created_at
+            ->startOfMonth();
 
         while ($currentMonth->lessThan(Carbon::now()))
         {
