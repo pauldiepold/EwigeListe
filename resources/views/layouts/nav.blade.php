@@ -1,4 +1,4 @@
-<div class="py-2 tw-bg-blue-dark">
+<div class="py-2 tw-bg-blue-dark" id="site-title">
     <a href="/" class="link-unstyled">
         <h3 class="site-title text-light mb-0">Ewige Liste</h3>
     </a>

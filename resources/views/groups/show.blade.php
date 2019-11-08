@@ -156,15 +156,6 @@
 
     </tabs>
 
-    @auth
-        @if(auth()->user()->isAdmin())
-            <a class="btn btn-primary tw-my-6" href="/liste/calculate/{{ $group->id }}">Gruppe
-                aktualisieren</a>
-            <a class="btn btn-primary tw-my-6" href="/liste/calculateBadges/{{ $group->id }}">Badges
-                aktualisieren</a>
-        @endif
-    @endauth
-
 @endsection
 
 @push('scripts')

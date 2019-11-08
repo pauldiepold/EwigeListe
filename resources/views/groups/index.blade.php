@@ -6,7 +6,6 @@
 
 @section('content')
 
-
     <div class="">
         @foreach ($groups as $group)
             <div
@@ -28,13 +27,5 @@
     </div>
 
     <a href="{{ route('groups.create') }}" class="tw-my-6 btn btn-primary">Neue Gruppe erstellen</a>
-
-    @auth
-        @if(auth()->user()->isAdmin())
-            <br><br>
-            <a class="btn btn-primary tw-my-6 tw-block" href="/listen/calculate">Alle Gruppen aktualisieren</a>
-            <a class="btn btn-primary tw-my-6 tw-block" href="/players/calculate">Alle Spieler-Profile aktualisieren</a>
-        @endif
-    @endauth
 
 @endsection

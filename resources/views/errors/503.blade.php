@@ -2,4 +2,10 @@
 
 @section('title', 'Server nicht erreichbar')
 @section('code', '503')
-@section('message', 'Server nicht erreichbar')
+@section('message')
+    @if(isset($exception))
+        {{ $exception->getMessage() }}
+    @else
+        Server ist nicht erreichbar
+    @endif
+@endsection

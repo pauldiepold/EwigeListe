@@ -47,11 +47,9 @@ Route::get('/players/calculate/{player}', function (App\Player $player)
 Route::get('/rounds/current',
     function ()
     {
-        $lastGame = Auth::user()->player->games()->latest()->first();
-        if ($lastGame)
+        $lastRound = auth()->user()->player->rounds()->latest()->first();
+        if ($lastRound)
         {
-            $lastRound = Auth::user()->player->games()->latest()->first()->round;
-
             return redirect($lastRound->path());
         } else
         {

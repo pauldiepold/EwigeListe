@@ -33,7 +33,7 @@
 
         @auth
         @if(Auth::user()->player->id == 1)
-        {{--&bull; <a href="https://dev.ewige-liste.de/report">Report</a>--}}
+        &bull; <a href="/report">Admin</a>
         &bull; <a href="/telescope" target="_blank">Telescope</a>
         @endif
         @endauth

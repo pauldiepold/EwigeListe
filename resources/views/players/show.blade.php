@@ -24,6 +24,14 @@
                 <div class="row justify-content-center">
                     <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
                         <table class="table table-sm table-borderless text-left">
+                            @if($profile->badges()->count() > 0)
+                                <tr>
+                                    <td class="pb-4">Monatsrekorde:</td>
+                                    <td class="font-weight-bold pb-4">{{ $profile->badges()->count() }}
+                                        <i class="fas fa-crown tw-ml-1 tw-text-yellow-500 tw-text-xl"></i>
+                                    </td>
+                                </tr>
+                            @endif
                             <tr>
                                 <td>Aktuelle Punktzahl:</td>
                                 <td class="font-weight-bold">{{ $profile->points }}</td>
@@ -247,13 +255,5 @@
             @endforelse
         </tab>
     </tabs>
-
-
-    @auth
-        @if(auth()->user()->isAdmin())
-            <a class="btn btn-primary tw-my-6" href="/players/calculate/{{ $player->id }}">Profil
-                aktualisieren</a>
-        @endif
-    @endauth
 
 @endsection

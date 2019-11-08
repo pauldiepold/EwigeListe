@@ -73,9 +73,9 @@ class Profile extends Pivot
         return $this->belongsTo(Group::class);
     }
 
-    public function games()
+    public function badges()
     {
-
+        return $this->player->badges()->where('group_id', $this->group_id)->get();
     }
 
     public function calculate()
