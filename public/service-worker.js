@@ -1,4 +1,4 @@
-let CACHE_NAME = 'ewige-liste-cache-v1';
+let CACHE_NAME = 'ewige-liste-cache-v2';
 const FILES_TO_CACHE = [
     '/offline.html',
     '/webfonts/OpenSans-Regular.ttf',
