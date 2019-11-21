@@ -15,6 +15,12 @@
                 <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste
                     beitreten</a>
             @endif
+            @if($group->players->contains(auth()->user()->player) &&
+                $group->profiles->where('player_id', auth()->user()->player->id)->first()->games == 0 &&
+                $group->profiles->count() != 1 && false)
+                <a href="#" class="btn btn-outline-primary tw-mb-8">Aus
+                    Liste austreten</a>
+            @endif
             @if($group->rounds->count() >= 1 && $group->rounds->first()->games->count() > 0)
                 <div class="row justify-content-center my-4">
                     <div class="col col-xl-7 col-lg-8 col-md-9">

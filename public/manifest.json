@@ -1,0 +1,21 @@
+{
+    "short_name": "Ewige Liste",
+    "name": "Ewige Liste",
+    "icons": [
+        {
+            "src": "/images/android-chrome-192x192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "/images/android-chrome-512x512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "start_url": "/",
+    "background_color": "#f1f1ef",
+    "display": "standalone",
+    "scope": "/",
+    "theme_color": "#054b6d"
+}
