@@ -31,11 +31,9 @@ self.addEventListener('activate', function (event) {
     );
 });
 
-self.addEventListener('fetch', function(event) {
-    if (event.request.mode !== 'navigate') {
-        return;
-    }
+self.addEventListener('fetch', function (event) {
     event.respondWith(
+        /*
         fetch(event.request)
             .catch(() => {
                 return caches.open(CACHE_NAME)
@@ -43,5 +41,12 @@ self.addEventListener('fetch', function(event) {
                         return cache.match('offline.html');
                     });
             })
+*/
+        caches.open(CACHE_NAME).then((cache) => {
+            return cache.match(event.request)
+                .then((response) => {
+                    return response || fetch(event.request);
+                });
+        })
     );
 });
