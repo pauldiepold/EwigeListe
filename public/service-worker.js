@@ -1,19 +1,42 @@
-/*let CACHE_NAME = 'my-site-cache-v1';
+let CACHE_NAME = 'ewige-liste-cache-v1';
 const FILES_TO_CACHE = [
     '/offline.html',
 ];
 
-self.addEventListener('install', function(event) {
+self.addEventListener('install', function (event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(function(cache) {
-                console.log('Opened cache');
+            .then(function (cache) {
                 return cache.addAll(FILES_TO_CACHE);
             })
     );
 });
- */
 
-self.addEventListener('install', (e) => {
-    console.log('[Service Worker] Install');
+self.addEventListener('activate', function (event) {
+    event.waitUntil(
+        caches.keys().then(function (cacheNames) {
+            return Promise.all(
+                cacheNames.map(function (cacheName) {
+                    if (cacheName !== CACHE_NAME) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
+
+self.addEventListener('fetch', function(event) {
+    if (event.request.mode !== 'navigate') {
+        return;
+    }
+    event.respondWith(
+        fetch(event.request)
+            .catch(() => {
+                return caches.open(CACHE_NAME)
+                    .then((cache) => {
+                        return cache.match('offline.html');
+                    });
+            })
+    );
 });
