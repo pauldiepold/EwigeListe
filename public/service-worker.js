@@ -2,7 +2,7 @@ let CACHE_NAME = 'ewige-liste-cache-v1';
 const FILES_TO_CACHE = [
     '/offline.html',
     '/webfonts/OpenSans-Regular.ttf',
-    '/webfonts/Raleway-Medium.ttf',
+    '/webfonts/Raleway-Regular.ttf',
     '/img/offline.png',
     '/img/favicon_32x32.png',
     '/img/favicon_192x192.png'
