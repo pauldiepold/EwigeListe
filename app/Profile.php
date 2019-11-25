@@ -60,6 +60,7 @@ class Profile extends Pivot
         'pointsPerLose' => 'decimal:2',
         'gamesPerDay' => 'decimal:2',
         'winrate' => 'decimal:1',
+        'pointsPerSolo' => 'decimal:2',
         'soloWinrate' => 'decimal:1'
     ];
 
@@ -125,6 +126,7 @@ class Profile extends Pivot
         $this->soloRate = $this->soli == 0 ? null : round($this->games / $this->soli);
         $this->soloWinrate = $this->soli == 0 ? null : $this->soliWon / $this->soli * 100;
         $this->soloPoints = $soli->sum('points');
+        $this->pointsPerSolo = $this->soli == 0 ? null : $this->soloPoints / $this->soli;
 
         /* Meiste Spiele Tag ************************* */
         $groupedByDay = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)

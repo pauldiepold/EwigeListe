@@ -94,8 +94,12 @@
                                     <td class="font-weight-bold">{{ $profile->soloWinrate }}%</td>
                                 </tr>
                                 <tr>
-                                    <td class="pb-4">Punkte durch Soli:</td>
-                                    <td class="font-weight-bold pb-4">{{ $profile->soloPoints }}</td>
+                                    <td>Punkte durch Soli:</td>
+                                    <td class="font-weight-bold">{{ $profile->soloPoints }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="pb-4">Punkte pro Solo:</td>
+                                    <td class="font-weight-bold pb-4">{{ $profile->pointsPerSolo }}</td>
                                 </tr>
                             @endif
 
