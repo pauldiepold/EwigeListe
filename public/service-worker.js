@@ -32,7 +32,7 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-    event.respondWith(
+    /*event.respondWith(
         fetch(event.request)
             .catch(() => {
                 return caches.open(CACHE_NAME)
@@ -40,5 +40,22 @@ self.addEventListener('fetch', function (event) {
                         return cache.match('offline.html');
                     });
             })
-    );
+    ); */
+
+    event.respondWith(async function () {
+        // Try the cache
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+
+        try {
+            // Fall back to network
+            return await fetch(event.request);
+        } catch (err) {
+            // If both fail, show a generic fallback:
+            return caches.match('/offline.html');
+            // However, in reality you'd have many different
+            // fallbacks, depending on URL & headers.
+            // Eg, a fallback silhouette image for avatars.
+        }
+    }());
 });
