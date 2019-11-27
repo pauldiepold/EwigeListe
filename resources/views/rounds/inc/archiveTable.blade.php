@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @endpush
 @if($rounds_count > 0)
-    <div class="tw--mx-3 d-none" id="archiveTable">
+    <div class="tw--mx-3 tw-flex tw-justify-center d-none" id="archiveTable">
+        <div class="tw-max-w-3xl">
             <table class="table roundsTable">
                 <thead>
                     <tr>
