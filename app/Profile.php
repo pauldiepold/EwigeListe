@@ -94,6 +94,11 @@ class Profile extends Pivot
 
         if ($games->count() == 0)
         {
+            $this->games = 0;
+            $this->points = null;
+            $this->pointsPerGame = null;
+            $this->soli = null;
+            $this->save();
             return;
         }
         $this->games = $games->count();

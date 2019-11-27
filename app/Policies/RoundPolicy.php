@@ -12,7 +12,7 @@ class RoundPolicy {
 
     public function update(User $user, Round $round)
     {
-        return $round->players->contains($user->player);
+        return $round->players->contains($user->player) && !$round->closed;
     }
 
 }

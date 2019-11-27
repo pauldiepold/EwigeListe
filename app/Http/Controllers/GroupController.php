@@ -57,7 +57,19 @@ class GroupController extends Controller
 
         $badges = $group->badges->groupBy(['type', 'year']);
 
-        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges'));
+        $player = auth()->user()->player;
+        $playersRoundsInGroup = $player->rounds()->whereHas('groups', function (Builder $query) use ($group)
+        {
+            $query->where('groups.id', '=', $group->id);
+        })->get();
+
+        $canLeaveGroup = $group->players->contains(auth()->user()->player) &&
+                         $group->profiles->where('player_id', auth()->user()->player->id)->first()->games == 0 &&
+                         $group->profiles->count() != 1 &&
+                         ($playersRoundsInGroup->count() != 1 ||
+                          !$playersRoundsInGroup->first()->players->contains(auth()->user()->player));
+
+        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges', 'canLeaveGroup'));
     }
 
     public function update(Group $group)
@@ -72,5 +84,33 @@ class GroupController extends Controller
         $group->addPlayer($player);
 
         return redirect($group->path());
+    }
+
+    public function leave(Group $group)
+    {
+        $player = auth()->user()->player;
+
+        if (!$group->players->contains($player) ||
+            $group->profiles->where('player_id', $player->id)->first()->games != 0 ||
+            $group->profiles->count() == 1)
+        {
+            return redirect($group->path());
+        }
+
+        $group->players()->detach($player->id);
+
+        return redirect($group->path());
+    }
+
+    public function close(Group $group, $close)
+    {
+        if (!($group->creator->is(auth()->user()->player) || auth()->user()->id == 1))
+        {
+            return redirect($group->path() . '#admin');
+        }
+        $group->closed = boolval($close);
+        $group->save();
+
+        return redirect($group->path() . '#admin');
     }
 }

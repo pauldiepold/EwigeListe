@@ -197,7 +197,7 @@ class RoundController extends Controller
 
         $rounds = $roundsQuery
             ->with('players')
-            ->withCount('games');
+            ->withCount(['games', 'groups']);
 
         return Datatables::of($rounds)
             ->addColumn('players', function ($round)

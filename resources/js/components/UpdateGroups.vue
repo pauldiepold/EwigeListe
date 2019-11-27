@@ -11,10 +11,10 @@
             </a><!-- tw-block tw-flex-grow -->
             <div class="tw--mx-4 tw-px-4 tw--my-2 tw-py-2 tw-flex tw-items-center"
                  @click="inSelectedGroups(group) && edit ? removeGroup(group) : addGroup(group)"
-                 :class="{'tw-cursor-pointer': group.id !== 1 && edit}">
+                 :class="{'tw-cursor-pointer': group.id !== 1 && group.closed !== 1 && edit}">
                 <i class="fas fa-2x tw-text-gray-700"
                    :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}"
-                   v-show="group.id !== 1 && edit">
+                   v-show="group.id !== 1 && group.closed !== 1 && edit">
                 </i>
             </div>
         </div>
@@ -107,7 +107,7 @@
                 }
             },
             removeGroup(group) {
-                if (group.id !== 1) {
+                if (group.id !== 1 && group.closed !== 1) {
                     let index = this.groups.indexOf(group.id);
                     if (index > -1) {
                         this.groups.splice(index, 1);

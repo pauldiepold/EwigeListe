@@ -79,6 +79,8 @@ Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->na
 Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
 Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
 Route::get('/liste/{group}/beitreten', 'GroupController@update')->middleware('auth')->name('groups.addPlayer');
+Route::get('/liste/{group}/verlassen', 'GroupController@leave')->middleware('auth')->name('groups.leave');
+Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->middleware('auth')->name('groups.close');
 
 Route::get('/listen/calculate', function ()
 {

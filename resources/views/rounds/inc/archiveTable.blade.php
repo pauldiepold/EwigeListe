@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
 @endpush
 @if($rounds_count > 0)
-    <div class="row justify-content-center my-4 d-none" id="archiveTable">
-        <div class="col col-xl-9 col-lg-10">
+    <div class="tw--mx-3 d-none" id="archiveTable">
             <table class="table roundsTable">
                 <thead>
                     <tr>
                         <th>Datum</th>
                         <th>Spiele</th>
+                        {{-- <th>Listen</th>--}}
                         <th>Teilnehmende Spieler</th>
                     </tr>
                 </thead>
@@ -43,6 +43,11 @@
                             name: 'games_count',
                             orderSequence: ["desc", "asc"]
                         },
+                        /*{
+                            data: 'groups_count',
+                            name: 'groups_count',
+                            orderSequence: ["desc", "asc"]
+                        },*/
                         {
                             data: 'players',
                             name: 'players',
@@ -51,7 +56,7 @@
                     ],
                     deferRender: true,
                     stateSave: false,
-                    dom: 't<"my-3"p><"my-3"l>',
+                    dom: 't<"my-3 tw-flex tw-justify-center"p><"my-3"l>',
                     info: false,
                     searching: false,
                     paging: {{ $rounds_count > 15 ? "true" : "false" }},

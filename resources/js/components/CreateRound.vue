@@ -128,7 +128,7 @@
 
                 this.players.forEach(function (player) {
                     player.groups.forEach(function (group) {
-                        if (!output.map(v => v.id).includes(group.id)) {
+                        if (!output.map(v => v.id).includes(group.id) && group.closed !== 1) {
                             output.push(group);
                         }
                     });

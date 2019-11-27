@@ -8,21 +8,26 @@
 
     <div class="">
         @foreach ($groups as $group)
-            <div
-                class="group text-left d-flex align-items-center justify-content-between"
-                style="max-width: 30rem;">
-                <div class="tw-flex-1">
-                    <a href="{{ $group->path() }}" class="font-weight-bold tw-text-black">
+            <a href="{{ $group->path() }}" class="tw-text-black">
+                <div
+                    class="group text-left d-flex align-items-center justify-content-between"
+                    style="max-width: 30rem;">
+                    <div class="tw-flex-1 tw-font-bold">
                         {{ $group->name }}
-                    </a>
+                    </div>
+                    @if($group->closed)
+                        <div class="tw-mx-2">
+                            <i class="fa fa-lock"></i>
+                        </div>
+                    @endif
+                    <div class="tw-mx-2">
+                            Spieler: {{ $group->players_count }}
+                    </div>
+                    <div class="tw-mx-2">
+                            Runden: {{ $group->rounds_count }}
+                    </div>
                 </div>
-                <div class="tw-mx-2">
-                    Spieler: {{ $group->players_count }}
-                </div>
-                <div class="tw-mx-2">
-                    Runden: {{ $group->rounds_count }}
-                </div>
-            </div>
+            </a>
         @endforeach
     </div>
 

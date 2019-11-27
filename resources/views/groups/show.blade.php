@@ -15,11 +15,9 @@
                 <a href="{{ route('groups.addPlayer', ['group' => $group->id]) }}" class="btn btn-outline-primary">Liste
                     beitreten</a>
             @endif
-            @if($group->players->contains(auth()->user()->player) &&
-                $group->profiles->where('player_id', auth()->user()->player->id)->first()->games == 0 &&
-                $group->profiles->count() != 1 && false)
-                <a href="#" class="btn btn-outline-primary tw-mb-8">Aus
-                    Liste austreten</a>
+            @if($canLeaveGroup)
+                <a href="{{ route('groups.leave', ['group' => $group->id]) }}" class="btn btn-outline-primary">Aus Liste
+                    austreten</a>
             @endif
             @if($group->rounds->count() >= 1 && $group->rounds->first()->games->count() > 0)
                 <div class="row justify-content-center my-4">
@@ -160,6 +158,39 @@
             @include('rounds.inc.archiveTable')
         </tab>
 
+        @if($group->creator->is(auth()->user()->player) || auth()->user()->id == 1)
+            <tab name="Admin" icon="fa-cog">
+                <div class="tw-max-w-sm tw-mx-auto">
+                    @if(!$group->closed)
+                        <p>Du bist der Ersteller dieser Liste und kannst sie <b>schließen</b>.</p>
+                        <ul class="tw-list-outside tw-list-disc tw-pl-8 tw-text-left">
+                            <li>Danach können <b>keine</b> neue Runden hinzugefügt werden</li>
+                            <li>Bestehende Runden können <b>nicht</b> mehr verändert werden</li>
+                        </ul>
+                        <p>
+                            Anschließend kann die Liste wieder geöffnet werden.
+                        </p>
+
+                        <a href="{{ route('groups.close', ['group' => $group->id, 'close' => 1]) }}"
+                           class="btn btn-primary">
+                            Liste schließen
+                        </a>
+                    @else
+                        <p>Du bist der Ersteller dieser geschlossenen Liste und kannst sie wieder <b>öffnen</b>.</p>
+                        <ul class="tw-list-outside tw-list-disc tw-pl-8 tw-text-left">
+                            <li>Danach können wieder neue Runden hinzugefügt werden</li>
+                            <li>Bestehende Runden können wieder verändert werden</li>
+                        </ul>
+
+                        <a href="{{ route('groups.close', ['group' => $group->id, 'close' => 0]) }}"
+                           class="btn btn-primary">
+                            Liste öffnen
+                        </a>
+                    @endif
+                </div>
+            </tab>
+        @endif
+
     </tabs>
 
 @endsection
@@ -169,7 +200,7 @@
         $(document).ready(function () {
             $('.myDataTable').DataTable({
                 stateSave: true,
-                dom: '{{ $group->players->count() > 30 ? 'f' : '' }}t<"my-3"p><"my-3"l>',
+                dom: '<"tw-flex tw-justify-center"{{ $group->players->count() > 30 ? 'f' : '' }}>t<"my-3 tw-flex tw-justify-center"p><"my-3"l>',
                 info: false,
                 searching: true,
                 columns: [

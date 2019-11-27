@@ -239,9 +239,9 @@ class Group extends Model
         return route('groups.show', ['group' => $this->id]);
     }
 
-    public function created_by()
+    public function creator()
     {
-        return $this->belongsTo(Player::class);
+        return $this->belongsTo('App\Player', 'created_by');
     }
 
     public function players()
