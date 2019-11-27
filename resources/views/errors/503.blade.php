@@ -3,9 +3,9 @@
 @section('title', 'Server nicht erreichbar')
 @section('code', '503')
 @section('message')
-    @if(isset($exception))
+    @if(isset($exception->getMessage()))
         {{ $exception->getMessage() }}
     @else
-        Server ist nicht erreichbar
+        Tolle neue Änderungen für euch!
     @endif
 @endsection
