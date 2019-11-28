@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use App\SocialiteUser;
 
 
 class SocialiteController extends Controller
@@ -28,8 +29,26 @@ class SocialiteController extends Controller
             return redirect('/login');
         }
 
-        $socialiteUser = Socialite::driver($provider)->stateless()->user();
+        $socialiteUser = SocialiteUser::firstOrCreate(
+            Socialite::driver($provider)->stateless()->user(),
+            $provider
+        );
 
-        dd($socialiteUser);
+        if ($socialiteUser->user)
+        {
+            auth()->login($socialiteUser->user);
+        } else
+        {
+            if (auth()->check())
+            {
+                $socialiteUser->user()->save(auth()->user());
+
+                return redirect($socialiteUser->user->player->path());
+            } else {
+                return view('auth.registerOrAttach');
+            }
+        }
+
+        redirect('/');
     }
 }
