@@ -131,8 +131,9 @@ Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 
 
 /* *********** AUTH ************** */
-Route::get('auth/redirect/google', 'Auth\GoogleController@redirect')->name('auth.google');
-Route::get('callback/google', 'Auth\GoogleController@callback');
+Route::get('auth/redirect/{provider}', 'Auth\SocialiteController@redirect')->name('auth.socialite');
+Route::get('callback/{provider}', 'Auth\SocialiteController@callback');
+
 
 
 

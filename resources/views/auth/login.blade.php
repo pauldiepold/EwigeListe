@@ -22,8 +22,8 @@
 
                             @if ($errors->has('email'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('email') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
@@ -38,8 +38,8 @@
 
                             @if ($errors->has('password'))
                                 <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
-                                    </span>
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>
                             @endif
                         </div>
                     </div>
@@ -87,8 +87,12 @@
                         <div class="col-sm-6 offset-sm-4">
                             <hr>
                             Google Login<br>
-                            <a href="{{ route('auth.google') }}" class="btn btn-outline-primary mt-2">
-                                Login mit Google
+                            <a href="{{ route('auth.google') }}"
+                               class="btn btn-outline-primary mt-2">
+                                <div class="tw-flex tw-items-center">
+                                    <i class="fab fa-google tw-text-lg tw-mr-2 tw-text-gray-800"></i>
+                                    <span>Login mit Google</span>
+                                </div>
                             </a>
                         </div>
                     </div>
