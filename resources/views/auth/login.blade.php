@@ -87,7 +87,7 @@
                         <div class="col-sm-6 offset-sm-4">
                             <hr>
                             Google Login<br>
-                            <a href="{{ route('auth.google') }}"
+                            <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
                                class="btn btn-outline-primary mt-2">
                                 <div class="tw-flex tw-items-center">
                                     <i class="fab fa-google tw-text-lg tw-mr-2 tw-text-gray-800"></i>
