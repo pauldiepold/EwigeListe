@@ -97,6 +97,20 @@
                         </div>
                     </div>
 
+                    <div class="form-group row mb-0">
+                        <div class="col-sm-6 offset-sm-4">
+                            <hr>
+                            Google Login<br>
+                            <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
+                               class="btn btn-outline-primary mt-2">
+                                <div class="tw-flex tw-items-center">
+                                    <i class="fab fa-facebook tw-text-lg tw-mr-2 tw-text-gray-800"></i>
+                                    <span>Login mit Facebook</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>
