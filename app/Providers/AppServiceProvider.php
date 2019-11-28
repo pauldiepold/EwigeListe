@@ -16,6 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        if(false) {
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**

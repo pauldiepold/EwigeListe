@@ -83,6 +83,16 @@
                         </div>
                     </div>
 
+                    <div class="form-group row mb-0">
+                        <div class="col-sm-6 offset-sm-4">
+                            <hr>
+                            Google Login<br>
+                            <a href="{{ route('auth.google') }}" class="btn btn-outline-primary mt-2">
+                                Login mit Google
+                            </a>
+                        </div>
+                    </div>
+
                 </form>
             </div>
         </div>

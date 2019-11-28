@@ -1,6 +1,6 @@
 <template>
     <a :href="path"
-       class="tw-m-4 tw-p-2 tw-mx-auto tw-w-56 tw-rounded-lg tw-bg-yellow-400 shadow-2 tw-cursor-pointer
+       class="tw-m-4 tw-p-2 tw-mx-auto tw-w-64 tw-rounded-lg tw-bg-yellow-400 shadow-2 tw-cursor-pointer
         tw-flex tw-flex tw-content-center tw-no-underline tw-text-black hover:tw-no-underline hover:tw-text-black">
         <div class="tw-flex-1 tw-flex tw-flex-col">
             <div>
@@ -38,9 +38,9 @@
         computed: {
             typeDeutsch() {
                 if (this.type === 'points') {
-                    return 'Punkte';
+                    return 'Meiste Punkte';
                 } else if (this.type === 'games') {
-                    return 'Spiele';
+                    return 'Meiste Spiele';
                 }
             }
         },

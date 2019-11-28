@@ -130,58 +130,9 @@ Route::get('/test', 'TestController@test')->middleware('auth');
 Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 
 
-Route::get('/umzug1', function ()
-{
-    $date = Carbon\Carbon::createMidnightDate(2018, 03, 25);
+/* *********** AUTH ************** */
+Route::get('auth/redirect/google', 'Auth\GoogleController@redirect')->name('auth.google');
+Route::get('callback/google', 'Auth\GoogleController@callback');
 
-    $group = factory('App\Group')->create([
-        'created_by' => App\Player::find(1),
-        'name' => 'Ewige Liste',
-        'created_at' => $date,
-        'updated_at' => $date,
-    ]);
-
-    $players = App\Player::all();
-    $rounds = App\Round::all();
-
-    $group->players()->saveMany($players);
-    $players->each(function ($player, $key)
-    {
-        $date = $player->created_at;
-
-        DB::table('profiles')
-            ->where('player_id', $player->id)
-            ->update(['created_at' => $date, 'updated_at' => $date]);
-    });
-
-    $group->rounds()->saveMany($rounds);
-    $rounds->each(function ($round, $key)
-    {
-        $date = $round->created_at;
-
-        DB::table('group_round')
-            ->where('round_id', $round->id)
-            ->update(['created_at' => $date, 'updated_at' => $date]);
-    });
-
-    return redirect('/');
-});
-
-Route::get('/umzug2', function ()
-{
-    $group = App\Group::find(1);
-
-    $players = App\Player::all();
-
-    $players->each(function ($player, $key)
-    {
-        $player->calculate();
-    });
-
-    $group->calculate();
-    $group->calculateBadges();
-
-    return redirect('/');
-});
 
 

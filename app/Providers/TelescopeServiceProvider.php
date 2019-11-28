@@ -9,6 +9,7 @@ use Laravel\Telescope\TelescopeApplicationServiceProvider;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
+
     /**
      * Register any application services.
      *
@@ -20,10 +21,13 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         $this->hideSensitiveRequestDetails();
 
-        Telescope::filter(function (IncomingEntry $entry) {
-            if ($this->app->isLocal()) {
+        Telescope::filter(function (IncomingEntry $entry)
+        {
+            if ($this->app->isLocal())
+            {
                 return true;
             }
+
             return true;
 
             return $entry->isReportableException() ||
@@ -41,7 +45,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function hideSensitiveRequestDetails()
     {
-        if ($this->app->isLocal()) {
+        if ($this->app->isLocal())
+        {
             return;
         }
 
@@ -63,7 +68,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewTelescope', function ($user) {
+        Gate::define('viewTelescope', function ($user)
+        {
             return in_array($user->id, [
                 1
             ]);
