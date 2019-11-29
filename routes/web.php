@@ -133,6 +133,7 @@ Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 /* *********** AUTH ************** */
 Route::get('auth/redirect/{provider}', 'Auth\SocialiteController@redirect')->name('auth.socialite');
 Route::get('callback/{provider}', 'Auth\SocialiteController@callback');
+Route::get('social/login', function () { return view('auth.registerOrAttach');})->name('auth.registerOrAttach');
 
 
 

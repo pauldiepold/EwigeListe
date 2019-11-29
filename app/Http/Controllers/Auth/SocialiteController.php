@@ -37,18 +37,20 @@ class SocialiteController extends Controller
         if ($socialiteUser->user)
         {
             auth()->login($socialiteUser->user);
+
+            return redirect('/#');
         } else
         {
             if (auth()->check())
             {
-                $socialiteUser->user()->save(auth()->user());
+                $socialiteUser->user_id = auth()->id();
+                $socialiteUser->save();
+                $socialiteUser->refresh();
 
-                return redirect($socialiteUser->user->player->path());
+                return redirect($socialiteUser->user->player->path() . '#');
             } else {
-                return view('auth.registerOrAttach');
+                return redirect()->route('auth.registerOrAttach');
             }
         }
-
-        redirect('/');
     }
 }

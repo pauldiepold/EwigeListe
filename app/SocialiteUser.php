@@ -27,6 +27,8 @@ class SocialiteUser extends Model
                 'provider' => $provider,
                 'provider_id' => $providerUser->getId(),
             ]);
+
+            return $socialiteUser;
         }
     }
 }
