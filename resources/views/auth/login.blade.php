@@ -64,25 +64,6 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <div class="col-sm-6 offset-sm-4">
-                        <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
-                           class="btn btn-outline-primary mt-2">
-                            <div class="tw-flex tw-items-center">
-                                <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
-                                <span>Login mit Google</span>
-                            </div>
-                        </a><br>
-
-                        <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
-                           class="btn btn-outline-primary mt-2">
-                            <div class="tw-flex tw-items-center">
-                                <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
-                                <span>Login mit Facebook</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
 
                 <div class="form-group row mb-0">
                     <div class="col-sm-6 offset-sm-4">
@@ -93,6 +74,28 @@
                         @endif
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-sm-6 offset-sm-4">
+                        <hr>
+                        <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
+                           class="btn btn-outline-primary mt-2">
+                            <div class="tw-flex tw-items-center">
+                                <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
+                                <span>Login mit Google</span>
+                            </div>
+                        </a><br>
+
+                        <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
+                           class="btn btn-outline-primary my-2">
+                            <div class="tw-flex tw-items-center">
+                                <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
+                                <span>Login mit Facebook</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
                 <div class="form-group row mb-0">
                     <div class="col-sm-6 offset-sm-4">
                         <hr>

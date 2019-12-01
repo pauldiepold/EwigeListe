@@ -11,6 +11,24 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
+                    <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
+                       class="btn btn-outline-primary mt-2">
+                        <div class="tw-flex tw-items-center">
+                            <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
+                            <span>Registrieren mit Google</span>
+                        </div>
+                    </a><br>
+
+                    <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
+                       class="btn btn-outline-primary mt-2">
+                        <div class="tw-flex tw-items-center">
+                            <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
+                            <span>Registrieren mit Facebook</span>
+                        </div>
+                    </a>
+
+                    <hr>
+
                     <div class="form-group row">
                         <label for="surname"
                                class="col-sm-5 col-form-label text-sm-right">Vorname</label>
@@ -86,34 +104,6 @@
                                    name="password_confirmation" required>
                         </div>
                     </div>
-
-                <!--
-                    <div class="form-group row">
-                        <label for="pin"
-                               class="col-sm-5 col-form-label text-sm-right font-weight-bold">Einladungs-PIN:</label>
-
-                        <div class="col-sm-6 d-flex justify-content-center">
-                            <div>
-                                <input id="pin" type="number"
-                                       class="mx-auto form-control{{ $errors->has('pin') ? ' is-invalid' : '' }}"
-                                       name="pin" value="{{ old('pin') }}" style="width: 120px !important;" required>
-
-                                @if ($errors->has('pin'))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $errors->first('pin') }}</strong>
-                                    </span>
-                                @endif
-                    </div>
-                    <div class="ml-3 align-self-center">
-                        <a data-container="body" data-toggle="popover" data-placement="top"
-                           data-content="Jeder bereits registrierte Spieler kann unter &quot;Sonstiges/Einladungen&quot; eine Einladungs-PIN erstellen.">
-                                    <i class="fas fa-info-circle fa-lg my-auto text-dark"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                    </div>
-                    -->
 
                     <div class="form-group row mb-0">
                         <div class="col-sm-6 offset-sm-5">
