@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Group;
+use App\SocialiteUser;
 use App\User;
 use App\Player;
 use App\Profile;
 use App\Invitation;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Str;
 
 class RegisterController extends Controller {
 
@@ -63,10 +66,11 @@ class RegisterController extends Controller {
         ];
 
         return Validator::make($data, [
-            'surname' => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:6', 'confirmed'],
+            'surname' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required_without:socialiteUserId|string|min:6|confirmed',
+            'socialiteUserId' => 'exists:socialite_users,id'
         ], $messages);
     }
 
@@ -83,16 +87,35 @@ class RegisterController extends Controller {
             'name' => $data['name']
         ]);
 
+        $password = $data['socialiteUserId'] ? Str::random(14) : $data['password'];
+
         $user = User::create([
             'player_id' => $player->id,
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => Hash::make($password),
         ]);
+
+        $socialiteUserId = $data['socialiteUserId'];
+        if ($socialiteUserId)
+        {
+            $socialiteUser = SocialiteUser::find($socialiteUserId);
+            if ($socialiteUser->user_id == null)
+            {
+                $socialiteUser->user_id = $user->id;
+                $socialiteUser->save();
+            }
+        }
 
         Group::find(1)->addPlayer($player);
 
         $player->profiles->first()->calculate();
 
         return $user;
+    }
+
+
+    protected function registered(Request $request, $user)
+    {
+
     }
 }

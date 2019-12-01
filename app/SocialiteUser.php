@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class SocialiteUser extends Model
 {
 
-    protected $fillable = ['user_id', 'provider', 'provider_id'];
+    protected $fillable = ['user_id', 'provider', 'provider_id', 'name', 'email', 'avatar'];
 
     public function user()
     {
@@ -26,6 +26,9 @@ class SocialiteUser extends Model
             $socialiteUser = SocialiteUser::create([
                 'provider' => $provider,
                 'provider_id' => $providerUser->getId(),
+                'name' => $providerUser->getName(),
+                'email' => $providerUser->getEmail(),
+                'avatar' => $providerUser->getAvatar(),
             ]);
 
             return $socialiteUser;

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialiteUser;
+use function GuzzleHttp\Promise\queue;
 
 
 class SocialiteController extends Controller
@@ -29,10 +30,16 @@ class SocialiteController extends Controller
             return redirect('/login');
         }
 
-        $socialiteUser = SocialiteUser::firstOrCreate(
-            Socialite::driver($provider)->stateless()->user(),
-            $provider
-        );
+        try
+        {
+            $socialiteUser = SocialiteUser::firstOrCreate(
+                Socialite::driver($provider)->stateless()->user(),
+                $provider
+            );
+        } catch (\GuzzleHttp\Exception\ClientException $e)
+        {
+            return redirect()->route('auth.socialite', ['provider' => 'facebook']);
+        }
 
         if ($socialiteUser->user)
         {
@@ -48,8 +55,11 @@ class SocialiteController extends Controller
                 $socialiteUser->refresh();
 
                 return redirect($socialiteUser->user->player->path() . '#');
-            } else {
-                return redirect()->route('auth.registerOrAttach');
+            } else
+            {
+                session(['socialiteUser' => $socialiteUser->provider_id]);
+
+                return redirect()->route('auth.registerOrAttach', ['socialiteUser' => $socialiteUser]);
             }
         }
     }

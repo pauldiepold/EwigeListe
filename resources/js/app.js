@@ -14,6 +14,7 @@ import Tab from "./components/components/Tab";
 import Badge from "./components/components/Badge";
 import NavIcon from "./components/components/NavIcon";
 import SelectListe from "./components/components/SelectListe";
+import Toggle from "./components/components/Toggle";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
@@ -34,7 +35,8 @@ global.vm = new Vue({
         NavIcon,
         Badge,
         SelectListe,
-        UpdateGroups
+        UpdateGroups,
+        Toggle,
     },
     data: {},
 

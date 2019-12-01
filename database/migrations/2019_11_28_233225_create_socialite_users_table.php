@@ -21,6 +21,9 @@ class CreateSocialiteUsersTable extends Migration
 
             $table->string('provider');
             $table->string('provider_id');
+            $table->string('name');
+            $table->string('email');
+            $table->string('avatar')->nullable();
 
             $table->timestamps();
 
