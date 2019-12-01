@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialiteUser;
+use App\User;
 use function GuzzleHttp\Promise\queue;
 
 
@@ -57,10 +58,14 @@ class SocialiteController extends Controller
                 return redirect($socialiteUser->user->player->path() . '#');
             } else
             {
-                session(['socialiteUser' => $socialiteUser->provider_id]);
-
                 return redirect()->route('auth.registerOrAttach', ['socialiteUser' => $socialiteUser]);
             }
         }
+    }
+
+    public function showView(SocialiteUser $socialiteUser) {
+        $user = User::where('email', $socialiteUser->email)->first();
+
+        return view('auth.registerOrAttach', compact('socialiteUser', 'user'));
     }
 }
