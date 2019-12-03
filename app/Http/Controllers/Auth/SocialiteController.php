@@ -44,7 +44,7 @@ class SocialiteController extends Controller
 
         if ($socialiteUser->user)
         {
-            auth()->login($socialiteUser->user);
+            auth()->login($socialiteUser->user, true);
 
             return redirect('/#');
         } else
