@@ -44,7 +44,8 @@
                         <label for="name" class="">Name</label>
                         <input id="name" type="text"
                                class="form-control {{ $errors->has('name') ? ' is-invalid' : '' }}" name="name"
-                               value="{{ explode(' ', $socialiteUser->name, 2)[1] }}" required>
+                               value="@php if (isset($socialiteUser)) { echo explode(' ', $socialiteUser->name, 2)[1]; } @endphp"
+                               required>
 
                         @if ($errors->has('name'))
                             <span class="invalid-feedback" role="alert">
@@ -68,7 +69,8 @@
                 </form>
             @endempty
             @isset($user)
-                <p>Es existiert bereits ein Account mit der Mailadresse <b>{{ $socialiteUser->email }}</b>.<br>Klicke "Zurück" und
+                <p>Es existiert bereits ein Account mit der Mailadresse <b>{{ $socialiteUser->email }}</b>.<br>Klicke
+                    "Zurück" und
                     verbinden diesen Account mit Facebook.</p>
             @endisset
         </template>

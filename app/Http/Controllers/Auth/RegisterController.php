@@ -87,7 +87,9 @@ class RegisterController extends Controller {
             'name' => $data['name']
         ]);
 
-        $password = $data['socialiteUserId'] ? Str::random(14) : $data['password'];
+        $socialiteUserId = isset($data['socialiteUserId']) ? $data['socialiteUserId'] : null;
+
+        $password = $socialiteUserId ? Str::random(14) : $data['password'];
 
         $user = User::create([
             'player_id' => $player->id,
@@ -95,7 +97,6 @@ class RegisterController extends Controller {
             'password' => Hash::make($password),
         ]);
 
-        $socialiteUserId = $data['socialiteUserId'];
         if ($socialiteUserId)
         {
             $socialiteUser = SocialiteUser::find($socialiteUserId);
