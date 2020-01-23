@@ -135,4 +135,8 @@
         </tab>
     </tabs>
 
+    <hr>
+
+    <a href="{{ $player->path() }}" class="btn btn-outline-primary">Zurück zum Profil</a>
+
 @endsection
