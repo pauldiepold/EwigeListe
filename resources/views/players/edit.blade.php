@@ -14,9 +14,27 @@
     <div id="alertPlaceholder"></div>
 
     <tabs>
-        <tab name="name" icon="fa-user" :selected="true">
+
+        <tab name="listen" icon="fa-list-alt" :selected="true">
+            <template v-slot:default="props">
+
+                <h5 class="tw-mb-4 tw-font-bold">Standard-Listen auswählen</h5>
+
+                <p class="tw-max-w-xs tw-mx-auto">
+                    Jede deiner Listen kann als Standard Liste ausgewählt werden. Zukünftig wird sie beim Start einer neuen Runde automatisch aktiviert.
+                </p>
+
+                <standard-groups :profiles-input="{{ $profiles }}"
+                                 :player-id="{{ auth()->user()->player->id }}"
+                                 :key="props.tabKey">
+                </standard-groups>
+            </template>
+        </tab>
+
+        <tab name="name" icon="fa-user">
 
             <h5 class="tw-mb-6 tw-font-bold">Namen ändern</h5>
+
             <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('players.updateName', [$player]) }}">
                 @csrf
                 @method('PATCH')
@@ -114,19 +132,6 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Passwort speichern</button>
             </form>
-        </tab>
-
-        <tab name="listen" icon="fa-list-alt">
-
-            <h5 class="tw-mb-6 tw-font-bold">Standard-Listen auswählen</h5>
-
-            <template v-slot:default="props">
-                <standard-groups :profiles-input="{{ $profiles }}"
-                                 :player-id="{{ auth()->user()->player->id }}"
-                                 :key="props.tabKey">
-                </standard-groups>
-            </template>
-
         </tab>
     </tabs>
 
