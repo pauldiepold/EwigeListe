@@ -21,7 +21,8 @@
                 <h5 class="tw-mb-4 tw-font-bold">Standard-Listen auswählen</h5>
 
                 <p class="tw-max-w-xs tw-mx-auto">
-                    Jede deiner Listen kann als Standard Liste ausgewählt werden. Zukünftig wird sie beim Start einer neuen Runde automatisch aktiviert.
+                    Jede deiner Listen kann als Standard Liste ausgewählt werden. Zukünftig wird sie beim Start einer
+                    neuen Runde automatisch aktiviert.
                 </p>
 
                 <standard-groups :profiles-input="{{ $profiles }}"
@@ -133,10 +134,10 @@
                 <button type="submit" class="btn btn-primary">Passwort speichern</button>
             </form>
         </tab>
+
+        <hr>
+
+        <a href="{{ $player->path() }}" class="btn btn-outline-primary">Zurück zum Profil</a>
     </tabs>
-
-    <hr>
-
-    <a href="{{ $player->path() }}" class="btn btn-outline-primary">Zurück zum Profil</a>
 
 @endsection
