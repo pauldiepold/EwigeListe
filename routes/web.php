@@ -23,8 +23,12 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 /* *********** Players *********** */
 Route::get('liste', 'GroupController@show')->name('ewigeListe');
+Route::get('profil/{player}/edit', 'PlayerController@edit')->middleware('auth')->name('players.edit');
+Route::patch('profil/{player}/name', 'PlayerController@updateName')->middleware('auth')->name('players.updateName');
+Route::patch('profil/{player}/mail', 'PlayerController@updateMail')->middleware('auth')->name('players.updateMail');
+Route::patch('profil/{player}/password', 'PlayerController@updatePassword')->middleware('auth')->name('players.updatePassword');
+Route::patch('profil/{player}/listen', 'PlayerController@updateListen')->middleware('auth')->name('players.updateListen');
 Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
-
 Route::get('/players/calculate', function ()
 {
     App\Player::all()->each(function ($player, $key)

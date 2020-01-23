@@ -179,6 +179,15 @@
                     }
                     this.textSearch = '';
                     this.players.push(player);
+
+                    let self = this;
+                    player.profiles.forEach(function (profile) {
+                        if (profile.default) {
+                            if (!self.groups.includes(profile.group_id)) {
+                                self.groups.push(profile.group_id)
+                            }
+                        }
+                    });
                 }
             },
             removePlayer(player) {

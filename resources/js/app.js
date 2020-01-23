@@ -8,6 +8,7 @@ import ProfileGraphs from './components/ProfileGraphs';
 import GroupGraph from './components/GroupGraph';
 import CreateRound from './components/CreateRound';
 import UpdateGroups from './components/UpdateGroups';
+import StandardGroups from './components/StandardGroups';
 import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
 import Tab from "./components/components/Tab";
@@ -36,6 +37,7 @@ global.vm = new Vue({
         Badge,
         SelectListe,
         UpdateGroups,
+        StandardGroups,
         Toggle,
     },
     data: {},

@@ -92,7 +92,7 @@
                     });
                 });
 
-                output = output.filter(group => this.edit || this.inSelectedGroups(group));
+                output = output.filter(group => !group.closed && (this.edit || this.inSelectedGroups(group)));
 
                 return output;
             },

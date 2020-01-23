@@ -11,23 +11,43 @@
                 <form method="POST" action="{{ route('register') }}">
                     @csrf
 
-                    <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
-                       class="btn btn-outline-primary mt-2">
-                        <div class="tw-flex tw-items-center">
-                            <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
-                            <span>Registrieren mit Google</span>
-                        </div>
-                    </a><br>
-
                     <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
-                       class="btn btn-outline-primary mt-2">
+                       class="btn btn-outline-primary mt-2 tw-w-64">
                         <div class="tw-flex tw-items-center">
                             <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
-                            <span>Registrieren mit Facebook</span>
+                            <span class="tw-flex-1">Mit Facebook registrieren</span>
+                        </div>
+                    </a>
+
+                    <br>
+
+                    <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
+                       class="btn btn-outline-primary my-2 tw-w-64">
+                        <div class="tw-flex tw-items-center">
+                            <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
+                            <span class="tw-flex-1">Mit Google registrieren</span>
                         </div>
                     </a>
 
                     <hr>
+                    <p class="tw-font-bold">Oder mit E-Mail registrieren:</p>
+
+                    <div class="form-group row">
+                        <label for="email"
+                               class="col-sm-5 col-form-label text-sm-right">E-Mail</label>
+
+                        <div class="col-sm-6">
+                            <input id="email" type="email"
+                                   class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email"
+                                   value="{{ old('email') }}" required>
+
+                            @if ($errors->has('email'))
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $errors->first('email') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
 
                     <div class="form-group row">
                         <label for="surname"
@@ -57,23 +77,6 @@
                             @if ($errors->has('name'))
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $errors->first('name') }}</strong>
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="email"
-                               class="col-sm-5 col-form-label text-sm-right">E-Mail</label>
-
-                        <div class="col-sm-6">
-                            <input id="email" type="email"
-                                   class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email"
-                                   value="{{ old('email') }}" required>
-
-                            @if ($errors->has('email'))
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $errors->first('email') }}</strong>
                                 </span>
                             @endif
                         </div>

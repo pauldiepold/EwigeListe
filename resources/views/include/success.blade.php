@@ -1,4 +1,4 @@
-<div class="alert alert-success my-2" role="alert">
+<div class="alert alert-success tw-mb-4 tw-max-w-md" role="alert">
     <div class="row align-items-center no-gutters">
         <div class="col-11">
             {{ $slot }}

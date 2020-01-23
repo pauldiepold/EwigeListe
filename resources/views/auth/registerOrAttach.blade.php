@@ -16,7 +16,6 @@
 
     <toggle provider="{{ ucfirst($socialiteUser->provider) }}">
 
-
         <template v-slot:content1>
             @empty($user)
                 <form method="POST" action="{{ route('register') }}">

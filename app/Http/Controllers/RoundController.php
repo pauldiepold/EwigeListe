@@ -102,7 +102,7 @@ class RoundController extends Controller
     public function create()
     {
         $allPlayers = Player::where('hide', '=', '0')
-            ->with('groups')
+            ->with(['groups', 'profiles:id,player_id,group_id,default'])
             ->withCount('gamePlayers')
             ->orderByRaw('game_players_count desc')
             ->get();

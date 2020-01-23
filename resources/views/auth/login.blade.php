@@ -59,7 +59,7 @@
                 <div class="form-group row">
                     <div class="col-sm-6 offset-sm-4">
                         <button type="submit" class="btn btn-primary">
-                            Login
+                            Anmelden
                         </button>
                     </div>
                 </div>
@@ -79,18 +79,18 @@
                     <div class="col-sm-6 offset-sm-4">
                         <hr>
                         <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
-                           class="btn btn-outline-primary mt-2">
+                           class="btn btn-outline-primary mt-2" style="width: 15rem;">
                             <div class="tw-flex tw-items-center">
                                 <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
-                                <span>Login mit Google</span>
+                                <span class="tw-flex-1">Mit Google anmelden</span>
                             </div>
                         </a><br>
 
                         <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
-                           class="btn btn-outline-primary my-2">
+                           class="btn btn-outline-primary my-2" style="width: 15rem;">
                             <div class="tw-flex tw-items-center">
                                 <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
-                                <span>Login mit Facebook</span>
+                                <span class="tw-flex-1">Mit Facebook anmelden</span>
                             </div>
                         </a>
                     </div>

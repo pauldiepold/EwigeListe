@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-show="show === 0">
-            <p class="tw-my-6">Möchstes du einen</p>
+            <p class="tw-my-6">Möchstest du einen</p>
             <button @click="show = 1"
                     v-show="show === 0"
                     class="btn btn-outline-primary">

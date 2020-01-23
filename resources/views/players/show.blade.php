@@ -7,8 +7,14 @@
 @endsection
 
 @section('content')
-    <tabs>
 
+    @can('update', $player)
+        <a href="{{ route('players.edit', [$player]) }}" class="btn btn-outline-primary tw-mb-3">
+            <i class="fas fa-user-cog tw-mr-2"></i>Konto-Einstellungen
+        </a>
+    @endcan
+
+    <tabs>
         <tab name="Statistiken" icon="fa-user" :selected="true">
 
             <select-liste>
