@@ -187,7 +187,13 @@
             @else
                 <h5>Statistiken werden ab dem 10. Spiel angezeigt.</h5>
             @endif
-            <p class="tw-mt-6">Registriert seit dem {{ $profile->created_at->format('d.m.Y') }}</p>
+            <p class="tw-mt-6">
+                @if($profile->group_id == 1)
+                    Registriert seit dem
+                @else
+                    Der Liste beigetreten am
+                @endif
+                {{ $profile->created_at->format('d.m.Y') }}</p>
         </tab>
         <tab name="Graphen" icon="fa-chart-area">
             <template v-slot:default="props">

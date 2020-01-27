@@ -99,6 +99,7 @@ class Profile extends Pivot
             $this->pointsPerGame = null;
             $this->soli = null;
             $this->save();
+
             return;
         }
         $this->games = $games->count();
@@ -110,7 +111,7 @@ class Profile extends Pivot
         $gamesLost = clone $games;
         $this->gamesWon = $gamesWon->where('won', 1)->count();
         $this->gamesLost = $gamesLost->where('won', '0')->count();
-        $this->gamesPerDay = $this->player->created_at->diffInDays(Carbon::now()) < 5 ? null : $this->games / $this->player->created_at->diffInDays(Carbon::now());
+        $this->gamesPerDay = $this->created_at->diffInDays(Carbon::now()->addDay()) < 5 ? null : $this->games / $this->created_at->diffInDays(Carbon::now()->addDay());
         $this->points = $games->sum('points');
         $pointsThisMonth = clone $games;
         $this->pointsThisMonth = $pointsThisMonth->where('created_at', '>=', Carbon::now()->startOfMonth())
