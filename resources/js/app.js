@@ -1,5 +1,6 @@
 require('./bootstrap');
 require('./scripts/custom.js');
+//require('@fortawesome/fontawesome-free/js/all.min.js');
 
 import Vue from 'vue';
 

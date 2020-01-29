@@ -202,10 +202,13 @@ class RoundController extends Controller
         return Datatables::of($rounds)
             ->addColumn('players', function ($round)
             {
-                return '<a href="' . $round->path . '">' . nice_count($round->players->pluck('surname')->toArray()) . '</a>';
+                return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
             })
             ->addColumn('date', function ($round) {
                 return $round->updated_at->format('d.m.Y');
+            })
+            ->addColumn('playerIDs', function ($round) {
+                return $round->players->pluck('id');
             })
             ->escapeColumns([''])
             ->orderColumn('date', 'updated_at $1')

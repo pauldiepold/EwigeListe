@@ -53,7 +53,7 @@
                             data: 'players',
                             name: 'players',
                             orderable: false,
-                        },
+                        }
                     ],
                     deferRender: true,
                     stateSave: false,
@@ -69,6 +69,11 @@
                         paginate: {
                             next: "&rsaquo;",
                             previous: "&lsaquo;"
+                        }
+                    },
+                    createdRow: function (row, data, index) {
+                        if (JSON.parse(data['playerIDs']).includes({{ auth()->user()->player->id }}) && {{ isset($player) && ($player->id != auth()->user()->player->id) || !isset($player) ? 'true' : 'false' }}) {
+                            $('td', row).addClass('bg-primary-light');
                         }
                     },
                     drawCallback: function (settings) {

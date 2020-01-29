@@ -15,6 +15,10 @@
             },
             selected: {
                 default: false
+            },
+            comments: {
+                required: false,
+                default: 0
             }
         },
 

@@ -28,7 +28,7 @@ table, tbody, tr, th {
 
 table {
     margin: 0 auto;
-    font-size:inherit !important;
+    font-size: inherit !important;
     text-align: center !important;
 }
 
@@ -131,4 +131,19 @@ th.sorting_desc, th.sorting_asc {
 
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
     justify-content: center;
+}
+
+.dataTable td {
+    border-top-width: 0px !important;
+    border-bottom-width: 1px !important;
+    padding-top: 0.30rem;
+    padding-bottom: 0.30rem;
+}
+.dataTable tr {
+    border-bottom-width: 0px !important;
+}
+
+.dataTable th {
+    border-bottom-width: 1px !important;
+    border-bottom-color: rgba(28, 114, 147, 0.53) !important;
 }
