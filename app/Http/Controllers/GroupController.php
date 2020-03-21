@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
+use App\Player;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,12 @@ class GroupController extends Controller
 
     public function create()
     {
-        return view('groups.create');
+        $allPlayers = Player::where('hide', '=', '0')
+            ->withCount('gamePlayers')
+            ->orderByRaw('game_players_count desc')
+            ->get();
+
+        return view('groups.create', compact('allPlayers'));
     }
 
 

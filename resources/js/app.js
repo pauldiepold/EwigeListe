@@ -8,7 +8,9 @@ import RoundGraph from './components/RoundGraph';
 import ProfileGraphs from './components/ProfileGraphs';
 import GroupGraph from './components/GroupGraph';
 import CreateRound from './components/CreateRound';
+import CreateGroup from './components/CreateGroup';
 import UpdateGroups from './components/UpdateGroups';
+import UpdateRoundDates from './components/UpdateRoundDates';
 import StandardGroups from './components/StandardGroups';
 import Alert from './components/Alert';
 import Tabs from "./components/components/Tabs";
@@ -17,6 +19,7 @@ import Badge from "./components/components/Badge";
 import NavIcon from "./components/components/NavIcon";
 import SelectListe from "./components/components/SelectListe";
 import Toggle from "./components/components/Toggle";
+import DatePicker from "./components/components/DatePicker";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
@@ -31,6 +34,7 @@ global.vm = new Vue({
         ProfileGraphs,
         GroupGraph,
         CreateRound,
+        CreateGroup,
         Alert,
         Tab,
         Tabs,
@@ -38,10 +42,12 @@ global.vm = new Vue({
         Badge,
         SelectListe,
         UpdateGroups,
+        UpdateRoundDates,
         StandardGroups,
         Toggle,
+        DatePicker
     },
-    data: {},
+    data: {    },
 
     methods: {}
 });

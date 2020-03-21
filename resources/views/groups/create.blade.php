@@ -6,6 +6,7 @@
 
 @section('content')
 
+    {{--
     <form method="POST" action="/groups">
         @csrf
         <div class="form-group">
@@ -14,5 +15,9 @@
         </div>
         <button type="submit" class="btn btn-primary">Gruppe erstellen</button>
     </form>
+    --}}
+    <create-group :all-players="{{ $allPlayers }}">
+    </create-group>
+
 
 @endsection

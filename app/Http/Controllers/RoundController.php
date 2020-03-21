@@ -9,6 +9,7 @@ use App\Player;
 use App\Group;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreRound;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\Facades\DataTables;
@@ -180,6 +181,14 @@ class RoundController extends Controller
         return redirect()->route('rounds.create');
     }
 
+    public function changeDates(Round $round, Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date'
+        ]);
+        dd($request->input('date'));
+    }
+
     public function archiveTable(Group $group, Player $player = null)
     {
         $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group)
@@ -204,10 +213,12 @@ class RoundController extends Controller
             {
                 return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
             })
-            ->addColumn('date', function ($round) {
+            ->addColumn('date', function ($round)
+            {
                 return $round->updated_at->format('d.m.Y');
             })
-            ->addColumn('playerIDs', function ($round) {
+            ->addColumn('playerIDs', function ($round)
+            {
                 return $round->players->pluck('id');
             })
             ->escapeColumns([''])

@@ -67,6 +67,7 @@ Route::post('/rounds', 'RoundController@store')->middleware('auth')->name('round
 Route::get('/runde/{round}', 'RoundController@show')->middleware('auth')->name('rounds.show');
 Route::patch('/rounds/{round}', 'RoundController@update')->middleware('auth')->name('rounds.update');
 Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth')->name('rounds.destroy');
+Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->middleware('auth')->name('rounds.changeDates');
 Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable');
 
 

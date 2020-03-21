@@ -67,5 +67,14 @@
         <tab name="Kommentare" icon="fa-comments">
             @include('comments.index', ['comments' => $round->comments()->oldest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
         </tab>
+
+        @if(Auth::id() == 1)
+            <tab name="Einstellungen" icon="fa-cog">
+                <template v-slot:default="props">
+                    <update-round-dates :round-id="{{ $round->id }}" :key="props.tabKey"></update-round-dates>
+                </template>
+
+            </tab>
+        @endif
     </tabs>
 @endsection
