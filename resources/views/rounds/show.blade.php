@@ -37,11 +37,7 @@
                 @endif
             @endcan
 
-            @if ($round->games->count() != 0)
-                <p class="text-muted tw-text-sm tw-mt-6">
-                    Anzahl Spiele: {{ $round->games->count() }}
-                </p>
-            @endif
+            @include('rounds.inc.info')
         </tab>
 
         <tab name="Statistiken" icon="fa-chart-area" :selected="false">

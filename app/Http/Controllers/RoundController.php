@@ -7,6 +7,7 @@ use App\Profile;
 use App\Round;
 use App\Player;
 use App\Group;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreRound;
 use Illuminate\Http\Request;
@@ -186,7 +187,31 @@ class RoundController extends Controller
         $request->validate([
             'date' => 'required|date'
         ]);
-        dd($request->input('date'));
+
+        $dateDiff = Carbon::create($request->input('date'))->diffInDays($round->created_at, false);
+
+        if ($dateDiff > 0)
+        {
+            $case = 'subDays';
+        } elseif ($dateDiff < 0)
+        {
+            $case = 'addDays';
+            $dateDiff = abs($dateDiff) + 1;
+        } else
+        {
+            return 'false';
+        }
+
+        $round->created_at = $round->created_at->$case($dateDiff);
+        $round->save();
+
+        foreach ($round->games as $game)
+        {
+            $game->created_at = $game->created_at->$case($dateDiff);
+            $game->save();
+        }
+
+        return 'success';
     }
 
     public function archiveTable(Group $group, Player $player = null)
