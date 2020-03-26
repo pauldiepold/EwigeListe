@@ -10,7 +10,7 @@
                         <th class="tw-flex-col tw-items-center">
                             <div class="tw--mb-6 tw-text-transparent">asdf</div>
                             <img src="{{ $item->get(1) }}"
-                                 class="tw-mx-auto tw-mb-1 tw-h-7 tw-w-7 tw-rounded-full">
+                                 class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
                             <a class="{{ !$item->contains('dealer') ? 'text-dark ' : '' }}{{ $item->contains('active') ? 'active-player' : '' }}"
                                href="{{ $item->get(2) }}">{{$item->get(0)}}</a>
                         </th>
