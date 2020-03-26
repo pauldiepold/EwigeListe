@@ -223,7 +223,7 @@
                 paging: {{ $group->players->count() > 15 ? "true" : "false" }},
                 pageLength: -1,
                 lengthMenu: [[15, 30, -1], [15, 30, "Alle"]],
-                order: [1, "desc"],
+                order: [2, "desc"],
                 language: {
                     lengthMenu: "Zeige _MENU_ pro Seite",
                     paginate: {
