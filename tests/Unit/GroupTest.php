@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,7 +16,7 @@ class GroupTest extends TestCase
     public function it_has_a_path()
     {
         $group = factory('App\Group')->create();
-        $this->assertEquals('/groups/' . $group->id, $group->path());
+        $this->assertEquals(URL::to('/') . '/liste/' . $group->id, $group->path());
     }
 
     /** @test */

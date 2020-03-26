@@ -52,7 +52,7 @@ class GroupController extends Controller
     {
         $group = isset($group) ? $group : Group::find(1);
         $selectedGroup = $group;
-        $group->load(['players.profiles', 'profiles.player', 'badges.player']);
+        $group->load(['players.profiles', 'profiles.player.user', 'badges.player']);
 
         $rounds_count = $group->rounds()
             ->whereHas('groups', function (Builder $query) use ($group)

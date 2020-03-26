@@ -56,6 +56,7 @@ class RoundController extends Controller
         foreach ($round->players as $player)
         {
             $colItem = collect($player->surname);
+            $colItem->push($player->user->avatar_path);
             $colItem->push($player->path());
             $player->pivot->index == $dealerIndex ? $colItem->push('dealer') : '';
             $activePlayers->pluck('id')->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';

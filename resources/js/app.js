@@ -20,6 +20,7 @@ import NavIcon from "./components/components/NavIcon";
 import SelectListe from "./components/components/SelectListe";
 import Toggle from "./components/components/Toggle";
 import DatePicker from "./components/components/DatePicker";
+import AvatarForm from "./components/AvatarForm";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
@@ -45,7 +46,8 @@ global.vm = new Vue({
         UpdateRoundDates,
         StandardGroups,
         Toggle,
-        DatePicker
+        DatePicker,
+        AvatarForm
     },
     data: {    },
 

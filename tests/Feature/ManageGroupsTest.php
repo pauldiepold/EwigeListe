@@ -15,7 +15,7 @@ class ManageGroupsTest extends TestCase {
     {
         $group = factory('App\Group')->create();
 
-        $this->get('/groups/create')->assertRedirect('/login');
+        $this->get('/liste/erstellen')->assertRedirect('/login');
         $this->post('/groups', $group->toArray())->assertRedirect('login');
     }
 
@@ -25,15 +25,15 @@ class ManageGroupsTest extends TestCase {
         $this->withoutExceptionHandling();
         $this->actingAs(factory('App\User')->create());
 
-        $this->get('/groups/create')->assertStatus(200);
+        $this->get('/liste/erstellen')->assertStatus(200);
 
         $attributes = factory('App\Group')->raw(['created_by' => auth()->user()->player->id]);
 
-        $this->post('groups', $attributes)->assertRedirect('/groups/1');
+        $this->post('groups', $attributes)->assertRedirect('/liste/1');
 
         $this->assertDatabaseHas('groups', $attributes);
 
-        $this->get('groups')->assertSee(e($attributes['name']));
+        $this->get('listen')->assertSee($attributes['name']);
     }
 
     /** @test */
@@ -58,7 +58,7 @@ class ManageGroupsTest extends TestCase {
 
         $group = factory('App\Group')->create();
 
-        $this->get($group->path())->assertSee(e($group->name));
+        $this->get($group->path())->assertSee($group->name);
     }
 
     /** @test */

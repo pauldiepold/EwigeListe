@@ -2,16 +2,15 @@
 
 namespace App\Policies;
 
-use App\Player;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PlayerPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function update(User $user, Player $player)
+    public function update(User $user, User $userCheck)
     {
-        return $user->player_id == $player->id;
+        return $user->id == $userCheck->id;
     }
 }

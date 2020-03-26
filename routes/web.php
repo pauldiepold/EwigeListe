@@ -20,115 +20,126 @@ Auth::routes();
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
 
-
-/* *********** Players *********** */
-Route::get('liste', 'GroupController@show')->name('ewigeListe');
-Route::get('profil/{player}/edit', 'PlayerController@edit')->middleware('auth')->name('players.edit');
-Route::patch('profil/{player}/name', 'PlayerController@updateName')->middleware('auth')->name('players.updateName');
-Route::patch('profil/{player}/mail', 'PlayerController@updateMail')->middleware('auth')->name('players.updateMail');
-Route::patch('profil/{player}/password', 'PlayerController@updatePassword')->middleware('auth')->name('players.updatePassword');
-Route::patch('profil/{player}/listen', 'PlayerController@updateListen')->middleware('auth')->name('players.updateListen');
-Route::get('profil/{player}/{group?}', 'PlayerController@show')->middleware('auth');
-Route::get('/players/calculate', function ()
+Route::middleware(['auth'])->group(function ()
 {
-    App\Player::all()->each(function ($player, $key)
+    /* *********** Users *********** */
+    Route::get('users/{user}/edit', 'UserController@edit')->name('users.edit');
+    Route::patch('users/{user}/name', 'UserController@updateName')->name('users.updateName');
+    Route::patch('users/{user}/mail', 'UserController@updateMail')->name('users.updateMail');
+    Route::patch('users/{user}/password', 'UserController@updatePassword')->name('users.updatePassword');
+    Route::patch('users/{user}/listen', 'UserController@updateListen')->name('users.updateListen');
+
+    /* *********** Players *********** */
+    Route::get('profil/{player}/{group?}', 'PlayerController@show');
+    Route::get('/players/calculate', function ()
+    {
+        App\Player::all()->each(function ($player, $key)
+        {
+            $player->calculate();
+        });
+
+        return redirect('/liste/1');
+    });
+
+    Route::get('/players/calculate/{player}', function (App\Player $player)
     {
         $player->calculate();
+
+        return redirect($player->path());
     });
 
-    return redirect('/liste/1');
-})->middleware('auth');
 
-Route::get('/players/calculate/{player}', function (App\Player $player)
-{
-    $player->calculate();
+    /* *********** Rounds ************ */
+    Route::get('/rounds/current',
+        function ()
+        {
+            $lastRound = auth()->user()->player->rounds()->latest()->first();
+            if ($lastRound)
+            {
+                return redirect($lastRound->path());
+            } else
+            {
+                return redirect()->route('rounds.create');
+            }
+        })->name('rounds.current');
 
-    return redirect($player->path());
-})->middleware('auth');
+    Route::get('/rundenarchiv/{group?}', 'RoundController@index')->name('rounds.index');
+    Route::get('/runde/erstellen', 'RoundController@create')->name('rounds.create');
+    Route::post('/rounds', 'RoundController@store')->name('rounds.store');
+    Route::get('/runde/{round}', 'RoundController@show')->name('rounds.show');
+    Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
+    Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
+    Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');
 
 
-/* *********** Rounds ************ */
-Route::get('/rounds/current',
-    function ()
+    /* *********** Games ************** */
+    Route::get('/rounds/{round}/game/create', 'GameController@create');
+    Route::post('/rounds/{round}/game', 'GameController@store');
+    Route::patch('/games/{game}', 'GameController@update');
+    Route::delete('/games/{game}', 'GameController@destroy');
+
+
+    /* *********** Groups ************** */
+    Route::get('liste', 'GroupController@show')->name('ewigeListe');
+    Route::get('/listen', 'GroupController@index')->name('groups.index');
+    Route::get('/liste/erstellen', 'GroupController@create')->name('groups.create');
+    Route::get('/liste/{group}', 'GroupController@show')->name('groups.show');
+    Route::post('/groups', 'GroupController@store')->name('groups.store');
+    Route::get('/liste/{group}/beitreten', 'GroupController@update')->name('groups.addPlayer');
+    Route::get('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
+    Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->name('groups.close');
+
+    Route::get('/listen/calculate', function ()
     {
-        $lastRound = auth()->user()->player->rounds()->latest()->first();
-        if ($lastRound)
+        App\Group::all()->each(function ($group, $key)
         {
-            return redirect($lastRound->path());
-        } else
-        {
-            return redirect()->route('rounds.create');
-        }
-    })->middleware('auth')->name('rounds.current');
+            $group->calculate();
+        });
 
-Route::get('/rundenarchiv/{group?}', 'RoundController@index')->middleware('auth')->name('rounds.index');
-Route::get('/runde/erstellen', 'RoundController@create')->middleware('auth')->name('rounds.create');
-Route::post('/rounds', 'RoundController@store')->middleware('auth')->name('rounds.store');
-Route::get('/runde/{round}', 'RoundController@show')->middleware('auth')->name('rounds.show');
-Route::patch('/rounds/{round}', 'RoundController@update')->middleware('auth')->name('rounds.update');
-Route::delete('/rounds/{round}', 'RoundController@destroy')->middleware('auth')->name('rounds.destroy');
-Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->middleware('auth')->name('rounds.changeDates');
-Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable');
+        return redirect('/listen');
+    });
 
-
-/* *********** Games ************** */
-Route::get('/rounds/{round}/game/create', 'GameController@create')->middleware('auth');
-Route::post('/rounds/{round}/game', 'GameController@store')->middleware('auth');
-Route::patch('/games/{game}', 'GameController@update')->middleware('auth');
-Route::delete('/games/{game}', 'GameController@destroy')->middleware('auth');
-
-
-/* *********** Groups ************** */
-Route::get('/listen', 'GroupController@index')->middleware('auth')->name('groups.index');
-Route::get('/liste/erstellen', 'GroupController@create')->middleware('auth')->name('groups.create');
-Route::get('/liste/{group}', 'GroupController@show')->middleware('auth')->name('groups.show');
-Route::post('/groups', 'GroupController@store')->middleware('auth')->name('groups.store');
-Route::get('/liste/{group}/beitreten', 'GroupController@update')->middleware('auth')->name('groups.addPlayer');
-Route::get('/liste/{group}/verlassen', 'GroupController@leave')->middleware('auth')->name('groups.leave');
-Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->middleware('auth')->name('groups.close');
-
-Route::get('/listen/calculate', function ()
-{
-    App\Group::all()->each(function ($group, $key)
+    Route::get('/liste/calculate/{group}', function (App\Group $group)
     {
         $group->calculate();
+
+        return redirect($group->path() . '#statistiken');
     });
 
-    return redirect('/listen');
-})->middleware('auth');
+    Route::get('/liste/calculateBadges/{group}', function (App\Group $group)
+    {
+        $group->calculateBadges();
 
-Route::get('/liste/calculate/{group}', function (App\Group $group)
-{
-    $group->calculate();
+        return redirect($group->path() . '#abzeichen');
+    });
 
-    return redirect($group->path() . '#statistiken');
-})->middleware('auth');
 
-Route::get('/liste/calculateBadges/{group}', function (App\Group $group)
-{
-    $group->calculateBadges();
+    /* *********** Charts ************** */
+    Route::get('/charts/round/{round}/', 'ChartController@roundChart');
+    Route::get('/charts/profile/{profile}/', 'ChartController@profileChart');
 
-    return redirect($group->path() . '#abzeichen');
-})->middleware('auth');
 
+    /* *********** Comments ************** */
+    Route::post('/comments', 'CommentController@store');
+    Route::delete('/comments/{comment}', 'CommentController@destroy');
+
+    /* *********** API ************** */
+    Route::post('api/users/{user}/avatar', 'Api\UserAvatarController@store')->name('avatar');
+});
+
+
+
+/* *********** Rounds ************** */
+Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable');
 
 /* *********** Charts ************** */
-Route::get('/charts/round/{round}/', 'ChartController@roundChart')->middleware('auth');
-Route::get('/charts/profile/{profile}/', 'ChartController@profileChart')->middleware('auth');
 Route::get('/charts/home/{group}', 'ChartController@homeChart');
-
-
-/* *********** Comments ************** */
-Route::post('/comments', 'CommentController@store')->middleware('auth');
-Route::delete('/comments/{comment}', 'CommentController@destroy')->middleware('auth');
 
 
 /* *********** Sonstiges ************** */
 Route::view('/datenschutz/', 'sonstiges.datenschutz')->name('datenschutz');
 Route::view('/impressum/', 'sonstiges.impressum')->name('impressum');
 Route::view('/regeln/', 'sonstiges.regeln')->name('regeln');
-
-Route::get('autocomplete', 'SearchController@autocomplete')->name('autocomplete')->middleware('auth');
 
 Route::get('/test', 'TestController@test')->middleware('auth');
 

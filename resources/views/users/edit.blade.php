@@ -26,7 +26,7 @@
                 </p>
 
                 <standard-groups :profiles-input="{{ $profiles }}"
-                                 :player-id="{{ auth()->user()->player->id }}"
+                                 :user-id="{{ auth()->user()->id }}"
                                  :key="props.tabKey">
                 </standard-groups>
             </template>
@@ -34,9 +34,13 @@
 
         <tab name="name" icon="fa-user">
 
-            <h5 class="tw-mb-6 tw-font-bold">Namen ändern</h5>
+            <h5 class="tw-mb-6 tw-font-bold">Namen und Profilbild ändern</h5>
 
-            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('players.updateName', [$player]) }}">
+            <avatar-form :user="{{ $player->user }}"></avatar-form>
+
+            <hr>
+
+            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('users.updateName', [$player]) }}">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
@@ -69,7 +73,7 @@
 
             <h5 class="tw-mb-6 tw-font-bold">E-Mail ändern</h5>
 
-            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('players.updateMail', [$player]) }}">
+            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('users.updateMail', [$player]) }}">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
@@ -92,7 +96,7 @@
             <h5 class="tw-mb-6 tw-font-bold">Passwort ändern</h5>
 
             <form class="tw-max-w-xs tw-mx-auto" method="POST"
-                  action="{{ route('players.updatePassword', [$player]) }}">
+                  action="{{ route('users.updatePassword', [$player]) }}">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">

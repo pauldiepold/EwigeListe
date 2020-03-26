@@ -20,11 +20,14 @@
                     austreten</a>
             @endif
             @if($group->rounds->count() >= 1 && $group->rounds->first()->games->count() > 0)
-                <div class="row justify-content-center my-4">
+                <div class="row justify-content-center my-4" v-touch:swipe.stop="">
                     <div class="col col-xl-7 col-lg-8 col-md-9">
                         <table class="table myDataTable d-none table-responsive-sm">
                             <thead>
                                 <tr class="border-bottom-thick" style="line-height:120%;">
+                                    <th>
+                                        <span class="tw-text-transparent">Phot</span>
+                                    </th>
                                     <th>Name</th>
                                     <th>Spiele</th>
                                     <th>Punkte</th>
@@ -33,11 +36,17 @@
                                 </tr>
                             </thead>
 
+
                             <tbody>
                                 @foreach($group->profiles as $profile)
                                     <tr class="{{ $profile->player->id == auth()->user()->player->id ? ' bg-primary-light' : ''}}">
-
-                                        <td style="max-width: 8rem; white-space: normal;">
+                                        <td style="padding-right: 0px;">
+                                            <a href="{{ $profile->path() }}">
+                                                <img src="{{ $profile->player->user->avatar_path }}"
+                                                     class="tw-mx-auto tw-h-10 tw-w-10 sm:tw-w-8 sm:tw-h-8 tw-m-0 tw-rounded-full">
+                                            </a>
+                                        </td>
+                                        <td>
                                             <a href="{{ $profile->path() }}">
                                                 {{ $profile->player->surname }} {{ $profile->player->name }}
                                             </a>
@@ -67,7 +76,7 @@
                 <h5>Nur du bist bisher Mitglied dieser Liste.</h5>
             @elseif($group->players->count() == 1)
                 <h5 class="tw-mt-8">Bisher ist nur <a
-                        href="{{ $group->profiles->first()->path() }}">{{ $group->players->first()->surname }}</a>
+                            href="{{ $group->profiles->first()->path() }}">{{ $group->players->first()->surname }}</a>
                     Mitglied dieser Liste.</h5>
             @else
                 <h5 class="tw-mt-8">Bisher wurde keine Runde auf dieser Liste gespielt.</h5>
@@ -139,11 +148,11 @@
                             <h5>Die meisten {{ $typeDeutsch }} {{ $type->keys()->get($loop->index) }}: </h5>
                             @foreach($year as $badge)
                                 <badge
-                                    date="{{ $badge->date->formatLocalized('%B %Y') }}"
-                                    name="{{ $badge->player->surname }}"
-                                    value="{{ $badge->value }}"
-                                    type="{{ $badge->type }}"
-                                    path="{{ $badge->playerPath() }}"
+                                        date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                        name="{{ $badge->player->surname }}"
+                                        value="{{ $badge->value }}"
+                                        type="{{ $badge->type }}"
+                                        path="{{ $badge->playerPath() }}"
                                 ></badge>
                             @endforeach
                         @endforeach
@@ -204,6 +213,7 @@
                 info: false,
                 searching: true,
                 columns: [
+                    {"orderSequence": []},
                     {"orderSequence": ["asc", "desc"]},
                     {"orderSequence": ["desc", "asc"]},
                     {"orderSequence": ["desc", "asc"]},

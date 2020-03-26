@@ -8,8 +8,13 @@
 
 @section('content')
 
-    @can('update', $player)
-        <a href="{{ route('players.edit', [$player]) }}" class="btn btn-outline-primary tw-mb-3">
+    @if(substr($player->user->avatar_path, -11) != 'default.jpg')
+    <img src="{{ $player->user->avatar_path }}"
+         class="tw-mx-auto tw-mb-4 tw-h-32 tw-w-32 tw-rounded-full">
+    @endif
+
+    @can('update', $player->user)
+        <a href="{{ route('users.edit', [$player->user]) }}" class="btn btn-outline-primary tw-mb-3">
             <i class="fas fa-user-cog tw-mr-2"></i>Konto-Einstellungen
         </a>
     @endcan

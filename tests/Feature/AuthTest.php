@@ -16,16 +16,18 @@ class AuthTest extends TestCase
     {
         $this->get('/register')->assertStatus(200);
 
-        $password = $this->faker->password();
+        $group = factory('App\Group')->create();
+
+        $password = $this->faker->password;
         $attributes = [
-            'surname' => $this->faker->firstName(),
-            'name' => $this->faker->lastName(),
-            'email' => $this->faker->email(),
+            'surname' => $this->faker->firstName,
+            'name' => $this->faker->lastName,
+            'email' => $this->faker->email,
             'password' => $password,
             'password_confirmation' => $password
         ];
 
-        $this->post('register', $attributes)->assertRedirect('home');
+        $this->post('register', $attributes)->assertRedirect('/');
 
         $this->assertInstanceOf('App\Player', auth()->user()->player);
         $this->assertInstanceOf('App\User', auth()->user());

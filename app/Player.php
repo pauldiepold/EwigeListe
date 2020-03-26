@@ -18,8 +18,15 @@ class Player extends Model
         return "/profil/{$this->id}";
     }
 
-    public function calculate() {
-        foreach ($this->profiles as $profile) {
+    public function avatar()
+    {
+        return $this->user->avatar();
+    }
+
+    public function calculate()
+    {
+        foreach ($this->profiles as $profile)
+        {
             $profile->calculate();
         }
     }
@@ -71,18 +78,21 @@ class Player extends Model
             ->orderByRaw('rounds_count desc');
     }
 
-    public function badges() {
+    public function badges()
+    {
         return $this->hasMany(Badge::class)
             ->orderBy('year', 'desc')
             ->orderBy('month', 'desc')
             ->where('player_id', '!=', 0);
     }
 
-    public function profiles() {
+    public function profiles()
+    {
         return $this->hasMany(Profile::class);
     }
 
-    public function gamePlayers() {
+    public function gamePlayers()
+    {
         return $this->hasMany(GamePlayer::class);
     }
 }

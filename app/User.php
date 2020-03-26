@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'player_id'
+        'email', 'password', 'player_id', 'avatar_path'
     ];
 
     /**
@@ -39,8 +39,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->id == 1;
+    }
+
+    public function getAvatarPathAttribute($avatar)
+    {
+        return $avatar ? '/storage/avatars/' . $avatar : '/storage/avatars/default.jpg';
     }
 
     public function sendPasswordResetNotification($token)

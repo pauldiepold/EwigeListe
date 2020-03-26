@@ -12,6 +12,7 @@
     "doctrine/dbal": "^2.9",
     "facade/ignition": "^1.6",
     "fideloper/proxy": "^4.0",
+    "intervention/image": "^2.5",
     "laravel/framework": "6.0.*",
     "laravel/socialite": "^4.3",
     "laravel/telescope": "^2.1",

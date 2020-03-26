@@ -38,7 +38,8 @@
 
                         <div class="col-sm-6">
                             <input id="email" type="email"
-                                   class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="email"
+                                   class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }}"
+                                   name="email"
                                    value="{{ old('email') }}" required>
 
                             @if ($errors->has('email'))
@@ -55,7 +56,8 @@
 
                         <div class="col-sm-6">
                             <input id="surname" type="text"
-                                   class="form-control{{ $errors->has('surname') ? ' is-invalid' : '' }}" name="surname"
+                                   class="form-control{{ $errors->has('surname') ? ' is-invalid' : '' }}"
+                                   name="surname"
                                    value="{{ old('surname') }}" required autofocus>
 
                             @if ($errors->has('surname'))
@@ -71,7 +73,8 @@
 
                         <div class="col-sm-6">
                             <input id="name" type="text"
-                                   class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}" name="name"
+                                   class="form-control{{ $errors->has('name') ? ' is-invalid' : '' }}"
+                                   name="name"
                                    value="{{ old('name') }}" required>
 
                             @if ($errors->has('name'))
@@ -89,7 +92,8 @@
                         <div class="col-sm-6">
                             <input id="password" type="password"
                                    class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}"
-                                   name="password" value="{{ old('password') }}" required>
+                                   name="password"
+                                   value="{{ old('password') }}" required>
 
                             @if ($errors->has('password'))
                                 <span class="invalid-feedback" role="alert">

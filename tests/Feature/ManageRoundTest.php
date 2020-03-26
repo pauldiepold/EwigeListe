@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Player;
+use App\Round;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,19 +18,20 @@ class ManageRoundTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->seed('PlayerSeeder');
+        //$this->seed('PlayerSeeder');
+        //$players = Player::all()->random(rand(4,7));
 
-        $players = Player::all()->random(rand(4,7));
+        $users = factory('App\User', rand(4, 7))->create();
+        $groups = factory('App\Group', rand(2, 4))->create();
 
-        $groups = factory('App\Group',rand(2,4))->create();
-
-        $this->actingAs($players->first()->user);
+        $this->actingAs($users->first());
 
         $this->post('/rounds', [
-            'players' => $players->pluck('id')->toArray(),
+            'players' => $users->pluck('id')->toArray(),
             'groups' => $groups->pluck('id')->toArray()
-        ])->assertTrue(true);
-            //->assertSee('/rounds/')->assertStatus(200);
+        ])
+            ->assertOk()
+            ->assertSee(Round::first()->path());
 
     }
 }

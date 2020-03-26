@@ -48,7 +48,7 @@
     export default {
         props: [
             'profilesInput',
-            'playerId'
+            'userId'
         ],
 
         data() {
@@ -92,7 +92,7 @@
             submit() {
                 this.loading = true;
 
-                axios.post('/profil/' + this.playerId + '/listen', {
+                axios.post('/users/' + this.userId + '/listen', {
                     '_method': 'PATCH',
                     'groups': this.groups
                 })
