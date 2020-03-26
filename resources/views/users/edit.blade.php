@@ -15,7 +15,7 @@
 
     <tabs>
 
-        <tab name="listen" icon="fa-list-alt" :selected="true">
+        <tab name="listen" icon="fa-list-alt">
             <template v-slot:default="props">
 
                 <h5 class="tw-mb-4 tw-font-bold">Standard-Listen auswählen</h5>
@@ -32,7 +32,7 @@
             </template>
         </tab>
 
-        <tab name="name" icon="fa-user">
+        <tab name="name" icon="fa-user" :selected="true">
 
             <h5 class="tw-mb-6 tw-font-bold">Namen und Profilbild ändern</h5>
 

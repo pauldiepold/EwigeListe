@@ -58,7 +58,7 @@ class ManageGroupsTest extends TestCase {
 
         $group = factory('App\Group')->create();
 
-        $this->get($group->path())->assertSee($group->name);
+        $this->get($group->path())->assertSee(e($group->name));
     }
 
     /** @test */
@@ -72,7 +72,7 @@ class ManageGroupsTest extends TestCase {
 
         $group->addPlayers($players);
 
-        $this->get($group->path())->assertSee($players->first()->name);
+        $this->get($group->path())->assertSee(e($players->first()->name));
     }
 
     /** @test */

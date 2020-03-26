@@ -13,7 +13,7 @@ class UserAvatarController extends Controller
     public function store(Request $request, User $user)
     {
         $request->validate([
-            'avatar' => 'required'
+            'avatar' => 'required|string'
         ]);
 
         $this->authorize('update', $user);

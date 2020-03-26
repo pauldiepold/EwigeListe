@@ -45,11 +45,11 @@ class ManageUsersTest extends TestCase
     {
         $user = factory('App\User')->create();
 
-        $this->assertEquals('storage/avatars/default.jpg', $user->avatar());
+        $this->assertEquals('/storage/avatars/default.jpg', $user->avatar_path);
 
-        $user->avatar_path = 'avatars/me.jpg';
+        $user->avatar_path = 'me.jpg';
 
-        $this->assertEquals('storage/avatars/me.jpg', $user->avatar());
+        $this->assertEquals('/storage/avatars/me.jpg', $user->avatar_path);
     }
 
 
