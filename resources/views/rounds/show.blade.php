@@ -12,33 +12,47 @@
 
     <tabs>
         <tab name="Runde" icon="fa-play-circle" :selected="true">
-            @can('update', $round)
-                @include('games.create')
-            @endcan
+            @if(!$round->liveGame)
+                @can('update', $round)
+                    @include('games.create')
+                @endcan
+            @endif
 
             @include('rounds.inc.pointsTable')
 
-            @can('update', $round)
-                @if ($round->games->count() != 0)
-                    <div class="d-flex flex-sm-row flex-column justify-content-center">
-                        <div class="mx-2 mt-3">
-                            @include('games.update')
+            @if(!$round->liveGame)
+                @can('update', $round)
+                    @if ($round->games->count() != 0)
+                        <div class="d-flex flex-sm-row flex-column justify-content-center">
+                            <div class="mx-2 mt-3">
+                                @include('games.update')
+                            </div>
+                            <div class="mx-2 mt-3">
+                                @include('games.delete')
+                            </div>
                         </div>
-                        <div class="mx-2 mt-3">
-                            @include('games.delete')
-                        </div>
-                    </div>
-                @else
-                    <form method="POST" action="{{ route('rounds.destroy', ['round' => $round->id]) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-primary mt-4">Runde löschen</button>
-                    </form>
-                @endif
-            @endcan
+                    @else
+                        <form method="POST" action="{{ route('rounds.destroy', ['round' => $round->id]) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-primary mt-4">Runde löschen</button>
+                        </form>
+                    @endif
+                @endcan
+            @endif
 
             @include('rounds.inc.info')
         </tab>
+
+        @can('update', $round)
+            @if($round->liveGame)
+                <tab name="Live" icon="fa-dice">
+                    <template v-slot:default="props">
+                        <live-game :round="{{ $round }}" :deck="{{ collect($deck)->toJson() }}"></live-game>
+                    </template>
+                </tab>
+            @endif
+        @endcan
 
         <tab name="Statistiken" icon="fa-chart-area" :selected="false">
             <template v-slot:default="props">
@@ -62,15 +76,14 @@
 
         <tab name="Kommentare" icon="fa-comments">
             @include('comments.index', ['comments' => $round->comments()->oldest()->paginate(8, ['*'], 'comments'), 'route' => 'round'])
-        </tab>
-
-        @if(Auth::id() == 1)
-            <tab name="Einstellungen" icon="fa-cog">
+            @if(Auth::id() == 1)
+                <hr>
                 <template v-slot:default="props">
                     <update-round-dates :round-id="{{ $round->id }}" :key="props.tabKey"></update-round-dates>
                 </template>
+            @endif
+        </tab>
 
-            </tab>
-        @endif
+
     </tabs>
 @endsection

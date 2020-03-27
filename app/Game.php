@@ -5,7 +5,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Game extends Model {
+class Game extends Model
+{
 
     protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay', 'created_by', 'round_id'];
 
@@ -33,7 +34,13 @@ class Game extends Model {
         return $this->belongsTo(Player::class, 'created_by');
     }
 
-    public function gamePlayers() {
+    public function gamePlayers()
+    {
         return $this->hasMany(GamePlayer::class);
+    }
+
+    public function liveGame()
+    {
+        return $this->belongsTo(LiveGame::class);
     }
 }

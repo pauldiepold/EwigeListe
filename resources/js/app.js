@@ -21,6 +21,7 @@ import SelectListe from "./components/components/SelectListe";
 import Toggle from "./components/components/Toggle";
 import DatePicker from "./components/components/DatePicker";
 import AvatarForm from "./components/AvatarForm";
+import LiveGame from "./components/live/LiveGame";
 
 import VueScrollTo from 'vue-scrollto';
 import Vue2TouchEvents from 'vue2-touch-events';
@@ -47,7 +48,8 @@ global.vm = new Vue({
         StandardGroups,
         Toggle,
         DatePicker,
-        AvatarForm
+        AvatarForm,
+        LiveGame
     },
     data: {    },
 

@@ -27,7 +27,8 @@ class StoreRound extends FormRequest {
             'players' => 'required|between:4,7|array',
             'players.*' => 'exists:players,id',
             'groups' => 'array',
-            'groups.*' => 'exists:groups,id'
+            'groups.*' => 'exists:groups,id',
+            'liveGame' => 'required|boolean'
         ];
     }
 

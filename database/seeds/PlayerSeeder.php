@@ -19,7 +19,9 @@ class PlayerSeeder extends Seeder
     {
         $date300 = Carbon::now()->subMinutes(60*24*300);
         factory('App\User')->create(['email' => 'paul@paul.de', 'password' => Hash::make('paul')]);
-        factory('App\User')->create(['email' => 'test@test.de']);
+        factory('App\User')->create(['email' => 'test1@test.de']);
+        factory('App\User')->create(['email' => 'test2@test.de']);
+        factory('App\User')->create(['email' => 'test3@test.de']);
 
         factory('App\User', intval(config('database.seed.players')))->create([
             'created_at' => $date300,

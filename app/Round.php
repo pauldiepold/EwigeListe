@@ -8,22 +8,33 @@ use Illuminate\Support\Facades\DB;
 class Round extends Model
 {
 
-    protected $fillable = ['created_by'];
+    protected $fillable = ['created_by', 'liveGame'];
 
     protected $appends = ['players_string', 'path'];
 
     protected $attributes = [];
+
+    public static function boot()
+    {
+        parent::boot();
+        static::creating(function ($model)
+        {
+            $model->created_by = auth()->user()->player->id;
+        });
+    }
 
     public function path()
     {
         return route('rounds.show', ['round' => $this->id]);
     }
 
-    public function getPlayersStringAttribute() {
+    public function getPlayersStringAttribute()
+    {
         return nice_count($this->players->pluck('surname')->toArray());
     }
 
-    public function getPathAttribute() {
+    public function getPathAttribute()
+    {
         return $this->path();
     }
 
@@ -123,5 +134,10 @@ class Round extends Model
         return Profile::whereIn('group_id', $this->groups->pluck('id'))
             ->whereIn('player_id', $this->players->pluck('id'))
             ->get();
+    }
+
+    public function liveRound()
+    {
+        return $this->belongsTo(LiveRound::class);
     }
 }

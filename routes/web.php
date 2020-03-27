@@ -142,6 +142,7 @@ Route::view('/impressum/', 'sonstiges.impressum')->name('impressum');
 Route::view('/regeln/', 'sonstiges.regeln')->name('regeln');
 
 Route::get('/test', 'TestController@test')->middleware('auth');
+Route::get('/testClient', 'TestController@client')->middleware('auth');
 
 Route::get('/report', 'ReportController@report')->middleware(['auth', 'admin']);
 

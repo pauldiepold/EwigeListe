@@ -42,6 +42,12 @@
                              @remove-player="removePlayer"/>
         </sortable-players-list>
 
+        <div class="custom-control custom-checkbox tw-my-6">
+            <input class="custom-control-input" type="checkbox" v-model="liveGame" id="liveGame">
+            <label class="custom-control-label" for="liveGame">
+                Runde online spielen?
+            </label>
+        </div>
 
         <form @submit.prevent="submit">
             <button :disabled="players.length < 4"
@@ -108,7 +114,8 @@
                 textSearch: '',
                 loading: false,
                 groups: [1],
-                players: []
+                players: [],
+                liveGame: false
             }
         },
 
@@ -216,7 +223,8 @@
 
                 axios.post('/rounds', {
                     'players': this.players.map(v => v.id),
-                    'groups': this.selectedGroups
+                    'groups': this.selectedGroups,
+                    'liveGame': this.liveGame
                 })
                     .then(response => {
                         window.location.href = response.data;

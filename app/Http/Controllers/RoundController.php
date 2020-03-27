@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateRound;
+use App\live\Board;
+use App\LiveRound;
 use App\Profile;
 use App\Round;
 use App\Player;
@@ -93,7 +95,11 @@ class RoundController extends Controller
             $colRound->push($colRow);
         }
 
+        $deck = new Board();
+        $deck = $deck->getDeck();
+
         return view('rounds.show', compact(
+            'deck',
             'round',
             'colRound',
             'activePlayers',
@@ -116,13 +122,16 @@ class RoundController extends Controller
     public function store(StoreRound $request)
     {
         $validated = collect($request->validated());
+
         $players = Player::find($validated->get('players'));
 
         $groups = Group::find(
             $validated->get('groups')
         );
 
-        $round = Round::create(['created_by' => auth()->user()->player->id]);
+        $round = Round::create([
+            //'created_by' => auth()->user()->player->id
+        ]);
 
         $index = 0;
         foreach ($validated->get('players') as $playerID)
@@ -138,6 +147,10 @@ class RoundController extends Controller
         foreach ($groups as $group)
         {
             $group->addPlayers($players);
+        }
+
+        if ($validated->get('liveGame')) {
+            $this->startLiveRound($round);
         }
 
         return $round->path();
@@ -250,6 +263,14 @@ class RoundController extends Controller
             ->escapeColumns([''])
             ->orderColumn('date', 'updated_at $1')
             ->make(true);
+    }
+
+    private function startLiveRound(Round $round)
+    {
+        $liveRound = $round->liveRound()->create();
+        $round->liveRound()->associate($liveRound)->save();
+
+        return;
     }
 
 }

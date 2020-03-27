@@ -11,6 +11,9 @@
 |
 */
 
-Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+use App\Round;
+
+Broadcast::channel('round.{round}', function ($user, Round $round)
+{
+    return $user->can('update', $round) ? ['userID' => $user->id] : false;
 });
