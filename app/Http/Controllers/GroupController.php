@@ -78,6 +78,30 @@ class GroupController extends Controller
         return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges', 'canLeaveGroup'));
     }
 
+    public function calculateAll()
+    {
+        Group::all()->each(function ($group, $key)
+        {
+            $group->calculate();
+        });
+
+        return redirect('/listen');
+    }
+
+    public function calculate(Group $group)
+    {
+        $group->calculate();
+
+        return redirect($group->path() . '#statistiken');
+    }
+
+    public function calculateBadges(Group $group)
+    {
+        $group->calculateBadges();
+
+        return redirect($group->path() . '#abzeichen');
+    }
+
     public function update(Group $group)
     {
         $player = auth()->user()->player;

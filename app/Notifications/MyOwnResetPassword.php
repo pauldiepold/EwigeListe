@@ -63,7 +63,8 @@ class MyOwnResetPassword extends Notification {
             ->subject('Passwort Zurücksetzen')
             ->line('warum hast du Trottel dein Passwort vergessen? Um mit einem neuen Passwort weiterhin Doppelkopf zu spielen, setze dein Passwort zurück:')
             ->action('Passwort zurücksetzen', url(config('app.url') . route('password.reset', ['token' => $this->token], false)))
-            ->line('Dieser Link ist ' . config('auth.passwords.users.expire') . ' Minuten gültig.');
+            ->line('Dieser Link ist ' . config('auth.passwords.users.expire') . ' Minuten gültig.')
+            ->salutation('Beste Grüße!');
     }
 
     /**

@@ -47,4 +47,21 @@ class PlayerController extends Controller
 
     }
 
+    public function calculateAll()
+    {
+        Player::all()->each(function ($player, $key)
+        {
+            $player->calculate();
+        });
+
+        return redirect('/liste/1');
+    }
+
+    public function calculate(Player $player)
+    {
+        $player->calculate();
+
+        return redirect($player->path());
+    }
+
 }

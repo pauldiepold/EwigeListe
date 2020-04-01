@@ -11,9 +11,34 @@
 |
 */
 
-use App\Round;
+use App\LiveRound;
+use App\Player;
+use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('round.{round}', function ($user, Round $round)
+Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRound)
 {
-    return $user->can('update', $round) ? ['userID' => $user->id] : false;
+    if ($user->can('update', $liveRound))
+    {
+        return [
+            'id' => $user->id,
+            'name' => $user->player->surname . ' ' . $user->player->name
+        ];
+    }
 });
+
+Broadcast::channel(
+    'liveRound.{liveRound}.{player}',
+    function ($user, LiveRound $liveRound, Player $player)
+    {
+        if ($user->id == $player->id)
+        {
+            if ($user->can('update', $liveRound))
+            {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->player->surname . ' ' . $user->player->name
+                ];
+            }
+        }
+    }
+);

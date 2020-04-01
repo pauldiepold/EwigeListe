@@ -63,6 +63,8 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
+        $this->actingAs(factory('App\User')->create());
+
         $group = factory('App\Group')->create();
 
         $rounds = factory('App\Round', 5)->create();
@@ -77,6 +79,8 @@ class GroupTest extends TestCase
     public function a_round_has_many_groups()
     {
         $this->withoutExceptionHandling();
+
+        $this->actingAs(factory('App\User')->create());
 
         $round = factory('App\Round')->create();
 

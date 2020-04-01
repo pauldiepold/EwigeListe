@@ -18,11 +18,11 @@
             <a href="{{ route('rounds.create') }}">
                 <nav-icon icon="fa-plus-circle" tooltip="Neue Runde"></nav-icon>
             </a>
-        @endauth
-        <a href="{{ route('groups.index') }}">
-            <nav-icon icon="fa-list-alt" tooltip="Listen"></nav-icon>
-        </a>
-        @auth
+
+            <a href="{{ route('groups.index') }}">
+                <nav-icon icon="fa-list-alt" tooltip="Listen"></nav-icon>
+            </a>
+
             <a href="{{ route('rounds.index') }}">
                 <nav-icon icon="fa-history" tooltip="Rundenarchiv"></nav-icon>
             </a>

@@ -28,7 +28,8 @@ class ManageRoundTest extends TestCase
 
         $this->post('/rounds', [
             'players' => $users->pluck('id')->toArray(),
-            'groups' => $groups->pluck('id')->toArray()
+            'groups' => $groups->pluck('id')->toArray(),
+            'liveGame' => false
         ])
             ->assertOk()
             ->assertSee(Round::first()->path());

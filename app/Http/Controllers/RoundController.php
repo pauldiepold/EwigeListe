@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UpdateRound;
-use App\live\Board;
+use App\Live\Deck;
 use App\LiveRound;
 use App\Profile;
 use App\Round;
@@ -40,6 +40,17 @@ class RoundController extends Controller
         $round->load('players.groups', 'groups');
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
+        $liveRound = $round->liveRound;
+
+        if ($liveRound)
+        {
+            $liveGame = $round->liveRound->liveGames->count() != 0 ? $liveRound->currentLiveGame() : null;
+            //dd($liveGame->spieler1);
+        } else
+        {
+            $liveGame = null;
+        }
+
 
         if (Auth::user()->player->games->count() > 0)
         {
@@ -95,17 +106,27 @@ class RoundController extends Controller
             $colRound->push($colRow);
         }
 
-        $deck = new Board();
-        $deck = $deck->getDeck();
-
         return view('rounds.show', compact(
-            'deck',
             'round',
+            'liveRound',
+            'liveGame',
             'colRound',
             'activePlayers',
             'lastGame',
             'isCurrentRound'
         ));
+    }
+
+    public function current()
+    {
+        $lastRound = auth()->user()->player->rounds()->latest()->first();
+        if ($lastRound)
+        {
+            return redirect($lastRound->path());
+        } else
+        {
+            return redirect()->route('rounds.create');
+        }
     }
 
     public function create()
@@ -123,34 +144,29 @@ class RoundController extends Controller
     {
         $validated = collect($request->validated());
 
-        $players = Player::find($validated->get('players'));
-
         $groups = Group::find(
             $validated->get('groups')
         );
 
-        $round = Round::create([
-            //'created_by' => auth()->user()->player->id
-        ]);
+        $round = Round::create();
 
-        $index = 0;
-        foreach ($validated->get('players') as $playerID)
+        foreach ($validated->get('players') as $key => $playerID)
         {
             $round->players()->attach($playerID, [
-                'index' => $index
+                'index' => $key
             ]);
-            $index++;
         }
 
         $round->groups()->saveMany($groups);
 
         foreach ($groups as $group)
         {
-            $group->addPlayers($players);
+            $group->addPlayers($round->players);
         }
 
-        if ($validated->get('liveGame')) {
-            $this->startLiveRound($round);
+        if ($validated->get('liveGame'))
+        {
+            $round->startLiveRound();
         }
 
         return $round->path();
@@ -263,14 +279,6 @@ class RoundController extends Controller
             ->escapeColumns([''])
             ->orderColumn('date', 'updated_at $1')
             ->make(true);
-    }
-
-    private function startLiveRound(Round $round)
-    {
-        $liveRound = $round->liveRound()->create();
-        $round->liveRound()->associate($liveRound)->save();
-
-        return;
     }
 
 }

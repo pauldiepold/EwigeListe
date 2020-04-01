@@ -6,6 +6,35 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * App\Badge
+ *
+ * @property int $id
+ * @property int $group_id
+ * @property int $year
+ * @property int $month
+ * @property string $type
+ * @property int|null $player_id
+ * @property int|null $value
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read mixed $date
+ * @property-read \App\Group $group
+ * @property-read \App\Player|null $player
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereYear($value)
+ * @mixin \Eloquent
+ */
 class Badge extends Model
 {
     protected $guarded = [];

@@ -9,6 +9,94 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * App\Profile
+ *
+ * @property int $id
+ * @property int $player_id
+ * @property int $group_id
+ * @property int|null $queued
+ * @property int|null $default
+ * @property int|null $points
+ * @property int|null $pointsThisMonth
+ * @property mixed|null $pointsPerGame
+ * @property mixed|null $pointsPerWin
+ * @property mixed|null $pointsPerLose
+ * @property int|null $games
+ * @property int|null $gamesThisMonth
+ * @property mixed|null $gamesPerDay
+ * @property int|null $gamesWon
+ * @property int|null $gamesLost
+ * @property mixed|null $winrate
+ * @property int|null $soli
+ * @property int|null $soliWon
+ * @property int|null $soliLost
+ * @property int|null $soloRate
+ * @property mixed|null $soloWinrate
+ * @property mixed|null $pointsPerSolo
+ * @property int|null $soloPoints
+ * @property int|null $mostGamesDay
+ * @property \Illuminate\Support\Carbon|null $mostGamesDayDate
+ * @property int|null $mostGamesMonth
+ * @property \Illuminate\Support\Carbon|null $mostGamesMonthDate
+ * @property int|null $highestPoints
+ * @property \Illuminate\Support\Carbon|null $highestPointsDate
+ * @property int|null $lowestPoints
+ * @property \Illuminate\Support\Carbon|null $lowestPointsDate
+ * @property int|null $winStreak
+ * @property \Illuminate\Support\Carbon|null $winStreakStart
+ * @property \Illuminate\Support\Carbon|null $winStreakEnd
+ * @property int|null $loseStreak
+ * @property \Illuminate\Support\Carbon|null $loseStreakStart
+ * @property \Illuminate\Support\Carbon|null $loseStreakEnd
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \App\Group $group
+ * @property-read \App\Player $player
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesLost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesPerDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesThisMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesWon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereHighestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereHighestPointsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreakEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreakStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLowestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLowestPointsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesDayDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesMonthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerGame($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerLose($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerSolo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerWin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsThisMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereQueued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoliLost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoliWon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreakEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreakStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinrate($value)
+ * @mixin \Eloquent
+ */
 class Profile extends Pivot
 {
 

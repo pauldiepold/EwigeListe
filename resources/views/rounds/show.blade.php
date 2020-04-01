@@ -9,10 +9,9 @@
 @endif
 
 @section('content')
-
     <tabs>
-        <tab name="Runde" icon="fa-play-circle" :selected="true">
-            @if(!$round->liveGame)
+        <tab name="Runde" icon="fa-play-circle">
+            @if(!$round->live_round_id)
                 @can('update', $round)
                     @include('games.create')
                 @endcan
@@ -20,7 +19,7 @@
 
             @include('rounds.inc.pointsTable')
 
-            @if(!$round->liveGame)
+            @if(!$round->live_round_id)
                 @can('update', $round)
                     @if ($round->games->count() != 0)
                         <div class="d-flex flex-sm-row flex-column justify-content-center">
@@ -44,11 +43,18 @@
             @include('rounds.inc.info')
         </tab>
 
-        @can('update', $round)
-            @if($round->liveGame)
-                <tab name="Live" icon="fa-dice">
+        @can('update', $liveRound)
+            @if($round->live_round_id)
+                <tab name="Live" icon="fa-dice" :selected="true">
                     <template v-slot:default="props">
-                        <live-game :round="{{ $round }}" :deck="{{ collect($deck)->toJson() }}"></live-game>
+                        <live-game :round-players-ids='@json($round->players->pluck('id'))'
+                                   :live-round-id='@json($liveRound->id)'
+                                   :auth-id='@json(auth()->id())'
+                                   @isset($liveGame)
+                                   :live-game-init='@json($liveGame)'
+                                   :ich-init='@json($liveGame->getSpieler(auth()->id()))'
+                                   @endisset
+                        ></live-game>
                     </template>
                 </tab>
             @endif
@@ -68,8 +74,8 @@
 
         <tab name="Listen" icon="fa-list-alt">
             <template v-slot:default="props">
-                <update-groups :round-input="{{ $round }}"
-                               :can-update="{{ auth()->user()->can('update', $round) ? 'true' : 'false'}}"
+                <update-groups :round-input='@json($round)'
+                               :can-update='@json(auth()->user()->can('update', $round) ? 'true' : 'false')'
                                :key="props.tabKey"></update-groups>
             </template>
         </tab>

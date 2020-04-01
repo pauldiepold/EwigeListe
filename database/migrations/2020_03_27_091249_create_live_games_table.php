@@ -18,6 +18,24 @@ class CreateLiveGamesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('live_round_id');
 
+            //$table->boolean('test');
+            //$table->integer('stich');
+            //$table->boolean('herz10');
+            $table->string('spielerIDs');
+            $table->string('spielerIndize');
+            $table->text('spieler0');
+            $table->text('spieler1');
+            $table->text('spieler2');
+            $table->text('spieler3');
+
+            $table->integer('phase');
+
+            $table->integer('vorhand');
+            $table->integer('dran');
+
+            $table->text('letzterStich');
+            $table->text('aktuellerStich');
+
             $table->boolean('closed');
 
             $table->timestamps();

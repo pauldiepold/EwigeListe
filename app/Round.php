@@ -5,6 +5,36 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * App\Round
+ *
+ * @property int $id
+ * @property int|null $live_round_id
+ * @property int $created_by
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Comment[] $comments
+ * @property-read int|null $comments_count
+ * @property-read \App\Player $createdBy
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Game[] $games
+ * @property-read int|null $games_count
+ * @property-read mixed $path
+ * @property-read mixed $players_string
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Group[] $groups
+ * @property-read int|null $groups_count
+ * @property-read \App\LiveRound|null $liveRound
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Player[] $players
+ * @property-read int|null $players_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereLiveRoundId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Round extends Model
 {
 
@@ -38,6 +68,14 @@ class Round extends Model
         return $this->path();
     }
 
+    public function startLiveRound()
+    {
+        $liveRound = $this->liveRound()->create();
+        $this->liveRound()->associate($liveRound)->save();
+
+        return;
+    }
+
     public function getLastGame()
     {
         return $this->games->last();
@@ -55,13 +93,12 @@ class Round extends Model
                    ->count();
     }
 
-    public function getActivePlayers()
+    public function getActivePlayers($sortPlayers = true)
     {
         $dealerIndex = $this->getDealerIndex();
         $countPlayers = $this->players->count();
 
-        if ($countPlayers == 4
-            || $countPlayers == 5)
+        if ($countPlayers == 4 || $countPlayers == 5)
         {
             $increments = collect([1, 2, 3, 4]);
         } elseif ($countPlayers == 6)
@@ -83,22 +120,13 @@ class Round extends Model
             $playerIndices->push($currentDealerIndex);
         }
 
-        $playerIndicesSorted = $playerIndices->sort();
-        $playerIndicesSorted->values()->all();
-
-        $players = collect();
-
-        foreach ($playerIndicesSorted as $playerIndex)
+        if ($sortPlayers)
         {
-            $playerID = DB::table('player_round')
-                ->where('round_id', $this->id)
-                ->where('index', $playerIndex)
-                ->first()->player_id;
-
-            $players->push(Player::find($playerID));
+            $playerIndices = $playerIndices->sort();
+            $playerIndices = $playerIndices->values()->all();
         }
 
-        return $players;
+        return $this->players()->wherePivotIn('index', $playerIndices)->get();
     }
 
     public function games()
@@ -113,7 +141,10 @@ class Round extends Model
 
     public function players()
     {
-        return $this->belongsToMany(Player::class)->withTimestamps()->withPivot('index')->orderBy('pivot_index');
+        return $this->belongsToMany(Player::class)
+            ->withTimestamps()
+            ->withPivot('index')
+            ->orderBy('pivot_index');
     }
 
     public function comments()

@@ -9,12 +9,101 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * App\Group
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $created_by
+ * @property int|null $queued
+ * @property int|null $closed
+ * @property \Illuminate\Support\Collection|null $records
+ * @property \Illuminate\Support\Collection|null $stats
+ * @property \Illuminate\Support\Collection|null $mostGames
+ * @property \Illuminate\Support\Collection|null $highestPoints
+ * @property \Illuminate\Support\Collection|null $lowestPoints
+ * @property \Illuminate\Support\Collection|null $highestWinrate
+ * @property \Illuminate\Support\Collection|null $lowestWinrate
+ * @property \Illuminate\Support\Collection|null $highestSoloWinrate
+ * @property \Illuminate\Support\Collection|null $lowestSoloWinrate
+ * @property \Illuminate\Support\Collection|null $highestSoloRate
+ * @property \Illuminate\Support\Collection|null $lowestSoloRate
+ * @property \Illuminate\Support\Collection|null $highestWinstreak
+ * @property \Illuminate\Support\Collection|null $highestLosestreak
+ * @property \Illuminate\Support\Collection|null $mostGamesDay
+ * @property \Illuminate\Support\Collection|null $mostGamesMonth
+ * @property int|null $totalGames
+ * @property mixed|null $pointsPerGame
+ * @property mixed|null $gamesPerRound
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Badge[] $badges
+ * @property-read int|null $badges_count
+ * @property-read \App\Player $creator
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Player[] $players
+ * @property-read int|null $players_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Profile[] $profiles
+ * @property-read int|null $profiles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Round[] $rounds
+ * @property-read int|null $rounds_count
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereClosed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereGamesPerRound($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestLosestreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestWinstreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGamesDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGamesMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group wherePointsPerGame($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereQueued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereRecords($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereStats($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereTotalGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class Group extends Model
 {
 
     protected $fillable = [
         'name',
         'created_by'
+    ];
+
+    protected $hidden = [
+        'queued',
+        'records',
+        'stats',
+        'mostGames',
+        'highestPoints',
+        'lowestPoints',
+        'highestWinrate',
+        'lowestWinrate',
+        'highestSoloWinrate',
+        'lowestSoloWinrate',
+        'highestSoloRate',
+        'lowestSoloRate',
+        'highestWinstreak',
+        'highestLosestreak',
+        'mostGamesDay',
+        'mostGamesMonth',
+        'totalGames',
+        'pointsPerGame',
+        'gamesPerRound'
     ];
 
     public function updateStats($date = null)
