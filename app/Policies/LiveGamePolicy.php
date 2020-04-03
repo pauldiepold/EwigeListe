@@ -6,13 +6,17 @@ use App\User;
 use App\LiveGame;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class LiveGamePolicy {
+class LiveGamePolicy
+{
 
     use HandlesAuthorization;
 
     public function update(User $user, LiveGame $liveGame)
     {
-        return $liveGame->spielerIDs->contains($user->id);
+        if ($liveGame->spielerIDs->contains($user->id))
+        {
+            return true;
+        }
     }
 
 }

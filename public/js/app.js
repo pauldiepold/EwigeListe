@@ -3541,6 +3541,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     authId: Number,
@@ -3566,8 +3575,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     this.liveGame = this.liveGameInit;
-    this.ich = this.ichInit; //this.ich = this.liveGame.spieler.spieler0;
-
+    this.ich = this.ichInit;
     this.presenceChannel.here(function (userIDs) {
       _this.players = userIDs;
     }).joining(function (userID) {
@@ -3575,11 +3583,17 @@ __webpack_require__.r(__webpack_exports__);
     }).leaving(function (userID) {
       _this.players.splice(_this.players.indexOf(userID), 1);
     });
-    this.privateChannel.listen('LiveGameDataBroadcasted', function (e) {
-      console.log(e);
-      _this.ich = e.ich;
-      _this.liveGame = e.liveGame; //this.ich = e.liveGame.spieler.spieler0;
-    });
+
+    if (this.aktiv) {
+      this.privateChannel.listen('LiveGameDataBroadcasted', function (e) {
+        _this.ich = e.ich;
+        _this.liveGame = e.liveGame;
+      });
+    } else {
+      this.privateChannel.listen('LiveGameDataBroadcastedInaktiv', function (e) {
+        _this.liveGame = e.liveGame;
+      });
+    }
   },
   computed: {
     presenceChannel: function presenceChannel() {
@@ -3587,6 +3601,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     privateChannel: function privateChannel() {
       return window.Echo["private"]('liveRound.' + this.liveRoundId + '.' + this.authId);
+    },
+    aktiv: function aktiv() {
+      return !this.liveGame.spielerIDsInaktiv.includes(this.authId);
     },
     allPlayersOnline: function allPlayersOnline() {
       var _this2 = this;
@@ -3603,7 +3620,10 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     spielStarten: function spielStarten() {
-      axios.post('/api/live/' + this.liveRoundId + '/starteNeuesSpiel', {});
+      axios.post('/api/live/' + this.liveRoundId + '/spielStarten', {});
+    },
+    kartenGeben: function kartenGeben() {
+      axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
     },
     karteSpielen: function karteSpielen(karte) {
       axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
@@ -71754,47 +71774,69 @@ var render = function() {
       ? _c("p", [_vm._v("LiveGameID: " + _vm._s(_vm.liveGame.id))])
       : _vm._e(),
     _vm._v(" "),
+    _vm.liveGame !== "null"
+      ? _c("p", [_vm._v("Dran: " + _vm._s(_vm.liveGame.dran))])
+      : _vm._e(),
+    _vm._v(" "),
     true
       ? _c(
           "button",
           { staticClass: "btn btn-primary", on: { click: _vm.spielStarten } },
-          [_vm._v("\n        Karten austeilen\n    ")]
+          [_vm._v("\n        Neues Spiel starten\n    ")]
         )
       : undefined,
+    _vm._v(" "),
+    _vm.liveGame.phase === 0
+      ? _c(
+          "button",
+          { staticClass: "btn btn-primary", on: { click: _vm.kartenGeben } },
+          [_vm._v("\n        Karten austeilen\n    ")]
+        )
+      : _vm._e(),
     _vm._v(" "),
     _c("hr"),
     _vm._v(" "),
     _c("div", { staticClass: "tw-flex" }, [
-      _c("div", { staticClass: "tw-flex-1" }, [
-        _vm._v("\n            Hand:\n            "),
-        _c(
-          "ul",
-          _vm._l(_vm.ich.hand, function(karte) {
-            return _vm.liveGame !== "null"
-              ? _c("li", {
-                  domProps: {
-                    textContent: _vm._s(karte.farbName + " " + karte.wertName)
-                  },
-                  on: {
-                    click: function($event) {
-                      return _vm.karteSpielen(karte)
-                    }
-                  }
-                })
-              : _vm._e()
-          }),
-          0
-        )
-      ]),
+      _vm.aktiv
+        ? _c("div", { staticClass: "tw-flex-1" }, [
+            _vm._v("\n            Hand:\n            "),
+            _c(
+              "ul",
+              _vm._l(_vm.ich.hand, function(karte) {
+                return _vm.liveGame !== "null"
+                  ? _c("li", {
+                      domProps: {
+                        textContent: _vm._s(
+                          karte.farbName + " " + karte.wertName
+                        )
+                      },
+                      on: {
+                        click: function($event) {
+                          return _vm.karteSpielen(karte)
+                        }
+                      }
+                    })
+                  : _vm._e()
+              }),
+              0
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      !_vm.aktiv
+        ? _c("div", { staticClass: "tw-flex-1" }, [
+            _vm._v("\n            Du setzt dieses Spiel aus!\n        ")
+          ])
+        : _vm._e(),
       _vm._v(" "),
       _c("div", { staticClass: "tw-flex-1" }, [
         _c(
           "ul",
           [
             _vm._v("\n                Aktueller Stich:\n                "),
-            _vm._l(_vm.liveGame.aktuellerStich, function(karte) {
-              return _vm.liveGame !== "null" &&
-                _vm.liveGame.aktuellerStich.length > 0
+            _vm._l(_vm.liveGame.aktuellerStich.karten, function(karte) {
+              return _vm.liveGame.phase > 0 &&
+                _vm.liveGame.aktuellerStich.karten.length > 0
                 ? _c("li", {
                     domProps: {
                       textContent: _vm._s(karte.farbName + " " + karte.wertName)
@@ -71812,9 +71854,9 @@ var render = function() {
           "ul",
           [
             _vm._v("\n                Letzter Stich:\n                "),
-            _vm._l(_vm.liveGame.letzterStich, function(karte) {
-              return _vm.liveGame !== "null" &&
-                _vm.liveGame.letzterStich.length > 0
+            _vm._l(_vm.liveGame.letzterStich.karten, function(karte) {
+              return _vm.liveGame.phase > 0 &&
+                _vm.liveGame.letzterStich.karten.length > 0
                 ? _c("li", {
                     domProps: {
                       textContent: _vm._s(karte.farbName + " " + karte.wertName)
@@ -88607,7 +88649,7 @@ if (token) {
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "46ccc872a97bba003779",
+  key: "3f4b86c82d24f86ae81d",
   cluster: "eu",
   forceTLS: true
 });

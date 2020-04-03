@@ -17,16 +17,16 @@ class Spieler
 
     /**
      * LivePlayer constructor.
-     * @param $hand
-     * @param $index
      * @param $playerID
+     * @param $hand
+     * @param $playerIndex
      * @param $playerName
      */
-    public function __construct($playerID = '', $playerName = '', $index = '', $hand = '')
+    public function __construct($playerID = '', $playerName = '', $playerIndex = '', $hand = '')
     {
         $this->player_id = $playerID;
         $this->player_name = $playerName;
-        $this->index = $index;
+        $this->index = $playerIndex;
 
         $this->hand = $hand;
         $this->stiche = collect();
@@ -38,27 +38,35 @@ class Spieler
 
     public static function create($input)
     {
-        $spieler = new self();
+        if (isset($input))
+        {
+            $spieler = new self();
 
-        $spieler->player_id = $input->player_id;
-        $spieler->player_name = $input->player_name;
-        $spieler->index = $input->index;
+            $spieler->player_id = $input->player_id;
+            $spieler->player_name = $input->player_name;
+            $spieler->index = $input->index;
 
-        $hand = collect($input->hand)->map(function ($item, $key) {
-            return Karte::create(collect($item));
-        });
-        $spieler->hand = $hand;
+            $hand = collect($input->hand)->map(function ($item, $key)
+            {
+                return Karte::create($item);
+            });
+            $spieler->hand = $hand;
+            //dd($input->stiche);
+            $stiche = collect($input->stiche)->map(function ($item, $key)
+            {
+                return Stich::create($item);
+            });
+            $spieler->stiche = $stiche;
 
-        $stiche = collect($input->stiche)->map(function ($item, $key) {
-            return Karte::create(collect($item));
-        });
-        $spieler->stiche = $stiche;
+            $spieler->isRe = $input->isRe;
+            $spieler->ansage = $input->ansage;
+            $spieler->absage = $input->absage;
 
-        $spieler->isRe = $input->isRe;
-        $spieler->ansage = $input->ansage;
-        $spieler->absage = $input->absage;
-
-        return $spieler;
+            return $spieler;
+        } else
+        {
+            return new self();
+        }
     }
 
     public function karteAusHandEntfernen($karte)
@@ -71,11 +79,10 @@ class Spieler
         $this->hand = $hand;
     }
 
-    public function stichNehmen($neuerStich) {
-        dump($neuerStich);
-        $stiche = $this->stiche->concat($neuerStich);
-        dump($stiche);
-
+    public function stichNehmen($stich)
+    {
+        $stiche = $this->stiche;
+        $stiche = $stiche->push($stich);
         $this->stiche = $stiche;
     }
 

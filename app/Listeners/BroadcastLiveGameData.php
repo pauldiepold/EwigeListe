@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\LiveGameDataBroadcasted;
+use App\Events\LiveGameDataBroadcastedInaktiv;
 use App\Events\LiveGameSaved;
 
 class BroadcastLiveGameData
@@ -18,6 +19,11 @@ class BroadcastLiveGameData
         foreach ($event->liveGame->spielerIDs as $spielerID)
         {
             event(new LiveGameDataBroadcasted($event->liveGame, $spielerID));
+        }
+
+        foreach ($event->liveGame->spielerIDsInaktiv as $spielerID)
+        {
+            event(new LiveGameDataBroadcastedInaktiv($event->liveGame, $spielerID));
         }
     }
 }

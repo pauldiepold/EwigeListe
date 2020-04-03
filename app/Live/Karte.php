@@ -2,6 +2,8 @@
 
 namespace App\Live;
 
+use Illuminate\Support\Collection;
+
 class Karte
 {
     public $id;
@@ -16,11 +18,13 @@ class Karte
 
     public $spielbar;
 
+    public $gespieltVon;
 
     public function __construct($id = 0, $farbe = 1, $wert = 1)
     {
         $this->id = $id;
-        $this->spielbar = false;
+        $this->spielbar = true;
+        $this->gespieltVon = false;
 
         $this->farbe = $farbe;
 
@@ -84,13 +88,14 @@ class Karte
     public static function create($input) {
         $karte = new self();
 
-        $karte->id = $input['id'];
-        $karte->farbe = $input['farbe'];
-        $karte->farbName = $input['farbName'];
-        $karte->wert = $input['wert'];
-        $karte->wertName = $input['wertName'];
-        $karte->punkte = $input['punkte'];
-        $karte->spielbar = $input['spielbar'];
+        $karte->id = $input->id;
+        $karte->farbe = $input->farbe;
+        $karte->farbName = $input->farbName;
+        $karte->wert = $input->wert;
+        $karte->wertName = $input->wertName;
+        $karte->punkte = $input->punkte;
+        $karte->spielbar = $input->spielbar;
+        $karte->gespieltVon = $input->gespieltVon;
 
         return $karte;
     }

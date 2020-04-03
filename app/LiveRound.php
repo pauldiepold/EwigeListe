@@ -2,6 +2,10 @@
 
 namespace App;
 
+use App\Live\Deck;
+use App\Live\Spieler;
+use App\Live\Stich;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -25,6 +29,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class LiveRound extends Model
 {
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
     public function round()
     {
         return $this->hasOne(Round::class);
@@ -35,12 +44,39 @@ class LiveRound extends Model
         return $this->hasMany(LiveGame::class);
     }
 
-    public function currentLiveGame() {
+    public function currentLiveGame()
+    {
         return $this->liveGames()->latest()->first();
     }
 
     public function games()
     {
         return $this->hasManyThrough(Game::class, LiveGame::class);
+    }
+
+    public function starteNeuesSpiel()
+    {
+        if ($this->liveGames->where('beendet', 0)->count() != 0)
+        {
+            //abort(422, 'Es darf keine geöffneten Spiele geben!');
+        }
+
+        $activePlayers = $this->round->getActivePlayers(false);
+
+        $spielerIDs = $activePlayers->pluck('id');
+        $spielerIDsInaktiv = $this->round->getInactivePlayers()->pluck('id');
+        $spielerIndize = $activePlayers->pluck('pivot.index');
+
+        $this->liveGames()->create([
+            'live_round_id' => $this->id,
+            'vorhand' => $activePlayers->first()->pivot->index,
+            'dran' => $activePlayers->first()->pivot->player_id,
+            'phase' => 0,
+            'aktuellerStich' => new Stich(),
+            'letzterStich' => new Stich(),
+            'spielerIDs' => $spielerIDs,
+            'spielerIndize' => $spielerIndize,
+            'spielerIDsInaktiv' => $spielerIDsInaktiv,
+        ]);
     }
 }

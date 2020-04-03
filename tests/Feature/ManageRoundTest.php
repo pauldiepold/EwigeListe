@@ -33,6 +33,5 @@ class ManageRoundTest extends TestCase
         ])
             ->assertOk()
             ->assertSee(Round::first()->path());
-
     }
 }

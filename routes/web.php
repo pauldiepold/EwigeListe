@@ -83,7 +83,8 @@ Route::middleware(['auth'])->group(function ()
 
 
     /* *********** API ************** */
-    Route::post('api/live/{liveRound}/starteNeuesSpiel', 'Live\RoundController@starteNeuesSpiel');
+    Route::post('api/live/{liveRound}/spielStarten',     'Live\RoundController@starteNeuesSpiel');
+    Route::post('api/live/{liveGame}/kartenGeben',       'Live\GameController@kartenGeben');
     Route::post('api/live/{liveGame}/karteSpielen',      'Live\GameController@karteSpielen');
 
     Route::post('api/users/{user}/avatar',               'Api\UserAvatarController@store') ->name('avatar');

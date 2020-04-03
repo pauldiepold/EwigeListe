@@ -22,6 +22,7 @@ class CreateLiveGamesTable extends Migration
             //$table->integer('stich');
             //$table->boolean('herz10');
             $table->string('spielerIDs');
+            $table->string('spielerIDsInaktiv');
             $table->string('spielerIndize');
             $table->text('spieler0');
             $table->text('spieler1');
@@ -36,7 +37,7 @@ class CreateLiveGamesTable extends Migration
             $table->text('letzterStich');
             $table->text('aktuellerStich');
 
-            $table->boolean('closed');
+            $table->boolean('beendet');
 
             $table->timestamps();
 

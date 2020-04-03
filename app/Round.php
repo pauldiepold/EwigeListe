@@ -73,6 +73,8 @@ class Round extends Model
         $liveRound = $this->liveRound()->create();
         $this->liveRound()->associate($liveRound)->save();
 
+        $liveRound->starteNeuesSpiel();
+
         return;
     }
 
@@ -91,6 +93,10 @@ class Round extends Model
                % $this
                    ->players()
                    ->count();
+    }
+
+    public function getInactivePlayers() {
+        return $this->players->diff($this->getActivePlayers());
     }
 
     public function getActivePlayers($sortPlayers = true)

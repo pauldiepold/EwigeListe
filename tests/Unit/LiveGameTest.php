@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-class RoundTest extends TestCase
+class LiveGameTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -14,4 +14,5 @@ class RoundTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
 }
