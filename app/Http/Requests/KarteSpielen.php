@@ -25,7 +25,7 @@ class KarteSpielen extends FormRequest
     {
         return [
             'karte' => 'required|array',
-            'karte.id' => 'required|integer|between:1,48',
+            'karte.id' => 'required|integer|between:0,47',
         ];
     }
 }
