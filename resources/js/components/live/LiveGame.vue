@@ -1,48 +1,78 @@
 <template>
-    <div>
-        <p v-if="liveGame !== 'null'">LiveGameID: {{ liveGame.id }}</p>
-        <p v-if="liveGame !== 'null'">Dran: {{ liveGame.dran }}</p>
-        <button class="btn btn-primary"
-                v-if="true"
-                @click="spielStarten">
-            Neues Spiel starten
-        </button>
-        <button class="btn btn-primary"
-                v-if="liveGame.phase === 0"
-                @click="kartenGeben">
-            Karten austeilen
-        </button>
+    <div class="playingCards">
+        <div class="tw-flex tw-justify-around tw-items-center">
+            <span v-if="liveGame !== 'null'">LiveGameID: {{ liveGame.id }}</span>
+            <span v-if="liveGame !== 'null'">Dran: {{ liveGame.dran }}</span>
+            <button class="btn btn-primary"
+                    v-if="true"
+                    @click="spielStarten">
+                Neues Spiel starten
+            </button>
+        </div>
+        <p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p>
         <hr>
-        <div class="tw-flex">
-            <div class="tw-flex-1" v-if="aktiv">
-                Hand:
-                <ul>
-                    <li v-if="liveGame !== 'null'"
-                        v-for="karte in ich.hand"
-                        v-text="karte.farbName + ' ' + karte.wertName"
-                        @click="karteSpielen(karte)"/>
-                </ul>
+
+        <div v-if="aktiv">
+            <div v-if="liveGame.phase === 0">
+                <button class="btn btn-primary"
+                        @click="kartenGeben">
+                    Karten austeilen
+                </button>
             </div>
-            <div class="tw-flex-1" v-if="!aktiv">
-                Du setzt dieses Spiel aus!
+
+            <div v-if="liveGame.phase === 1">
+                <div v-if="liveGame.dran === authId">
+                    <p class="tw-font-bold">Bist du gesund?</p>
+                    <div class="tw-flex tw-justify-around tw-max-w-xs tw-mx-auto">
+                        <button class="btn btn-primary" @click="gesund(true)">Ja!</button>
+                        <button class="btn btn-primary" @click="gesund(false)">Nein!</button>
+                    </div>
+                </div>
+                <div v-else>
+                    <p class="tw-font-bold">Bitte warte, bis alle Spieler ihren Vorbehalt gemeldet haben.</p>
+                </div>
             </div>
-            <div class="tw-flex-1">
-                <ul>
-                    Aktueller Stich:
-                    <li v-if="liveGame.phase > 0 && liveGame.aktuellerStich.karten.length > 0"
-                        v-for="karte in liveGame.aktuellerStich.karten"
-                        v-text="karte.farbName + ' ' + karte.wertName"/>
-                </ul>
+
+            <div v-if="liveGame.phase === 2">
+                <div v-if="liveGame.dran === authId" class="tw-flex tw-flex-col tw-max-w-4xs tw-mx-auto">
+                    <button class="btn btn-outline-primary tw-my-1"
+                            v-for="vorbehalt in ich.moeglicheVorbehalte"
+                            @click="vorbehaltSenden(vorbehalt)"
+                            v-text="vorbehalt"/>
+                </div>
+                <div v-else>
+                    <p class="tw-font-bold">Bitte warte, bis alle Spieler ihren Vorbehalt offengelegt haben.</p>
+                </div>
             </div>
-            <div class="tw-flex-1">
-                <ul>
-                    Letzter Stich:
-                    <li v-if="liveGame.phase > 0 && liveGame.letzterStich.karten.length > 0"
-                        v-for="karte in liveGame.letzterStich.karten"
-                        v-text="karte.farbName + ' ' + karte.wertName"/>
-                </ul>
+
+            <div v-if="liveGame.phase === 4">
+                <stich v-if="liveGame.phase > 0"
+                       :stich="liveGame.aktuellerStich.karten"
+                       :auth-id="authId"
+                       :spieler-ids="liveGame.spielerIDs"/>
+            </div>
+
+            <div v-if="liveGame.phase > 0">
+                <hr>
+                <hand class="tw-mt-7"
+                      v-if="ich.hand !== ''"
+                      :karten="ich.hand"
+                      @karteSpielen="karteSpielen"/>
+            </div>
+
+            <div v-if="liveGame.phase === 4">
+                <stich v-if="liveGame.phase > 0"
+                       :stich="liveGame.letzterStich.karten"
+                       :auth-id="authId"
+                       :spieler-ids="liveGame.spielerIDs"/>
             </div>
         </div>
+
+        <div class="tw-flex-1" v-if="!aktiv">
+            Du setzt dieses Spiel aus!
+        </div>
+
+
         <hr>
         <p>
             Gerade online:
@@ -54,7 +84,16 @@
 </template>
 
 <script>
+
+    import Hand from "./Hand";
+    import Stich from "./Stich";
+
     export default {
+        components: {
+            Hand,
+            Stich
+        },
+
         props: {
             authId: Number,
             roundPlayersIds: Array,
@@ -74,12 +113,15 @@
                 players: [],
                 liveGame: 'null',
                 ich: 'null',
+                error: '',
             }
         },
 
         created() {
             this.liveGame = this.liveGameInit;
             this.ich = this.ichInit;
+            this.ich.hand = Object.values(this.ich.hand);
+            this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
 
             this.presenceChannel
                 .here(userIDs => {
@@ -96,7 +138,10 @@
                 this.privateChannel
                     .listen('LiveGameDataBroadcasted', e => {
                         this.ich = e.ich;
+                        this.ich.hand = Object.values(this.ich.hand);
+                        this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
                         this.liveGame = e.liveGame;
+                        this.error = '';
                     });
             } else {
                 this.privateChannel
@@ -140,10 +185,55 @@
                 axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
             },
 
+            gesund(input) {
+                axios.post('/api/live/' + this.liveGame.id + '/gesund', {
+                    gesund: input
+                });
+            },
+
+            vorbehaltSenden(input) {
+                axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
+                    vorbehalt: input
+                })
+                    .then(response => this.error = '')
+                    .catch(error => this.handleError(error));
+            },
+
             karteSpielen(karte) {
+                this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
+                let karteKopie = karte;
+                karteKopie.gespieltVon = this.authId;
+                karteKopie.spielbar = false;
+                this.liveGame.aktuellerStich.karten.push(karteKopie);
+
                 axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
                     karte: karte
-                });
+                })
+                    .then(response => this.error = '')
+                    .catch(error => this.handleError(error));
+            },
+
+            reloadData() {
+                axios.get('/api/live/' + this.liveGame.id + '/reloadData')
+                    .then(response => {
+                        this.ich = response.data.ich;
+                        this.liveGame = response.data.liveGame;
+                    });
+            },
+
+            reloadPage() {
+                window.location.reload(true);
+            },
+
+            handleError(error) {
+                if (error.response.status === 419) {
+                    this.error = error.response.data.message;
+                    this.reloadPage();
+                }
+                if (error.response.status === 422) {
+                    this.reloadData();
+                    this.error = error.response.data.message;
+                }
             }
         }
     };

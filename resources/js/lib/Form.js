@@ -68,7 +68,7 @@ export default class Form {
     onSuccess(data) {
         //alert(data.message); // temporary
 
-        //this.reset();
+        this.reset();
     }
 
     onFail(errors) {

@@ -20,7 +20,6 @@ class TestController extends Controller
 
         $test->put('isRe', false);
 
-        dd($test);
 
         return view('test.index');
     }

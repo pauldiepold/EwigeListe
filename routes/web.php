@@ -21,7 +21,7 @@ Auth::routes();
 Route::get('/',      'HomeController@index');
 Route::get('/home',  'HomeController@index')   ->name('home');
 
-Route::middleware(['auth'])->group(function ()
+Route::middleware('auth')->group(function ()
 {
     /* *********** Users *********** */
     Route::get('users/{user}/edit',                     'UserController@edit')          ->name('users.edit');
@@ -83,15 +83,24 @@ Route::middleware(['auth'])->group(function ()
 
 
     /* *********** API ************** */
-    Route::post('api/live/{liveRound}/spielStarten',     'Live\RoundController@starteNeuesSpiel');
-    Route::post('api/live/{liveGame}/kartenGeben',       'Live\GameController@kartenGeben');
-    Route::post('api/live/{liveGame}/karteSpielen',      'Live\GameController@karteSpielen');
+    Route::middleware('can:update,liveRound')->group(function () {
+        Route::post('api/live/{liveRound}/spielStarten', 'Live\RoundController@starteNeuesSpiel');
+    });
+
+    Route::middleware('can:update,liveGame')->group(function ()
+    {
+        Route::post('api/live/{liveGame}/kartenGeben',   'Live\GameController@kartenGeben');
+        Route::post('api/live/{liveGame}/gesund',        'Live\GameController@gesund');
+        Route::post('api/live/{liveGame}/vorbehalt',     'Live\GameController@vorbehalt');
+        Route::post('api/live/{liveGame}/karteSpielen',  'Live\GameController@karteSpielen');
+        Route::get('api/live/{liveGame}/reloadData',     'Live\GameController@reloadData');
+    });
 
     Route::post('api/users/{user}/avatar',               'Api\UserAvatarController@store') ->name('avatar');
 
 
     /* *********** Admin ************** */
-    Route::middleware(['admin'])->group(function ()
+    Route::middleware('admin')->group(function ()
     {
         Route::get('/test',                               'TestController@test');
         Route::get('/testClient',                         'TestController@client');

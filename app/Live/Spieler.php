@@ -6,14 +6,20 @@ namespace App\Live;
 
 class Spieler
 {
-    public $player_id;
-    public $player_name;
+    public $id;
+    public $name;
     public $index;
+
     public $hand;
     public $stiche;
+
+    public $gesund;
+    public $moeglicheVorbehalte;
+    public $vorbehalt;
     public $isRe;
     public $ansage;
     public $absage;
+    public $punkte;
 
     /**
      * LivePlayer constructor.
@@ -24,16 +30,20 @@ class Spieler
      */
     public function __construct($playerID = '', $playerName = '', $playerIndex = '', $hand = '')
     {
-        $this->player_id = $playerID;
-        $this->player_name = $playerName;
+        $this->id = $playerID;
+        $this->name = $playerName;
         $this->index = $playerIndex;
 
         $this->hand = $hand;
         $this->stiche = collect();
 
-        $this->isRe = false;
-        $this->ansage = false;
-        $this->absage = false;
+        $this->gesund = null;
+        $this->moeglicheVorbehalte = collect();
+        $this->vorbehalt = null;
+        $this->isRe = null;
+        $this->ansage = null;
+        $this->absage = null;
+        $this->punkte = null;
     }
 
     public static function create($input)
@@ -42,8 +52,8 @@ class Spieler
         {
             $spieler = new self();
 
-            $spieler->player_id = $input->player_id;
-            $spieler->player_name = $input->player_name;
+            $spieler->id = $input->id;
+            $spieler->name = $input->name;
             $spieler->index = $input->index;
 
             $hand = collect($input->hand)->map(function ($item, $key)
@@ -51,16 +61,20 @@ class Spieler
                 return Karte::create($item);
             });
             $spieler->hand = $hand;
-            //dd($input->stiche);
+
             $stiche = collect($input->stiche)->map(function ($item, $key)
             {
                 return Stich::create($item);
             });
             $spieler->stiche = $stiche;
 
+            $spieler->gesund = $input->gesund;
+            $spieler->moeglicheVorbehalte = collect($input->moeglicheVorbehalte);
+            $spieler->vorbehalt = $input->vorbehalt;
             $spieler->isRe = $input->isRe;
             $spieler->ansage = $input->ansage;
             $spieler->absage = $input->absage;
+            $spieler->punkte = $input->punkte;
 
             return $spieler;
         } else
@@ -71,10 +85,12 @@ class Spieler
 
     public function karteAusHandEntfernen($karte)
     {
-        $hand = $this->hand->reject(function ($value, $key) use ($karte)
-        {
-            return $value == $karte;
-        })->all();
+        $hand = $this->hand->reject(
+            function ($value, $key) use ($karte)
+            {
+                return $value->id == $karte->id;
+            }
+        )->all();
 
         $this->hand = $hand;
     }
@@ -86,4 +102,13 @@ class Spieler
         $this->stiche = $stiche;
     }
 
+    public function punkteZaehlen()
+    {
+        $punkte = 0;
+        foreach ($this->stiche as $stich)
+        {
+            $punkte += $stich->punkteZaehlen();
+        }
+        $this->punkte = $punkte;
+    }
 }

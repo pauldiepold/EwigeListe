@@ -41,16 +41,14 @@ class RoundController extends Controller
         $activePlayers = $round->getActivePlayers();
         $lastGame = $round->getLastGame();
         $liveRound = $round->liveRound;
-
         if ($liveRound)
         {
             $liveGame = $round->liveRound->liveGames->count() != 0 ? $liveRound->currentLiveGame() : null;
-            //dd($liveGame->getSpieler());
+            //dd($liveGame->res->contains(null));
         } else
         {
             $liveGame = null;
         }
-
 
         if (Auth::user()->player->games->count() > 0)
         {

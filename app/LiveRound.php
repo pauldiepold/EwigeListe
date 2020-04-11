@@ -69,7 +69,7 @@ class LiveRound extends Model
 
         $this->liveGames()->create([
             'live_round_id' => $this->id,
-            'vorhand' => $activePlayers->first()->pivot->index,
+            'vorhand' => $activePlayers->first()->pivot->player_id,
             'dran' => $activePlayers->first()->pivot->player_id,
             'phase' => 0,
             'aktuellerStich' => new Stich(),

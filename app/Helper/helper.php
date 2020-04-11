@@ -1,5 +1,15 @@
 <?php
 
+function current_user()
+{
+    return auth()->user();
+}
+
+function current_player()
+{
+    return auth()->user()->player;
+}
+
 if (!function_exists('nice_count'))
 {
     function nice_count($input = array())

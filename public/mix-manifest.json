@@ -1,5 +1,7 @@
 {
-    "/js/app.js": "/js/app.js?id=1a9f24686d56d77ae48a",
-    "/css/app.css": "/css/app.css?id=c849e0eb2e32e24b5eae",
-    "/js/popper.js": "/js/popper.js?id=454f7b28f8ae4335a00a"
+    "/js/app.js": "/js/app.js?id=ba7c4aacd0111fe1cf1a",
+    "/css/app.css": "/css/app.css?id=6d9e18642961948ece3e",
+    "/css/cards.css": "/css/cards.css?id=2870ac1737737fd4405d",
+    "/css/cards_orig.css": "/css/cards_orig.css?id=b209f453ce5377021eef",
+    "/js/popper.js": "/js/popper.js?id=fc24ad14703acd0bfa26"
 }

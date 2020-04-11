@@ -44,4 +44,17 @@ class Stich
     {
         return $this->karten->count();
     }
+
+    public function punkteZaehlen()
+    {
+        $punkte = 0;
+        foreach($this->karten as $karte) {
+            $punkte += $karte->punkte;
+        }
+        return $punkte;
+    }
+
+    public function ersteKarte() {
+        return $this->karten->first();
+    }
 }

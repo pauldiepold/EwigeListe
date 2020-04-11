@@ -45,6 +45,9 @@
 
         @can('update', $liveRound)
             @if($round->live_round_id)
+                @push('scriptsHead')
+                    <link rel="stylesheet" href="{{ mix('/css/cards.css') }}">
+                @endpush
                 <tab name="Live" icon="fa-dice" :selected="true">
                     <template v-slot:default="props">
                         <live-game :round-players-ids='@json($round->players->pluck('id'))'
@@ -53,7 +56,7 @@
                                    @isset($liveGame)
                                    :live-game-init='@json($liveGame)'
                                    :ich-init='@json($liveGame->getSpieler(auth()->id()))'
-                                   @endisset
+                                @endisset
                         ></live-game>
                     </template>
                 </tab>
