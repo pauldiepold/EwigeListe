@@ -82,10 +82,10 @@ class LiveGame extends Model
 
     protected $hidden = [
         'anzeige',
-        /*'spieler0',
+        'spieler0',
         'spieler1',
         'spieler2',
-        'spieler3',*/
+        'spieler3',
     ];
 
     protected $appends = [
@@ -751,8 +751,8 @@ class LiveGame extends Model
 
             $farbe = $hand->where('trumpf', false);
             $karo = $farbe->where('farbe', 1)->sortByDesc('wert');
-            $herz = $farbe->where('farbe', 2)->sortByDesc('wert');
             $pik = $farbe->where('farbe', 3)->sortByDesc('wert');
+            $herz = $farbe->where('farbe', 2)->sortByDesc('wert');
             $kreuz = $farbe->where('farbe', 4)->sortByDesc('wert');
 
             $hand = $trumpf->concat($karo)->concat($herz)->concat($pik)->concat($kreuz);
@@ -1236,6 +1236,9 @@ class LiveGame extends Model
             }
         }
 
+        $punkteString = 'Kontra: ' . $kontraPunkte . '<br>' . $punkteString;
+        $punkteString = 'Re: ' . $rePunkte . '<br>' . $punkteString;
+
         if ($gewinntRe)
         {
             $punkteString = '<b>Re</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
@@ -1243,6 +1246,7 @@ class LiveGame extends Model
         {
             $punkteString = '<b>Kontra</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
         }
+
 
         $this->gewinntRe = $gewinntRe;
         $this->wertungsPunkte = $wertungsPunkte;
