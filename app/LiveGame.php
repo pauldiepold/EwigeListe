@@ -755,7 +755,7 @@ class LiveGame extends Model
             $herz = $farbe->where('farbe', 2)->sortByDesc('wert');
             $kreuz = $farbe->where('farbe', 4)->sortByDesc('wert');
 
-            $hand = $trumpf->concat($karo)->concat($herz)->concat($pik)->concat($kreuz);
+            $hand = $trumpf->concat($karo)->concat($pik)->concat($herz)->concat($kreuz);
 
             $spieler->hand = $hand;
             $this->spielerSpeichern($spieler);
