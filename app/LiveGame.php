@@ -369,7 +369,7 @@ class LiveGame extends Model
 
         if ($ersteKarte->trumpf)
         {
-            $siegerKarte = $this->besteKarteBestimmen($stich->karten);
+            $siegerKarte = $this->besteKarteBestimmen($stich->karten->where('trumpf', 1));
         } else
         {
             $trumpfKarten = $stich->karten->where('trumpf', 1);
