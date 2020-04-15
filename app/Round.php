@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -95,7 +96,8 @@ class Round extends Model
                    ->count();
     }
 
-    public function getInactivePlayers() {
+    public function getInactivePlayers()
+    {
         return $this->players->diff($this->getActivePlayers());
     }
 
@@ -133,6 +135,68 @@ class Round extends Model
         }
 
         return $this->players()->wherePivotIn('index', $playerIndices)->get();
+    }
+
+    public function addNewGame($winners, $pointsRound, $misplay = false)
+    {
+        $players = $this->getActivePlayers();
+        $solo = (count($winners) != 2 ? true : false);
+        $solo = $misplay ? false : $solo;
+
+        $game = Game::create([
+            'points' => $pointsRound,
+            'solo' => $solo,
+            'misplay' => $misplay,
+            'dealerIndex' => $this->getDealerIndex(),
+            'created_by' => Auth::user()->player->id,
+            'round_id' => $this->id,
+        ]);
+
+        foreach ($players as $player)
+        {
+            if (count($winners) == 1 &&
+                in_array($player->id, $winners))           // Solo gewonnen
+            {
+                $soloist = true;
+                $won = true;
+                $points = 3 * $pointsRound;
+                $misplayed = false;
+            } elseif (count($winners) == 3 &&
+                      !in_array($player->id, $winners))    // Solo verloren
+            {
+                $soloist = $misplay ? false : true;
+                $won = false;
+                $points = -3 * $pointsRound;
+                $misplayed = $misplay ? true : false;
+            } elseif ((count($winners) == 2 &&
+                       in_array($player->id, $winners)) ||
+                      (count($winners) == 3 &&
+                       in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
+            {
+                $soloist = false;
+                $won = true;
+                $points = 1 * $pointsRound;
+                $misplayed = false;
+            } elseif ((count($winners) == 2 &&
+                       !in_array($player->id, $winners)) ||
+                      (count($winners) == 1 &&
+                       !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
+            {
+                $soloist = false;
+                $won = false;
+                $points = -1 * $pointsRound;
+                $misplayed = false;
+            }
+
+            $game->players()->attach($player->id, [
+                'won' => $won,
+                'soloist' => $soloist,
+                'points' => $points,
+                'misplayed' => $misplayed,
+            ]);
+        }
+
+        return $game;
     }
 
     public function games()

@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read int|null $game_players_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Game[] $games
  * @property-read int|null $games_count
+ * @property-read mixed $avatar_path
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Group[] $groups
  * @property-read int|null $groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Profile[] $profiles
@@ -61,9 +62,9 @@ class Player extends Model
         return "/profil/{$this->id}";
     }
 
-    public function avatar()
+    public function getAvatarPathAttribute()
     {
-        return $this->user->avatar();
+        return $this->user->avatar_path;
     }
 
     public function calculate()

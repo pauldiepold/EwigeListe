@@ -1,11 +1,15 @@
 <template>
-    <div class="tw-max-w-xs tw-mx-auto tw-mb-8">
+    <div class="tw-max-w-xs tw-mx-auto">
         <div class="tw-flex tw-justify-center tw--mb-8">
             <karte :karte="karten[2]"/>
         </div>
         <div class="tw-flex tw-justify-between">
-            <karte :karte="karten[1]"/>
-            <karte :karte="karten[3]"/>
+            <div class="tw-mr-16">
+                <karte :karte="karten[1]"/>
+            </div>
+            <div class="tw-ml-16">
+                <karte :karte="karten[3]"/>
+            </div>
         </div>
         <div class="tw-flex tw-justify-center tw--mt-8">
             <karte :karte="karten[0]"/>

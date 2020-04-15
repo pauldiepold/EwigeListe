@@ -90,9 +90,13 @@ Route::middleware('auth')->group(function ()
     Route::middleware('can:update,liveGame')->group(function ()
     {
         Route::post('api/live/{liveGame}/kartenGeben',   'Live\GameController@kartenGeben');
-        Route::post('api/live/{liveGame}/gesund',        'Live\GameController@gesund');
         Route::post('api/live/{liveGame}/vorbehalt',     'Live\GameController@vorbehalt');
+        Route::post('api/live/{liveGame}/armutAbgeben',  'Live\GameController@armutAbgeben');
+        Route::post('api/live/{liveGame}/armutMitnehmen','Live\GameController@armutMitnehmen');
+        Route::post('api/live/{liveGame}/armutZurueck',  'Live\GameController@armutZurueckgeben');
         Route::post('api/live/{liveGame}/karteSpielen',  'Live\GameController@karteSpielen');
+        Route::post('api/live/{liveGame}/ansage',        'Live\GameController@ansage');
+        Route::post('api/live/{liveGame}/absage',        'Live\GameController@absage');
         Route::get('api/live/{liveGame}/reloadData',     'Live\GameController@reloadData');
     });
 

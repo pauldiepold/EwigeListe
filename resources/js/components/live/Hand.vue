@@ -2,7 +2,9 @@
     <ul class="hand">
         <li v-for="karte in karten" :key="karte.id">
             <karte :karte="karte"
-                   @karteSpielen="$emit('karteSpielen', $event)"/>
+                   :armut="armut"
+                   @karteSpielen="$emit('karteSpielen', $event)"
+                   @armut="$emit('armut', $event)"/>
         </li>
     </ul>
 </template>
@@ -16,7 +18,12 @@
         },
 
         props: {
-            karten: [Array, Object]
+            karten: [Array, Object],
+            armut: {
+                type: Boolean,
+                required: false,
+                default: false,
+            },
         },
 
         computed: {},

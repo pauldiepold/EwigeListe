@@ -3505,13 +3505,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Karte: _Karte__WEBPACK_IMPORTED_MODULE_0__["default"]
   },
   props: {
-    karten: [Array, Object]
+    karten: [Array, Object],
+    armut: {
+      type: Boolean,
+      required: false,
+      "default": false
+    }
   },
   computed: {}
 });
@@ -3549,9 +3556,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    karte: [Object, String]
+    karte: [Object, String],
+    armut: {
+      type: Boolean,
+      required: false,
+      "default": false
+    },
+    keinRoterRahmen: {
+      type: Boolean,
+      required: false,
+      "default": false
+    }
   },
   data: function data() {
     return {
@@ -3625,6 +3650,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Hand__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Hand */ "./resources/js/components/live/Hand.vue");
 /* harmony import */ var _Stich__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Stich */ "./resources/js/components/live/Stich.vue");
+/* harmony import */ var _Spieler__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Spieler */ "./resources/js/components/live/Spieler.vue");
 //
 //
 //
@@ -3710,12 +3736,177 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Hand: _Hand__WEBPACK_IMPORTED_MODULE_0__["default"],
-    Stich: _Stich__WEBPACK_IMPORTED_MODULE_1__["default"]
+    Stich: _Stich__WEBPACK_IMPORTED_MODULE_1__["default"],
+    Spieler: _Spieler__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   props: {
     authId: Number,
@@ -3735,7 +3926,10 @@ __webpack_require__.r(__webpack_exports__);
       players: [],
       liveGame: 'null',
       ich: 'null',
-      error: ''
+      error: '',
+      soli: ['Fleischlos', 'Bubensolo', 'Damensolo', 'Königssolo'],
+      letzterStichEingeblendet: false,
+      armutKarten: []
     };
   },
   created: function created() {
@@ -3745,12 +3939,22 @@ __webpack_require__.r(__webpack_exports__);
     this.ich = this.ichInit;
     this.ich.hand = Object.values(this.ich.hand);
     this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-    this.presenceChannel.here(function (userIDs) {
-      _this.players = userIDs;
-    }).joining(function (userID) {
-      _this.players.push(userID);
-    }).leaving(function (userID) {
-      _this.players.splice(_this.players.indexOf(userID), 1);
+    this.presenceChannel.here(function (playerIDs) {
+      _this.liveGame.spielerIDs.forEach(function (spielerID) {
+        if (!_this.pluck(playerIDs, 'id').includes(spielerID)) {
+          _this.liveGame.spieler[spielerID].online = false;
+        }
+      });
+
+      _this.players = _this.pluck(playerIDs, 'id');
+    }).joining(function (playerID) {
+      _this.players.push(playerID.id);
+
+      _this.liveGame.spieler[playerID.id].online = true;
+    }).leaving(function (playerID) {
+      _this.players.splice(_this.players.indexOf(playerID.id), 1);
+
+      _this.liveGame.spieler[playerID.id].online = false;
     });
 
     if (this.aktiv) {
@@ -3760,6 +3964,12 @@ __webpack_require__.r(__webpack_exports__);
         _this.ich.moeglicheVorbehalte = Object.values(_this.ich.moeglicheVorbehalte);
         _this.liveGame = e.liveGame;
         _this.error = '';
+
+        _this.liveGame.spielerIDs.forEach(function (spielerID) {
+          if (!_this.players.includes(spielerID)) {
+            _this.liveGame.spieler[spielerID].online = false;
+          }
+        });
       });
     } else {
       this.privateChannel.listen('LiveGameDataBroadcastedInaktiv', function (e) {
@@ -3777,19 +3987,35 @@ __webpack_require__.r(__webpack_exports__);
     aktiv: function aktiv() {
       return !this.liveGame.spielerIDsInaktiv.includes(this.authId);
     },
-    allPlayersOnline: function allPlayersOnline() {
+    alleSpielerOnline: function alleSpielerOnline() {
       var _this2 = this;
 
       return this.roundPlayersIds.every(function (e) {
-        return _this2.pluck(_this2.players, 'id').includes(e);
+        return _this2.players.includes(e);
       });
+    },
+    binIchDran: function binIchDran() {
+      return this.liveGame.dran === this.authId;
+    },
+    reOderKontra: function reOderKontra() {
+      if (this.ich.isRe === true) {
+        return 'Re';
+      } else if (this.ich.isRe === false) {
+        return 'Kontra';
+      } else {
+        return 'Keins von beidem Fehler';
+      }
     }
   },
+  watch: {},
   methods: {
     pluck: function pluck(array, key) {
       return array.map(function (o) {
         return o[key];
       });
+    },
+    istPhase: function istPhase(phase) {
+      return this.liveGame.phase === phase;
     },
     spielStarten: function spielStarten() {
       axios.post('/api/live/' + this.liveRoundId + '/spielStarten', {});
@@ -3797,16 +4023,11 @@ __webpack_require__.r(__webpack_exports__);
     kartenGeben: function kartenGeben() {
       axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
     },
-    gesund: function gesund(input) {
-      axios.post('/api/live/' + this.liveGame.id + '/gesund', {
-        gesund: input
-      });
-    },
-    vorbehaltSenden: function vorbehaltSenden(input) {
+    vorbehaltSenden: function vorbehaltSenden(vorbehalt) {
       var _this3 = this;
 
       axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
-        vorbehalt: input
+        vorbehalt: vorbehalt
       }).then(function (response) {
         return _this3.error = '';
       })["catch"](function (error) {
@@ -3829,12 +4050,36 @@ __webpack_require__.r(__webpack_exports__);
         return _this4.handleError(error);
       });
     },
-    reloadData: function reloadData() {
+    ansage: function ansage() {
       var _this5 = this;
 
+      axios.post('/api/live/' + this.liveGame.id + '/ansage', {})["catch"](function (error) {
+        return _this5.handleError(error);
+      });
+    },
+    absage: function absage(zahl) {
+      var _this6 = this;
+
+      axios.post('/api/live/' + this.liveGame.id + '/absage', {
+        zahl: zahl
+      })["catch"](function (error) {
+        return _this6.handleError(error);
+      });
+    },
+    reloadData: function reloadData() {
+      var _this7 = this;
+
       axios.get('/api/live/' + this.liveGame.id + '/reloadData').then(function (response) {
-        _this5.ich = response.data.ich;
-        _this5.liveGame = response.data.liveGame;
+        _this7.ich = response.data.ich;
+        _this7.liveGame = response.data.liveGame;
+        _this7.ich.hand = Object.values(_this7.ich.hand);
+        _this7.ich.moeglicheVorbehalte = Object.values(_this7.ich.moeglicheVorbehalte);
+
+        _this7.liveGame.spielerIDs.forEach(function (spielerID) {
+          if (!_this7.players.includes(spielerID)) {
+            _this7.liveGame.spieler[spielerID].online = false;
+          }
+        });
       });
     },
     reloadPage: function reloadPage() {
@@ -3847,9 +4092,113 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       if (error.response.status === 422) {
-        this.reloadData();
         this.error = error.response.data.message;
+        this.reloadData();
       }
+    },
+    getSpieler: function getSpieler(position) {
+      var eigenerIndex = this.liveGame.spielerIDs.indexOf(this.authId);
+      var ergebnis = eigenerIndex + position;
+
+      if (ergebnis >= 4) {
+        ergebnis -= 4;
+      }
+
+      var spielerID = this.liveGame.spielerIDs[ergebnis];
+      return this.liveGame.spieler[spielerID];
+    },
+    letzterStich: function letzterStich() {
+      this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
+    },
+    armutKarteWechseln: function armutKarteWechseln(karte, richtung) {
+      if (richtung === 'mitte') {
+        if (this.armutKarten.length < 3) {
+          var index = this.ich.hand.indexOf(karte);
+          this.ich.hand.splice(index, 1);
+          karte.index = index;
+          this.armutKarten.push(karte);
+        }
+      }
+
+      if (richtung === 'hand') {
+        this.armutKarten.splice(this.armutKarten.indexOf(karte), 1);
+        this.ich.hand.splice(karte.index, 0, karte);
+      }
+    },
+    armutAbgeben: function armutAbgeben() {
+      axios.post('/api/live/' + this.liveGame.id + '/armutAbgeben', {
+        karten: this.armutKarten
+      }).then(this.armutKarten = []);
+    },
+    armutMitnehmen: function armutMitnehmen(mitnehmen) {
+      axios.post('/api/live/' + this.liveGame.id + '/armutMitnehmen', {
+        mitnehmen: mitnehmen
+      });
+    },
+    armutZurueckgeben: function armutZurueckgeben(mitnehmen) {
+      axios.post('/api/live/' + this.liveGame.id + '/armutZurueck', {
+        karten: this.armutKarten
+      }).then(this.armutKarten = []);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    spieler: [Object, String],
+    liveGame: Object
+  },
+  data: function data() {
+    return {};
+  },
+  created: function created() {},
+  computed: {
+    dran: function dran() {
+      return this.liveGame.dran === this.spieler.id;
+    },
+    letzterStich: function letzterStich() {
+      return this.liveGame.letzterStich.stecher === this.spieler.id;
+    },
+    hasSlotAnsagen: function hasSlotAnsagen() {
+      return !!this.$slots.ansagen;
     }
   }
 });
@@ -3866,6 +4215,10 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Karte__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Karte */ "./resources/js/components/live/Karte.vue");
+//
+//
+//
+//
 //
 //
 //
@@ -72067,10 +72420,13 @@ var render = function() {
         { key: karte.id },
         [
           _c("karte", {
-            attrs: { karte: karte },
+            attrs: { karte: karte, armut: _vm.armut },
             on: {
               karteSpielen: function($event) {
                 return _vm.$emit("karteSpielen", $event)
+              },
+              armut: function($event) {
+                return _vm.$emit("armut", $event)
               }
             }
           })
@@ -72107,6 +72463,31 @@ var render = function() {
     ? _c("div", { staticClass: "card-live back tw-invisible" }, [
         _vm._v("\n    *\n")
       ])
+    : _vm.armut
+    ? _c(
+        "a",
+        {
+          staticClass: "card-live",
+          class: [_vm.wert_klasse, _vm.farbe],
+          attrs: { href: "#" },
+          on: {
+            click: function($event) {
+              return _vm.$emit("armut", _vm.karte)
+            }
+          }
+        },
+        [
+          _c("span", {
+            staticClass: "rank",
+            domProps: { innerHTML: _vm._s(_vm.wert) }
+          }),
+          _vm._v(" "),
+          _c("span", {
+            staticClass: "suit",
+            domProps: { innerHTML: _vm._s("&" + _vm.farbe + ";") }
+          })
+        ]
+      )
     : _vm.karte.spielbar
     ? _c(
         "a",
@@ -72136,8 +72517,12 @@ var render = function() {
     ? _c(
         "div",
         {
-          staticClass: "card-live karteNichtSpielbar",
-          class: [_vm.wert_klasse, _vm.farbe]
+          staticClass: "card-live",
+          class: [
+            _vm.wert_klasse,
+            _vm.farbe,
+            !_vm.keinRoterRahmen ? "karteNichtSpielbar" : ""
+          ]
         },
         [
           _c("span", {
@@ -72176,13 +72561,635 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "playingCards" }, [
+    _vm.error !== ""
+      ? _c("p", {
+          staticClass: "tw-font-bold tw-text-red-700 tw-my-4",
+          domProps: { textContent: _vm._s(_vm.error) }
+        })
+      : _vm._e(),
+    _vm._v(" "),
+    !_vm.alleSpielerOnline
+      ? _c("div", [
+          _c("h4", [_vm._v("Bitte warte, bis alle Spieler am Tisch sitzen")])
+        ])
+      : _c("div", [
+          _vm.istPhase(0) ? _c("h4", [_vm._v("Spielvorbereitung")]) : _vm._e(),
+          _vm._v(" "),
+          _vm.istPhase(1) || _vm.istPhase(3)
+            ? _c("h4", [_vm._v("Spielfindung")])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.istPhase(4) ? _c("h4", [_vm._v("Spiel")]) : _vm._e()
+        ]),
+    _vm._v(" "),
+    _c("hr"),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "tw-grid tw-grid-cols-livegame tw-grid-rows-livegame lg:tw-grid-rows-livegame_lg"
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-1 tw-row-start-2 tw-col-span-3 lg:tw-col-span-1 tw-flex tw-flex-col tw-justify-around tw-items-center tw-p-4"
+          },
+          [
+            _vm.istPhase(0)
+              ? _c("div", [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary",
+                      on: { click: _vm.kartenGeben }
+                    },
+                    [
+                      _vm._v(
+                        "\n                    Karten austeilen\n                "
+                      )
+                    ]
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(2) && _vm.ich.vorbehalt != null
+              ? _c("div", { staticClass: "tw-font-bold" }, [
+                  _vm._v(
+                    "\n                Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.\n            "
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(2) && _vm.ich.vorbehalt == null
+              ? _c(
+                  "div",
+                  {
+                    staticClass:
+                      "tw-flex tw-flex-col tw-justify-between tw-items-center"
+                  },
+                  [
+                    _vm.binIchDran
+                      ? _c("p", { staticClass: "tw-font-bold" }, [
+                          _vm._v("Wähle deinen Vorbehalt:")
+                        ])
+                      : _c("p", { staticClass: "tw-font-bold" }, [
+                          _vm._v("Mögliche Vorbehalte:")
+                        ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "tw-flex tw-items-center" }, [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary tw-mr-6 tw-max-w-4xs",
+                          attrs: { disabled: !_vm.binIchDran },
+                          on: {
+                            click: function($event) {
+                              return _vm.vorbehaltSenden("Gesund")
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                        Gesund\n                    "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "tw-flex tw-flex-col" },
+                        _vm._l(_vm.ich.moeglicheVorbehalte, function(
+                          vorbehalt
+                        ) {
+                          return !_vm.soli.includes(vorbehalt)
+                            ? _c("button", {
+                                staticClass:
+                                  "btn btn-outline-primary tw-my-1 tw-mr-6 tw-max-w-4xs",
+                                attrs: { disabled: !_vm.binIchDran },
+                                domProps: { textContent: _vm._s(vorbehalt) },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.vorbehaltSenden(vorbehalt)
+                                  }
+                                }
+                              })
+                            : _vm._e()
+                        }),
+                        0
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "tw-flex tw-flex-col tw-max-w-4xs" },
+                        _vm._l(_vm.ich.moeglicheVorbehalte, function(
+                          vorbehalt
+                        ) {
+                          return _vm.soli.includes(vorbehalt)
+                            ? _c("button", {
+                                staticClass:
+                                  "btn btn-outline-primary tw-my-1 tw-max-w-4xs",
+                                attrs: { disabled: !_vm.binIchDran },
+                                domProps: { textContent: _vm._s(vorbehalt) },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.vorbehaltSenden(vorbehalt)
+                                  }
+                                }
+                              })
+                            : _vm._e()
+                        }),
+                        0
+                      )
+                    ])
+                  ]
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(3) && !_vm.binIchDran
+              ? _c("div", [
+                  _vm._v(
+                    "\n                Die Armut wählt Ihre Karten.\n            "
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(3) && _vm.binIchDran
+              ? _c(
+                  "div",
+                  [
+                    _vm._v(
+                      "\n                Wähle aus, welche Karten du abgeben möchtest!\n                "
+                    ),
+                    _vm.armutKarten.length > 0
+                      ? _c("hand", {
+                          staticClass: "tw-mb-0 tw-mt-3",
+                          attrs: { karten: _vm.armutKarten, armut: true },
+                          on: {
+                            armut: function($event) {
+                              return _vm.armutKarteWechseln($event, "hand")
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.armutKarten.length === 3
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            on: { click: _vm.armutAbgeben }
+                          },
+                          [
+                            _vm._v(
+                              "\n                    Karten abgeben\n                "
+                            )
+                          ]
+                        )
+                      : _vm._e()
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(32) && _vm.binIchDran
+              ? _c("div", [
+                  _c("p", { staticClass: "tw-font-bold" }, [
+                    _vm._v(
+                      "\n                    Willst du die Armut mitnehmen?\n                "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary tw-mr-6",
+                      on: {
+                        click: function($event) {
+                          return _vm.armutMitnehmen(true)
+                        }
+                      }
+                    },
+                    [_vm._v("\n                    Ja!\n                ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-primary tw-ml-6",
+                      on: {
+                        click: function($event) {
+                          return _vm.armutMitnehmen(false)
+                        }
+                      }
+                    },
+                    [_vm._v("\n                    Nein!\n                ")]
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(33) && _vm.binIchDran
+              ? _c(
+                  "div",
+                  [
+                    _vm._v(
+                      "\n                Wähle aus, welche Karten du zurückgeben möchtest!\n                "
+                    ),
+                    _vm.armutKarten.length > 0
+                      ? _c("hand", {
+                          staticClass: "tw-mb-0 tw-mt-3",
+                          attrs: { karten: _vm.armutKarten, armut: true },
+                          on: {
+                            armut: function($event) {
+                              return _vm.armutKarteWechseln($event, "hand")
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm.armutKarten.length === 3
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-primary",
+                            on: { click: _vm.armutZurueckgeben }
+                          },
+                          [
+                            _vm._v(
+                              "\n                    Karten zurückgeben\n                "
+                            )
+                          ]
+                        )
+                      : _vm._e()
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(4) && !_vm.letzterStichEingeblendet
+              ? _c(
+                  "div",
+                  [
+                    _c("stich", {
+                      attrs: {
+                        stich: _vm.liveGame.aktuellerStich.karten,
+                        "auth-id": _vm.authId,
+                        "spieler-ids": _vm.liveGame.spielerIDs
+                      }
+                    })
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            (_vm.istPhase(4) || _vm.istPhase(101)) &&
+            _vm.letzterStichEingeblendet
+              ? _c(
+                  "div",
+                  [
+                    _c("stich", {
+                      attrs: {
+                        stich: _vm.liveGame.letzterStich.karten,
+                        "auth-id": _vm.authId,
+                        "spieler-ids": _vm.liveGame.spielerIDs
+                      }
+                    })
+                  ],
+                  1
+                )
+              : _vm._e(),
+            _vm._v(" "),
+            _vm.istPhase(101) && !_vm.letzterStichEingeblendet
+              ? _c("div", [
+                  _c("div", {
+                    domProps: { innerHTML: _vm._s(_vm.liveGame.wertung) }
+                  }),
+                  _vm._v(" "),
+                  true
+                    ? _c(
+                        "button",
+                        {
+                          staticClass: "btn btn-primary tw-mt-6",
+                          on: { click: _vm.spielStarten }
+                        },
+                        [
+                          _vm._v(
+                            "\n                    Neues Spiel starten\n                "
+                          )
+                        ]
+                      )
+                    : undefined
+                ])
+              : _vm._e()
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-2 tw-row-start-3 tw-col-span-2 lg:tw-col-start-2 lg:tw-row-start-4 lg:tw-col-span-3 tw-flex tw-items-center tw-p-4"
+          },
+          [
+            _c(
+              "div",
+              [
+                _vm.ich.hand !== "" && _vm.liveGame.phase > 0
+                  ? _c("hand", {
+                      staticClass: "tw-mb-0 tw-mt-3",
+                      attrs: {
+                        karten: _vm.ich.hand,
+                        armut:
+                          _vm.binIchDran &&
+                          (_vm.istPhase(3) || _vm.istPhase(33))
+                      },
+                      on: {
+                        karteSpielen: _vm.karteSpielen,
+                        armut: function($event) {
+                          return _vm.armutKarteWechseln($event, "mitte")
+                        }
+                      }
+                    })
+                  : _vm._e()
+              ],
+              1
+            )
+          ]
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-1 tw-row-start-3 lg:tw-col-start-2 tw-flex tw-items-center tw-justify-center tw-py-4"
+          },
+          [
+            _c("spieler", {
+              attrs: { spieler: _vm.getSpieler(0), "live-game": _vm.liveGame },
+              scopedSlots: _vm._u([
+                {
+                  key: "letzterStich",
+                  fn: function() {
+                    return [
+                      _c("button", {
+                        staticClass: "btn btn-sm btn-outline-primary tw-my-1",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.letzterStichEingeblendet
+                              ? "Ausblenden"
+                              : "Letzter Stich"
+                          )
+                        },
+                        on: { click: _vm.letzterStich }
+                      })
+                    ]
+                  },
+                  proxy: true
+                },
+                {
+                  key: "ansagen",
+                  fn: function() {
+                    return [
+                      _vm.istPhase(4)
+                        ? _c("div", [
+                            _vm.binIchDran &&
+                            _vm.liveGame.stichNr <= 2 &&
+                            _vm.ich.ansage !== true
+                              ? _c("button", {
+                                  staticClass: "btn btn-primary btn-sm tw-my-1",
+                                  domProps: {
+                                    textContent: _vm._s(_vm.reOderKontra)
+                                  },
+                                  on: { click: _vm.ansage }
+                                })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.binIchDran &&
+                            _vm.liveGame.stichNr <= 3 &&
+                            _vm.ich.ansage === true &&
+                            _vm.ich.absage === null
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-primary btn-sm tw-my-1",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.absage(90)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Keine 90\n                        "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.binIchDran &&
+                            _vm.liveGame.stichNr <= 4 &&
+                            _vm.ich.ansage === true &&
+                            _vm.ich.absage === 90
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-primary btn-sm tw-my-1",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.absage(60)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Keine 60\n                        "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.binIchDran &&
+                            _vm.liveGame.stichNr <= 5 &&
+                            _vm.ich.ansage === true &&
+                            _vm.ich.absage === 60
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-primary btn-sm tw-my-1",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.absage(30)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Keine 30\n                        "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.binIchDran &&
+                            _vm.liveGame.stichNr <= 6 &&
+                            _vm.ich.ansage === true &&
+                            _vm.ich.absage === 30
+                              ? _c(
+                                  "button",
+                                  {
+                                    staticClass:
+                                      "btn btn-primary btn-sm tw-my-1",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.absage(0)
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                            Schwarz\n                        "
+                                    )
+                                  ]
+                                )
+                              : _vm._e()
+                          ])
+                        : _vm._e()
+                    ]
+                  },
+                  proxy: true
+                }
+              ])
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-1 tw-row-start-1 lg:tw-row-start-2 tw-flex tw-items-center tw-justify-center"
+          },
+          [
+            _c("spieler", {
+              attrs: { spieler: _vm.getSpieler(1), "live-game": _vm.liveGame },
+              on: { letzterStich: _vm.letzterStich },
+              scopedSlots: _vm._u([
+                {
+                  key: "letzterStich",
+                  fn: function() {
+                    return [
+                      _c("button", {
+                        staticClass: "btn btn-sm btn-outline-primary tw-my-1",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.letzterStichEingeblendet
+                              ? "Ausblenden"
+                              : "Letzter Stich"
+                          )
+                        },
+                        on: { click: _vm.letzterStich }
+                      })
+                    ]
+                  },
+                  proxy: true
+                }
+              ])
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-2 tw-row-start-1 tw-flex tw-items-center tw-justify-center"
+          },
+          [
+            _c("spieler", {
+              attrs: { spieler: _vm.getSpieler(2), "live-game": _vm.liveGame },
+              on: { letzterStich: _vm.letzterStich },
+              scopedSlots: _vm._u([
+                {
+                  key: "letzterStich",
+                  fn: function() {
+                    return [
+                      _c("button", {
+                        staticClass: "btn btn-sm btn-outline-primary tw-my-1",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.letzterStichEingeblendet
+                              ? "Ausblenden"
+                              : "Letzter Stich"
+                          )
+                        },
+                        on: { click: _vm.letzterStich }
+                      })
+                    ]
+                  },
+                  proxy: true
+                }
+              ])
+            })
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass:
+              "tw-col-start-3 tw-row-start-1 lg:tw-row-start-2 tw-flex tw-items-center tw-justify-center"
+          },
+          [
+            _c("spieler", {
+              attrs: { spieler: _vm.getSpieler(3), "live-game": _vm.liveGame },
+              on: { letzterStich: _vm.letzterStich },
+              scopedSlots: _vm._u([
+                {
+                  key: "letzterStich",
+                  fn: function() {
+                    return [
+                      _c("button", {
+                        staticClass: "btn btn-sm btn-outline-primary tw-my-1",
+                        domProps: {
+                          textContent: _vm._s(
+                            _vm.letzterStichEingeblendet
+                              ? "Ausblenden"
+                              : "Letzter Stich"
+                          )
+                        },
+                        on: { click: _vm.letzterStich }
+                      })
+                    ]
+                  },
+                  proxy: true
+                }
+              ])
+            })
+          ],
+          1
+        )
+      ]
+    ),
+    _vm._v(" "),
+    !_vm.aktiv
+      ? _c("div", { staticClass: "tw-flex-1" }, [
+          _vm._v("\n        Du setzt dieses Spiel aus!\n    ")
+        ])
+      : _vm._e(),
+    _vm._v(" "),
+    _c("hr", { staticClass: "tw-mt-8" }),
+    _vm._v(" "),
     _c("div", { staticClass: "tw-flex tw-justify-around tw-items-center" }, [
       _vm.liveGame !== "null"
         ? _c("span", [_vm._v("LiveGameID: " + _vm._s(_vm.liveGame.id))])
-        : _vm._e(),
-      _vm._v(" "),
-      _vm.liveGame !== "null"
-        ? _c("span", [_vm._v("Dran: " + _vm._s(_vm.liveGame.dran))])
         : _vm._e(),
       _vm._v(" "),
       true
@@ -72192,195 +73199,108 @@ var render = function() {
             [_vm._v("\n            Neues Spiel starten\n        ")]
           )
         : undefined
-    ]),
-    _vm._v(" "),
-    _vm.error !== ""
-      ? _c("p", {
-          staticClass: "tw-font-bold tw-text-red-700 tw-my-4",
-          domProps: { textContent: _vm._s(_vm.error) }
-        })
-      : _vm._e(),
-    _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _vm.aktiv
-      ? _c("div", [
-          _vm.liveGame.phase === 0
-            ? _c("div", [
-                _c(
-                  "button",
-                  {
-                    staticClass: "btn btn-primary",
-                    on: { click: _vm.kartenGeben }
-                  },
-                  [_vm._v("\n                Karten austeilen\n            ")]
-                )
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liveGame.phase === 1
-            ? _c("div", [
-                _vm.liveGame.dran === _vm.authId
-                  ? _c("div", [
-                      _c("p", { staticClass: "tw-font-bold" }, [
-                        _vm._v("Bist du gesund?")
-                      ]),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        {
-                          staticClass:
-                            "tw-flex tw-justify-around tw-max-w-xs tw-mx-auto"
-                        },
-                        [
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              on: {
-                                click: function($event) {
-                                  return _vm.gesund(true)
-                                }
-                              }
-                            },
-                            [_vm._v("Ja!")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "button",
-                            {
-                              staticClass: "btn btn-primary",
-                              on: {
-                                click: function($event) {
-                                  return _vm.gesund(false)
-                                }
-                              }
-                            },
-                            [_vm._v("Nein!")]
-                          )
-                        ]
-                      )
-                    ])
-                  : _c("div", [
-                      _c("p", { staticClass: "tw-font-bold" }, [
-                        _vm._v(
-                          "Bitte warte, bis alle Spieler ihren Vorbehalt gemeldet haben."
-                        )
-                      ])
-                    ])
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liveGame.phase === 2
-            ? _c("div", [
-                _vm.liveGame.dran === _vm.authId
-                  ? _c(
-                      "div",
-                      {
-                        staticClass:
-                          "tw-flex tw-flex-col tw-max-w-4xs tw-mx-auto"
-                      },
-                      _vm._l(_vm.ich.moeglicheVorbehalte, function(vorbehalt) {
-                        return _c("button", {
-                          staticClass: "btn btn-outline-primary tw-my-1",
-                          domProps: { textContent: _vm._s(vorbehalt) },
-                          on: {
-                            click: function($event) {
-                              return _vm.vorbehaltSenden(vorbehalt)
-                            }
-                          }
-                        })
-                      }),
-                      0
-                    )
-                  : _c("div", [
-                      _c("p", { staticClass: "tw-font-bold" }, [
-                        _vm._v(
-                          "Bitte warte, bis alle Spieler ihren Vorbehalt offengelegt haben."
-                        )
-                      ])
-                    ])
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liveGame.phase === 4
-            ? _c(
-                "div",
-                [
-                  _vm.liveGame.phase > 0
-                    ? _c("stich", {
-                        attrs: {
-                          stich: _vm.liveGame.aktuellerStich.karten,
-                          "auth-id": _vm.authId,
-                          "spieler-ids": _vm.liveGame.spielerIDs
-                        }
-                      })
-                    : _vm._e()
-                ],
-                1
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liveGame.phase > 0
-            ? _c(
-                "div",
-                [
-                  _c("hr"),
-                  _vm._v(" "),
-                  _vm.ich.hand !== ""
-                    ? _c("hand", {
-                        staticClass: "tw-mt-7",
-                        attrs: { karten: _vm.ich.hand },
-                        on: { karteSpielen: _vm.karteSpielen }
-                      })
-                    : _vm._e()
-                ],
-                1
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.liveGame.phase === 4
-            ? _c(
-                "div",
-                [
-                  _vm.liveGame.phase > 0
-                    ? _c("stich", {
-                        attrs: {
-                          stich: _vm.liveGame.letzterStich.karten,
-                          "auth-id": _vm.authId,
-                          "spieler-ids": _vm.liveGame.spielerIDs
-                        }
-                      })
-                    : _vm._e()
-                ],
-                1
-              )
-            : _vm._e()
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    !_vm.aktiv
-      ? _c("div", { staticClass: "tw-flex-1" }, [
-          _vm._v("\n        Du setzt dieses Spiel aus!\n    ")
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _c("p", [_vm._v("\n        Gerade online:\n    ")]),
-    _vm._v(" "),
-    _c(
-      "ul",
-      _vm._l(_vm.players, function(player) {
-        return _c("li", {
-          domProps: {
-            textContent: _vm._s(player.name + " (" + player.id + ")")
-          }
-        })
-      }),
-      0
-    )
+    ])
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass:
+        "tw-flex tw-items-center tw-rounded-lg tw-border-2 tw-border-gray-500 tw-p-2",
+      class: {
+        "tw-border-3 tw-border-green-400": _vm.dran && _vm.spieler.online,
+        "tw-border-red-400": !_vm.spieler.online
+      },
+      staticStyle: { margin: "1px" }
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "tw-flex tw-items-center tw-pr-2 tw-py-1 tw-pl-1" },
+        [
+          _c("img", {
+            staticClass: "tw-h-20 tw-w-20 tw-rounded-full",
+            class: { grayscale: !_vm.spieler.online },
+            attrs: { src: _vm.spieler.avatar }
+          })
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass:
+            "tw-flex tw-flex-col tw-justify-around tw-px-2 tw-border-r-2 tw-border-l-2 tw-border-gray-500"
+        },
+        [
+          _c("div", { staticClass: "tw-font-bold tw-text-lg" }, [
+            _vm._v(_vm._s(_vm.spieler.surname))
+          ]),
+          _vm._v(" "),
+          _c("div", [_vm._v("Punkte: " + _vm._s(_vm.spieler.punkte))]),
+          _vm._v(" "),
+          _vm.letzterStich ? _c("div", [_vm._t("letzterStich")], 2) : _vm._e()
+        ]
+      ),
+      _vm._v(" "),
+      _vm.spieler.ansage
+        ? _c(
+            "div",
+            {
+              staticClass:
+                "tw-font-bold tw-flex tw-flex-col tw-justify-around tw-px-2 tw-border-r-2 tw-border-gray-500"
+            },
+            [
+              _vm.spieler.ansage
+                ? _c("div", {
+                    domProps: { textContent: _vm._s(_vm.spieler.ansage) }
+                  })
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.spieler.absage
+                ? _c("div", {
+                    domProps: { textContent: _vm._s(_vm.spieler.absage) }
+                  })
+                : _vm._e()
+            ]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.hasSlotAnsagen
+        ? _c(
+            "div",
+            {
+              staticClass:
+                "tw-flex tw-flex-col tw-items-center tw-justify-center tw-pl-2"
+            },
+            [_vm._t("ansagen")],
+            2
+          )
+        : _vm._e()
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -72404,7 +73324,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "tw-max-w-xs tw-mx-auto tw-mb-8" }, [
+  return _c("div", { staticClass: "tw-max-w-xs tw-mx-auto" }, [
     _c(
       "div",
       { staticClass: "tw-flex tw-justify-center tw--mb-8" },
@@ -72412,16 +73332,21 @@ var render = function() {
       1
     ),
     _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "tw-flex tw-justify-between" },
-      [
-        _c("karte", { attrs: { karte: _vm.karten[1] } }),
-        _vm._v(" "),
-        _c("karte", { attrs: { karte: _vm.karten[3] } })
-      ],
-      1
-    ),
+    _c("div", { staticClass: "tw-flex tw-justify-between" }, [
+      _c(
+        "div",
+        { staticClass: "tw-mr-16" },
+        [_c("karte", { attrs: { karte: _vm.karten[1] } })],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "tw-ml-16" },
+        [_c("karte", { attrs: { karte: _vm.karten[3] } })],
+        1
+      )
+    ]),
     _vm._v(" "),
     _c(
       "div",
@@ -90782,6 +91707,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LiveGame_vue_vue_type_template_id_1c3e07b4___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LiveGame_vue_vue_type_template_id_1c3e07b4___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/live/Spieler.vue":
+/*!**************************************************!*\
+  !*** ./resources/js/components/live/Spieler.vue ***!
+  \**************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Spieler.vue?vue&type=template&id=3731d648& */ "./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&");
+/* harmony import */ var _Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Spieler.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/live/Spieler.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/components/live/Spieler.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&":
+/*!*********************************************************************************!*\
+  !*** ./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648& ***!
+  \*********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=template&id=3731d648& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

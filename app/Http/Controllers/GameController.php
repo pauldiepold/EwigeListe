@@ -21,6 +21,23 @@ class   GameController extends Controller
         $this->authorize('update', $round);
 
         $validated = $request->validated();
+        $winners = $validated['winners'];
+        $pointsRound = $validated['points'];
+        $misplay = array_key_exists('misplayed', $validated) ? true : false;
+
+        $game = $round->addNewGame($winners, $pointsRound, $misplay);
+
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
+
+        return redirect($round->path());
+    }
+
+    /*public function store(StoreGame $request, Round $round)
+    {
+        $this->authorize('update', $round);
+
+        $validated = $request->validated();
         $misplay = array_key_exists('misplayed', $validated) ? true : false;
         $winners = $validated['winners'];
         $pointsRound = $validated['points'];
@@ -86,7 +103,7 @@ class   GameController extends Controller
         Group::updateManyStats($round->groups, $round->updated_at);
 
         return redirect($round->path());
-    }
+    }*/
 
     public function update(UpdateGame $request, Game $game)
     {

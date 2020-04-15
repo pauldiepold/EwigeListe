@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Live\Anzeige;
 use App\Live\Deck;
 use App\Live\Spieler;
 use App\Live\Stich;
@@ -63,9 +64,19 @@ class LiveRound extends Model
 
         $activePlayers = $this->round->getActivePlayers(false);
 
-        $spielerIDs = $activePlayers->pluck('id');
         $spielerIDsInaktiv = $this->round->getInactivePlayers()->pluck('id');
-        $spielerIndize = $activePlayers->pluck('pivot.index');
+
+        foreach ($activePlayers as $key => $player)
+        {
+            $spielerString = 'spieler' . $key;
+
+            $$spielerString = new Spieler(
+                $player->id,
+                $player->surname . ' ' . $player->name,
+                $player->pivot->index,
+                $player->avatar,
+            );
+        }
 
         $this->liveGames()->create([
             'live_round_id' => $this->id,
@@ -74,9 +85,12 @@ class LiveRound extends Model
             'phase' => 0,
             'aktuellerStich' => new Stich(),
             'letzterStich' => new Stich(),
-            'spielerIDs' => $spielerIDs,
-            'spielerIndize' => $spielerIndize,
             'spielerIDsInaktiv' => $spielerIDsInaktiv,
+            'spieler0' => $spieler0,
+            'spieler1' => $spieler1,
+            'spieler2' => $spieler2,
+            'spieler3' => $spieler3,
+            'anzeige' => new Anzeige($activePlayers),
         ]);
     }
 }

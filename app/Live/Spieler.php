@@ -8,12 +8,13 @@ class Spieler
 {
     public $id;
     public $name;
+    public $avatar;
     public $index;
 
     public $hand;
     public $stiche;
+    public $armutKarten;
 
-    public $gesund;
     public $moeglicheVorbehalte;
     public $vorbehalt;
     public $isRe;
@@ -24,20 +25,21 @@ class Spieler
     /**
      * LivePlayer constructor.
      * @param $playerID
-     * @param $hand
-     * @param $playerIndex
      * @param $playerName
+     * @param $playerIndex
+     * @param $avatar
      */
-    public function __construct($playerID = '', $playerName = '', $playerIndex = '', $hand = '')
+    public function __construct($playerID = '', $playerName = '', $playerIndex = '', $avatar = '')
     {
         $this->id = $playerID;
         $this->name = $playerName;
+        $this->avatar = $avatar;
         $this->index = $playerIndex;
 
-        $this->hand = $hand;
+        $this->hand = collect();
         $this->stiche = collect();
+        $this->armutKarten = collect();
 
-        $this->gesund = null;
         $this->moeglicheVorbehalte = collect();
         $this->vorbehalt = null;
         $this->isRe = null;
@@ -54,13 +56,21 @@ class Spieler
 
             $spieler->id = $input->id;
             $spieler->name = $input->name;
+            $spieler->avatar = $input->avatar;
             $spieler->index = $input->index;
 
-            $hand = collect($input->hand)->map(function ($item, $key)
+            if ($input->hand != '')
             {
-                return Karte::create($item);
-            });
-            $spieler->hand = $hand;
+
+                $hand = collect($input->hand)->map(function ($item, $key)
+                {
+                    return Karte::create($item);
+                });
+                $spieler->hand = $hand;
+            } else
+            {
+                $spieler->hand = $input->hand;
+            }
 
             $stiche = collect($input->stiche)->map(function ($item, $key)
             {
@@ -68,7 +78,19 @@ class Spieler
             });
             $spieler->stiche = $stiche;
 
-            $spieler->gesund = $input->gesund;
+            if ($input->armutKarten != '')
+            {
+
+                $armutKarten = collect($input->armutKarten)->map(function ($item, $key)
+                {
+                    return Karte::create($item);
+                });
+                $spieler->armutKarten = $armutKarten;
+            } else
+            {
+                $spieler->armutKarten = $input->armutKarten;
+            }
+
             $spieler->moeglicheVorbehalte = collect($input->moeglicheVorbehalte);
             $spieler->vorbehalt = $input->vorbehalt;
             $spieler->isRe = $input->isRe;
@@ -85,14 +107,12 @@ class Spieler
 
     public function karteAusHandEntfernen($karte)
     {
-        $hand = $this->hand->reject(
-            function ($value, $key) use ($karte)
-            {
-                return $value->id == $karte->id;
-            }
-        )->all();
+        $index = $this->hand->search(function ($item, $key) use ($karte)
+        {
+            return $item->id == $karte->id;
+        });
 
-        $this->hand = $hand;
+        $this->hand->splice($index, 1);
     }
 
     public function stichNehmen($stich)

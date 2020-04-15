@@ -19,10 +19,7 @@ Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRoun
 {
     if ($user->can('update', $liveRound))
     {
-        return [
-            'id' => $user->id,
-            'name' => $user->player->surname . ' ' . $user->player->name
-        ];
+        return [ 'id' => $user->id ];
     }
 });
 

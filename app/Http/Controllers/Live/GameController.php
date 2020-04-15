@@ -32,33 +32,7 @@ class GameController extends Controller
 
         $liveGame->moeglicheVorbehalteBerechnen();
 
-        $liveGame->phase = 1;
-
-        $liveGame->save();
-    }
-
-    public function gesund(LiveGame $liveGame, Request $request)
-    {
-        abort_if($liveGame->phase != 1, 422, 'Falsche Phase!');
-
-        $liveGame->istSpielerAktiv();
-        $liveGame->istSpielerDran();
-
-        $validated = $request->validate([
-            'gesund' => 'required|boolean'
-        ]);
-        $gesund = $validated['gesund'];
-
-        $liveGame->setGesund($gesund);
-
-        $liveGame->naechstenSpielerBerechnen();
-
-        if ($liveGame->dran == $liveGame->vorhand)
-        {
-            $liveGame->phase = 2;
-
-            $liveGame->naechstenSpielerBerechnenPhase2();
-        }
+        $liveGame->phase = 2;
 
         $liveGame->save();
     }
@@ -73,6 +47,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'vorbehalt' => [
                 'required', 'string', Rule::in([
+                    'Gesund',
                     'Schmeißen',
                     'Hochzeit',
                     'Stille Hochzeit',
@@ -90,19 +65,117 @@ class GameController extends Controller
         $liveGame->istVorbehaltMoeglich($vorbehalt);
         $liveGame->setVorbehalt($vorbehalt);
 
-        $liveGame->naechstenSpielerBerechnenPhase2();
+        $liveGame->naechstenSpielerBerechnen();
+
+        if ($liveGame->dran == $liveGame->spielerIDs->get(0))
+        {
+            $liveGame->vorbehalteAbhandeln();
+        }
 
         $liveGame->save();
     }
 
-    public function karteSpielen(LiveGame $liveGame, KarteSpielen $request)
+    public function armutAbgeben(LiveGame $liveGame, Request $request)
+    {
+        abort_if($liveGame->phase != 3, 422, 'Falsche Phase!');
+
+        $liveGame->istSpielerAktiv();
+        $liveGame->istSpielerDran();
+
+        $validated = $request->validate([
+            'karten' => 'required|array|size:3',
+            'karten.*' => 'required|array',
+            'karte.*.id' => 'required|integer|between:0,47',
+        ]);
+
+        $karten = collect();
+        foreach ($validated['karten'] as $karte)
+        {
+            $karten->push($liveGame->getKarteVonSpieler($karte['id']));
+        }
+
+        $liveGame->armutKartenAbgeben($karten);
+        $liveGame->naechstenSpielerBerechnen();
+        $liveGame->phase = 32;
+
+        $liveGame->save();
+    }
+
+    public function armutMitnehmen(LiveGame $liveGame, Request $request)
+    {
+        abort_if($liveGame->phase != 32, 422, 'Falsche Phase!');
+
+        $liveGame->istSpielerAktiv();
+        $liveGame->istSpielerDran();
+
+        $validated = $request->validate([
+            'mitnehmen' => 'required|boolean',
+        ]);
+
+        if ($validated['mitnehmen'])
+        {
+            $spieler = $liveGame->getSpieler();
+            $armutSpieler = $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'));
+
+            $hand = $spieler->hand->concat($armutSpieler->armutKarten);
+
+            $spieler->hand = $hand;
+
+            $liveGame->spielerSpeichern($spieler);
+
+            $liveGame->dran = $spieler->id;
+
+            $liveGame->phase = 33;
+        } else
+        {
+            $liveGame->naechstenSpielerBerechnen();
+
+            if ($liveGame->dran == $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'))->id)
+            {
+                $liveGame->schmeissen();
+            }
+        }
+        $liveGame->save();
+    }
+
+    public function armutZurueckgeben(LiveGame $liveGame, Request $request)
+    {
+        abort_if($liveGame->phase != 33, 422, 'Falsche Phase!');
+
+        $liveGame->istSpielerAktiv();
+        $liveGame->istSpielerDran();
+
+        $validated = $request->validate([
+            'karten' => 'required|array|size:3',
+            'karten.*' => 'required|array',
+            'karte.*.id' => 'required|integer|between:0,47',
+        ]);
+
+        $karten = collect();
+        foreach ($validated['karten'] as $karte)
+        {
+            $karten->push($liveGame->getKarteVonSpieler($karte['id']));
+        }
+
+        $liveGame->armutKartenZurueckgebenUndReSetzen($karten);
+
+        $liveGame->dran = $liveGame->vorhand;
+        $liveGame->spielStarten();
+
+        $liveGame->save();
+    }
+
+    public function karteSpielen(LiveGame $liveGame, Request $request)
     {
         abort_if($liveGame->phase != 4, 422, 'Falsche Phase!');
 
         $liveGame->istSpielerAktiv();
         $liveGame->istSpielerDran();
 
-        $validated = $request->validated();
+        $validated = $request->validate([
+            'karte' => 'required|array',
+            'karte.id' => 'required|integer|between:0,47'
+        ]);
         $karte = $liveGame->getKarteVonSpieler($validated['karte']['id']);
 
         $liveGame->kartenSortieren();
@@ -123,7 +196,8 @@ class GameController extends Controller
 
             $liveGame->punkteZaehlen();
 
-            // Ergebnisse anzeigen und eintragen
+            $liveGame->wertungBerechnen();
+            $liveGame->spielErgebnisUebertragen();
 
             $liveGame->save();
 
@@ -133,6 +207,38 @@ class GameController extends Controller
         $liveGame->naechstenSpielerBerechnen();
         $liveGame->spielbareKartenBerechnen();
         $liveGame->kartenSortieren();
+
+        $liveGame->save();
+
+        return 'success';
+    }
+
+    public function ansage(LiveGame $liveGame, Request $request)
+    {
+        abort_if($liveGame->phase != 4, 422, 'Falsche Phase!');
+
+        $liveGame->istSpielerAktiv();
+        $liveGame->istSpielerDran();
+
+        $liveGame->ansageMachen();
+
+        $liveGame->save();
+
+        return 'success';
+    }
+
+    public function absage(LiveGame $liveGame, Request $request)
+    {
+        abort_if($liveGame->phase != 4, 422, 'Falsche Phase!');
+
+        $liveGame->istSpielerAktiv();
+        $liveGame->istSpielerDran();
+
+        $validated = $request->validate([
+            'zahl' => 'required|integer'
+        ]);
+
+        $liveGame->absageMachen($validated['zahl']);
 
         $liveGame->save();
 

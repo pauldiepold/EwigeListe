@@ -65,9 +65,6 @@ class Deck
         $this->deck->push(new Karte(0, 3, 1)); // Kreuz
 
         $this->deck = $this->deck->shuffle();
-        $this->deck = $this->deck->shuffle();
-        $this->deck = $this->deck->shuffle();
-        $this->deck = $this->deck->shuffle();
         $this->deck = $this->deck->split(4);
     }
 
