@@ -1265,7 +1265,7 @@ class LiveGame extends Model
         {
             $winners = $this->res->filter(function ($value, $key)
             {
-                return $value === true;
+                return $value === false;
             })->keys()->toArray();
         }
         $round = $this->liveRound->round;

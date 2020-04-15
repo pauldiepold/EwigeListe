@@ -72890,7 +72890,7 @@ var render = function() {
           "div",
           {
             staticClass:
-              "tw-col-start-2 tw-row-start-3 tw-col-span-2 lg:tw-col-start-2 lg:tw-row-start-4 lg:tw-col-span-3 tw-flex tw-items-center tw-p-4"
+              "tw-col-start-2 tw-row-start-3 tw-col-span-2 lg:tw-col-start-2 lg:tw-row-start-3 lg:tw-col-span-2 tw-flex tw-items-center tw-p-4"
           },
           [
             _c(
@@ -72923,7 +72923,7 @@ var render = function() {
           "div",
           {
             staticClass:
-              "tw-col-start-1 tw-row-start-3 lg:tw-col-start-2 tw-flex tw-items-center tw-justify-center tw-py-4"
+              "tw-col-start-1 tw-row-start-3 lg:tw-col-start-1 tw-flex tw-items-center tw-justify-center tw-py-4"
           },
           [
             _c("spieler", {
