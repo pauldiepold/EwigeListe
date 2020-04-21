@@ -3970,6 +3970,13 @@ __webpack_require__.r(__webpack_exports__);
             _this.liveGame.spieler[spielerID].online = false;
           }
         });
+
+        if (_this.liveGame.aktuellerStich.karten.length === 0) {
+          _this.letzterStichEingeblendet = true;
+          setTimeout(function () {
+            return _this.letzterStichEingeblendet = false;
+          }, 2555);
+        }
       });
     } else {
       this.privateChannel.listen('LiveGameDataBroadcastedInaktiv', function (e) {
@@ -73230,7 +73237,7 @@ var render = function() {
       staticClass:
         "tw-flex tw-items-center tw-rounded-lg tw-border-2 tw-border-gray-500 tw-p-2",
       class: {
-        "tw-border-3 tw-border-green-400": _vm.dran && _vm.spieler.online,
+        "tw-border-green-400": _vm.dran && _vm.spieler.online,
         "tw-border-red-400": !_vm.spieler.online
       },
       staticStyle: { margin: "1px" }
@@ -90118,7 +90125,7 @@ if (token) {
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "46ccc872a97bba003779",
+  key: "3f4b86c82d24f86ae81d",
   cluster: "eu",
   forceTLS: true
 });

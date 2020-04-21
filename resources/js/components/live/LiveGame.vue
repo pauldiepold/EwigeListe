@@ -324,6 +324,11 @@
                                 this.liveGame.spieler[spielerID].online = false;
                             }
                         });
+
+                        if (this.liveGame.aktuellerStich.karten.length === 0) {
+                            this.letzterStichEingeblendet = true
+                            setTimeout(() => this.letzterStichEingeblendet = false, 2555)
+                        }
                     });
             } else {
                 this.privateChannel

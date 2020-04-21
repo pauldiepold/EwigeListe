@@ -131,10 +131,17 @@ class Round extends Model
         if ($sortPlayers)
         {
             $playerIndices = $playerIndices->sort();
-            $playerIndices = $playerIndices->values()->all();
+            $playerIndices = $playerIndices->values();
         }
 
-        return $this->players()->wherePivotIn('index', $playerIndices)->get();
+        $players = collect();
+
+        foreach ($playerIndices as $playerIndex)
+        {
+            $players->push($this->players()->wherePivot('index', $playerIndex)->get()->first());
+        }
+
+        return $players;
     }
 
     public function addNewGame($winners, $pointsRound, $misplay = false)

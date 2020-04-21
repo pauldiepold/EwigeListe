@@ -11,7 +11,7 @@
 @section('content')
     <tabs>
         <tab name="Runde" icon="fa-play-circle">
-            @if(!$round->live_round_id)
+            @if(true)<!--!$round->live_round_id)-->
                 @can('update', $round)
                     @include('games.create')
                 @endcan
@@ -19,7 +19,7 @@
 
             @include('rounds.inc.pointsTable')
 
-            @if(!$round->live_round_id)
+            @if(true)<!--!$round->live_round_id)-->
                 @can('update', $round)
                     @if ($round->games->count() != 0)
                         <div class="d-flex flex-sm-row flex-column justify-content-center">

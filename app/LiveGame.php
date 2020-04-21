@@ -587,7 +587,8 @@ class LiveGame extends Model
 
     public function schmeissen()
     {
-        foreach($this->spielerIDs as $spielerID) {
+        foreach ($this->spielerIDs as $spielerID)
+        {
             $spieler = $this->getSpieler($spielerID);
 
             $spieler->hand = collect();
@@ -945,6 +946,7 @@ class LiveGame extends Model
         $kontraAnsage = null;
         $kontraAbsage = null;
         $kontraKarten = collect();
+        $schwarzGespielt = false;
 
         foreach ($this->spielerIDs as $spielerID)
         {
@@ -959,7 +961,7 @@ class LiveGame extends Model
                 }
 
                 if ($spieler->ansage) $reAnsage = true;
-                if ($spieler->absage) $reAbsage = $spieler->absage;
+                if ($spieler->absage !== null) $reAbsage = $spieler->absage;
             } else
             {
                 $kontraPunkte += $spieler->punkte;
@@ -970,32 +972,44 @@ class LiveGame extends Model
                 }
 
                 if ($spieler->ansage) $kontraAnsage = true;
-                if ($spieler->absage) $kontraAbsage = $spieler->absage;
+                if ($spieler->absage !== null) $kontraAbsage = $spieler->absage;
             }
         }
 
-        /*$rePunkte = 130;
+        $rePunkte = 155;
         $reAnsage = true;
-        $reAbsage = null;
+        $reAbsage = 90;
         $kontraPunkte = 240 - $rePunkte;
         $kontraAnsage = null;
-        $kontraAbsage = null;*/
+        $kontraAbsage = null;
 
-        abort_if($kontraAbsage != null && $reAbsage != null, 422, 'Hör auf du Spacko, du hast keine Ahnung wie das Spiel funktioniert!');
+        $punkteString = '';
+        $wertungsPunkte = 0;
+
+        $punkteString .= 'Re: ' . $rePunkte . '<br>';
+        $punkteString .= 'Kontra: ' . $kontraPunkte . '<br>';
 
         $punktegrenze = 120;
-        if ($reAbsage != null)
+        if ($reAbsage !== null)
         {
             $punktegrenze = 240 - $reAbsage;
             $absage = $reAbsage;
-        } elseif ($kontraAbsage != null)
+        } elseif ($kontraAbsage !== null)
         {
             $punktegrenze = $kontraAbsage;
             $absage = $kontraAbsage;
         }
 
-        $punkteString = '';
-        $wertungsPunkte = 0;
+
+        if ($rePunkte == 240)
+        {
+            $schwarzGespielt = true;
+            $rePunkte++;
+        } elseif ($kontraPunkte == 240)
+        {
+            $schwarzGespielt = true;
+            $kontraPunkte++;
+        }
 
         $gewinntRe = $rePunkte > $punktegrenze ? true : false;
 
@@ -1016,23 +1030,42 @@ class LiveGame extends Model
         if ($kontraAnsage) $punkteString .= '+2 Kontra angesagt<br>';
 
         /* **** Absagen **** */
-        if ($gewinntRe && $reAbsage || !$gewinntRe && $kontraAbsage)
-        {
-            $absagePunkte = (120 - $absage) / 30 * 2;
-            $wertungsPunkte += $absagePunkte;
-
-            $punkteString .= '+' . $absagePunkte . ' Keine ' . $absage . ' angesagt<br>';
-        } elseif ($gewinntRe && $kontraAbsage || !$gewinntRe && $reAbsage)
+        if ($reAbsage !== null || $kontraAbsage !== null)
         {
             $absagePunkte = (120 - $absage) / 30;
-
-            $gewinnerAugen = $gewinntRe ? $rePunkte : $kontraPunkte;
-
-            $absagePunkte += (int) floor(($gewinnerAugen - $absage) / 30);
             $wertungsPunkte += $absagePunkte;
 
-            $punkteString .= '+' . $absagePunkte . ' Keine ' . $absage . ' angesagt<br>';
+            if ($reAbsage === 0 || $kontraAbsage === 0)
+            {
+                $punkteString .= '+' . $absagePunkte . ' Schwarz angesagt<br>';
+            } else
+            {
+                $punkteString .= '+' . $absagePunkte . ' Keine ' . $absage . ' angesagt<br>';
+            }
         }
+
+        /* **** Punkte für Erreichte Augen **** */
+        $gewinnerAugen = $gewinntRe ? $rePunkte : $kontraPunkte;
+        if ($gewinntRe && $kontraAbsage !== null || !$gewinntRe && $reAbsage !== null) // Verlorene Absage
+        {
+            $augenPunkte = (int) floor(($gewinnerAugen - $absage) / 30);
+            if ($augenPunkte)
+            {
+                $punkteString .= '+' . $augenPunkte . ' Weil ' . $augenPunkte . ' über Absage gespielt<br>';
+            }
+        } else
+        { // Alle Anderen Fälle inklusive gewonnene Absage
+            $augenPunkte = (int) floor(abs(($gewinnerAugen - 121) / 30));
+
+            if ($schwarzGespielt)
+            {
+                $punkteString .= '+' . $augenPunkte . ' Schwarz gespielt<br>';
+            } elseif ($augenPunkte)
+            {
+                $punkteString .= '+' . $augenPunkte . ' Keine ' . ceil((240 - $gewinnerAugen) / 30) * 30 . ' gespielt<br>';
+            }
+        }
+        $wertungsPunkte += $augenPunkte;
 
 
         /* **** Fuchs gefangen **** */
@@ -1236,9 +1269,6 @@ class LiveGame extends Model
             }
         }
 
-        $punkteString = 'Kontra: ' . $kontraPunkte . '<br>' . $punkteString;
-        $punkteString = 'Re: ' . $rePunkte . '<br>' . $punkteString;
-
         if ($gewinntRe)
         {
             $punkteString = '<b>Re</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
@@ -1247,7 +1277,7 @@ class LiveGame extends Model
             $punkteString = '<b>Kontra</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
         }
 
-
+        dd($punkteString);
         $this->gewinntRe = $gewinntRe;
         $this->wertungsPunkte = $wertungsPunkte;
         $this->wertung = $punkteString;
@@ -1316,6 +1346,7 @@ class LiveGame extends Model
 
         // To-Do check ob zu diesem Zeitpunkt noch abgesagt werden darf
         //abort_if($this->stichNr > 2 || $spieler->hand->count() < 11, 422, 'Es kann keine Ansage mehr gemacht werden.');
+        
         abort_if($spieler->ansage === null, 422, 'Du musst erst eine Ansage machen!');
 
         if ($zahl < 90)
@@ -1369,7 +1400,8 @@ class LiveGame extends Model
 
         $spieler->armutKarten = $karten;
 
-        foreach($karten as $karte) {
+        foreach ($karten as $karte)
+        {
             $spieler->karteAusHandEntfernen($karte);
         }
 
@@ -1380,7 +1412,8 @@ class LiveGame extends Model
     {
         $spieler = $this->getSpieler();
 
-        foreach($karten as $karte) {
+        foreach ($karten as $karte)
+        {
             $spieler->karteAusHandEntfernen($karte);
         }
 

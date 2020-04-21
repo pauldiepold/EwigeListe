@@ -1,5 +1,5 @@
 <template>
-    <div :class="{ 'tw-border-3 tw-border-green-400' : dran && spieler.online, 'tw-border-red-400' : !spieler.online}"
+    <div :class="{ 'tw-border-green-400' : dran && spieler.online, 'tw-border-red-400' : !spieler.online}"
          style="margin: 1px;"
          class="tw-flex tw-items-center tw-rounded-lg tw-border-2 tw-border-gray-500 tw-p-2">
         <div class="tw-flex tw-items-center tw-pr-2 tw-py-1 tw-pl-1">
