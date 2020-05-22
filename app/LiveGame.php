@@ -346,11 +346,13 @@ class LiveGame extends Model
                     $stecher->ansage = true;
                 } elseif ($stecher->ansage === true)
                 {
+                    // To-Do Ansagen der Gegner löschen
                     $heirater->ansage = true;
                 }
 
                 if ($stecher->absage !== null)
                 {
+                    // To-Do Absagen der Gegner löschen
                     $heirater->absage = $stecher->absage;
                 } elseif ($heirater->absage !== null)
                 {
@@ -438,6 +440,10 @@ class LiveGame extends Model
             $spieler->moeglicheVorbehalte->push('Bubensolo');
             $spieler->moeglicheVorbehalte->push('Damensolo');
             $spieler->moeglicheVorbehalte->push('Königssolo');
+            $spieler->moeglicheVorbehalte->push('Trumpfsolo');
+            $spieler->moeglicheVorbehalte->push('Farbsolo Herz');
+            $spieler->moeglicheVorbehalte->push('Farbsolo Pik');
+            $spieler->moeglicheVorbehalte->push('Farbsolo Kreuz');
 
             $this->spielerSpeichern($spieler);
         }
@@ -505,15 +511,32 @@ class LiveGame extends Model
         }
     }
 
+    public function istSolo($vorbehalt = null)
+    {
+        $vorbehalt = $vorbehalt ?? $this->spieltyp;
+
+        if ($vorbehalt === 'Bubensolo' ||
+            $vorbehalt === 'Damensolo' ||
+            $vorbehalt === 'Königssolo' ||
+            $vorbehalt === 'Fleischlos' ||
+            $vorbehalt === 'Trumpfsolo' ||
+            $vorbehalt === 'Farbsolo Herz' ||
+            $vorbehalt === 'Farbsolo Pik' ||
+            $vorbehalt === 'Farbsolo Kreuz')
+        {
+            return true;
+        } else
+        {
+            return false;
+        }
+    }
+
     public function vorbehalteAbhandeln()
     {
         $vorbehaltIndex = null;
         foreach ($this->vorbehalte as $key => $vorbehalt)
         {
-            if ($vorbehalt === 'Bubensolo' ||
-                $vorbehalt === 'Damensolo' ||
-                $vorbehalt === 'Königssolo' ||
-                $vorbehalt === 'Fleischlos')
+            if ($this->istSolo($vorbehalt))
             {
                 $this->loescheVorbehalteExcept($key);
                 $this->soloSpielen($key, $vorbehalt);
@@ -549,7 +572,7 @@ class LiveGame extends Model
             }
             if ($vorbehalt === 'Stille Hochzeit')
             {
-                $this->soloSpielen($key, $vorbehalt);
+                $this->soloSpielen($key, $vorbehalt, true);
 
                 return;
             }
@@ -571,7 +594,7 @@ class LiveGame extends Model
         }
     }
 
-    public function soloSpielen($position, $vorbehalt)
+    public function soloSpielen($position, $vorbehalt, $istStilleHochzeit = false)
     {
         $spieler = $this->getSpielerByPosition($position);
         $spieler->isRe = true;
@@ -579,7 +602,10 @@ class LiveGame extends Model
 
         $this->alleSpielerKontraSetzen($spieler->id);
 
-        $this->dran = $spieler->id;
+        if (!$istStilleHochzeit)
+        {
+            $this->dran = $spieler->id;
+        }
         $this->spieltyp = $vorbehalt;
 
         $this->spielStarten();
@@ -651,6 +677,7 @@ class LiveGame extends Model
         $this->trumpfBerechnen();
         $this->kartenSortieren();
         $this->spielbareKartenBerechnen();
+        $this->moeglicheAnAbsagenBerechnen();
     }
 
     public function alleSpielerKontraSetzen($except = null)
@@ -788,11 +815,27 @@ class LiveGame extends Model
         if ($this->spieltyp == 'Normalspiel' ||
             $this->spieltyp == 'Hochzeit' ||
             $this->spieltyp == 'Stille Hochzeit' ||
+            $this->spieltyp == 'Trumpfsolo' ||
             $this->spieltyp == '')
         {
             if ($karte->wert == 2 || $karte->wert == 3) return true;
             if ($karte->farbe == 1) return true;
             if ($karte->farbe == 2 && $karte->wert == 5) return true;
+        } elseif (substr($this->spieltyp, 0, 8) == 'Farbsolo')
+        {
+            if ($karte->wert == 2 || $karte->wert == 3) return true;
+            if ($karte->farbe == 2 && $karte->wert == 5) return true;
+
+            if ($this->spieltyp == 'Farbsolo Herz')
+            {
+                if ($karte->farbe == 2) return true;
+            } elseif ($this->spieltyp == 'Farbsolo Pik')
+            {
+                if ($karte->farbe == 3) return true;
+            } elseif ($this->spieltyp == 'Farbsolo Kreuz')
+            {
+                if ($karte->farbe == 4) return true;
+            }
         } elseif ($this->spieltyp == 'Bubensolo')
         {
             if ($karte->wert == 2) return true;
@@ -976,12 +1019,12 @@ class LiveGame extends Model
             }
         }
 
-        $rePunkte = 155;
+        /*$rePunkte = 155;
         $reAnsage = true;
         $reAbsage = 90;
         $kontraPunkte = 240 - $rePunkte;
         $kontraAnsage = null;
-        $kontraAbsage = null;
+        $kontraAbsage = null;*/
 
         $punkteString = '';
         $wertungsPunkte = 0;
@@ -1051,7 +1094,7 @@ class LiveGame extends Model
             $augenPunkte = (int) floor(($gewinnerAugen - $absage) / 30);
             if ($augenPunkte)
             {
-                $punkteString .= '+' . $augenPunkte . ' Weil ' . $augenPunkte . ' über Absage gespielt<br>';
+                $punkteString .= '+' . $augenPunkte . ' Weil ' . 30 * $augenPunkte . ' über Absage gespielt<br>';
             }
         } else
         { // Alle Anderen Fälle inklusive gewonnene Absage
@@ -1068,203 +1111,208 @@ class LiveGame extends Model
         $wertungsPunkte += $augenPunkte;
 
 
-        /* **** Fuchs gefangen **** */
-        foreach ($reKarten as $karte)
+        /* **** Extrapunkte **** */
+        if (!$this->istSolo())
         {
-            if ($karte->rang == 14)
+
+            /* **** Fuchs gefangen **** */
+            foreach ($reKarten as $karte)
             {
-                $spieler = $this->getSpieler($karte->gespieltVon);
-                if ($spieler->isRe == false)
+                if ($karte->rang == 14)
                 {
-                    if ($gewinntRe)
+                    $spieler = $this->getSpieler($karte->gespieltVon);
+                    if ($spieler->isRe == false)
                     {
-                        $wertungsPunkte++;
-                        $punkteString .= '+1 Fuchs gefangen<br>';
-                    } else
-                    {
-                        $wertungsPunkte--;
-                        $punkteString .= '-1 Fuchs gefangen<br>';
+                        if ($gewinntRe)
+                        {
+                            $wertungsPunkte++;
+                            $punkteString .= '+1 Fuchs gefangen<br>';
+                        } else
+                        {
+                            $wertungsPunkte--;
+                            $punkteString .= '-1 Fuchs gefangen<br>';
+                        }
                     }
                 }
             }
-        }
-        foreach ($kontraKarten as $karte)
-        {
-            if ($karte->rang == 14)
+            foreach ($kontraKarten as $karte)
             {
-                $spieler = $this->getSpieler($karte->gespieltVon);
-                if ($spieler->isRe == true)
+                if ($karte->rang == 14)
                 {
-                    if ($gewinntRe)
+                    $spieler = $this->getSpieler($karte->gespieltVon);
+                    if ($spieler->isRe == true)
                     {
-                        $wertungsPunkte--;
-                        $punkteString .= '-1 Fuchs gefangen<br>';
-                    } else
-                    {
-                        $wertungsPunkte++;
-                        $punkteString .= '+1 Fuchs gefangen<br>';
+                        if ($gewinntRe)
+                        {
+                            $wertungsPunkte--;
+                            $punkteString .= '-1 Fuchs gefangen<br>';
+                        } else
+                        {
+                            $wertungsPunkte++;
+                            $punkteString .= '+1 Fuchs gefangen<br>';
+                        }
                     }
                 }
             }
-        }
 
 
-        /* **** Karlchen **** */
-        $hoechsterRang = $this->letzterStich->karten->max('rang');
-        $hoechsteKarte = $this->letzterStich->karten->where('rang', $hoechsterRang)->first();
-        $karlchen = $this->letzterStich->karten->where('rang', 18);
+            /* **** Karlchen **** */
+            $hoechsterRang = $this->letzterStich->karten->max('rang');
+            $hoechsteKarte = $this->letzterStich->karten->where('rang', $hoechsterRang)->first();
+            $karlchen = $this->letzterStich->karten->where('rang', 18);
 
-        $reMachtKarlchen = false;
-        $kontraMachtKarlchen = false;
-        $reFaengtKarlchen = 0;
-        $kontraFaengtKarlchen = 0;
+            $reMachtKarlchen = false;
+            $kontraMachtKarlchen = false;
+            $reFaengtKarlchen = 0;
+            $kontraFaengtKarlchen = 0;
 
-        if ($karlchen->count() > 0)
-        {
-            if ($hoechsteKarte->rang == 18 && $karlchen->count() == 1) // Karlchen gemacht
+            if ($karlchen->count() > 0)
             {
-                if ($this->getSpieler($hoechsteKarte->gespieltVon)->isRe)
+                if ($hoechsteKarte->rang == 18 && $karlchen->count() == 1) // Karlchen gemacht
                 {
-                    $reMachtKarlchen = true;
-                } else
+                    if ($this->getSpieler($hoechsteKarte->gespieltVon)->isRe)
+                    {
+                        $reMachtKarlchen = true;
+                    } else
+                    {
+                        $kontraMachtKarlchen = true;
+                    }
+                } elseif ($hoechsteKarte->rang == 18 && $karlchen->count() == 2) // Karlchen gemacht und Karlchen fängt Karlchen
                 {
-                    $kontraMachtKarlchen = true;
-                }
-            } elseif ($hoechsteKarte->rang == 18 && $karlchen->count() == 2) // Karlchen gemacht und Karlchen fängt Karlchen
-            {
-                $erstesKarlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
-                $zweitesKarlchenSpieler = $this->getSpieler($karlchen->last()->gespieltVon);
+                    $erstesKarlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
+                    $zweitesKarlchenSpieler = $this->getSpieler($karlchen->last()->gespieltVon);
 
-                if ($erstesKarlchenSpieler->isRe)
-                {
-                    $reMachtKarlchen = true;
-                } else
-                {
-                    $kontraMachtKarlchen = true;
-                }
-
-                if ($erstesKarlchenSpieler->isRe != $zweitesKarlchenSpieler->isRe)
-                {
                     if ($erstesKarlchenSpieler->isRe)
                     {
-                        $reFaengtKarlchen = 1;
+                        $reMachtKarlchen = true;
                     } else
                     {
-                        $kontraFaengtKarlchen = 1;
+                        $kontraMachtKarlchen = true;
                     }
-                }
-            } elseif ($hoechsteKarte->rang != 18 && $karlchen->count() == 1) // Karlchen gefangen
-            {
-                $hoechsteKarteSpieler = $this->getSpieler($hoechsteKarte->gespieltVon);
-                $karlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
 
-                if ($hoechsteKarteSpieler->isRe != $karlchenSpieler->isRe)
+                    if ($erstesKarlchenSpieler->isRe != $zweitesKarlchenSpieler->isRe)
+                    {
+                        if ($erstesKarlchenSpieler->isRe)
+                        {
+                            $reFaengtKarlchen = 1;
+                        } else
+                        {
+                            $kontraFaengtKarlchen = 1;
+                        }
+                    }
+                } elseif ($hoechsteKarte->rang != 18 && $karlchen->count() == 1) // Karlchen gefangen
                 {
-                    if ($hoechsteKarteSpieler->isRe)
-                    {
-                        $reFaengtKarlchen++;
-                    } else
-                    {
-                        $kontraFaengtKarlchen++;
-                    }
-                }
-            } elseif ($hoechsteKarte->rang != 18 && $karlchen->count() == 2) // Zwei Karlchen gefangen
-            {
-                $hoechsteKarteSpieler = $this->getSpieler($hoechsteKarte->gespieltVon);
-                $erstesKarlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
-                $zweitesKarlchenSpieler = $this->getSpieler($karlchen->last()->gespieltVon);
+                    $hoechsteKarteSpieler = $this->getSpieler($hoechsteKarte->gespieltVon);
+                    $karlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
 
-                if ($hoechsteKarteSpieler->isRe != $erstesKarlchenSpieler->isRe)
+                    if ($hoechsteKarteSpieler->isRe != $karlchenSpieler->isRe)
+                    {
+                        if ($hoechsteKarteSpieler->isRe)
+                        {
+                            $reFaengtKarlchen++;
+                        } else
+                        {
+                            $kontraFaengtKarlchen++;
+                        }
+                    }
+                } elseif ($hoechsteKarte->rang != 18 && $karlchen->count() == 2) // Zwei Karlchen gefangen
                 {
-                    if ($hoechsteKarteSpieler->isRe)
+                    $hoechsteKarteSpieler = $this->getSpieler($hoechsteKarte->gespieltVon);
+                    $erstesKarlchenSpieler = $this->getSpieler($karlchen->first()->gespieltVon);
+                    $zweitesKarlchenSpieler = $this->getSpieler($karlchen->last()->gespieltVon);
+
+                    if ($hoechsteKarteSpieler->isRe != $erstesKarlchenSpieler->isRe)
                     {
-                        $reFaengtKarlchen++;
-                    } else
+                        if ($hoechsteKarteSpieler->isRe)
+                        {
+                            $reFaengtKarlchen++;
+                        } else
+                        {
+                            $kontraFaengtKarlchen++;
+                        }
+                    }
+
+                    if ($hoechsteKarteSpieler->isRe != $zweitesKarlchenSpieler->isRe)
                     {
-                        $kontraFaengtKarlchen++;
+                        if ($hoechsteKarteSpieler->isRe)
+                        {
+                            $reFaengtKarlchen++;
+                        } else
+                        {
+                            $kontraFaengtKarlchen++;
+                        }
                     }
                 }
+            }
 
-                if ($hoechsteKarteSpieler->isRe != $zweitesKarlchenSpieler->isRe)
-                {
-                    if ($hoechsteKarteSpieler->isRe)
-                    {
-                        $reFaengtKarlchen++;
-                    } else
-                    {
-                        $kontraFaengtKarlchen++;
-                    }
-                }
-            }
-        }
-
-        if ($gewinntRe)
-        {
-            if ($reMachtKarlchen)
+            if ($gewinntRe)
             {
-                $wertungsPunkte++;
-                $punkteString .= '+1 Karlchen<br>';
-            }
-            if ($kontraMachtKarlchen)
-            {
-                $wertungsPunkte--;
-                $punkteString .= '-1 Karlchen<br>';
-            }
-            if ($reFaengtKarlchen)
-            {
-                $wertungsPunkte += $reFaengtKarlchen;
-                $punkteString .= '+' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
-            }
-            if ($kontraFaengtKarlchen)
-            {
-                $wertungsPunkte -= $kontraFaengtKarlchen;
-                $punkteString .= '-' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
-            }
-        } else
-        {
-            if ($reMachtKarlchen)
-            {
-                $wertungsPunkte--;
-                $punkteString .= '-1 Karlchen<br>';
-            }
-            if ($kontraMachtKarlchen)
-            {
-                $wertungsPunkte++;
-                $punkteString .= '+1 Karlchen<br>';
-            }
-            if ($reFaengtKarlchen)
-            {
-                $wertungsPunkte -= $reFaengtKarlchen;
-                $punkteString .= '-' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
-            }
-            if ($kontraFaengtKarlchen)
-            {
-                $wertungsPunkte += $kontraFaengtKarlchen;
-                $punkteString .= '+' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
-            }
-        }
-
-        /* **** Doppelkopf **** */
-        $alleStiche = collect();
-        foreach ($this->spielerIDs as $spielerID)
-        {
-            $spieler = $this->getSpieler($spielerID);
-            $alleStiche = $alleStiche->concat($spieler->stiche);
-        }
-        foreach ($alleStiche as $stich)
-        {
-            if ($stich->punkteZaehlen() >= 40)
-            {
-                $stecher = $this->getSpieler($stich->stecher);
-                if ($stecher->isRe && $gewinntRe
-                    || !$stecher->isRe && !$gewinntRe)
+                if ($reMachtKarlchen)
                 {
                     $wertungsPunkte++;
-                    $punkteString .= '+1 Doppelkopf<br>';
-                } else
+                    $punkteString .= '+1 Karlchen<br>';
+                }
+                if ($kontraMachtKarlchen)
                 {
                     $wertungsPunkte--;
-                    $punkteString .= '-1 Doppelkopf<br>';
+                    $punkteString .= '-1 Karlchen<br>';
+                }
+                if ($reFaengtKarlchen)
+                {
+                    $wertungsPunkte += $reFaengtKarlchen;
+                    $punkteString .= '+' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
+                }
+                if ($kontraFaengtKarlchen)
+                {
+                    $wertungsPunkte -= $kontraFaengtKarlchen;
+                    $punkteString .= '-' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
+                }
+            } else
+            {
+                if ($reMachtKarlchen)
+                {
+                    $wertungsPunkte--;
+                    $punkteString .= '-1 Karlchen<br>';
+                }
+                if ($kontraMachtKarlchen)
+                {
+                    $wertungsPunkte++;
+                    $punkteString .= '+1 Karlchen<br>';
+                }
+                if ($reFaengtKarlchen)
+                {
+                    $wertungsPunkte -= $reFaengtKarlchen;
+                    $punkteString .= '-' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
+                }
+                if ($kontraFaengtKarlchen)
+                {
+                    $wertungsPunkte += $kontraFaengtKarlchen;
+                    $punkteString .= '+' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
+                }
+            }
+
+            /* **** Doppelkopf **** */
+            $alleStiche = collect();
+            foreach ($this->spielerIDs as $spielerID)
+            {
+                $spieler = $this->getSpieler($spielerID);
+                $alleStiche = $alleStiche->concat($spieler->stiche);
+            }
+            foreach ($alleStiche as $stich)
+            {
+                if ($stich->punkteZaehlen() >= 40)
+                {
+                    $stecher = $this->getSpieler($stich->stecher);
+                    if ($stecher->isRe && $gewinntRe
+                        || !$stecher->isRe && !$gewinntRe)
+                    {
+                        $wertungsPunkte++;
+                        $punkteString .= '+1 Doppelkopf<br>';
+                    } else
+                    {
+                        $wertungsPunkte--;
+                        $punkteString .= '-1 Doppelkopf<br>';
+                    }
                 }
             }
         }
@@ -1277,10 +1325,11 @@ class LiveGame extends Model
             $punkteString = '<b>Kontra</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
         }
 
-        dd($punkteString);
         $this->gewinntRe = $gewinntRe;
         $this->wertungsPunkte = $wertungsPunkte;
         $this->wertung = $punkteString;
+
+        dd($punkteString);
     }
 
     public function spielErgebnisUebertragen()
@@ -1317,50 +1366,110 @@ class LiveGame extends Model
         $this->spielerSpeichern($spieler);
     }
 
+    public function getGegnerIDs($spielerID)
+    {
+        $spielerID = $spielerID ?? auth()->id();
+
+        $ich = $this->getSpieler($spielerID);
+
+        $reOderKontra = $ich->isRe;
+
+        $gegner = $this->res->filter(function ($value, $key) use ($reOderKontra)
+        {
+            return $value != $reOderKontra;
+        });
+
+        return $gegner->keys();
+    }
+
+    public function habenMeineGegnerAngesagt($spielerID)
+    {
+        $gegner = $this->getSpieler($this->getGegnerIDs($spielerID)->first());
+
+        return $gegner->ansage;
+    }
+
+    public function habenMeineGegnerAbgesagt($spielerID)
+    {
+        $gegner = $this->getSpieler($this->getGegnerIDs($spielerID)->first());
+
+        return $gegner->absage;
+    }
+
+    public function moeglicheAnAbsagenBerechnen()
+    {
+        foreach ($this->spielerIDs as $key => $spielerID)
+        {
+            $spieler = $this->getSpieler($spielerID);
+
+            $ansageBisStich = $this->habenMeineGegnerAngesagt($spieler->id) ? 3 : 2;
+
+            if ($spieler->ansage === null && $this->stichNr <= $ansageBisStich)
+            {
+                $spieler->moeglicheAnAbsage = $spieler->isRe ? 'Re' : 'Kontra';
+            } elseif ($spieler->ansage !== null && // Hat schon angesagt
+                      $spieler->absage === null && // Hat noch nicht abgesagt
+                      $this->stichNr <= 3)         // Darf nur bis zum dritten Stich absagen
+            {
+                $spieler->moeglicheAnAbsage = 90;
+            } elseif ($spieler->ansage !== null &&                         // Hat schon angesagt
+                      $spieler->absage > 0 &&                              // Hat schon abgesagt und noch nicht Schwarz gesagt
+                      $this->stichNr <= 3 + (120 - $spieler->absage) / 30) // Darf nur bis zum dritten Stich absagen
+            {
+                $absage = $spieler->absage - 30;
+                $absage = $absage == 0 ? 'Schwarz' : strval($absage);
+                $spieler->moeglicheAnAbsage = $absage;
+            } else
+            {
+                $spieler->moeglicheAnAbsage = null;
+            }
+
+            $this->spielerSpeichern($spieler);
+        }
+    }
+
     public function ansageMachen()
     {
         $spieler = $this->getSpieler();
 
-        //abort_if($this->stichNr > 2 || $spieler->hand->count() < 11, 422, 'Es kann keine Ansage mehr gemacht werden.');
+        $ansageBisStich = $this->habenMeineGegnerAngesagt($spieler->id) ? 3 : 2;
 
-        if ($spieler->ansage === null)
-        {
-            $spieler->ansage = true;
-            $this->spielerSpeichern($spieler);
+        abort_if($this->stichNr > $ansageBisStich, 422, 'Es kann keine Ansage mehr gemacht werden.');
 
-            $anzeige = $this->anzeige;
-            $ansage = $spieler->isRe ? 'Re' : 'Kontra';
-            $anzeige->set('ansage', $spieler->id, $ansage);
-            $this->anzeige = $anzeige;
+        abort_if($spieler->ansage !== null, 422, 'Du hast bereits eine Ansage gemacht!');
 
-            $this->mitspielerSagtAuchAn();
-        } else
-        {
-            abort(422, 'Du hast bereits eine Ansage gemacht!');
-        }
+        $spieler->ansage = true;
+        $this->spielerSpeichern($spieler);
+
+        $this->mitspielerSagtAuchAn();
+
+        $anzeige = $this->anzeige;
+        $ansage = $spieler->isRe ? 'Re' : 'Kontra';
+        $anzeige->set('ansage', $spieler->id, $ansage);
+        $this->anzeige = $anzeige;
     }
 
-    public function absageMachen($zahl)
+    public function absageMachen($absageZahl)
     {
         $spieler = $this->getSpieler();
 
-        // To-Do check ob zu diesem Zeitpunkt noch abgesagt werden darf
-        //abort_if($this->stichNr > 2 || $spieler->hand->count() < 11, 422, 'Es kann keine Ansage mehr gemacht werden.');
-        
+        $zahl = (int) ceil((120 - $absageZahl) / 30);
+
         abort_if($spieler->ansage === null, 422, 'Du musst erst eine Ansage machen!');
 
-        if ($zahl < 90)
-        {
-            abort_if($spieler->absage != $zahl + 30, 422, 'Du musst zuvor Absagen');
-        }
+        abort_if($this->stichNr > 2 + $zahl, 422, 'Es kann keine Ansage mehr gemacht werden.');
 
-        $spieler->absage = $zahl;
+        abort_if($absageZahl < 90 && $spieler->absage != $absageZahl + 30, 422, 'Du musst zuvor absagen!');
+
+        abort_if($this->habenMeineGegnerAbgesagt($spieler->id), 422, 'Du hast keine Ahnung wie das Spiel funktioniert, SPACKO!');
+
+        $spieler->absage = $absageZahl;
         $this->spielerSpeichern($spieler);
 
         $this->mitspielerSagtAuchAb();
 
         $anzeige = $this->anzeige;
-        $anzeige->set('absage', $spieler->id, $zahl);
+        $anzeige->set('absage', $spieler->id, $absageZahl);
         $this->anzeige = $anzeige;
     }
 

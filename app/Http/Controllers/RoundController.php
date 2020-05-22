@@ -44,7 +44,7 @@ class RoundController extends Controller
         if ($liveRound)
         {
             $liveGame = $round->liveRound->liveGames->count() != 0 ? $liveRound->currentLiveGame() : null;
-            //dd($liveGame->aktuellerStich);
+            //dd($liveGame->moeglicheAnAbsagenBerechnen());
         } else
         {
             $liveGame = null;

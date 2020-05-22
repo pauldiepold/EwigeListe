@@ -3893,12 +3893,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -3928,6 +3922,8 @@ __webpack_require__.r(__webpack_exports__);
       ich: 'null',
       error: '',
       soli: ['Fleischlos', 'Bubensolo', 'Damensolo', 'Königssolo'],
+      farbsoli: ['Trumpfsolo', 'Farbsolo Herz', 'Farbsolo Pik', 'Farbsolo Kreuz'],
+      farbsoliAnzeigen: false,
       letzterStichEingeblendet: false,
       armutKarten: []
     };
@@ -4057,34 +4053,27 @@ __webpack_require__.r(__webpack_exports__);
         return _this4.handleError(error);
       });
     },
-    ansage: function ansage() {
+    ansage: function ansage(_ansage) {
       var _this5 = this;
 
-      axios.post('/api/live/' + this.liveGame.id + '/ansage', {})["catch"](function (error) {
+      axios.post('/api/live/' + this.liveGame.id + '/ansage', {
+        ansage: _ansage
+      })["catch"](function (error) {
         return _this5.handleError(error);
       });
     },
-    absage: function absage(zahl) {
+    reloadData: function reloadData() {
       var _this6 = this;
 
-      axios.post('/api/live/' + this.liveGame.id + '/absage', {
-        zahl: zahl
-      })["catch"](function (error) {
-        return _this6.handleError(error);
-      });
-    },
-    reloadData: function reloadData() {
-      var _this7 = this;
-
       axios.get('/api/live/' + this.liveGame.id + '/reloadData').then(function (response) {
-        _this7.ich = response.data.ich;
-        _this7.liveGame = response.data.liveGame;
-        _this7.ich.hand = Object.values(_this7.ich.hand);
-        _this7.ich.moeglicheVorbehalte = Object.values(_this7.ich.moeglicheVorbehalte);
+        _this6.ich = response.data.ich;
+        _this6.liveGame = response.data.liveGame;
+        _this6.ich.hand = Object.values(_this6.ich.hand);
+        _this6.ich.moeglicheVorbehalte = Object.values(_this6.ich.moeglicheVorbehalte);
 
-        _this7.liveGame.spielerIDs.forEach(function (spielerID) {
-          if (!_this7.players.includes(spielerID)) {
-            _this7.liveGame.spieler[spielerID].online = false;
+        _this6.liveGame.spielerIDs.forEach(function (spielerID) {
+          if (!_this6.players.includes(spielerID)) {
+            _this6.liveGame.spieler[spielerID].online = false;
           }
         });
       });
@@ -72586,7 +72575,9 @@ var render = function() {
             ? _c("h4", [_vm._v("Spielfindung")])
             : _vm._e(),
           _vm._v(" "),
-          _vm.istPhase(4) ? _c("h4", [_vm._v("Spiel")]) : _vm._e()
+          _vm.istPhase(4)
+            ? _c("h4", [_vm._v("Spiel -- " + _vm._s(_vm.liveGame.spieltyp))])
+            : _vm._e()
         ]),
     _vm._v(" "),
     _c("hr"),
@@ -72647,23 +72638,26 @@ var render = function() {
                         ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "tw-flex tw-items-center" }, [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-primary tw-mr-6 tw-max-w-4xs",
-                          attrs: { disabled: !_vm.binIchDran },
-                          on: {
-                            click: function($event) {
-                              return _vm.vorbehaltSenden("Gesund")
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "\n                        Gesund\n                    "
+                      !_vm.ich.moeglicheVorbehalte.includes("Hochzeit")
+                        ? _c(
+                            "button",
+                            {
+                              staticClass:
+                                "btn btn-primary tw-mr-6 tw-max-w-4xs",
+                              attrs: { disabled: !_vm.binIchDran },
+                              on: {
+                                click: function($event) {
+                                  return _vm.vorbehaltSenden("Gesund")
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n                        Gesund\n                    "
+                              )
+                            ]
                           )
-                        ]
-                      ),
+                        : _vm._e(),
                       _vm._v(" "),
                       _c(
                         "div",
@@ -72671,10 +72665,11 @@ var render = function() {
                         _vm._l(_vm.ich.moeglicheVorbehalte, function(
                           vorbehalt
                         ) {
-                          return !_vm.soli.includes(vorbehalt)
+                          return !_vm.soli.includes(vorbehalt) &&
+                            !_vm.farbsoli.includes(vorbehalt)
                             ? _c("button", {
                                 staticClass:
-                                  "btn btn-outline-primary tw-my-1 tw-mr-6 tw-max-w-4xs",
+                                  "btn btn-outline-primary tw-my-1 tw-mr-6",
                                 attrs: { disabled: !_vm.binIchDran },
                                 domProps: { textContent: _vm._s(vorbehalt) },
                                 on: {
@@ -72697,7 +72692,7 @@ var render = function() {
                           return _vm.soli.includes(vorbehalt)
                             ? _c("button", {
                                 staticClass:
-                                  "btn btn-outline-primary tw-my-1 tw-max-w-4xs",
+                                  "btn btn-outline-primary tw-my-1 tw-mr-6",
                                 attrs: { disabled: !_vm.binIchDran },
                                 domProps: { textContent: _vm._s(vorbehalt) },
                                 on: {
@@ -72709,6 +72704,45 @@ var render = function() {
                             : _vm._e()
                         }),
                         0
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "tw-flex tw-flex-col tw-max-w-2xs" },
+                        [
+                          !_vm.farbsoliAnzeigen
+                            ? _c("button", {
+                                staticClass: "btn btn-outline-primary tw-my-1",
+                                attrs: { disabled: !_vm.binIchDran },
+                                domProps: { textContent: _vm._s("Farbsolo") },
+                                on: {
+                                  click: function($event) {
+                                    _vm.farbsoliAnzeigen = true
+                                  }
+                                }
+                              })
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm._l(_vm.ich.moeglicheVorbehalte, function(
+                            vorbehalt
+                          ) {
+                            return _vm.farbsoli.includes(vorbehalt) &&
+                              _vm.farbsoliAnzeigen
+                              ? _c("button", {
+                                  staticClass:
+                                    "btn btn-outline-primary tw-my-1",
+                                  attrs: { disabled: !_vm.binIchDran },
+                                  domProps: { textContent: _vm._s(vorbehalt) },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.vorbehaltSenden(vorbehalt)
+                                    }
+                                  }
+                                })
+                              : _vm._e()
+                          })
+                        ],
+                        2
                       )
                     ])
                   ]
@@ -72961,108 +72995,22 @@ var render = function() {
                     return [
                       _vm.istPhase(4)
                         ? _c("div", [
-                            _vm.binIchDran &&
-                            _vm.liveGame.stichNr <= 2 &&
-                            _vm.ich.ansage !== true
+                            _vm.binIchDran && _vm.ich.moeglicheAnAbsage
                               ? _c("button", {
                                   staticClass: "btn btn-primary btn-sm tw-my-1",
                                   domProps: {
-                                    textContent: _vm._s(_vm.reOderKontra)
+                                    textContent: _vm._s(
+                                      _vm.ich.moeglicheAnAbsage
+                                    )
                                   },
-                                  on: { click: _vm.ansage }
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.ansage(
+                                        _vm.ich.moeglicheAnAbsage
+                                      )
+                                    }
+                                  }
                                 })
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.binIchDran &&
-                            _vm.liveGame.stichNr <= 3 &&
-                            _vm.ich.ansage === true &&
-                            _vm.ich.absage === null
-                              ? _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "btn btn-primary btn-sm tw-my-1",
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.absage(90)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                            Keine 90\n                        "
-                                    )
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.binIchDran &&
-                            _vm.liveGame.stichNr <= 4 &&
-                            _vm.ich.ansage === true &&
-                            _vm.ich.absage === 90
-                              ? _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "btn btn-primary btn-sm tw-my-1",
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.absage(60)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                            Keine 60\n                        "
-                                    )
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.binIchDran &&
-                            _vm.liveGame.stichNr <= 5 &&
-                            _vm.ich.ansage === true &&
-                            _vm.ich.absage === 60
-                              ? _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "btn btn-primary btn-sm tw-my-1",
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.absage(30)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                            Keine 30\n                        "
-                                    )
-                                  ]
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.binIchDran &&
-                            _vm.liveGame.stichNr <= 6 &&
-                            _vm.ich.ansage === true &&
-                            _vm.ich.absage === 30
-                              ? _c(
-                                  "button",
-                                  {
-                                    staticClass:
-                                      "btn btn-primary btn-sm tw-my-1",
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.absage(0)
-                                      }
-                                    }
-                                  },
-                                  [
-                                    _vm._v(
-                                      "\n                            Schwarz\n                        "
-                                    )
-                                  ]
-                                )
                               : _vm._e()
                           ])
                         : _vm._e()

@@ -20,6 +20,7 @@ class Spieler
     public $isRe;
     public $ansage;
     public $absage;
+    public $moeglicheAnAbsage;
     public $punkte;
 
     /**
@@ -45,6 +46,7 @@ class Spieler
         $this->isRe = null;
         $this->ansage = null;
         $this->absage = null;
+        $this->moeglicheAnAbsage = null;
         $this->punkte = null;
     }
 
@@ -96,6 +98,7 @@ class Spieler
             $spieler->isRe = $input->isRe;
             $spieler->ansage = $input->ansage;
             $spieler->absage = $input->absage;
+            $spieler->moeglicheAnAbsage = $input->moeglicheAnAbsage;
             $spieler->punkte = $input->punkte;
 
             return $spieler;

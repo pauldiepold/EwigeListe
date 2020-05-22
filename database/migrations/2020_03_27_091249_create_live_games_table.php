@@ -39,7 +39,7 @@ class CreateLiveGamesTable extends Migration
 
             $table->boolean('gewinntRe')->nullable();
             $table->integer('wertungsPunkte')->nullable();
-            $table->string('wertung');
+            $table->text('wertung');
 
             $table->boolean('beendet');
 

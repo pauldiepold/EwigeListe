@@ -8,7 +8,7 @@
         <div v-else>
             <h4 v-if="istPhase(0)">Spielvorbereitung</h4>
             <h4 v-if="istPhase(1) || istPhase(3)">Spielfindung</h4>
-            <h4 v-if="istPhase(4)">Spiel</h4>
+            <h4 v-if="istPhase(4)">Spiel -- {{ liveGame.spieltyp }}</h4>
         </div>
         <hr>
 
@@ -38,23 +38,37 @@
                     <div class="tw-flex tw-items-center">
                         <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
                                 :disabled="!binIchDran"
+                                v-if="!ich.moeglicheVorbehalte.includes('Hochzeit')"
                                 @click="vorbehaltSenden('Gesund')">
                             Gesund
                         </button>
                         <div class="tw-flex tw-flex-col">
-                            <button class="btn btn-outline-primary tw-my-1 tw-mr-6 tw-max-w-4xs"
+                            <button class="btn btn-outline-primary tw-my-1 tw-mr-6"
                                     v-for="vorbehalt in ich.moeglicheVorbehalte"
                                     @click="vorbehaltSenden(vorbehalt)"
                                     v-text="vorbehalt"
-                                    v-if="!soli.includes(vorbehalt)"
+                                    v-if="!soli.includes(vorbehalt) && !farbsoli.includes(vorbehalt)"
                                     :disabled="!binIchDran"/>
                         </div>
                         <div class="tw-flex tw-flex-col tw-max-w-4xs">
-                            <button class="btn btn-outline-primary tw-my-1 tw-max-w-4xs"
+                            <button class="btn btn-outline-primary tw-my-1 tw-mr-6"
                                     v-for="vorbehalt in ich.moeglicheVorbehalte"
                                     @click="vorbehaltSenden(vorbehalt)"
                                     v-text="vorbehalt"
                                     v-if="soli.includes(vorbehalt)"
+                                    :disabled="!binIchDran"/>
+                        </div>
+                        <div class="tw-flex tw-flex-col tw-max-w-2xs">
+                            <button class="btn btn-outline-primary tw-my-1"
+                                    @click="farbsoliAnzeigen = true"
+                                    v-text="'Farbsolo'"
+                                    v-if="!farbsoliAnzeigen"
+                                    :disabled="!binIchDran"/>
+                            <button class="btn btn-outline-primary tw-my-1"
+                                    v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                    @click="vorbehaltSenden(vorbehalt)"
+                                    v-text="vorbehalt"
+                                    v-if="farbsoli.includes(vorbehalt) && farbsoliAnzeigen"
                                     :disabled="!binIchDran"/>
                         </div>
                     </div>
@@ -160,29 +174,9 @@
                     <template v-slot:ansagen>
                         <div v-if="istPhase(4)">
                             <button class="btn btn-primary btn-sm tw-my-1"
-                                    @click="ansage"
-                                    v-if="binIchDran && liveGame.stichNr <= 2 && ich.ansage !== true"
-                                    v-text="reOderKontra">
-                            </button>
-                            <button class="btn btn-primary btn-sm tw-my-1"
-                                    @click="absage(90)"
-                                    v-if="binIchDran && liveGame.stichNr <= 3 && ich.ansage === true && ich.absage === null">
-                                Keine 90
-                            </button>
-                            <button class="btn btn-primary btn-sm tw-my-1"
-                                    @click="absage(60)"
-                                    v-if="binIchDran && liveGame.stichNr <= 4 && ich.ansage === true && ich.absage === 90">
-                                Keine 60
-                            </button>
-                            <button class="btn btn-primary btn-sm tw-my-1"
-                                    @click="absage(30)"
-                                    v-if="binIchDran && liveGame.stichNr <= 5 && ich.ansage === true && ich.absage === 60">
-                                Keine 30
-                            </button>
-                            <button class="btn btn-primary btn-sm tw-my-1"
-                                    @click="absage(0)"
-                                    v-if="binIchDran && liveGame.stichNr <= 6 && ich.ansage === true && ich.absage === 30">
-                                Schwarz
+                                    @click="ansage(ich.moeglicheAnAbsage)"
+                                    v-if="binIchDran && ich.moeglicheAnAbsage"
+                                    v-text="ich.moeglicheAnAbsage">
                             </button>
                         </div>
                     </template>
@@ -280,6 +274,8 @@
                 ich: 'null',
                 error: '',
                 soli: ['Fleischlos', 'Bubensolo', 'Damensolo', 'Königssolo'],
+                farbsoli: ['Trumpfsolo', 'Farbsolo Herz', 'Farbsolo Pik', 'Farbsolo Kreuz'],
+                farbsoliAnzeigen: false,
                 letzterStichEingeblendet: false,
                 armutKarten: [],
             }
@@ -414,14 +410,9 @@
                     .catch(error => this.handleError(error));
             },
 
-            ansage() {
-                axios.post('/api/live/' + this.liveGame.id + '/ansage', {})
-                    .catch(error => this.handleError(error));
-            },
-
-            absage(zahl) {
-                axios.post('/api/live/' + this.liveGame.id + '/absage', {
-                    zahl: zahl
+            ansage(ansage) {
+                axios.post('/api/live/' + this.liveGame.id + '/ansage', {
+                    ansage: ansage
                 })
                     .catch(error => this.handleError(error));
             },

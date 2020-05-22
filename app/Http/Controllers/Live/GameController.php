@@ -55,7 +55,11 @@ class GameController extends Controller
                     'Fleischlos',
                     'Bubensolo',
                     'Damensolo',
-                    'Königssolo'
+                    'Königssolo',
+                    'Trumpfsolo',
+                    'Farbsolo Herz',
+                    'Farbsolo Pik',
+                    'Farbsolo Kreuz',
                 ])
             ]
         ]);
@@ -207,6 +211,7 @@ class GameController extends Controller
         $liveGame->naechstenSpielerBerechnen();
         $liveGame->spielbareKartenBerechnen();
         $liveGame->kartenSortieren();
+        $liveGame->moeglicheAnAbsagenBerechnen();
 
         $liveGame->save();
 
@@ -220,25 +225,24 @@ class GameController extends Controller
         $liveGame->istSpielerAktiv();
         $liveGame->istSpielerDran();
 
-        $liveGame->ansageMachen();
-
-        $liveGame->save();
-
-        return 'success';
-    }
-
-    public function absage(LiveGame $liveGame, Request $request)
-    {
-        abort_if($liveGame->phase != 4, 422, 'Falsche Phase!');
-
-        $liveGame->istSpielerAktiv();
-        $liveGame->istSpielerDran();
-
         $validated = $request->validate([
-            'zahl' => 'required|integer'
+            'ansage' => [
+                'required',
+                Rule::in(['Schwarz', 30, 60, 90, 'Re', 'Kontra'])
+            ]
         ]);
 
-        $liveGame->absageMachen($validated['zahl']);
+        $ansage = $validated['ansage'];
+
+        if ($ansage == 'Re' || $ansage == 'Kontra')
+        {
+            $liveGame->ansageMachen();
+        } else {
+            $absage = $ansage == 'Schwarz' ? 0 : intval($ansage);
+            $liveGame->absageMachen($absage);
+        }
+
+        $liveGame->moeglicheAnAbsagenBerechnen();
 
         $liveGame->save();
 
