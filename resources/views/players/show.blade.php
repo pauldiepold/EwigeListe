@@ -191,9 +191,12 @@
                             <table class="table table-sm table-borderless text-left">
                                 <tr>
                                     <td>Zeit:</td>
-                                    <td>{{ floor($profile->games * 8 / 60 / 24 ) }}
-                                        d {{ floor(($profile->games * 8 / 60) % 24) }}h {{ ($profile->games * 8) % 60 }}
-                                        min
+                                    <td>
+                                        @if($profile->games * 8 / 60 / 24 > 1)
+                                            {{ floor($profile->games * 8 / 60 / 24 ) }}d
+                                        @endif
+                                        {{ floor(($profile->games * 8 / 60) % 24) }}h
+                                        {{ ($profile->games * 8) % 60 }}min
                                     </td>
                                 </tr>
                                 <tr>
