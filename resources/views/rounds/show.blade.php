@@ -10,7 +10,7 @@
 
 @section('content')
     <tabs>
-        <tab name="Runde" icon="fa-play-circle">
+        <tab name="Runde" icon="fa-play-circle" :selected="true">
             @if(true)<!--!$round->live_round_id)-->
                 @can('update', $round)
                     @include('games.create')
@@ -48,7 +48,7 @@
                 @push('scriptsHead')
                     <link rel="stylesheet" href="{{ mix('/css/cards.css') }}">
                 @endpush
-                <tab name="Live" icon="fa-dice" :selected="true">
+                <tab name="Live" icon="fa-dice" :selected="false">
                     <template v-slot:default="props">
                         <live-game :round-players-ids='@json($round->players->pluck('id'))'
                                    :live-round-id='@json($liveRound->id)'
