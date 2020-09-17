@@ -9,8 +9,8 @@
 @section('content')
 
     @if(substr($player->user->avatar_path, -11) != 'default.jpg')
-    <img src="{{ $player->user->avatar_path }}"
-         class="tw-mx-auto tw-mb-4 tw-h-32 tw-w-32 tw-rounded-full">
+        <img src="{{ $player->user->avatar_path }}"
+             class="tw-mx-auto tw-mb-4 tw-h-32 tw-w-32 tw-rounded-full">
     @endif
 
     @can('update', $player->user)
@@ -25,7 +25,7 @@
             <select-liste>
                 @foreach($player->groups as $group)
                     <option value="{{ $player->path() . '/' . $group->id . '#statistiken'}}"
-                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                         {{ $group->name }}
                     </option>
                 @endforeach
@@ -185,6 +185,31 @@
                                 <td class="font-weight-bold">{{ $profile->loseStreak }}</td>
                             </tr>
                         </table>
+                        @if($profile->games > 150)
+                            <hr>
+                            <p class="tw-font-bold">Opportunitätskosten:</p>
+                            <table class="table table-sm table-borderless text-left">
+                                <tr>
+                                    <td>Zeit:</td>
+                                    <td>{{ floor($profile->games * 8 / 60 / 24 ) }}
+                                        d {{ floor(($profile->games * 8 / 60) % 24) }}h {{ ($profile->games * 8) % 60 }}
+                                        min
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Entgangenes Hiwi-Gehalt:</td>
+                                    <td>{{ number_format($profile->games * 8 / 60 * 11.5, 2, ',', '.') }}€</td>
+                                </tr>
+                                <tr>
+                                    <td>ECTS:</td>
+                                    <td>{{ number_format($profile->games * 8 / 60 / 30, 1, ',', '.') }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Vorlesungsdoppelstunden:</td>
+                                    <td>{{ number_format($profile->games * 8 / 90, 0, ',', '.') }}</td>
+                                </tr>
+                            </table>
+                        @endif
                     </div>
                 </div>
 
@@ -206,7 +231,7 @@
                 <select-liste>
                     @foreach($player->groups as $group)
                         <option value="{{ $player->path() . '/' . $group->id . '#graphen'}}"
-                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                                {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                             {{ $group->name }}
                         </option>
                     @endforeach
@@ -225,7 +250,7 @@
             <select-liste>
                 @foreach($player->groups as $group)
                     <option value="{{ $player->path() . '/' . $group->id . '#abzeichen'}}"
-                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                         {{ $group->name }}
                     </option>
                 @endforeach
@@ -237,10 +262,10 @@
                         @foreach($type as $badge)
                             @isset($badge->player)
                                 <badge
-                                    date="{{ $badge->date->formatLocalized('%B %Y') }}"
-                                    name="{{ $badge->player->surname }}"
-                                    value="{{ $badge->value }}"
-                                    type="{{ $badge->type }}"
+                                        date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                        name="{{ $badge->player->surname }}"
+                                        value="{{ $badge->value }}"
+                                        type="{{ $badge->type }}"
                                 ></badge>
                             @endisset
                         @endforeach
@@ -256,7 +281,7 @@
             <select-liste>
                 @foreach($player->groups as $group)
                     <option value="{{ $player->path() . '/' . $group->id . '#rundenarchiv'}}"
-                        {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
+                            {{ $selectedGroup->id == $group->id ? ' selected' : '' }}>
                         {{ $group->name }}
                     </option>
                 @endforeach
