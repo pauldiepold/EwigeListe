@@ -47,7 +47,7 @@
                                 <td>Aktuelle Punktzahl:</td>
                                 <td class="font-weight-bold">{{ $profile->points }}</td>
                             </tr>
-                            @if($profile->pointsThisMonth > 0)
+                            @if($profile->pointsThisMonth != 0)
                                 <tr>
                                     <td>Punkte in diesem Monat:</td>
                                     <td class="font-weight-bold">{{ $profile->pointsThisMonth }}</td>
