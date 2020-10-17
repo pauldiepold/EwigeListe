@@ -62,6 +62,9 @@ class RoundController extends Controller
         $playerPoints = collect();
         $dealerIndex = $round->getDealerIndex();
 
+        //Marcus 88 Punkte
+        $playerPoints->put(9, 88);
+
         //Kopfzeile
         $colRow = collect();
         foreach ($round->players as $player)
@@ -77,20 +80,14 @@ class RoundController extends Controller
         $colRound->push($colRow);
 
         //Spiele
-        foreach ($round->games()->with('players')->get() as $i => $game)
+        foreach ($round->games()->with('players')->get() as $game)
         {
             $colRow = collect();
-            foreach ($round->players as $k => $player)
+            foreach ($round->players as $player)
             {
                 if ($game->players->pluck('id')->contains($player->id))
                 {
-                    if ($player->id == 9 && $i == 0)
-                    {
-                        $playerPoints->put($player->id, 88 + $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
-                    } else
-                    {
-                        $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
-                    }
+                    $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
                     $colItem = collect($playerPoints->get($player->id));
 
                     $game->players->where('id', $player->id)->first()->pivot->won ? $colItem->push('won') : '';
