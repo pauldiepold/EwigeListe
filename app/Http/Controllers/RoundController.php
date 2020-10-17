@@ -77,14 +77,20 @@ class RoundController extends Controller
         $colRound->push($colRow);
 
         //Spiele
-        foreach ($round->games()->with('players')->get() as $game)
+        foreach ($round->games()->with('players')->get() as $i => $game)
         {
             $colRow = collect();
-            foreach ($round->players as $player)
+            foreach ($round->players as $k => $player)
             {
                 if ($game->players->pluck('id')->contains($player->id))
                 {
-                    $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
+                    if ($player->id == 9 && $i == 0)
+                    {
+                        $playerPoints->put($player->id, 88 + $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
+                    } else
+                    {
+                        $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
+                    }
                     $colItem = collect($playerPoints->get($player->id));
 
                     $game->players->where('id', $player->id)->first()->pivot->won ? $colItem->push('won') : '';
