@@ -10,13 +10,7 @@
 </template>
 
 <script>
-    import Karte from "./Karte";
-
     export default {
-        components: {
-            Karte
-        },
-
         props: {
             karten: [Array, Object],
             armut: {

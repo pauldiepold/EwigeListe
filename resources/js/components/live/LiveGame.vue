@@ -242,17 +242,7 @@
 
 <script>
 
-    import Hand from "./Hand";
-    import Stich from "./Stich";
-    import Spieler from "./Spieler";
-
     export default {
-        components: {
-            Hand,
-            Stich,
-            Spieler
-        },
-
         props: {
             authId: Number,
             roundPlayersIds: Array,

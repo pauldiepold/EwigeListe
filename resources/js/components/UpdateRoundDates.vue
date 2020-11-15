@@ -19,16 +19,11 @@
 </template>
 
 <script>
-    import DatePicker from './components/DatePicker';
     import moment from 'moment';
 
     moment.locale('de');
 
     export default {
-        components: {
-            DatePicker
-        },
-
         props: [
             'roundId'
         ],

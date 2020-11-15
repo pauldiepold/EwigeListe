@@ -34,13 +34,11 @@
 </template>
 
 <script>
-    import ImageUpload from './components/ImageUpload.vue'
     import {Cropper} from "vue-advanced-cropper";
 
     export default {
         components: {
             Cropper,
-            ImageUpload
         },
 
         props: ['user'],

@@ -13,16 +13,11 @@
 
 <script>
 
-    import DatePicker from './components/DatePicker';
     import moment from 'moment';
 
     moment.locale('de');
 
     export default {
-        components: {
-            DatePicker
-        },
-
         props: {
             allPlayers: {
                 type: Array,

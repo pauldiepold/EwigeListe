@@ -86,15 +86,8 @@
 </template>
 
 <script>
-    import SortablePlayer from "./SortablePlayer";
-    import SortablePlayersList from "./SortablePlayersList";
 
     export default {
-        components: {
-            SortablePlayer,
-            SortablePlayersList,
-        },
-
         props: {
             allPlayers: {
                 type: Array,

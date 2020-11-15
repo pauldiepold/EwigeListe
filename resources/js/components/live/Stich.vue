@@ -18,13 +18,7 @@
 </template>
 
 <script>
-    import Karte from "./Karte";
-
     export default {
-        components: {
-            Karte
-        },
-
         props: {
             stich: Array,
             authId: Number,
