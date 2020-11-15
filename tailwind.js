@@ -1,5 +1,8 @@
 module.exports = {
     prefix: 'tw-',
+    purge: {
+        enabled: false,
+    },
     theme: {
         extend: {
             colors: {
