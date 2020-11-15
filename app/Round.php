@@ -41,8 +41,6 @@ class Round extends Model
 
     protected $fillable = ['created_by', 'liveGame'];
 
-    protected $appends = ['players_string', 'path'];
-
     protected $attributes = [];
 
     public static function boot()
@@ -84,21 +82,36 @@ class Round extends Model
         return $this->games->last();
     }
 
+    public function getDealerIndexAttribute()
+    {
+        return $this->getDealerIndex();
+    }
+
     public function getDealerIndex()
     {
         return $this
-                   ->games()
+                   ->games
                    ->where('solo', 0)
                    ->where('misplay', 0)
                    ->count()
                % $this
-                   ->players()
+                   ->players
                    ->count();
+    }
+
+    public function getInactivePlayersAttribute()
+    {
+        return $this->getInactivePlayers();
     }
 
     public function getInactivePlayers()
     {
         return $this->players->diff($this->getActivePlayers());
+    }
+
+    public function getActivePlayersAttribute()
+    {
+        return $this->getActivePlayers();
     }
 
     public function getActivePlayers($sortPlayers = true)
@@ -138,7 +151,7 @@ class Round extends Model
 
         foreach ($playerIndices as $playerIndex)
         {
-            $players->push($this->players()->wherePivot('index', $playerIndex)->get()->first());
+            $players->push($this->players->where('pivot.index', $playerIndex)->first());
         }
 
         return $players;

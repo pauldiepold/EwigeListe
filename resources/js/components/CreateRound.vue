@@ -42,12 +42,12 @@
                              @remove-player="removePlayer"/>
         </sortable-players-list>
 
-        <!--<div class="custom-control custom-checkbox tw-my-6">
+        <div class="custom-control custom-checkbox tw-my-6">
             <input class="custom-control-input" type="checkbox" v-model="liveGame" id="liveGame">
             <label class="custom-control-label" for="liveGame">
                 Runde online spielen?
             </label>
-        </div>-->
+        </div>
 
         <form @submit.prevent="submit">
             <button :disabled="players.length < 4"

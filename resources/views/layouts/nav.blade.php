@@ -10,7 +10,7 @@
             <nav-icon icon="fa-home" tooltip="Startseite"></nav-icon>
         </a>
         @auth
-            @if(Auth::user()->player->rounds->count() != 0)
+            @if(Auth::user()->player->rounds()->count() != 0)
                 <a href="{{ route('rounds.current') }}">
                     <nav-icon icon="fa-play-circle" tooltip="Aktuelle Runde"></nav-icon>
                 </a>

@@ -4328,12 +4328,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: [],
+  props: {
+    roundProp: Object,
+    canUpdate: Boolean
+  },
   data: function data() {
     return {
-      show: false
+      round: ''
     };
+  },
+  mounted: function mounted() {
+    this.fetchData();
+  },
+  methods: {
+    fetchData: function fetchData() {
+      var _this = this;
+
+      axios.get('/api/rounds/' + this.roundProp.id + '/fetchData').then(function (response) {
+        _this.round = response.data.data;
+        /*this.ich = response.data.ich;
+        this.liveGame = response.data.liveGame;
+          this.ich.hand = Object.values(this.ich.hand);
+        this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+          this.liveGame.spielerIDs.forEach(spielerID => {
+            if (!this.players.includes(spielerID)) {
+                this.liveGame.spieler[spielerID].online = false;
+            }
+        });*/
+      });
+    }
   }
 });
 
@@ -72808,6 +72837,53 @@ var render = function() {
         1
       ),
       _vm._v(" "),
+      _c("div", { staticClass: "custom-control custom-checkbox tw-my-6" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.liveGame,
+              expression: "liveGame"
+            }
+          ],
+          staticClass: "custom-control-input",
+          attrs: { type: "checkbox", id: "liveGame" },
+          domProps: {
+            checked: Array.isArray(_vm.liveGame)
+              ? _vm._i(_vm.liveGame, null) > -1
+              : _vm.liveGame
+          },
+          on: {
+            change: function($event) {
+              var $$a = _vm.liveGame,
+                $$el = $event.target,
+                $$c = $$el.checked ? true : false
+              if (Array.isArray($$a)) {
+                var $$v = null,
+                  $$i = _vm._i($$a, $$v)
+                if ($$el.checked) {
+                  $$i < 0 && (_vm.liveGame = $$a.concat([$$v]))
+                } else {
+                  $$i > -1 &&
+                    (_vm.liveGame = $$a
+                      .slice(0, $$i)
+                      .concat($$a.slice($$i + 1)))
+                }
+              } else {
+                _vm.liveGame = $$c
+              }
+            }
+          }
+        }),
+        _vm._v(" "),
+        _c(
+          "label",
+          { staticClass: "custom-control-label", attrs: { for: "liveGame" } },
+          [_vm._v("\n            Runde online spielen?\n        ")]
+        )
+      ]),
+      _vm._v(" "),
       _c(
         "form",
         {
@@ -75212,15 +75288,53 @@ var render = function() {
             attrs: { name: "Live", icon: "fa-dice", selected: false }
           }),
           _vm._v(" "),
-          _c("tab", {
-            attrs: {
-              name: "Statistiken",
-              icon: "fa-chart-area",
-              selected: false
-            }
-          }),
+          _vm.round.games.length >= 4
+            ? _c("tab", {
+                attrs: {
+                  name: "Statistiken",
+                  icon: "fa-chart-area",
+                  selected: false
+                },
+                scopedSlots: _vm._u(
+                  [
+                    {
+                      key: "default",
+                      fn: function(props) {
+                        return [
+                          _c("round-graph", {
+                            key: props.tabKey,
+                            attrs: { round_id: _vm.round.id }
+                          })
+                        ]
+                      }
+                    }
+                  ],
+                  null,
+                  false,
+                  1536702046
+                )
+              })
+            : _vm._e(),
           _vm._v(" "),
-          _c("tab", { attrs: { name: "Listen", icon: "fa-list-alt" } }),
+          _c("tab", {
+            attrs: { name: "Listen", icon: "fa-list-alt" },
+            scopedSlots: _vm._u([
+              {
+                key: "default",
+                fn: function(props) {
+                  return [
+                    _c("update-groups", {
+                      key: props.tabKey,
+                      attrs: {
+                        "round-input": _vm.round,
+                        "can-update": _vm.canUpdate
+                      }
+                    })
+                  ]
+                }
+              }
+            ])
+          }),
           _vm._v(" "),
           _c("tab", { attrs: { name: "Kommentare", icon: "fa-comments" } })
         ],

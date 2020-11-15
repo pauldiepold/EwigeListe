@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\Round as RoundResource;
 use App\Http\Requests\UpdateRound;
 use App\Live\Deck;
 use App\LiveRound;
@@ -35,7 +36,7 @@ class RoundController extends Controller
         return view('rounds.index', compact('rounds_count', 'groups', 'selectedGroup'));
     }
 
-    public function show(Round $round)
+    public function show_old(Round $round)
     {
         $round->load('players.groups', 'groups');
         $activePlayers = $round->getActivePlayers();
@@ -107,7 +108,7 @@ class RoundController extends Controller
             $colRound->push($colRow);
         }
 
-        return view('rounds.show', compact(
+        return view('rounds.show_old', compact(
             'round',
             'liveRound',
             'liveGame',
@@ -116,6 +117,27 @@ class RoundController extends Controller
             'lastGame',
             'isCurrentRound'
         ));
+    }
+
+    public function show(Round $round)
+    {
+        $games = Auth::user()->player->games()->latest();
+        if ($games->count() > 0)
+        {
+            $isCurrentRound = $games->first()->round->id == $round->id;
+        } else
+        {
+            $isCurrentRound = false;
+        }
+
+        return view('rounds.show', compact('round', 'isCurrentRound'));
+    }
+
+    public function fetchData(Round $round)
+    {
+        $round->load('liveRound');
+
+        return new RoundResource(Round::find($round->id));
     }
 
     public function current()
