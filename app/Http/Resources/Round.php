@@ -25,7 +25,8 @@ class Round extends JsonResource
             'players_string' => $this->players_string,
             'path' => $this->path,
             'dealer_index' => $this->dealer_index,
-            'created_at' => printDate($this->created_at),
+            'created_at_print' => printDate($this->created_at),
+            'created_at' => $this->created_at,
             'created_by' => $this->createdBy,
 
             'online_players' => [],

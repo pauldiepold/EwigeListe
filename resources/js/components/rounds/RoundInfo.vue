@@ -4,31 +4,21 @@
             <p class="mb-2">
                 Anzahl Spiele: {{ round.games.length }}
             </p>
-            <!--
-            <div v-if="round.games.length >= 4">
-                @php
-                $gameLengthSeconds =
-                $gameLength = floor($gameLengthSeconds / 60) . ' Minuten und ' . ($gameLengthSeconds % 60) . '
-                Sekunden';
-                @endphp
 
-                @if( ($gameLengthSeconds / 60 >= 0) && ($gameLengthSeconds / 60 <= 25))
+            <div v-if="round.games.length >= 4">
                 <p>
-                    Durchschnittliche Spieldauer: {{ $gameLength }}
+                    Durchschnittliche Spieldauer: {{ gameLength }}
                 </p>
-                @endif
-                @endif
             </div>
--->
-            <p class="mb-2 mt-3">
-                Runde gestartet von {{ round.created_by.surname }}
-                <br class="d-block d-sm-none"> {{ round.created_at }}.
-            </p>
-            <p v-if="round.games.length >= 1">
-                Letztes Spiel eingetragen von {{ lastGame.created_by.surname }}
-                <br class="d-block d-sm-none"> {{ lastGame.created_at }}.
-            </p>
         </div>
+        <p class="mb-2 mt-3">
+            Runde gestartet von {{ round.created_by.surname }}
+            <br class="d-block d-sm-none"> {{ round.created_at_print }}.
+        </p>
+        <p v-if="round.games.length >= 1">
+            Letztes Spiel eingetragen von {{ this.round.games[this.round.games.length - 1].created_by.surname }}
+            <br class="d-block d-sm-none"> {{ this.round.games[this.round.games.length - 1].created_at_print }}.
+        </p>
     </div>
 </template>
 
@@ -42,15 +32,28 @@ export default {
     data() {
         return {}
     },
+    created() {
+
+    },
     computed: {
+        beginOfRound() {
+            return moment(this.round.created_at)
+        },
         lastGame() {
-            return this.round.games[this.round.games.length - 1];
+            return moment(this.round.games[this.round.games.length - 1].created_at);
         },
         firstGame() {
-            return this.round.games[0];
+            return moment(this.round.games[0].created_at);
+        },
+        gameLengthSeconds() {
+            if (false && moment().diff(this.lastGame, 'seconds') < 60 * 30) {
+                return moment().diff(this.firstGame, 'seconds') / (this.round.games.length);
+            } else {
+                return this.lastGame.diff(this.firstGame, 'seconds') / (this.round.games.length - 1);
+            }
         },
         gameLength() {
-            return moment(this.lastGame.created_at).diff(moment(this.firstGame.created_at));
+            return Math.floor(this.gameLengthSeconds / 60) + ' Minuten und ' + Math.round(this.gameLengthSeconds % 60) + ' Sekunden';
         },
     },
     methods: {
