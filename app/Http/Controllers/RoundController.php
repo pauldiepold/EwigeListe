@@ -121,8 +121,9 @@ class RoundController extends Controller
 
     public function show(Round $round)
     {
+        $round = new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
+
         $games = Auth::user()->player->games()->latest();
-        $round = new RoundResource($round);
         if ($games->count() > 0)
         {
             $isCurrentRound = $games->first()->round->id == $round->id;
@@ -136,9 +137,7 @@ class RoundController extends Controller
 
     public function fetchData(Round $round)
     {
-        $round->load('liveRound');
-
-        return new RoundResource(Round::find($round->id));
+        return new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
     }
 
     public function current()

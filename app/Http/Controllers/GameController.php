@@ -21,9 +21,10 @@ class   GameController extends Controller
         $this->authorize('update', $round);
 
         $validated = $request->validated();
+        //dd($validated);
         $winners = $validated['winners'];
         $pointsRound = $validated['points'];
-        $misplay = array_key_exists('misplayed', $validated) ? true : false;
+        $misplay = $validated['misplayed'];
 
         $game = $round->addNewGame($winners, $pointsRound, $misplay);
 

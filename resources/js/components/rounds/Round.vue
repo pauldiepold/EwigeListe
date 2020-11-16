@@ -2,9 +2,9 @@
     <div>
         <tabs>
             <tab name="Runde" icon="fa-play-circle" :selected="true">
-
-                <round-table :round="round"></round-table>
-
+                <create-game :round="round" @updated="fetchData"/>
+                <round-table :round="round"/>
+                <round-info :round="round"/>
             </tab>
 
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
@@ -21,7 +21,7 @@
                 <template v-slot:default="props">
                     <update-groups :round-input="round"
                                    :can-update="canUpdate"
-                                   :key="props.tabKey" />
+                                   :key="props.tabKey"/>
                 </template>
             </tab>
         </tabs>

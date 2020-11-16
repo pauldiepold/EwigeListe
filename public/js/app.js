@@ -4292,6 +4292,134 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _lib_Form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../lib/Form */ "./resources/js/lib/Form.js");
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['round'],
+  data: function data() {
+    return {
+      form: new _lib_Form__WEBPACK_IMPORTED_MODULE_0__["default"]({
+        points: 0,
+        winners: [],
+        misplayed: false
+      }),
+      loading: false
+    };
+  },
+  computed: {
+    points: function points() {
+      return parseInt(this.form.points);
+    }
+  },
+  methods: {
+    submit: function submit() {
+      var _this = this;
+
+      this.loading = true;
+      this.form.post('/api/rounds/' + this.round.id + '/game').then(function (response) {
+        _this.loading = false;
+
+        _this.form.reset();
+
+        $('#createGameButton').blur();
+        $('#createGame').modal('hide');
+
+        _this.$emit('updated');
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    pluck: function pluck(array, key) {
+      return array.map(function (o) {
+        return o[key];
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/Round.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/Round.vue?vue&type=script&lang=js& ***!
@@ -4354,6 +4482,80 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+/* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+moment__WEBPACK_IMPORTED_MODULE_0___default.a.locale('de');
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['round'],
+  data: function data() {
+    return {};
+  },
+  computed: {
+    lastGame: function lastGame() {
+      return this.round.games[this.round.games.length - 1];
+    },
+    firstGame: function firstGame() {
+      return this.round.games[0];
+    },
+    gameLength: function gameLength() {
+      return moment__WEBPACK_IMPORTED_MODULE_0___default()(this.lastGame.created_at).diff(moment__WEBPACK_IMPORTED_MODULE_0___default()(this.firstGame.created_at));
+    }
+  },
+  methods: {
+    pluck: function pluck(array, key) {
+      return array.map(function (o) {
+        return o[key];
+      });
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js&":
 /*!****************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js& ***!
@@ -4363,8 +4565,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
 //
 //
 //
@@ -75363,6 +75563,379 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c(
+      "button",
+      {
+        staticClass: "btn btn-primary tw-my-1",
+        attrs: {
+          type: "button",
+          id: "createGameButton",
+          "data-toggle": "modal",
+          "data-target": "#createGame"
+        }
+      },
+      [_vm._v("\n        Spiel eintragen\n    ")]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "modal",
+        attrs: {
+          id: "createGame",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "createModalLabel",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.submit($event)
+                      }
+                    }
+                  },
+                  [
+                    _vm._l(_vm.round.active_players, function(player) {
+                      return _c(
+                        "div",
+                        {
+                          key: player.id,
+                          staticClass: "custom-control custom-checkbox my-1"
+                        },
+                        [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.winners,
+                                expression: "form.winners"
+                              }
+                            ],
+                            staticClass: "custom-control-input",
+                            attrs: {
+                              type: "checkbox",
+                              id: "player" + player.id,
+                              name: "winners[]"
+                            },
+                            domProps: {
+                              value: player.id,
+                              checked: Array.isArray(_vm.form.winners)
+                                ? _vm._i(_vm.form.winners, player.id) > -1
+                                : _vm.form.winners
+                            },
+                            on: {
+                              change: function($event) {
+                                var $$a = _vm.form.winners,
+                                  $$el = $event.target,
+                                  $$c = $$el.checked ? true : false
+                                if (Array.isArray($$a)) {
+                                  var $$v = player.id,
+                                    $$i = _vm._i($$a, $$v)
+                                  if ($$el.checked) {
+                                    $$i < 0 &&
+                                      _vm.$set(
+                                        _vm.form,
+                                        "winners",
+                                        $$a.concat([$$v])
+                                      )
+                                  } else {
+                                    $$i > -1 &&
+                                      _vm.$set(
+                                        _vm.form,
+                                        "winners",
+                                        $$a
+                                          .slice(0, $$i)
+                                          .concat($$a.slice($$i + 1))
+                                      )
+                                  }
+                                } else {
+                                  _vm.$set(_vm.form, "winners", $$c)
+                                }
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass:
+                                "custom-control-label font-weight-bold",
+                              attrs: { for: "player" + player.id }
+                            },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(player.surname) +
+                                  " " +
+                                  _vm._s(player.name) +
+                                  "\n                            "
+                              )
+                            ]
+                          )
+                        ]
+                      )
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "form-row my-4 mx-auto justify-content-center"
+                      },
+                      [
+                        _c("div", { staticClass: "col-xs-6 col-xs-offset-3" }, [
+                          _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.form.points,
+                                expression: "form.points"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: {
+                              type: "number",
+                              min: "-4",
+                              max: "16",
+                              id: "points"
+                            },
+                            domProps: { value: _vm.form.points },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  _vm.form,
+                                  "points",
+                                  $event.target.value
+                                )
+                              }
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "label",
+                            {
+                              staticClass: "control-label font-weight-bold",
+                              attrs: { for: "points" }
+                            },
+                            [_vm._v("Punkte")]
+                          )
+                        ])
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "submit" }
+                      },
+                      [
+                        _c(
+                          "div",
+                          { staticClass: "d-flex vertical-align-center" },
+                          [
+                            _vm.loading
+                              ? _c("span", [
+                                  _c("i", {
+                                    staticClass:
+                                      "fa fa-spinner fa-spin text-lg mr-2",
+                                    staticStyle: {
+                                      "font-size": "1.2rem",
+                                      "vertical-align": "-0.1rem"
+                                    }
+                                  })
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("span", [
+                              _vm._v(
+                                "\n                                    Speichern\n                                "
+                              )
+                            ])
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("hr"),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      { staticClass: "custom-control custom-checkbox my-1" },
+                      [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.form.misplayed,
+                              expression: "form.misplayed"
+                            }
+                          ],
+                          staticClass: "custom-control-input",
+                          attrs: { type: "checkbox", id: "misplayed" },
+                          domProps: {
+                            checked: Array.isArray(_vm.form.misplayed)
+                              ? _vm._i(_vm.form.misplayed, null) > -1
+                              : _vm.form.misplayed
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$a = _vm.form.misplayed,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      _vm.form,
+                                      "misplayed",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      _vm.form,
+                                      "misplayed",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(_vm.form, "misplayed", $$c)
+                              }
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          {
+                            staticClass:
+                              "custom-control-label font-weight-bold",
+                            attrs: { for: "misplayed" }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Falsch bedient?\n                            "
+                            )
+                          ]
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _vm._m(1)
+                  ],
+                  2
+                )
+              ]),
+              _vm._v(" "),
+              _vm._m(2)
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        {
+          staticClass: "modal-title mx-auto",
+          attrs: { id: "createModalLabel" }
+        },
+        [_vm._v("Welche Spieler haben gewonnen?")]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "a",
+      {
+        attrs: {
+          "data-container": "body",
+          "data-toggle": "popover",
+          "data-placement": "top",
+          title: "Falsch bedient?",
+          "data-content":
+            "Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen."
+        }
+      },
+      [_c("i", { staticClass: "fas fa-info-circle fa-lg" })]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-footer" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-outline-secondary mx-auto",
+          attrs: { type: "button", "data-dismiss": "modal" }
+        },
+        [_vm._v("Schließen\n                    ")]
+      )
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/Round.vue?vue&type=template&id=1ce9f562&":
 /*!***************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/Round.vue?vue&type=template&id=1ce9f562& ***!
@@ -75389,7 +75962,16 @@ var render = function() {
             {
               attrs: { name: "Runde", icon: "fa-play-circle", selected: true }
             },
-            [_c("round-table", { attrs: { round: _vm.round } })],
+            [
+              _c("create-game", {
+                attrs: { round: _vm.round },
+                on: { updated: _vm.fetchData }
+              }),
+              _vm._v(" "),
+              _c("round-table", { attrs: { round: _vm.round } }),
+              _vm._v(" "),
+              _c("round-info", { attrs: { round: _vm.round } })
+            ],
             1
           ),
           _vm._v(" "),
@@ -75460,6 +76042,73 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6& ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    {
+      staticClass: "text-muted tw-text-sm tw-mt-6",
+      staticStyle: { "font-size": "0.88rem" }
+    },
+    [
+      _vm.round.games.length !== 0
+        ? _c("div", [
+            _c("p", { staticClass: "mb-2" }, [
+              _vm._v(
+                "\n                Anzahl Spiele: " +
+                  _vm._s(_vm.round.games.length) +
+                  "\n            "
+              )
+            ]),
+            _vm._v(" "),
+            _c("p", { staticClass: "mb-2 mt-3" }, [
+              _vm._v(
+                "\n                Runde gestartet von " +
+                  _vm._s(_vm.round.created_by.surname) +
+                  "\n                "
+              ),
+              _c("br", { staticClass: "d-block d-sm-none" }),
+              _vm._v(" " + _vm._s(_vm.round.created_at) + ".\n            ")
+            ]),
+            _vm._v(" "),
+            _vm.round.games.length >= 1
+              ? _c("p", [
+                  _vm._v(
+                    "\n                Letztes Spiel eingetragen von " +
+                      _vm._s(_vm.lastGame.created_by.surname) +
+                      "\n                "
+                  ),
+                  _c("br", { staticClass: "d-block d-sm-none" }),
+                  _vm._v(
+                    " " + _vm._s(_vm.lastGame.created_at) + ".\n            "
+                  )
+                ])
+              : _vm._e()
+          ])
+        : _vm._e()
+    ]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222&":
 /*!********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222& ***!
@@ -75509,15 +76158,6 @@ var render = function() {
                             staticClass: "tw-flex-col tw-items-center"
                           },
                           [
-                            _c(
-                              "div",
-                              {
-                                staticClass:
-                                  "tw&#45;&#45;mb-6 tw-text-transparent"
-                              },
-                              [_vm._v("asdf")]
-                            ),
-                            _vm._v(" "),
                             _c("img", {
                               staticClass:
                                 "tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full",
@@ -75609,10 +76249,6 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("th", { staticClass: "text-dark" }, [
-      _c("div", { staticClass: "tw&#45;&#45;mb-6 tw-text-transparent" }, [
-        _vm._v("asdf")
-      ]),
-      _vm._v(" "),
       _c("img", {
         staticClass:
           "tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full tw-opacity-0",
@@ -92316,7 +92952,9 @@ var map = {
 	"./components/live/LiveGame.vue": "./resources/js/components/live/LiveGame.vue",
 	"./components/live/Spieler.vue": "./resources/js/components/live/Spieler.vue",
 	"./components/live/Stich.vue": "./resources/js/components/live/Stich.vue",
+	"./components/rounds/CreateGame.vue": "./resources/js/components/rounds/CreateGame.vue",
 	"./components/rounds/Round.vue": "./resources/js/components/rounds/Round.vue",
+	"./components/rounds/RoundInfo.vue": "./resources/js/components/rounds/RoundInfo.vue",
 	"./components/rounds/RoundTable.vue": "./resources/js/components/rounds/RoundTable.vue"
 };
 
@@ -94243,6 +94881,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/rounds/CreateGame.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/rounds/CreateGame.vue ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CreateGame.vue?vue&type=template&id=4114cfc6& */ "./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6&");
+/* harmony import */ var _CreateGame_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CreateGame.vue?vue&type=script&lang=js& */ "./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _CreateGame_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/rounds/CreateGame.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CreateGame_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./CreateGame.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/CreateGame.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CreateGame_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6& ***!
+  \**************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./CreateGame.vue?vue&type=template&id=4114cfc6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/CreateGame.vue?vue&type=template&id=4114cfc6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CreateGame_vue_vue_type_template_id_4114cfc6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/js/components/rounds/Round.vue":
 /*!**************************************************!*\
   !*** ./resources/js/components/rounds/Round.vue ***!
@@ -94307,6 +95014,76 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Round_vue_vue_type_template_id_1ce9f562___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Round_vue_vue_type_template_id_1ce9f562___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundInfo.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/rounds/RoundInfo.vue ***!
+  \******************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RoundInfo.vue?vue&type=template&id=991ad8c6& */ "./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6&");
+/* harmony import */ var _RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RoundInfo.vue?vue&type=script&lang=js& */ "./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/rounds/RoundInfo.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./RoundInfo.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundInfo.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundInfo_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6& ***!
+  \*************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./RoundInfo.vue?vue&type=template&id=991ad8c6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundInfo.vue?vue&type=template&id=991ad8c6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundInfo_vue_vue_type_template_id_991ad8c6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -94381,6 +95158,212 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/lib/Errors.js":
+/*!************************************!*\
+  !*** ./resources/js/lib/Errors.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Errors; });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Errors = /*#__PURE__*/function () {
+  /**
+   * Create a new Errors instance.
+   */
+  function Errors() {
+    _classCallCheck(this, Errors);
+
+    this.errors = {};
+  }
+  /**
+   * Determine if an errors exists for the given field.
+   *
+   * @param {string} field
+   */
+
+
+  _createClass(Errors, [{
+    key: "has",
+    value: function has(field) {
+      return this.errors.hasOwnProperty(field);
+    }
+    /**
+     * Determine if we have any errors.
+     */
+
+  }, {
+    key: "any",
+    value: function any() {
+      return Object.keys(this.errors).length > 0;
+    }
+    /**
+     * Retrieve the error message for a field.
+     *
+     * @param {string} field
+     */
+
+  }, {
+    key: "get",
+    value: function get(field) {
+      if (this.errors[field]) {
+        return this.errors[field][0];
+      }
+    }
+    /**
+     * Record the new errors.
+     *
+     * @param {object} errors
+     */
+
+  }, {
+    key: "record",
+    value: function record(errors) {
+      this.errors = errors;
+    }
+    /**
+     * Clear one or all error fields.
+     *
+     * @param {string|null} field
+     */
+
+  }, {
+    key: "clear",
+    value: function clear(field) {
+      if (field) {
+        delete this.errors[field];
+        return;
+      }
+
+      this.errors = {};
+    }
+  }]);
+
+  return Errors;
+}();
+
+
+
+/***/ }),
+
+/***/ "./resources/js/lib/Form.js":
+/*!**********************************!*\
+  !*** ./resources/js/lib/Form.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Form; });
+/* harmony import */ var _Errors__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Errors */ "./resources/js/lib/Errors.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Form = /*#__PURE__*/function () {
+  function Form(data) {
+    _classCallCheck(this, Form);
+
+    this.originalData = data;
+    this.loading = false;
+
+    for (var field in data) {
+      this[field] = data[field];
+    }
+
+    this.errors = new _Errors__WEBPACK_IMPORTED_MODULE_0__["default"]();
+  }
+
+  _createClass(Form, [{
+    key: "data",
+    value: function data() {
+      var data = {};
+
+      for (var property in this.originalData) {
+        data[property] = this[property];
+      }
+
+      return data;
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      for (var field in this.originalData) {
+        this[field] = this.originalData[field];
+      }
+
+      this.errors.clear();
+    }
+  }, {
+    key: "post",
+    value: function post(url) {
+      return this.submit('post', url);
+    }
+  }, {
+    key: "put",
+    value: function put(url) {
+      return this.submit('put', url);
+    }
+  }, {
+    key: "patch",
+    value: function patch(url) {
+      return this.submit('patch', url);
+    }
+  }, {
+    key: "delete",
+    value: function _delete(url) {
+      return this.submit('delete', url);
+    }
+  }, {
+    key: "submit",
+    value: function submit(requestType, url) {
+      var _this = this;
+
+      this.loading = true;
+      return new Promise(function (resolve, reject) {
+        axios[requestType](url, _this.data()).then(function (response) {
+          _this.onSuccess(response.data);
+
+          resolve(response.data);
+        })["catch"](function (error) {
+          _this.onFail(error.response.data.errors);
+
+          _this.loading = false;
+          reject(error.response);
+        });
+      });
+    }
+  }, {
+    key: "onSuccess",
+    value: function onSuccess(data) {//alert(data.message); // temporary
+      //this.reset();
+    }
+  }, {
+    key: "onFail",
+    value: function onFail(errors) {
+      this.errors.record(errors);
+    }
+  }]);
+
+  return Form;
+}();
+
+
+
+/***/ }),
+
 /***/ "./resources/js/scripts/custom.js":
 /*!****************************************!*\
   !*** ./resources/js/scripts/custom.js ***!
@@ -94388,7 +95371,11 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-$(function () {});
+$(function () {
+  $('body').on('hidden.bs.modal', '.modal', function () {
+    $('.btn').blur();
+  });
+});
 
 /***/ }),
 

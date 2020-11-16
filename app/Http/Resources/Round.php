@@ -20,12 +20,13 @@ class Round extends JsonResource
     {
         return [
             'id' => $this->id,
-            'created_at' => $this->created_at,
             'active_players' => $this->active_players,
             'inactive_players' => $this->inactive_players,
             'players_string' => $this->players_string,
             'path' => $this->players_string,
             'dealer_index' => $this->dealer_index,
+            'created_at' => printDate($this->created_at),
+            'created_by' => $this->createdBy,
 
             'games' => GameResource::collection($this->games),
             'players' => PlayerFullResource::collection($this->players),

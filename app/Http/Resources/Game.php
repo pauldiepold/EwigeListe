@@ -21,6 +21,8 @@ class Game extends JsonResource
             'solo' => $this->solo,
             'points' => $this->points,
             'dealer_index' => $this->dealerIndex,
+            'created_at' => printDate($this->created_at),
+            'created_by' => $this->createdBy,
             'players' => PlayerResource::collection($this->players),
             //'index' => $this->whenPivotLoaded('player_round', fn() => $this->pivot->index),
         ];

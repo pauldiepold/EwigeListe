@@ -50,7 +50,6 @@ Route::middleware('auth')->group(function ()
 
 
     /* *********** Games ************** */
-    Route::get('/rounds/{round}/game/create', 'GameController@create');
     Route::post('/rounds/{round}/game', 'GameController@store');
     Route::patch('/games/{game}', 'GameController@update');
     Route::delete('/games/{game}', 'GameController@destroy');
@@ -86,6 +85,8 @@ Route::middleware('auth')->group(function ()
     Route::prefix('api')->group(function ()
     {
         Route::get('/rounds/{round}/fetchData', 'RoundController@fetchData');
+
+        Route::post('/rounds/{round}/game', 'GameController@store');
 
         Route::middleware('can:update,liveRound')->group(function ()
         {

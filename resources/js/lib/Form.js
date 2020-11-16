@@ -25,7 +25,7 @@ export default class Form {
 
     reset() {
         for (let field in this.originalData) {
-            this[field] = '';
+            this[field] = this.originalData[field];
         }
 
         this.errors.clear();
@@ -67,8 +67,7 @@ export default class Form {
 
     onSuccess(data) {
         //alert(data.message); // temporary
-
-        this.reset();
+        //this.reset();
     }
 
     onFail(errors) {

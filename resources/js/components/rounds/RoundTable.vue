@@ -9,7 +9,6 @@
                                 <!-- Spieler Kopfzeile -->
                                 <th v-for="player in round.players" :key="player.id"
                                     class="tw-flex-col tw-items-center">
-                                    <div class="tw&#45;&#45;mb-6 tw-text-transparent">asdf</div>
                                     <img :src="player.avatar_path"
                                          class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
 
@@ -22,7 +21,6 @@
 
                                 <!-- Punkte -->
                                 <th class="text-dark">
-                                    <div class="tw&#45;&#45;mb-6 tw-text-transparent">asdf</div>
                                     <img src="/storage/avatars/default.jpg"
                                          class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full tw-opacity-0">
                                     Punkte
