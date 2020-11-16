@@ -6,9 +6,20 @@ use App\Events\TestEvent;
 use App\Live\Deck;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class TestController extends Controller
 {
+
+    public function mail()
+    {
+        Mail::raw('It works!', function ($message) {
+            $message->to('mail@pauldiepold.de')
+                ->subject('Hello There');
+        });
+
+        return route('home');
+    }
 
     public function test()
     {

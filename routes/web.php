@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function ()
     Route::patch('users/{user}/password', 'UserController@updatePassword')->name('users.updatePassword');
     Route::patch('users/{user}/listen', 'UserController@updateListen')->name('users.updateListen');
 
+    Route::get('mail', 'TestController@mail');
 
     /* *********** Players *********** */
     Route::get('profil/{player}/{group?}', 'PlayerController@show');
