@@ -6,3 +6,7 @@
   filter: grayscale(1);
   -webkit-filter: grayscale(1)
 }
+
+.disable-dbl-tap-zoom {
+  touch-action: manipulation;
+}
