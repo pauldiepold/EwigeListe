@@ -8,8 +8,17 @@
                 <round-info :round="round"/>
             </tab>
 
-            <tab v-if="false && round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
+            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
+                <div id="fullscreen" class="tw-w-1/2 tw-h-1/2 tw-bg-gray-500 tw-mx-auto">
+                    <button class="btn btn-primary tw-my-4" type="button" @click="toggleFullscreen">
+                        Fullscreen
+                    </button>
+                    <br>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur deleniti
+                    eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum sapiente
+                    voluptas voluptatibus!
 
+                </div>
             </tab>
 
             <tab v-if="round.games.length >= 4" name="Statistiken" icon="fa-chart-area" :selected="false">
@@ -30,7 +39,10 @@
 </template>
 
 <script>
+//import Fullscreen from "vue-fullscreen/src/component.vue"
+
 export default {
+    components: {},
     props: {
         roundProp: Object,
         canUpdate: Boolean,
@@ -75,6 +87,19 @@ export default {
                     this.round = response.data.data;
                     this.reconnectChannels();
                 });
+        },
+        toggleFullscreen() {
+            if (this.fullscreen()) {
+                document.exitFullscreen();
+            } else {
+                document.getElementById('fullscreen').requestFullscreen().catch(console.log)
+            }
+        },
+        fullscreen() {
+            return document.fullscreenElement
+                || document.webkitFullscreenElement
+                || document.mozFullscreenElement
+                || document.msFullscreenElement;
         },
         deleteLastGame() {
             this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);
