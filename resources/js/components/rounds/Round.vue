@@ -10,13 +10,19 @@
 
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
                 <div id="fullscreen" class="tw-w-1/2 tw-h-1/2 tw-bg-gray-500 tw-mx-auto">
-                    <button class="btn btn-primary tw-my-4" type="button" @click="toggleFullscreen">
-                        Fullscreen
-                    </button>
-                    <br>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur deleniti
-                    eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum sapiente
-                    voluptas voluptatibus!
+                    {{ orientation }}
+                    <div v-if="!fullscreen">
+                        <i class="fas fa-expand tw-text-4xl" @click="toggleFullscreen"></i>
+                    </div>
+                    <div v-else>
+                        <i class="fas fa-compress tw-text-4xl" @click="toggleFullscreen"></i>
+                        <br>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur
+                        deleniti
+                        eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum
+                        sapiente
+                        voluptas voluptatibus!
+                    </div>
 
                 </div>
             </tab>
@@ -50,9 +56,17 @@ export default {
     data() {
         return {
             round: this.roundProp,
+            orientation: 0,
+            fullscreen: false,
         }
     },
+    mounted() {
+    },
     created() {
+        this.getOrientation();
+        this.getFullscreen();
+        window.addEventListener("resize", this.getOrientation);
+        window.addEventListener("fullscreenchange", this.getFullscreen);
         this.presenceChannel
             .here(players => {
                 this.round.online_players = this.pluck(players, 'id');
@@ -66,6 +80,10 @@ export default {
             .listen('RoundUpdated', e => {
                 this.fetchData();
             });
+    },
+    destroyed() {
+        window.removeEventListener("resize", this.getOrientation);
+        window.removeEventListener("fullscreenchange", this.getFullscreen);
     },
     computed: {
         presenceChannel() {
@@ -89,7 +107,7 @@ export default {
                 });
         },
         toggleFullscreen() {
-            if (this.fullscreen()) {
+            if (this.fullscreenElement()) {
                 document.exitFullscreen();
             } else {
                 let elem = document.getElementById('fullscreen');
@@ -102,11 +120,21 @@ export default {
                 }
             }
         },
-        fullscreen() {
+        fullscreenElement() {
             return document.fullscreenElement
                 || document.webkitFullscreenElement
                 || document.mozFullscreenElement
                 || document.msFullscreenElement;
+        },
+        getFullscreen() {
+            let fullscreen = !!document.webkitIsFullScreen;
+            this.fullscreen = fullscreen;
+            return fullscreen;
+        },
+        getOrientation() {
+            let orientation = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portait';
+            this.orientation = orientation;
+            return orientation;
         },
         deleteLastGame() {
             this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);

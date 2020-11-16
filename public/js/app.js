@@ -4629,6 +4629,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 //import Fullscreen from "vue-fullscreen/src/component.vue"
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {},
@@ -4638,12 +4644,19 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      round: this.roundProp
+      round: this.roundProp,
+      orientation: 0,
+      fullscreen: false
     };
   },
+  mounted: function mounted() {},
   created: function created() {
     var _this = this;
 
+    this.getOrientation();
+    this.getFullscreen();
+    window.addEventListener("resize", this.getOrientation);
+    window.addEventListener("fullscreenchange", this.getFullscreen);
     this.presenceChannel.here(function (players) {
       _this.round.online_players = _this.pluck(players, 'id');
     }).joining(function (player) {
@@ -4653,6 +4666,10 @@ __webpack_require__.r(__webpack_exports__);
     }).listen('RoundUpdated', function (e) {
       _this.fetchData();
     });
+  },
+  destroyed: function destroyed() {
+    window.removeEventListener("resize", this.getOrientation);
+    window.removeEventListener("fullscreenchange", this.getFullscreen);
   },
   computed: {
     presenceChannel: function presenceChannel() {
@@ -4680,7 +4697,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     toggleFullscreen: function toggleFullscreen() {
-      if (this.fullscreen()) {
+      if (this.fullscreenElement()) {
         document.exitFullscreen();
       } else {
         var elem = document.getElementById('fullscreen');
@@ -4694,8 +4711,18 @@ __webpack_require__.r(__webpack_exports__);
         }
       }
     },
-    fullscreen: function fullscreen() {
+    fullscreenElement: function fullscreenElement() {
       return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement;
+    },
+    getFullscreen: function getFullscreen() {
+      var fullscreen = !!document.webkitIsFullScreen;
+      this.fullscreen = fullscreen;
+      return fullscreen;
+    },
+    getOrientation: function getOrientation() {
+      var orientation = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portait';
+      this.orientation = orientation;
+      return orientation;
     },
     deleteLastGame: function deleteLastGame() {
       this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);
@@ -76434,24 +76461,29 @@ var render = function() {
                       attrs: { id: "fullscreen" }
                     },
                     [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "btn btn-primary tw-my-4",
-                          attrs: { type: "button" },
-                          on: { click: _vm.toggleFullscreen }
-                        },
-                        [
-                          _vm._v(
-                            "\n                    Fullscreen\n                "
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("br"),
                       _vm._v(
-                        "\n                Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur deleniti\n                eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum sapiente\n                voluptas voluptatibus!\n\n            "
-                      )
+                        "\n                " +
+                          _vm._s(_vm.orientation) +
+                          "\n                "
+                      ),
+                      !_vm.fullscreen
+                        ? _c("div", [
+                            _c("i", {
+                              staticClass: "fas fa-expand tw-text-4xl",
+                              on: { click: _vm.toggleFullscreen }
+                            })
+                          ])
+                        : _c("div", [
+                            _c("i", {
+                              staticClass: "fas fa-compress tw-text-4xl",
+                              on: { click: _vm.toggleFullscreen }
+                            }),
+                            _vm._v(" "),
+                            _c("br"),
+                            _vm._v(
+                              "\n                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur\n                    deleniti\n                    eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum\n                    sapiente\n                    voluptas voluptatibus!\n                "
+                            )
+                          ])
                     ]
                   )
                 ]
