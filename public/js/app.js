@@ -4683,7 +4683,15 @@ __webpack_require__.r(__webpack_exports__);
       if (this.fullscreen()) {
         document.exitFullscreen();
       } else {
-        document.getElementById('fullscreen').requestFullscreen()["catch"](console.log);
+        var elem = document.getElementById('fullscreen');
+
+        if (elem.requestFullscreen) {
+          elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+          elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) {
+          elem.msRequestFullscreen();
+        }
       }
     },
     fullscreen: function fullscreen() {
@@ -93578,7 +93586,7 @@ if (token) {
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "b667f98d36e9173c68e2",
+  key: "3f4b86c82d24f86ae81d",
   cluster: "eu",
   forceTLS: true
 });

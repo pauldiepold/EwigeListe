@@ -92,7 +92,14 @@ export default {
             if (this.fullscreen()) {
                 document.exitFullscreen();
             } else {
-                document.getElementById('fullscreen').requestFullscreen().catch(console.log)
+                let elem = document.getElementById('fullscreen');
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) {
+                    elem.msRequestFullscreen();
+                }
             }
         },
         fullscreen() {
