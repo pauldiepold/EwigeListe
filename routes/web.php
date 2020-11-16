@@ -50,12 +50,6 @@ Route::middleware('auth')->group(function ()
     Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable')->name('rounds.archiveTable');
 
 
-    /* *********** Games ************** */
-    Route::post('/rounds/{round}/game', 'GameController@store');
-    Route::patch('/games/{game}', 'GameController@update');
-    Route::delete('/games/{game}', 'GameController@destroy');
-
-
     /* *********** Groups ************** */
     Route::get('liste', 'GroupController@show')->name('ewigeListe');
     Route::get('/listen', 'GroupController@index')->name('groups.index');
@@ -88,6 +82,7 @@ Route::middleware('auth')->group(function ()
         Route::get('/rounds/{round}/fetchData', 'RoundController@fetchData');
 
         Route::post('/rounds/{round}/game', 'GameController@store');
+        Route::delete('/games/{game}', 'GameController@destroy');
 
         Route::middleware('can:update,liveRound')->group(function ()
         {

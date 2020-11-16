@@ -36,103 +36,11 @@ class RoundController extends Controller
         return view('rounds.index', compact('rounds_count', 'groups', 'selectedGroup'));
     }
 
-    public function show_old(Round $round)
-    {
-        $round->load('players.groups', 'groups');
-        $activePlayers = $round->getActivePlayers();
-        $lastGame = $round->getLastGame();
-        $liveRound = $round->liveRound;
-        if ($liveRound)
-        {
-            $liveGame = $round->liveRound->liveGames->count() != 0 ? $liveRound->currentLiveGame() : null;
-            //dd($liveGame->moeglicheAnAbsagenBerechnen());
-        } else
-        {
-            $liveGame = null;
-        }
-
-        if (Auth::user()->player->games->count() > 0)
-        {
-            $isCurrentRound = Auth::user()->player->games()->latest()->first()->round->id == $round->id ? true : false;
-        } else
-        {
-            $isCurrentRound = false;
-        }
-
-        $colRound = collect();
-        $playerPoints = collect();
-        $dealerIndex = $round->getDealerIndex();
-
-        //Marcus 88 Punkte
-        $playerPoints->put(9, 88);
-
-        //Kopfzeile
-        $colRow = collect();
-        foreach ($round->players as $player)
-        {
-            $colItem = collect($player->surname);
-            $colItem->push($player->user->avatar_path);
-            $colItem->push($player->path());
-            $player->pivot->index == $dealerIndex ? $colItem->push('dealer') : '';
-            $activePlayers->pluck('id')->contains($player->id) && $round->players->count() > 5 ? $colItem->push('active') : '';
-
-            $colRow->push($colItem);
-        }
-        $colRound->push($colRow);
-
-        //Spiele
-        foreach ($round->games()->with('players')->get() as $game)
-        {
-            $colRow = collect();
-            foreach ($round->players as $player)
-            {
-                if ($game->players->pluck('id')->contains($player->id))
-                {
-                    $playerPoints->put($player->id, $playerPoints->get($player->id) + $game->players->where('id', $player->id)->first()->pivot->points);
-                    $colItem = collect($playerPoints->get($player->id));
-
-                    $game->players->where('id', $player->id)->first()->pivot->won ? $colItem->push('won') : '';
-                } else
-                {
-                    $colItem = collect('-');
-                }
-                $colRow->push($colItem);
-            }
-
-            $colRow->push(collect($game->points));
-
-            ($game->dealerIndex + 1 == $round->players->count()) && !$game->solo && !$game->misplay ? $colRow->push('endOfRound') : '';
-
-            $game->solo ? $colRow->push('solo') : '';
-            $game->misplay ? $colRow->push('misplay') : '';
-            $colRound->push($colRow);
-        }
-
-        return view('rounds.show_old', compact(
-            'round',
-            'liveRound',
-            'liveGame',
-            'colRound',
-            'activePlayers',
-            'lastGame',
-            'isCurrentRound'
-        ));
-    }
-
     public function show(Round $round)
     {
         $roundResource = new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
 
-        $games = Auth::user()->player->games()->latest();
-        if ($games->count() > 0)
-        {
-            $isCurrentRound = $games->first()->round->id == $round->id;
-        } else
-        {
-            $isCurrentRound = false;
-        }
-
-        return view('rounds.show', compact('round', 'roundResource', 'isCurrentRound'));
+        return view('rounds.show', compact('round', 'roundResource'));
     }
 
     public function fetchData(Round $round)

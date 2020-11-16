@@ -8,7 +8,7 @@
         <div class="modal" id="createGame" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content disable-dbl-tap-zoom">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title mx-auto" id="createModalLabel">Welche Spieler haben gewonnen?</h5>
                     </div>
@@ -16,28 +16,64 @@
 
                         <form @submit.prevent="submit">
 
-                            <div v-for="player in round.active_players" :key="player.id"
-                                 class="custom-control custom-checkbox my-1">
-                                <input class="custom-control-input" type="checkbox" :value="player.id"
-                                       :id="'player' + player.id" name="winners[]" v-model="form.winners">
-                                <label class="custom-control-label font-weight-bold" :for="'player' + player.id">
-                                    {{ player.surname }} {{ player.name }}
-                                </label>
+                            <div class="tw-flex tw-justify-between tw-items-center tw-flex-col">
+                                <div :class="{'tw-shadow-green': winners.includes(activePlayers[2].id),
+                                              'tw-shadow-red':  !winners.includes(activePlayers[2].id)}"
+                                     @click="toggle(activePlayers[2].id)"
+                                     class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1">
+                                    <img :src="activePlayers[2].avatar_path"
+                                         class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold tw-ml-1">
+                                        {{ activePlayers[2].surname }} {{ activePlayers[2].name }}
+                                    </div>
+                                </div>
+                                <div class="tw-flex tw-justify-between tw-my-8 tw-w-full">
+                                    <div :class="{'tw-shadow-green': winners.includes(activePlayers[1].id),
+                                              'tw-shadow-red':  !winners.includes(activePlayers[1].id)}"
+                                         @click="toggle(activePlayers[1].id)"
+                                         class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1">
+                                        <img :src="activePlayers[1].avatar_path"
+                                             class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                        <div class="tw-font-bold tw-ml-1">
+                                            {{ activePlayers[1].surname }} {{ activePlayers[1].name }}
+                                        </div>
+                                    </div>
+                                    <div :class="{'tw-shadow-green': winners.includes(activePlayers[3].id),
+                                              'tw-shadow-red':  !winners.includes(activePlayers[3].id)}"
+                                         @click="toggle(activePlayers[3].id)"
+                                         class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1">
+                                        <img :src="activePlayers[3].avatar_path"
+                                             class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                        <div class="tw-font-bold tw-ml-1">
+                                            {{ activePlayers[3].surname }} {{ activePlayers[3].name }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div :class="{'tw-shadow-green': winners.includes(activePlayers[0].id),
+                                              'tw-shadow-red':  !winners.includes(activePlayers[0].id)}"
+                                     @click="toggle(activePlayers[0].id)"
+                                     class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1">
+                                    <img :src="activePlayers[0].avatar_path"
+                                         class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold tw-ml-1">
+                                        {{ activePlayers[0].surname }} {{ activePlayers[0].name }}
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-row my-4 mx-auto justify-content-center tw-flex">
+                            <div class="form-row tw-mb-4 tw-mt-10 mx-auto justify-content-center tw-flex">
                                 <div class="tw-mr-3 tw-mt-1">
-                                    <i class="fas fa-minus-circle tw-text-3xl tw-text-blue-dark tw-cursor-pointer"
-                                    @click="form.points--"></i>
+                                    <i class="fas fa-minus-circle tw-text-3xl tw-text-gray-800 tw-cursor-pointer"
+                                       @click="points--"></i>
                                 </div>
                                 <div class="col-xs-6 col-xs-offset-3">
                                     <input class="form-control"
-                                           type="number" min="-4" max="16" v-model="form.points" id="points">
+                                           type="number" min="-4" max="16" v-model="points" id="points">
                                     <label for="points" class="control-label font-weight-bold">Punkte</label>
                                 </div>
                                 <div class="tw-ml-3 tw-mt-1">
-                                    <i class="fas fa-plus-circle tw-text-3xl tw-text-blue-dark tw-cursor-pointer"
-                                    @click="form.points++"></i>
+                                    <i class="fas fa-plus-circle tw-text-3xl tw-text-gray-800 tw-cursor-pointer"
+                                       @click="points++"></i>
                                 </div>
                             </div>
 
@@ -55,7 +91,7 @@
                             <hr>
                             <div class="custom-control custom-checkbox my-1">
                                 <input class="custom-control-input" type="checkbox" id="misplayed"
-                                       v-model="form.misplayed"
+                                       v-model="misplayed"
                                 >
                                 <label class="custom-control-label font-weight-bold" for="misplayed">
                                     Falsch bedient?
@@ -79,39 +115,76 @@
 </template>
 
 <script>
-import Form from "../../lib/Form";
-
 export default {
     props: ['round'],
     data() {
         return {
-            form: new Form({
-                points: 0,
-                winners: [],
-                misplayed: false,
-            }),
+            points: 0,
+            winners: [],
+            misplayed: false,
             loading: false,
         }
     },
     computed: {
-        points() {
-            return parseInt(this.form.points);
+        activePlayers() {
+            /* Aktive Spieler sortieren: Immer ausgehend von der eigenen Sitzposition */
+            if (this.pluck(this.round.players, 'id').includes(this.round.authID)) {
+                let output = [];
+                let i;
+                let counter;
+                let startIndex = this.round.players.find(player => player.id === this.round.authID).index;
+
+                /* Wenn man selbst aussetzt, und bei 7er Runden möglicherweise auch der nächste, Index erhöhen */
+                while (!this.pluck(this.round.active_players, 'index').includes(startIndex)) {
+                    if (startIndex >= this.round.players.length - 1) {
+                        startIndex = 0;
+                    } else {
+                        startIndex++;
+                    }
+                }
+                counter = this.pluck(this.round.active_players, 'index').indexOf(startIndex);
+
+                for (i = 0; i <= 3; i++) {
+                    output.push(this.round.active_players[counter]);
+                    if (counter >= 3) {
+                        counter = 0;
+                    } else {
+                        counter++;
+                    }
+                }
+
+                return output;
+            } else {
+                return this.round.active_players;
+            }
         }
     },
     methods: {
         submit() {
             this.loading = true;
-            this.form.post('/api/rounds/' + this.round.id + '/game')
+            axios.post('/api/rounds/' + this.round.id + '/game', {
+                'points': this.points,
+                'winners': this.winners,
+                'misplayed': this.misplayed,
+            })
                 .then(response => {
                     this.loading = false;
-                    this.form.reset();
-                    $('#createGameButton').blur();
+                    this.points = 0;
+                    this.winners = [];
+                    this.misplayed = false;
                     $('#createGame').modal('hide')
                     this.$emit('updated');
                 })
                 .catch(error => {
                     console.log(error);
                 });
+        },
+        toggle(id) {
+            if (this.winners.includes(id)) {
+                this.winners.splice(this.winners.indexOf(id), 1);
+            } else {
+                this.winners.push(id);
+            }
         },
         pluck(array, key) {
             return array.map(o => o[key]);

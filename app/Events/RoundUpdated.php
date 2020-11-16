@@ -15,15 +15,15 @@ class RoundUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $round;
+    public $roundID;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Round $round)
+    public function __construct($roundID)
     {
-        $this->round = $round;
+        $this->roundID = $roundID;
     }
 
     /**
@@ -34,7 +34,7 @@ class RoundUpdated implements ShouldBroadcast
     public function broadcastOn()
     {
         return new PresenceChannel(
-            'round.' . $this->round->id
+            'round.' . $this->roundID
         );
     }
 }

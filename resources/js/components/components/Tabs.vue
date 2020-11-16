@@ -2,8 +2,8 @@
     <div style="min-height: 50vh;"
          v-touch:swipe.left="swipeLeft"
          v-touch:swipe.right="swipeRight">
-        <div class="tw-sticky tw-z-50 tw-pt-2 tw--mx-4 tw-flex tw-justify-center"
-             style="top: 48px; background-color: #f1f1ef;">
+        <div class="tw-sticky tw-top-0 tw-z-50 tw-pt-2 tw--mx-4 tw-flex tw-justify-center"
+             style="background-color: #f1f1ef;">
             <ul class="tw-flex-1 tw-flex tw-justify-around tw-border-b tw-border-gray-400 tw-max-w-md">
                 <li class="tw-mx-1" v-for="tab in tabs">
                     <a class="tw-min-w-7xs tw-inline-block tw-py-2 tw-text-orange-600 tw-w-100 tw-no-underline hover:tw-no-underline "

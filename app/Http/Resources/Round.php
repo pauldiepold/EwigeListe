@@ -20,8 +20,8 @@ class Round extends JsonResource
     {
         return [
             'id' => $this->id,
-            'active_players' => $this->active_players,
-            'inactive_players' => $this->inactive_players,
+            'active_players' => PlayerFullResource::collection($this->active_players),
+            'inactive_players' => PlayerFullResource::collection($this->inactive_players),
             'players_string' => $this->players_string,
             'path' => $this->path,
             'dealer_index' => $this->dealer_index,
@@ -29,6 +29,7 @@ class Round extends JsonResource
             'created_by' => $this->createdBy,
 
             'online_players' => [],
+            'authID' => auth()->id(),
 
             'games' => GameResource::collection($this->games),
             'players' => PlayerFullResource::collection($this->players),
