@@ -25,11 +25,19 @@
                                 </label>
                             </div>
 
-                            <div class="form-row my-4 mx-auto justify-content-center">
+                            <div class="form-row my-4 mx-auto justify-content-center tw-flex">
+                                <div class="tw-mr-3 tw-mt-1">
+                                    <i class="fas fa-minus-circle tw-text-3xl tw-text-blue-dark tw-cursor-pointer"
+                                    @click="form.points--"></i>
+                                </div>
                                 <div class="col-xs-6 col-xs-offset-3">
                                     <input class="form-control"
                                            type="number" min="-4" max="16" v-model="form.points" id="points">
                                     <label for="points" class="control-label font-weight-bold">Punkte</label>
+                                </div>
+                                <div class="tw-ml-3 tw-mt-1">
+                                    <i class="fas fa-plus-circle tw-text-3xl tw-text-blue-dark tw-cursor-pointer"
+                                    @click="form.points++"></i>
                                 </div>
                             </div>
 
