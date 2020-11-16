@@ -122,6 +122,7 @@ class RoundController extends Controller
     public function show(Round $round)
     {
         $games = Auth::user()->player->games()->latest();
+        $round = new RoundResource($round);
         if ($games->count() > 0)
         {
             $isCurrentRound = $games->first()->round->id == $round->id;

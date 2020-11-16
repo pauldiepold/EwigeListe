@@ -4331,8 +4331,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     roundProp: Object,
@@ -4340,11 +4338,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      round: ''
+      round: this.roundProp
     };
-  },
-  mounted: function mounted() {
-    this.fetchData();
   },
   methods: {
     fetchData: function fetchData() {
@@ -4352,15 +4347,124 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get('/api/rounds/' + this.roundProp.id + '/fetchData').then(function (response) {
         _this.round = response.data.data;
-        /*this.ich = response.data.ich;
-        this.liveGame = response.data.liveGame;
-          this.ich.hand = Object.values(this.ich.hand);
-        this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-          this.liveGame.spielerIDs.forEach(spielerID => {
-            if (!this.players.includes(spielerID)) {
-                this.liveGame.spieler[spielerID].online = false;
-            }
-        });*/
+      });
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['round'],
+  data: function data() {
+    return {};
+  },
+  computed: {
+    points: function points() {
+      var _this = this;
+
+      var i;
+      var k;
+      var playerPoints = [];
+      var player;
+
+      for (k = 0; k < this.round.players.length; k++) {
+        playerPoints[k] = 0;
+      }
+
+      var output = [];
+
+      for (i = 0; i < this.round.games.length; i++) {
+        output[i] = [];
+
+        for (k = 0; k < this.round.players.length; k++) {
+          if (this.pluck(this.round.games[i].players, 'id').includes(this.round.players[k].id)) {
+            player = this.round.games[i].players.find(function (player) {
+              return player.id === _this.round.players[k].id;
+            });
+            playerPoints[k] = playerPoints[k] + player.points;
+            output[i][k] = {
+              points: playerPoints[k],
+              won: player.won
+            };
+          } else {
+            output[i][k] = {
+              points: '-',
+              won: false
+            };
+          }
+        }
+      }
+
+      return output;
+    }
+  },
+  methods: {
+    pluck: function pluck(array, key) {
+      return array.map(function (o) {
+        return o[key];
       });
     }
   }
@@ -75280,13 +75384,20 @@ var render = function() {
       _c(
         "tabs",
         [
-          _c("tab", {
-            attrs: { name: "Runde", icon: "fa-play-circle", selected: true }
-          }),
+          _c(
+            "tab",
+            {
+              attrs: { name: "Runde", icon: "fa-play-circle", selected: true }
+            },
+            [_c("round-table", { attrs: { round: _vm.round } })],
+            1
+          ),
           _vm._v(" "),
-          _c("tab", {
-            attrs: { name: "Live", icon: "fa-dice", selected: false }
-          }),
+          _vm.round.live_round !== null
+            ? _c("tab", {
+                attrs: { name: "Live", icon: "fa-dice", selected: false }
+              })
+            : _vm._e(),
           _vm._v(" "),
           _vm.round.games.length >= 4
             ? _c("tab", {
@@ -75334,9 +75445,7 @@ var render = function() {
                 }
               }
             ])
-          }),
-          _vm._v(" "),
-          _c("tab", { attrs: { name: "Kommentare", icon: "fa-comments" } })
+          })
         ],
         1
       )
@@ -75345,6 +75454,176 @@ var render = function() {
   )
 }
 var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "touch",
+            rawName: "v-touch:swipe.stop",
+            arg: "swipe",
+            modifiers: { stop: true }
+          }
+        ],
+        staticClass: "row justify-content-center mt-4"
+      },
+      [
+        _c(
+          "div",
+          { staticClass: "col col-xl-6 col-lg-8 col-md-10 col-sm-12" },
+          [
+            _c("div", { staticClass: "table-responsive" }, [
+              _c("table", { staticClass: "table mb-1" }, [
+                _c("thead", [
+                  _c(
+                    "tr",
+                    { staticClass: "border-bottom-thick" },
+                    [
+                      _vm._l(_vm.round.players, function(player) {
+                        return _c(
+                          "th",
+                          {
+                            key: player.id,
+                            staticClass: "tw-flex-col tw-items-center"
+                          },
+                          [
+                            _c(
+                              "div",
+                              {
+                                staticClass:
+                                  "tw&#45;&#45;mb-6 tw-text-transparent"
+                              },
+                              [_vm._v("asdf")]
+                            ),
+                            _vm._v(" "),
+                            _c("img", {
+                              staticClass:
+                                "tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full",
+                              attrs: { src: player.avatar_path }
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                class: {
+                                  "text-dark":
+                                    _vm.round.dealer_index !== player.index,
+                                  "active-player":
+                                    _vm.round.players.length > 5 &&
+                                    _vm
+                                      .pluck(_vm.round.active_players, "id")
+                                      .includes(player.id)
+                                },
+                                attrs: { href: player.path }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                                    " +
+                                    _vm._s(player.surname) +
+                                    "\n                                "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      }),
+                      _vm._v(" "),
+                      _vm._m(0)
+                    ],
+                    2
+                  )
+                ]),
+                _vm._v(" "),
+                _c(
+                  "tbody",
+                  _vm._l(_vm.round.games, function(game, index) {
+                    return _c(
+                      "tr",
+                      {
+                        key: game.id,
+                        class: {
+                          "bg-danger-light": game.misplay,
+                          "bg-light": game.solo,
+                          "border-bottom-thick":
+                            game.dealer_index + 1 ===
+                              _vm.round.players.length &&
+                            !game.solo &&
+                            !game.misplay
+                        }
+                      },
+                      [
+                        _vm._l(_vm.points[index], function(player, index) {
+                          return _c(
+                            "td",
+                            { class: { "font-weight-bold": player.won } },
+                            [
+                              _vm._v(
+                                "\n                                " +
+                                  _vm._s(player.points) +
+                                  "\n                            "
+                              )
+                            ]
+                          )
+                        }),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(game.points))])
+                      ],
+                      2
+                    )
+                  }),
+                  0
+                )
+              ])
+            ])
+          ]
+        )
+      ]
+    )
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("th", { staticClass: "text-dark" }, [
+      _c("div", { staticClass: "tw&#45;&#45;mb-6 tw-text-transparent" }, [
+        _vm._v("asdf")
+      ]),
+      _vm._v(" "),
+      _c("img", {
+        staticClass:
+          "tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full tw-opacity-0",
+        attrs: { src: "/storage/avatars/default.jpg" }
+      }),
+      _vm._v(
+        "\n                                Punkte\n                            "
+      )
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -92037,7 +92316,8 @@ var map = {
 	"./components/live/LiveGame.vue": "./resources/js/components/live/LiveGame.vue",
 	"./components/live/Spieler.vue": "./resources/js/components/live/Spieler.vue",
 	"./components/live/Stich.vue": "./resources/js/components/live/Stich.vue",
-	"./components/rounds/Round.vue": "./resources/js/components/rounds/Round.vue"
+	"./components/rounds/Round.vue": "./resources/js/components/rounds/Round.vue",
+	"./components/rounds/RoundTable.vue": "./resources/js/components/rounds/RoundTable.vue"
 };
 
 
@@ -94027,6 +94307,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Round_vue_vue_type_template_id_1ce9f562___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Round_vue_vue_type_template_id_1ce9f562___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundTable.vue":
+/*!*******************************************************!*\
+  !*** ./resources/js/components/rounds/RoundTable.vue ***!
+  \*******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RoundTable.vue?vue&type=template&id=04df8222& */ "./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222&");
+/* harmony import */ var _RoundTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RoundTable.vue?vue&type=script&lang=js& */ "./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _RoundTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/rounds/RoundTable.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js&":
+/*!********************************************************************************!*\
+  !*** ./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./RoundTable.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundTable_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222& ***!
+  \**************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./RoundTable.vue?vue&type=template&id=04df8222& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/rounds/RoundTable.vue?vue&type=template&id=04df8222&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RoundTable_vue_vue_type_template_id_04df8222___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

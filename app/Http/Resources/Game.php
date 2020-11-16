@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Player as PlayerResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Game extends JsonResource
@@ -14,6 +15,14 @@ class Game extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'misplay' => $this->misplay,
+            'solo' => $this->solo,
+            'points' => $this->points,
+            'dealer_index' => $this->dealerIndex,
+            'players' => PlayerResource::collection($this->players),
+            //'index' => $this->whenPivotLoaded('player_round', fn() => $this->pivot->index),
+        ];
     }
 }

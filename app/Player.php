@@ -57,6 +57,11 @@ class Player extends Model
 
     protected $fillable = ['surname', 'name'];
 
+    public function getPathAttribute()
+    {
+        return $this->path();
+    }
+
     public function path()
     {
         return "/profil/{$this->id}";

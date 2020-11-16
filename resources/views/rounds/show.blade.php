@@ -11,7 +11,7 @@
 @section('content')
 
     <round :round-prop='@json($round)'
-           :can-update='@json(auth()->user()->can('update', $round) ? 'true' : 'false')'
+           :can-update='@json(auth()->user()->can('update', $round))'
     ></round>
 
 @endsection

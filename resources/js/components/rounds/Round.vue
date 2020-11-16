@@ -3,9 +3,11 @@
         <tabs>
             <tab name="Runde" icon="fa-play-circle" :selected="true">
 
+                <round-table :round="round"></round-table>
+
             </tab>
 
-            <tab name="Live" icon="fa-dice" :selected="false">
+            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
 
             </tab>
 
@@ -22,10 +24,6 @@
                                    :key="props.tabKey" />
                 </template>
             </tab>
-
-            <tab name="Kommentare" icon="fa-comments">
-
-            </tab>
         </tabs>
     </div>
 </template>
@@ -38,28 +36,14 @@ export default {
     },
     data() {
         return {
-            round: '',
+            round: this.roundProp,
         }
-    },
-    mounted() {
-        this.fetchData();
     },
     methods: {
         fetchData() {
             axios.get('/api/rounds/' + this.roundProp.id + '/fetchData')
                 .then(response => {
                     this.round = response.data.data;
-                    /*this.ich = response.data.ich;
-                    this.liveGame = response.data.liveGame;
-
-                    this.ich.hand = Object.values(this.ich.hand);
-                    this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-
-                    this.liveGame.spielerIDs.forEach(spielerID => {
-                        if (!this.players.includes(spielerID)) {
-                            this.liveGame.spieler[spielerID].online = false;
-                        }
-                    });*/
                 });
         },
     },

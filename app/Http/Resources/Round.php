@@ -4,6 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Game as GameResource;
+use App\Http\Resources\Player as PlayerResource;
+use App\Http\Resources\PlayerFull as PlayerFullResource;
+use App\Http\Resources\Group as GroupResource;
 
 class Round extends JsonResource
 {
@@ -25,6 +28,8 @@ class Round extends JsonResource
             'dealer_index' => $this->dealer_index,
 
             'games' => GameResource::collection($this->games),
+            'players' => PlayerFullResource::collection($this->players),
+            'groups' => GroupResource::collection($this->groups),
             'live_round' => $this->liveRound,
         ];
     }
