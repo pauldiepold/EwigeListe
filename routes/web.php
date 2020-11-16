@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function ()
     Route::post('/rounds', 'RoundController@store')->name('rounds.store');
     Route::get('/rounds/current', 'RoundController@current')->name('rounds.current');
     Route::get('/runde/{round}', 'RoundController@show')->name('rounds.show');
+    Route::get('/runde_alt/{round}', 'RoundController@show_old');
     Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
     Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
     Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');

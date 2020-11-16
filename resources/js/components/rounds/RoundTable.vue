@@ -10,7 +10,8 @@
                                 <th v-for="player in round.players" :key="player.id"
                                     class="tw-flex-col tw-items-center">
                                     <img :src="player.avatar_path"
-                                         class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                         class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
+                                         :class="{ 'tw-shadow-green' : round.online_players.includes(player.id)}">
 
                                     <a :class="{ 'text-dark': round.dealer_index !== player.index,
                                                  'active-player': round.players.length > 5 && pluck(round.active_players, 'id').includes(player.id) }"

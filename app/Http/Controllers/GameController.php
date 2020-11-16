@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\RoundUpdated;
 use App\Game;
 use App\Group;
 use App\Profile;
@@ -30,6 +31,7 @@ class   GameController extends Controller
 
         Profile::updateManyStats($round->profiles());
         Group::updateManyStats($round->groups, $round->updated_at);
+        broadcast(new RoundUpdated($round))->toOthers();
 
         return redirect($round->path());
     }

@@ -23,10 +23,12 @@ class Round extends JsonResource
             'active_players' => $this->active_players,
             'inactive_players' => $this->inactive_players,
             'players_string' => $this->players_string,
-            'path' => $this->players_string,
+            'path' => $this->path,
             'dealer_index' => $this->dealer_index,
             'created_at' => printDate($this->created_at),
             'created_by' => $this->createdBy,
+
+            'online_players' => [],
 
             'games' => GameResource::collection($this->games),
             'players' => PlayerFullResource::collection($this->players),

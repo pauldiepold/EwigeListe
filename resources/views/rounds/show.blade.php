@@ -10,7 +10,8 @@
 
 @section('content')
 
-    <round :round-prop='@json($round)'
+    <round :round-prop='@json($roundResource)'
+           :auth-id='@json(auth()->id())'
            :can-update='@json(auth()->user()->can('update', $round))'
     ></round>
 

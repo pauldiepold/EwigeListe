@@ -12,8 +12,18 @@
 */
 
 use App\LiveRound;
+use App\Round;
 use App\Player;
+use App\User;
 use Illuminate\Support\Facades\Broadcast;
+
+Broadcast::channel('round.{round}', function ($user, Round $round)
+{
+    if ($user->id)
+    {
+        return [ 'id' => $user->id ];
+    }
+});
 
 Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRound)
 {
