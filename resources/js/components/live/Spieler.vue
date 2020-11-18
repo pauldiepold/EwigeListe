@@ -1,10 +1,10 @@
 <template>
-    <div :class="{ 'tw-border-green-400' : dran && spieler.online, 'tw-border-red-400' : !spieler.online}"
+    <div :class="{ 'tw-border-green-400' : dran && true/*spieler.online*/, 'tw-border-red-400' : false /*!spieler.online*/}"
          style="margin: 1px;"
          class="tw-flex tw-items-center tw-rounded-lg tw-border-2 tw-border-gray-500 tw-p-2">
         <div class="tw-flex tw-items-center tw-pr-2 tw-py-1 tw-pl-1">
             <img :src="spieler.avatar"
-                 :class="{ 'grayscale': !spieler.online }"
+                 :class="{ 'grayscale': false /*!spieler.online*/ }"
                  class="tw-h-20 tw-w-20 tw-rounded-full">
         </div>
         <div class="tw-flex tw-flex-col tw-justify-around tw-px-2 tw-border-r-2 tw-border-l-2 tw-border-gray-500">

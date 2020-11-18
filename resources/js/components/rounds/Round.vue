@@ -1,6 +1,6 @@
 <template>
     <div>
-        <tabs>
+        <tabs @clicked="fullscreenIfMobile">
             <tab name="Runde" icon="fa-play-circle" :selected="true">
                 <create-game :round="round" @updated="fetchData"/>
                 <round-table :round="round"/>
@@ -8,22 +8,38 @@
                 <round-info :round="round"/>
             </tab>
 
-            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false">
-                <div id="fullscreen" class="tw-w-1/2 tw-h-1/2 tw-bg-gray-500 tw-mx-auto">
-                    {{ orientation }}
-                    <div v-if="!fullscreen">
-                        <i class="fas fa-expand tw-text-4xl" @click="toggleFullscreen"></i>
-                    </div>
-                    <div v-else>
-                        <i class="fas fa-compress tw-text-4xl" @click="toggleFullscreen"></i>
-                        <br>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur
-                        deleniti
-                        eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum
-                        sapiente
-                        voluptas voluptatibus!
-                    </div>
+            <tab name="Virus" icon="fa-basketball-ball">
 
+            </tab>
+
+            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false" @clicked="alert('test')">
+                <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
+                    <div
+                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-bg-gray-400"
+                        :class="{'tw-rounded-xl tw-shadow-xl': !fullscreen}"
+                        style="background-image: url('/img/wood.jpg');">
+                        <div class="tw-relative tw-h-full tw-w-full">
+
+                            <div v-if="mobile && !fullscreen"
+                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-12">
+                                <p>
+                                    Bitte aktiviere den Fullscreen-Modus!
+                                </p>
+                                <i class="fas fa-expand tw-text-4xl" @click="fullscreenOn"></i>
+                            </div>
+                            <div v-if="mobile && !landscape && fullscreen"
+                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-16">
+                                Bitte drehe dein Gerät in den Landscape Modus!
+                            </div>
+                            <div v-show="!mobile || (landscape && fullscreen)">
+                                <!--<live-game :round="round"/>-->
+                                <i v-if="mobile && fullscreen"
+                                   class="tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0 fas fa-compress tw-text-4xl tw-text-gray-600"
+                                   @click="fullscreenOff"></i>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </tab>
 
@@ -56,8 +72,9 @@ export default {
     data() {
         return {
             round: this.roundProp,
-            orientation: 0,
+            landscape: false,
             fullscreen: false,
+            mobile: false,
         }
     },
     mounted() {
@@ -106,25 +123,23 @@ export default {
                     this.reconnectChannels();
                 });
         },
-        toggleFullscreen() {
-            if (this.fullscreenElement()) {
-                document.exitFullscreen();
-            } else {
-                let elem = document.getElementById('fullscreen');
-                if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
-                } else if (elem.webkitRequestFullscreen) {
-                    elem.webkitRequestFullscreen();
-                } else if (elem.msRequestFullscreen) {
-                    elem.msRequestFullscreen();
-                }
+        fullscreenOn() {
+            let elem = document.getElementById('fullscreen');
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
             }
         },
-        fullscreenElement() {
-            return document.fullscreenElement
-                || document.webkitFullscreenElement
-                || document.mozFullscreenElement
-                || document.msFullscreenElement;
+        fullscreenOff() {
+            document.exitFullscreen();
+        },
+        fullscreenIfMobile() {
+            if (this.mobile && !this.fullscreen) {
+                this.fullscreenOn();
+            }
         },
         getFullscreen() {
             let fullscreen = !!document.webkitIsFullScreen;
@@ -132,9 +147,11 @@ export default {
             return fullscreen;
         },
         getOrientation() {
-            let orientation = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portait';
-            this.orientation = orientation;
-            return orientation;
+            this.landscape = window.innerWidth > window.innerHeight;
+            this.mobile = window.screen.width <= 900;
+            if (!this.mobile && this.fullscreen) {
+                this.fullscreenOff();
+            }
         },
         deleteLastGame() {
             this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);

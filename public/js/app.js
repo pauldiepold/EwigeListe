@@ -3362,6 +3362,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     selectTab: function selectTab(selectedTab) {
+      if (selectedTab.name === 'Live') {
+        this.$emit('clicked');
+      }
+
       this.tabs.forEach(function (tab) {
         tab.isActive = tab.href === selectedTab.href;
         tab.tabKey++;
@@ -3927,21 +3931,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
-    authId: Number,
-    roundPlayersIds: Array,
-    liveRoundId: Number,
-    liveGameInit: {
-      required: false,
-      "default": 'null'
-    },
-    ichInit: {
-      required: false,
-      "default": 'null'
-    }
+    round: Object
   },
   data: function data() {
     return {
-      players: [],
       liveGame: 'null',
       ich: 'null',
       error: '',
@@ -3955,27 +3948,10 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.liveGame = this.liveGameInit;
-    this.ich = this.ichInit;
+    this.liveGame = this.round.live_game;
+    this.ich = this.round.ich;
     this.ich.hand = Object.values(this.ich.hand);
     this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-    this.presenceChannel.here(function (playerIDs) {
-      _this.liveGame.spielerIDs.forEach(function (spielerID) {
-        if (!_this.pluck(playerIDs, 'id').includes(spielerID)) {
-          _this.liveGame.spieler[spielerID].online = false;
-        }
-      });
-
-      _this.players = _this.pluck(playerIDs, 'id');
-    }).joining(function (playerID) {
-      _this.players.push(playerID.id);
-
-      _this.liveGame.spieler[playerID.id].online = true;
-    }).leaving(function (playerID) {
-      _this.players.splice(_this.players.indexOf(playerID.id), 1);
-
-      _this.liveGame.spieler[playerID.id].online = false;
-    });
 
     if (this.aktiv) {
       this.privateChannel.listen('LiveGameDataBroadcasted', function (e) {
@@ -3984,12 +3960,6 @@ __webpack_require__.r(__webpack_exports__);
         _this.ich.moeglicheVorbehalte = Object.values(_this.ich.moeglicheVorbehalte);
         _this.liveGame = e.liveGame;
         _this.error = '';
-
-        _this.liveGame.spielerIDs.forEach(function (spielerID) {
-          if (!_this.players.includes(spielerID)) {
-            _this.liveGame.spieler[spielerID].online = false;
-          }
-        });
 
         if (_this.liveGame.aktuellerStich.karten.length === 0) {
           _this.letzterStichEingeblendet = true;
@@ -4005,24 +3975,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   computed: {
-    presenceChannel: function presenceChannel() {
-      return window.Echo.join('liveRound.' + this.liveRoundId);
-    },
     privateChannel: function privateChannel() {
-      return window.Echo["private"]('liveRound.' + this.liveRoundId + '.' + this.authId);
+      return window.Echo["private"]('liveRound.' + this.round.live_round.id + '.' + this.round.authID);
     },
     aktiv: function aktiv() {
-      return !this.liveGame.spielerIDsInaktiv.includes(this.authId);
-    },
-    alleSpielerOnline: function alleSpielerOnline() {
-      var _this2 = this;
-
-      return this.roundPlayersIds.every(function (e) {
-        return _this2.players.includes(e);
-      });
+      return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
     },
     binIchDran: function binIchDran() {
-      return this.liveGame.dran === this.authId;
+      return this.liveGame.dran === this.round.authID;
     },
     reOderKontra: function reOderKontra() {
       if (this.ich.isRe === true) {
@@ -4045,61 +4005,55 @@ __webpack_require__.r(__webpack_exports__);
       return this.liveGame.phase === phase;
     },
     spielStarten: function spielStarten() {
-      axios.post('/api/live/' + this.liveRoundId + '/spielStarten', {});
+      axios.post('/api/live/' + this.round.live_round.id + '/spielStarten', {});
     },
     kartenGeben: function kartenGeben() {
       axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
     },
     vorbehaltSenden: function vorbehaltSenden(vorbehalt) {
-      var _this3 = this;
+      var _this2 = this;
 
       axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
         vorbehalt: vorbehalt
+      }).then(function (response) {
+        return _this2.error = '';
+      })["catch"](function (error) {
+        return _this2.handleError(error);
+      });
+    },
+    karteSpielen: function karteSpielen(karte) {
+      var _this3 = this;
+
+      this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
+      var karteKopie = karte;
+      karteKopie.gespieltVon = this.round.authID;
+      karteKopie.spielbar = false;
+      this.liveGame.aktuellerStich.karten.push(karteKopie);
+      axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
+        karte: karte
       }).then(function (response) {
         return _this3.error = '';
       })["catch"](function (error) {
         return _this3.handleError(error);
       });
     },
-    karteSpielen: function karteSpielen(karte) {
-      var _this4 = this;
-
-      this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
-      var karteKopie = karte;
-      karteKopie.gespieltVon = this.authId;
-      karteKopie.spielbar = false;
-      this.liveGame.aktuellerStich.karten.push(karteKopie);
-      axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
-        karte: karte
-      }).then(function (response) {
-        return _this4.error = '';
-      })["catch"](function (error) {
-        return _this4.handleError(error);
-      });
-    },
     ansage: function ansage(_ansage) {
-      var _this5 = this;
+      var _this4 = this;
 
       axios.post('/api/live/' + this.liveGame.id + '/ansage', {
         ansage: _ansage
       })["catch"](function (error) {
-        return _this5.handleError(error);
+        return _this4.handleError(error);
       });
     },
     reloadData: function reloadData() {
-      var _this6 = this;
+      var _this5 = this;
 
       axios.get('/api/live/' + this.liveGame.id + '/reloadData').then(function (response) {
-        _this6.ich = response.data.ich;
-        _this6.liveGame = response.data.liveGame;
-        _this6.ich.hand = Object.values(_this6.ich.hand);
-        _this6.ich.moeglicheVorbehalte = Object.values(_this6.ich.moeglicheVorbehalte);
-
-        _this6.liveGame.spielerIDs.forEach(function (spielerID) {
-          if (!_this6.players.includes(spielerID)) {
-            _this6.liveGame.spieler[spielerID].online = false;
-          }
-        });
+        _this5.ich = response.data.ich;
+        _this5.liveGame = response.data.liveGame;
+        _this5.ich.hand = Object.values(_this5.ich.hand);
+        _this5.ich.moeglicheVorbehalte = Object.values(_this5.ich.moeglicheVorbehalte);
       });
     },
     reloadPage: function reloadPage() {
@@ -4117,7 +4071,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getSpieler: function getSpieler(position) {
-      var eigenerIndex = this.liveGame.spielerIDs.indexOf(this.authId);
+      var eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
       var ergebnis = eigenerIndex + position;
 
       if (ergebnis >= 4) {
@@ -4635,6 +4589,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //import Fullscreen from "vue-fullscreen/src/component.vue"
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {},
@@ -4645,8 +4615,9 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       round: this.roundProp,
-      orientation: 0,
-      fullscreen: false
+      landscape: false,
+      fullscreen: false,
+      mobile: false
     };
   },
   mounted: function mounted() {},
@@ -4696,23 +4667,24 @@ __webpack_require__.r(__webpack_exports__);
         _this3.reconnectChannels();
       });
     },
-    toggleFullscreen: function toggleFullscreen() {
-      if (this.fullscreenElement()) {
-        document.exitFullscreen();
-      } else {
-        var elem = document.getElementById('fullscreen');
+    fullscreenOn: function fullscreenOn() {
+      var elem = document.getElementById('fullscreen');
 
-        if (elem.requestFullscreen) {
-          elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) {
-          elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) {
-          elem.msRequestFullscreen();
-        }
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
       }
     },
-    fullscreenElement: function fullscreenElement() {
-      return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullscreenElement || document.msFullscreenElement;
+    fullscreenOff: function fullscreenOff() {
+      document.exitFullscreen();
+    },
+    fullscreenIfMobile: function fullscreenIfMobile() {
+      if (this.mobile && !this.fullscreen) {
+        this.fullscreenOn();
+      }
     },
     getFullscreen: function getFullscreen() {
       var fullscreen = !!document.webkitIsFullScreen;
@@ -4720,9 +4692,12 @@ __webpack_require__.r(__webpack_exports__);
       return fullscreen;
     },
     getOrientation: function getOrientation() {
-      var orientation = window.innerWidth > window.innerHeight ? 'Landscape' : 'Portait';
-      this.orientation = orientation;
-      return orientation;
+      this.landscape = window.innerWidth > window.innerHeight;
+      this.mobile = window.screen.width <= 900;
+
+      if (!this.mobile && this.fullscreen) {
+        this.fullscreenOff();
+      }
     },
     deleteLastGame: function deleteLastGame() {
       this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);
@@ -75066,10 +75041,8 @@ var render = function() {
         })
       : _vm._e(),
     _vm._v(" "),
-    !_vm.alleSpielerOnline
-      ? _c("div", [
-          _c("h4", [_vm._v("Bitte warte, bis alle Spieler am Tisch sitzen")])
-        ])
+    false
+      ? undefined
       : _c("div", [
           _vm.istPhase(0) ? _c("h4", [_vm._v("Spielvorbereitung")]) : _vm._e(),
           _vm._v(" "),
@@ -75378,7 +75351,7 @@ var render = function() {
                     _c("stich", {
                       attrs: {
                         stich: _vm.liveGame.aktuellerStich.karten,
-                        "auth-id": _vm.authId,
+                        "auth-id": _vm.round.authID,
                         "spieler-ids": _vm.liveGame.spielerIDs
                       }
                     })
@@ -75395,7 +75368,7 @@ var render = function() {
                     _c("stich", {
                       attrs: {
                         stich: _vm.liveGame.letzterStich.karten,
-                        "auth-id": _vm.authId,
+                        "auth-id": _vm.round.authID,
                         "spieler-ids": _vm.liveGame.spielerIDs
                       }
                     })
@@ -75687,8 +75660,8 @@ var render = function() {
       staticClass:
         "tw-flex tw-items-center tw-rounded-lg tw-border-2 tw-border-gray-500 tw-p-2",
       class: {
-        "tw-border-green-400": _vm.dran && _vm.spieler.online,
-        "tw-border-red-400": !_vm.spieler.online
+        "tw-border-green-400": _vm.dran && true /*spieler.online*/,
+        "tw-border-red-400": false /*!spieler.online*/
       },
       staticStyle: { margin: "1px" }
     },
@@ -75699,7 +75672,7 @@ var render = function() {
         [
           _c("img", {
             staticClass: "tw-h-20 tw-w-20 tw-rounded-full",
-            class: { grayscale: !_vm.spieler.online },
+            class: { grayscale: false /*!spieler.online*/ },
             attrs: { src: _vm.spieler.avatar }
           })
         ]
@@ -76419,6 +76392,7 @@ var render = function() {
     [
       _c(
         "tabs",
+        { on: { clicked: _vm.fullscreenIfMobile } },
         [
           _c(
             "tab",
@@ -76448,42 +76422,111 @@ var render = function() {
             1
           ),
           _vm._v(" "),
+          _c("tab", { attrs: { name: "Virus", icon: "fa-basketball-ball" } }),
+          _vm._v(" "),
           _vm.round.live_round !== null
             ? _c(
                 "tab",
-                { attrs: { name: "Live", icon: "fa-dice", selected: false } },
+                {
+                  attrs: { name: "Live", icon: "fa-dice", selected: false },
+                  on: {
+                    clicked: function($event) {
+                      return _vm.alert("test")
+                    }
+                  }
+                },
                 [
                   _c(
                     "div",
                     {
-                      staticClass:
-                        "tw-w-1/2 tw-h-1/2 tw-bg-gray-500 tw-mx-auto",
+                      staticClass: "tw-w-100 tw-relative tw-pt-50p",
                       attrs: { id: "fullscreen" }
                     },
                     [
-                      _vm._v(
-                        "\n                " +
-                          _vm._s(_vm.orientation) +
-                          "\n                "
-                      ),
-                      !_vm.fullscreen
-                        ? _c("div", [
-                            _c("i", {
-                              staticClass: "fas fa-expand tw-text-4xl",
-                              on: { click: _vm.toggleFullscreen }
-                            })
-                          ])
-                        : _c("div", [
-                            _c("i", {
-                              staticClass: "fas fa-compress tw-text-4xl",
-                              on: { click: _vm.toggleFullscreen }
-                            }),
-                            _vm._v(" "),
-                            _c("br"),
-                            _vm._v(
-                              "\n                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aspernatur autem consequatur\n                    deleniti\n                    eligendi ex nam quas ratione totam vero! Aliquid asperiores est libero maxime, quasi rerum\n                    sapiente\n                    voluptas voluptatibus!\n                "
-                            )
-                          ])
+                      _c(
+                        "div",
+                        {
+                          staticClass:
+                            "tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-bg-gray-400",
+                          class: {
+                            "tw-rounded-xl tw-shadow-xl": !_vm.fullscreen
+                          },
+                          staticStyle: {
+                            "background-image": "url('/img/wood.jpg')"
+                          }
+                        },
+                        [
+                          _c(
+                            "div",
+                            { staticClass: "tw-relative tw-h-full tw-w-full" },
+                            [
+                              _vm.mobile && !_vm.fullscreen
+                                ? _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-12"
+                                    },
+                                    [
+                                      _c("p", [
+                                        _vm._v(
+                                          "\n                                Bitte aktiviere den Fullscreen-Modus!\n                            "
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("i", {
+                                        staticClass:
+                                          "fas fa-expand tw-text-4xl",
+                                        on: { click: _vm.fullscreenOn }
+                                      })
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _vm.mobile && !_vm.landscape && _vm.fullscreen
+                                ? _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-16"
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                            Bitte drehe dein Gerät in den Landscape Modus!\n                        "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value:
+                                        !_vm.mobile ||
+                                        (_vm.landscape && _vm.fullscreen),
+                                      expression:
+                                        "!mobile || (landscape && fullscreen)"
+                                    }
+                                  ]
+                                },
+                                [
+                                  _vm.mobile && _vm.fullscreen
+                                    ? _c("i", {
+                                        staticClass:
+                                          "tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0 fas fa-compress tw-text-4xl tw-text-gray-600",
+                                        on: { click: _vm.fullscreenOff }
+                                      })
+                                    : _vm._e()
+                                ]
+                              )
+                            ]
+                          )
+                        ]
+                      )
                     ]
                   )
                 ]

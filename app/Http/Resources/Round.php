@@ -36,6 +36,8 @@ class Round extends JsonResource
             'players' => PlayerFullResource::collection($this->players),
             'groups' => GroupResource::collection($this->groups),
             'live_round' => $this->liveRound,
+            'live_game' => $this->liveRound->currentLiveGame(),
+            'ich' => $this->liveRound->currentLiveGame()->getSpieler(auth()->id()),
         ];
     }
 }

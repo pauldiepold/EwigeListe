@@ -7,6 +7,7 @@ module.exports = {
         extend: {
             colors: {
                 gray: {
+                    100: '#f1f1ef',
                     200: '#f3f3f3',
                     300: '#e4e4e4',
                     400: '#d1d1d1',
@@ -32,6 +33,9 @@ module.exports = {
             },
             spacing: {
                 '7': '1.75rem',
+            },
+            padding: {
+                '50p': '50%',
             },
             maxWidth: {
                 '6xs': '4rem',

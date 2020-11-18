@@ -2,7 +2,7 @@
     <div class="playingCards">
         <p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p>
 
-        <div v-if="!alleSpielerOnline">
+        <div v-if="false"><!-- Online -->
             <h4>Bitte warte, bis alle Spieler am Tisch sitzen</h4>
         </div>
         <div v-else>
@@ -125,7 +125,7 @@
                 <!-- ******** Aktueller Stich ********* -->
                 <div v-if="istPhase(4) && !letzterStichEingeblendet">
                     <stich :stich="liveGame.aktuellerStich.karten"
-                           :auth-id="authId"
+                           :auth-id="round.authID"
                            :spieler-ids="liveGame.spielerIDs"/>
                 </div>
 
@@ -133,7 +133,7 @@
                 <!-- ******** Letzter Stich ********* -->
                 <div v-if="(istPhase(4) || istPhase(101)) && letzterStichEingeblendet">
                     <stich :stich="liveGame.letzterStich.karten"
-                           :auth-id="authId"
+                           :auth-id="round.authID"
                            :spieler-ids="liveGame.spielerIDs"/>
                 </div>
 
@@ -244,22 +244,11 @@
 
     export default {
         props: {
-            authId: Number,
-            roundPlayersIds: Array,
-            liveRoundId: Number,
-            liveGameInit: {
-                required: false,
-                default: 'null'
-            },
-            ichInit: {
-                required: false,
-                default: 'null'
-            }
+            round: Object,
         },
 
         data() {
             return {
-                players: [],
                 liveGame: 'null',
                 ich: 'null',
                 error: '',
@@ -272,29 +261,10 @@
         },
 
         created() {
-            this.liveGame = this.liveGameInit;
-            this.ich = this.ichInit;
+            this.liveGame = this.round.live_game;
+            this.ich = this.round.ich;
             this.ich.hand = Object.values(this.ich.hand);
             this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-
-            this.presenceChannel
-                .here(playerIDs => {
-                    this.liveGame.spielerIDs.forEach(spielerID => {
-                        if (!this.pluck(playerIDs, 'id').includes(spielerID)) {
-                            this.liveGame.spieler[spielerID].online = false;
-                        }
-                    });
-
-                    this.players = this.pluck(playerIDs, 'id');
-                })
-                .joining(playerID => {
-                    this.players.push(playerID.id);
-                    this.liveGame.spieler[playerID.id].online = true;
-                })
-                .leaving(playerID => {
-                    this.players.splice(this.players.indexOf(playerID.id), 1);
-                    this.liveGame.spieler[playerID.id].online = false;
-                });
 
             if (this.aktiv) {
                 this.privateChannel
@@ -304,12 +274,6 @@
                         this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
                         this.liveGame = e.liveGame;
                         this.error = '';
-
-                        this.liveGame.spielerIDs.forEach(spielerID => {
-                            if (!this.players.includes(spielerID)) {
-                                this.liveGame.spieler[spielerID].online = false;
-                            }
-                        });
 
                         if (this.liveGame.aktuellerStich.karten.length === 0) {
                             this.letzterStichEingeblendet = true
@@ -325,27 +289,18 @@
         },
 
         computed: {
-            presenceChannel() {
-                return window.Echo
-                    .join('liveRound.' + this.liveRoundId);
-            },
 
             privateChannel() {
                 return window.Echo
-                    .private('liveRound.' + this.liveRoundId + '.' + this.authId);
+                    .private('liveRound.' + this.round.live_round.id + '.' + this.round.authID);
             },
 
             aktiv() {
-                return !this.liveGame.spielerIDsInaktiv.includes(this.authId);
-            },
-
-            alleSpielerOnline() {
-                return this.roundPlayersIds
-                    .every(e => this.players.includes(e));
+                return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
             },
 
             binIchDran() {
-                return this.liveGame.dran === this.authId;
+                return this.liveGame.dran === this.round.authID;
             },
 
             reOderKontra() {
@@ -371,7 +326,7 @@
             },
 
             spielStarten() {
-                axios.post('/api/live/' + this.liveRoundId + '/spielStarten', {});
+                axios.post('/api/live/' + this.round.live_round.id + '/spielStarten', {});
             },
 
             kartenGeben() {
@@ -389,7 +344,7 @@
             karteSpielen(karte) {
                 this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
                 let karteKopie = karte;
-                karteKopie.gespieltVon = this.authId;
+                karteKopie.gespieltVon = this.round.authID;
                 karteKopie.spielbar = false;
                 this.liveGame.aktuellerStich.karten.push(karteKopie);
 
@@ -415,12 +370,6 @@
 
                         this.ich.hand = Object.values(this.ich.hand);
                         this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-
-                        this.liveGame.spielerIDs.forEach(spielerID => {
-                            if (!this.players.includes(spielerID)) {
-                                this.liveGame.spieler[spielerID].online = false;
-                            }
-                        });
                     });
             },
 
@@ -440,7 +389,7 @@
             },
 
             getSpieler(position) {
-                let eigenerIndex = this.liveGame.spielerIDs.indexOf(this.authId);
+                let eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
 
                 let ergebnis = eigenerIndex + position;
                 if (ergebnis >= 4) {

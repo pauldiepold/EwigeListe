@@ -14,15 +14,16 @@
         @include('layouts.nav')
 
         <div class="container tw-py-4" id="app">
+            {{--<div id="fullscreen" class="tw-bg-gray-100">--}}
 
-            @if (trim($__env->yieldContent('heading')))
-            <h6 class="tw-mb-4 text-uppercase font-weight-bold" style="letter-spacing: 5px;">
-                @yield('heading')
-            </h6>
-            @endif
+                @if (trim($__env->yieldContent('heading')))
+                    <h6 class="tw-mb-4 text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+                        @yield('heading')
+                    </h6>
+                @endif
 
-            @yield('content')
-
+                @yield('content')
+            {{--</div>--}}
         </div>
 
         @include('layouts.footer')
