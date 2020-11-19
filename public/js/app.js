@@ -4601,10 +4601,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 //import Fullscreen from "vue-fullscreen/src/component.vue"
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {},
@@ -76422,8 +76418,6 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _c("tab", { attrs: { name: "Virus", icon: "fa-basketball-ball" } }),
-          _vm._v(" "),
           _vm.round.live_round !== null
             ? _c(
                 "tab",
@@ -76447,7 +76441,7 @@ var render = function() {
                         "div",
                         {
                           staticClass:
-                            "tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-bg-gray-400",
+                            "tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0",
                           class: {
                             "tw-rounded-xl tw-shadow-xl": !_vm.fullscreen
                           },
@@ -76460,17 +76454,40 @@ var render = function() {
                             "div",
                             { staticClass: "tw-relative tw-h-full tw-w-full" },
                             [
+                              _c(
+                                "div",
+                                {
+                                  staticClass:
+                                    "tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0"
+                                },
+                                [
+                                  _vm.mobile && _vm.fullscreen
+                                    ? _c("i", {
+                                        staticClass:
+                                          "fas fa-compress tw-text-2xl tw-text-gray-600",
+                                        on: { click: _vm.fullscreenOff }
+                                      })
+                                    : _vm._e()
+                                ]
+                              ),
+                              _vm._v(" "),
                               _vm.mobile && !_vm.fullscreen
                                 ? _c(
                                     "div",
                                     {
                                       staticClass:
-                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-12"
+                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-rounded-xl",
+                                      staticStyle: {
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%, -50%)"
+                                      }
                                     },
                                     [
                                       _c("p", [
                                         _vm._v(
-                                          "\n                                Bitte aktiviere den Fullscreen-Modus!\n                            "
+                                          " Bitte aktiviere den Fullscreen-Modus! "
                                         )
                                       ]),
                                       _vm._v(" "),
@@ -76488,41 +76505,27 @@ var render = function() {
                                     "div",
                                     {
                                       staticClass:
-                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-16"
+                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-4 tw-w-48 tw-rounded-xl",
+                                      staticStyle: {
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%, -50%)"
+                                      }
                                     },
                                     [
-                                      _vm._v(
-                                        "\n                            Bitte drehe dein Gerät in den Landscape Modus!\n                        "
-                                      )
+                                      _c("p", [
+                                        _vm._v(
+                                          "Bitte drehe dein Gerät in den Landscape Modus!"
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c("i", {
+                                        staticClass: "fas fa-sync tw-text-4xl"
+                                      })
                                     ]
                                   )
-                                : _vm._e(),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value:
-                                        !_vm.mobile ||
-                                        (_vm.landscape && _vm.fullscreen),
-                                      expression:
-                                        "!mobile || (landscape && fullscreen)"
-                                    }
-                                  ]
-                                },
-                                [
-                                  _vm.mobile && _vm.fullscreen
-                                    ? _c("i", {
-                                        staticClass:
-                                          "tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0 fas fa-compress tw-text-4xl tw-text-gray-600",
-                                        on: { click: _vm.fullscreenOff }
-                                      })
-                                    : _vm._e()
-                                ]
-                              )
+                                : _vm._e()
                             ]
                           )
                         ]

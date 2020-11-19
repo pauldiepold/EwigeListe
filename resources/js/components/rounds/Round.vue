@@ -8,36 +8,32 @@
                 <round-info :round="round"/>
             </tab>
 
-            <tab name="Virus" icon="fa-basketball-ball">
-
-            </tab>
-
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false" @clicked="alert('test')">
                 <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
                     <div
-                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-bg-gray-400"
+                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0"
                         :class="{'tw-rounded-xl tw-shadow-xl': !fullscreen}"
                         style="background-image: url('/img/wood.jpg');">
                         <div class="tw-relative tw-h-full tw-w-full">
-
+                            <div class="tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0">
+                                <i v-if="mobile && fullscreen"
+                                   class="fas fa-compress tw-text-2xl tw-text-gray-600"
+                                   @click="fullscreenOff"></i>
+                            </div>
                             <div v-if="mobile && !fullscreen"
-                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-12">
-                                <p>
-                                    Bitte aktiviere den Fullscreen-Modus!
-                                </p>
+                                 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-rounded-xl">
+                                <p> Bitte aktiviere den Fullscreen-Modus! </p>
                                 <i class="fas fa-expand tw-text-4xl" @click="fullscreenOn"></i>
                             </div>
                             <div v-if="mobile && !landscape && fullscreen"
-                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-mx-auto tw-rounded-xl tw-mt-16">
-                                Bitte drehe dein Gerät in den Landscape Modus!
+                                 style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+                                 class="tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-4 tw-w-48 tw-rounded-xl">
+                                <p>Bitte drehe dein Gerät in den Landscape Modus!</p>
+                                <i class="fas fa-sync tw-text-4xl"></i>
                             </div>
-                            <div v-show="!mobile || (landscape && fullscreen)">
-                                <!--<live-game :round="round"/>-->
-                                <i v-if="mobile && fullscreen"
-                                   class="tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0 fas fa-compress tw-text-4xl tw-text-gray-600"
-                                   @click="fullscreenOff"></i>
 
-                            </div>
+                            <!--<live-game v-show="!mobile || (landscape && fullscreen)" :round="round"/>-->
                         </div>
                     </div>
                 </div>
