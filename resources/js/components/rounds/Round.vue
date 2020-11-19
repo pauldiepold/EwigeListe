@@ -33,7 +33,7 @@
                                 <i class="fas fa-sync tw-text-4xl"></i>
                             </div>
 
-                            <!--<live-game v-show="!mobile || (landscape && fullscreen)" :round="round"/>-->
+                            <live-game v-show="!mobile || (landscape && fullscreen)" :round="round"/>
                         </div>
                     </div>
                 </div>
