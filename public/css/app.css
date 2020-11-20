@@ -37572,6 +37572,24 @@ readers do not read off random characters that represent icons */
   touch-action: manipulation;
 }
 
+.center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.live-overlay {
+  --text-opacity: 1;
+  color: #f3f3f3;
+  color: rgba(243, 243, 243, var(--text-opacity));
+  --bg-opacity: 1;
+  background-color: #424242;
+  background-color: rgba(66, 66, 66, var(--bg-opacity));
+  --bg-opacity: 0.5;
+  border-radius: 0.75rem;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: Raleway;
 }

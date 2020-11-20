@@ -91,7 +91,6 @@ Route::middleware('auth')->group(function ()
 
         Route::middleware('can:update,liveGame')->group(function ()
         {
-            Route::post('live/{liveGame}/kartenGeben', 'Live\GameController@kartenGeben');
             Route::post('live/{liveGame}/vorbehalt', 'Live\GameController@vorbehalt');
             Route::post('live/{liveGame}/armutAbgeben', 'Live\GameController@armutAbgeben');
             Route::post('live/{liveGame}/armutMitnehmen', 'Live\GameController@armutMitnehmen');

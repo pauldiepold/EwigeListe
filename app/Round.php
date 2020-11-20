@@ -67,14 +67,10 @@ class Round extends Model
         return $this->path();
     }
 
-    public function startLiveRound()
+    public function createLiveRound()
     {
         $liveRound = $this->liveRound()->create();
         $this->liveRound()->associate($liveRound)->save();
-
-        $liveRound->starteNeuesSpiel();
-
-        return;
     }
 
     public function getLastGame()

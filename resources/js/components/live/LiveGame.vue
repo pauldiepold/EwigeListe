@@ -1,7 +1,7 @@
 <template>
     <div class="playingCards">
         <div style="position: absolute; left: 25%; transform: translate(-50%);"
-        class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
+             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
             Spieler 1
         </div>
         <div style="position: absolute; left: 50%; transform: translate(-50%);"
@@ -12,81 +12,71 @@
              class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
             Spieler 3
         </div>
+        <div style="position: absolute; left: 50%; bottom: 0; transform: translate(-50%);"
+             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-t-lg tw-text-gray-300 tw-text tw-px-4">
+            Spieler 0
+        </div>
+
         <!--<p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p>
 
-        <div v-if="false">&lt;!&ndash; Online &ndash;&gt;
-            <h4>Bitte warte, bis alle Spieler am Tisch sitzen</h4>
-        </div>
         <div v-else>
             <h4 v-if="istPhase(0)">Spielvorbereitung</h4>
             <h4 v-if="istPhase(1) || istPhase(3)">Spielfindung</h4>
             <h4 v-if="istPhase(4)">Spiel &#45;&#45; {{ liveGame.spieltyp }}</h4>
         </div>
-        <hr>-->
-        <!--
-
-                <div class="tw-grid tw-grid-cols-livegame tw-grid-rows-livegame lg:tw-grid-rows-livegame_lg">
-
-                    <div class="tw-col-start-1 tw-row-start-2 tw-col-span-3 lg:tw-col-span-1 tw-flex tw-flex-col tw-justify-around tw-items-center tw-p-4">
         -->
 
-        <!--<div v-if="istPhase(0)">
-            <button class="btn btn-primary"
-                    @click="kartenGeben">
-                Karten austeilen
-            </button>
-        </div>-->
-
-
         <!-- ******** Vorbehalte ********* -->
-        <!--<div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
-            Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
-        </div>
+        <div class="center-absolute live-overlay tw-p-4 ">
+            <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
+                Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
+            </div>
 
-        <div v-if="istPhase(2) && ich.vorbehalt == null"
-             class="tw-flex tw-flex-col tw-justify-between tw-items-center">
+            <div v-if="istPhase(2) && ich.vorbehalt == null"
+                 class="tw-flex tw-flex-col tw-justify-between tw-items-center">
 
-            <p v-if="binIchDran" class="tw-font-bold">Wähle deinen Vorbehalt:</p>
-            <p v-else class="tw-font-bold">Mögliche Vorbehalte:</p>
+                <p v-if="binIchDran" class="tw-font-bold">Wähle deinen Vorbehalt:</p>
+                <p v-else class="tw-font-bold">Mögliche Vorbehalte:</p>
 
-            <div class="tw-flex tw-items-center">
-                <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
-                        :disabled="!binIchDran"
-                        v-if="!ich.moeglicheVorbehalte.includes('Hochzeit')"
-                        @click="vorbehaltSenden('Gesund')">
-                    Gesund
-                </button>
-                <div class="tw-flex tw-flex-col">
-                    <button class="btn btn-outline-primary tw-my-1 tw-mr-6"
-                            v-for="vorbehalt in ich.moeglicheVorbehalte"
-                            @click="vorbehaltSenden(vorbehalt)"
-                            v-text="vorbehalt"
-                            v-if="!soli.includes(vorbehalt) && !farbsoli.includes(vorbehalt)"
-                            :disabled="!binIchDran"/>
-                </div>
-                <div class="tw-flex tw-flex-col tw-max-w-4xs">
-                    <button class="btn btn-outline-primary tw-my-1 tw-mr-6"
-                            v-for="vorbehalt in ich.moeglicheVorbehalte"
-                            @click="vorbehaltSenden(vorbehalt)"
-                            v-text="vorbehalt"
-                            v-if="soli.includes(vorbehalt)"
-                            :disabled="!binIchDran"/>
-                </div>
-                <div class="tw-flex tw-flex-col tw-max-w-2xs">
-                    <button class="btn btn-outline-primary tw-my-1"
-                            @click="farbsoliAnzeigen = true"
-                            v-text="'Farbsolo'"
-                            v-if="!farbsoliAnzeigen"
-                            :disabled="!binIchDran"/>
-                    <button class="btn btn-outline-primary tw-my-1"
-                            v-for="vorbehalt in ich.moeglicheVorbehalte"
-                            @click="vorbehaltSenden(vorbehalt)"
-                            v-text="vorbehalt"
-                            v-if="farbsoli.includes(vorbehalt) && farbsoliAnzeigen"
-                            :disabled="!binIchDran"/>
+                <div class="tw-flex tw-items-center">
+                    <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
+                            :disabled="!binIchDran"
+                            v-if="!ich.moeglicheVorbehalte.includes('Hochzeit')"
+                            @click="vorbehaltSenden('Gesund')">
+                        Gesund
+                    </button>
+                    <div class="tw-flex tw-flex-col">
+                        <button class="btn btn-primary tw-my-1 tw-mr-6"
+                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                @click="vorbehaltSenden(vorbehalt)"
+                                v-text="vorbehalt"
+                                v-if="!soli.includes(vorbehalt) && !farbsoli.includes(vorbehalt)"
+                                :disabled="!binIchDran"/>
+                    </div>
+                    <div class="tw-flex tw-flex-col tw-max-w-4xs">
+                        <button class="btn btn-primary tw-my-1 tw-mr-6"
+                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                @click="vorbehaltSenden(vorbehalt)"
+                                v-text="vorbehalt"
+                                v-if="soli.includes(vorbehalt)"
+                                :disabled="!binIchDran"/>
+                    </div>
+                    <div class="tw-flex tw-flex-col tw-max-w-2xs">
+                        <button class="btn btn-primary tw-my-1"
+                                @click="farbsoliAnzeigen = true"
+                                v-text="'Farbsolo'"
+                                v-if="!farbsoliAnzeigen"
+                                :disabled="!binIchDran"/>
+                        <button class="btn btn-outline-primary tw-my-1"
+                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                @click="vorbehaltSenden(vorbehalt)"
+                                v-text="vorbehalt"
+                                v-if="farbsoli.includes(vorbehalt) && farbsoliAnzeigen"
+                                :disabled="!binIchDran"/>
+                    </div>
                 </div>
             </div>
-        </div>-->
+        </div>
 
 
         <!-- ******** Armut *********
@@ -274,18 +264,15 @@ export default {
     },
 
     created() {
-        this.liveGame = this.round.live_game;
-        this.ich = this.round.ich;
-        this.ich.hand = Object.values(this.ich.hand);
-        this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+        this.copyDataFromProp();
 
         if (this.aktiv) {
             this.privateChannel
                 .listen('LiveGameDataBroadcasted', e => {
+                    this.liveGame = e.liveGame;
                     this.ich = e.ich;
                     this.ich.hand = Object.values(this.ich.hand);
                     this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-                    this.liveGame = e.liveGame;
                     this.error = '';
 
                     if (this.liveGame.aktuellerStich.karten.length === 0) {
@@ -302,21 +289,20 @@ export default {
     },
 
     computed: {
-
         privateChannel() {
             return window.Echo
-                .private('liveRound.' + this.round.live_round.id + '.' + this.round.authID);
+                .private('liveRound.' + this.round.live_round.id + '.' + this.round.auth_id);
         },
 
-        aktiv() {
+        /*aktiv() {
             return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
-        },
+        },*/
 
         binIchDran() {
-            return this.liveGame.dran === this.round.authID;
+            return this.liveGame.dran === this.round.auth_id;
         },
 
-        reOderKontra() {
+        /*reOderKontra() {
             if (this.ich.isRe === true) {
                 return 'Re';
             } else if (this.ich.isRe === false) {
@@ -324,26 +310,24 @@ export default {
             } else {
                 return 'Keins von beidem Fehler';
             }
-        },
+        },*/
     },
 
     watch: {},
 
     methods: {
+        copyDataFromProp() {
+            this.liveGame = this.round.current_live_game;
+            this.ich = this.round.ich;
+            this.ich.hand = Object.values(this.ich.hand);
+            this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+        },
         pluck(array, key) {
             return array.map(o => o[key]);
         },
 
         istPhase(phase) {
             return this.liveGame.phase === phase;
-        },
-
-        spielStarten() {
-            axios.post('/api/live/' + this.round.live_round.id + '/spielStarten', {});
-        },
-
-        kartenGeben() {
-            axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
         },
 
         vorbehaltSenden(vorbehalt) {
@@ -354,7 +338,7 @@ export default {
                 .catch(error => this.handleError(error));
         },
 
-        karteSpielen(karte) {
+        /*karteSpielen(karte) {
             this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
             let karteKopie = karte;
             karteKopie.gespieltVon = this.round.authID;
@@ -366,16 +350,16 @@ export default {
             })
                 .then(response => this.error = '')
                 .catch(error => this.handleError(error));
-        },
+        },*/
 
-        ansage(ansage) {
+        /*ansage(ansage) {
             axios.post('/api/live/' + this.liveGame.id + '/ansage', {
                 ansage: ansage
             })
                 .catch(error => this.handleError(error));
-        },
+        },*/
 
-        reloadData() {
+        /*reloadData() {
             axios.get('/api/live/' + this.liveGame.id + '/reloadData')
                 .then(response => {
                     this.ich = response.data.ich;
@@ -399,9 +383,9 @@ export default {
                 this.error = error.response.data.message;
                 this.reloadData();
             }
-        },
+        },*/
 
-        getSpieler(position) {
+        /*getSpieler(position) {
             let eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
 
             let ergebnis = eigenerIndex + position;
@@ -415,9 +399,9 @@ export default {
 
         letzterStich() {
             this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
-        },
+        },*/
 
-        armutKarteWechseln(karte, richtung) {
+        /*armutKarteWechseln(karte, richtung) {
             if (richtung === 'mitte') {
                 if (this.armutKarten.length < 3) {
                     let index = this.ich.hand.indexOf(karte);
@@ -450,7 +434,7 @@ export default {
                 karten: this.armutKarten
             })
                 .then(this.armutKarten = []);
-        }
+        }*/
     }
 };
 </script>

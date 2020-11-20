@@ -10,3 +10,14 @@
 .disable-dbl-tap-zoom {
   touch-action: manipulation;
 }
+
+.center-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.live-overlay {
+  @apply tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-xl;
+}

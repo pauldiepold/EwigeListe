@@ -24,19 +24,6 @@ class GameController extends Controller
             ]);
     }
 
-    public function kartenGeben(LiveGame $liveGame)
-    {
-        abort_if($liveGame->phase != 0, 422, 'Falsche Phase!');
-
-        $liveGame->kartenGeben();
-
-        $liveGame->moeglicheVorbehalteBerechnen();
-
-        $liveGame->phase = 2;
-
-        $liveGame->save();
-    }
-
     public function vorbehalt(LiveGame $liveGame, Request $request)
     {
         abort_if($liveGame->phase != 2, 422, 'Falsche Phase!');

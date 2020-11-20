@@ -2164,6 +2164,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     allPlayers: {
@@ -2238,6 +2239,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    enterPressed: function enterPressed() {
+      if (this.filteredPlayers.length === 1) {
+        this.addPlayer(this.filteredPlayers[0]);
+      }
+    },
     scrollTo: function scrollTo(element) {
       this.$scrollTo(element);
     },
@@ -3468,216 +3474,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Grid.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Grid.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Hand.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Hand.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    karten: [Array, Object],
-    armut: {
-      type: Boolean,
-      required: false,
-      "default": false
-    }
-  },
-  computed: {}
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Karte.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Karte.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: {
-    karte: [Object, String],
-    armut: {
-      type: Boolean,
-      required: false,
-      "default": false
-    },
-    keinRoterRahmen: {
-      type: Boolean,
-      required: false,
-      "default": false
-    }
-  },
-  data: function data() {
-    return {
-      id: 0
-    };
-  },
-  created: function created() {
-    this.id = this.karte.id;
-  },
-  computed: {
-    wert: function wert() {
-      if (this.karte.wert === 1) {
-        return '9';
-      } else if (this.karte.wert === 2) {
-        return 'J';
-      } else if (this.karte.wert === 3) {
-        return 'Q';
-      } else if (this.karte.wert === 4) {
-        return 'K';
-      } else if (this.karte.wert === 5) {
-        return '10';
-      } else if (this.karte.wert === 6) {
-        return 'A';
-      } else {
-        return '';
-      }
-    },
-    wert_klasse: function wert_klasse() {
-      if (this.karte.wert === 1) {
-        return 'rank-9';
-      } else if (this.karte.wert === 2) {
-        return 'rank-j';
-      } else if (this.karte.wert === 3) {
-        return 'rank-q';
-      } else if (this.karte.wert === 4) {
-        return 'rank-k';
-      } else if (this.karte.wert === 5) {
-        return 'rank-10';
-      } else if (this.karte.wert === 6) {
-        return 'rank-a';
-      } else {
-        return '';
-      }
-    },
-    farbe: function farbe() {
-      if (this.karte.farbe === 1) {
-        return 'diams';
-      } else if (this.karte.farbe === 2) {
-        return 'hearts';
-      } else if (this.karte.farbe === 3) {
-        return 'spades';
-      } else if (this.karte.farbe === 4) {
-        return 'clubs';
-      } else {
-        return '';
-      }
-    }
-  }
-});
-
-/***/ }),
-
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/LiveGame.vue?vue&type=script&lang=js&":
 /*!************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/LiveGame.vue?vue&type=script&lang=js& ***!
@@ -3687,16 +3483,6 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -3961,17 +3747,14 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    this.liveGame = this.round.live_game;
-    this.ich = this.round.ich;
-    this.ich.hand = Object.values(this.ich.hand);
-    this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+    this.copyDataFromProp();
 
     if (this.aktiv) {
       this.privateChannel.listen('LiveGameDataBroadcasted', function (e) {
+        _this.liveGame = e.liveGame;
         _this.ich = e.ich;
         _this.ich.hand = Object.values(_this.ich.hand);
         _this.ich.moeglicheVorbehalte = Object.values(_this.ich.moeglicheVorbehalte);
-        _this.liveGame = e.liveGame;
         _this.error = '';
 
         if (_this.liveGame.aktuellerStich.karten.length === 0) {
@@ -3989,26 +3772,34 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     privateChannel: function privateChannel() {
-      return window.Echo["private"]('liveRound.' + this.round.live_round.id + '.' + this.round.authID);
+      return window.Echo["private"]('liveRound.' + this.round.live_round.id + '.' + this.round.auth_id);
     },
-    aktiv: function aktiv() {
-      return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
-    },
+
+    /*aktiv() {
+        return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
+    },*/
     binIchDran: function binIchDran() {
-      return this.liveGame.dran === this.round.authID;
-    },
-    reOderKontra: function reOderKontra() {
-      if (this.ich.isRe === true) {
-        return 'Re';
-      } else if (this.ich.isRe === false) {
-        return 'Kontra';
-      } else {
-        return 'Keins von beidem Fehler';
-      }
+      return this.liveGame.dran === this.round.auth_id;
     }
+    /*reOderKontra() {
+        if (this.ich.isRe === true) {
+            return 'Re';
+        } else if (this.ich.isRe === false) {
+            return 'Kontra';
+        } else {
+            return 'Keins von beidem Fehler';
+        }
+    },*/
+
   },
   watch: {},
   methods: {
+    copyDataFromProp: function copyDataFromProp() {
+      this.liveGame = this.round.current_live_game;
+      this.ich = this.round.ich;
+      this.ich.hand = Object.values(this.ich.hand);
+      this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+    },
     pluck: function pluck(array, key) {
       return array.map(function (o) {
         return o[key];
@@ -4016,12 +3807,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     istPhase: function istPhase(phase) {
       return this.liveGame.phase === phase;
-    },
-    spielStarten: function spielStarten() {
-      axios.post('/api/live/' + this.round.live_round.id + '/spielStarten', {});
-    },
-    kartenGeben: function kartenGeben() {
-      axios.post('/api/live/' + this.liveGame.id + '/kartenGeben', {});
     },
     vorbehaltSenden: function vorbehaltSenden(vorbehalt) {
       var _this2 = this;
@@ -4033,109 +3818,314 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         return _this2.handleError(error);
       });
-    },
-    karteSpielen: function karteSpielen(karte) {
-      var _this3 = this;
+    }
+    /*karteSpielen(karte) {
+        this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
+        let karteKopie = karte;
+        karteKopie.gespieltVon = this.round.authID;
+        karteKopie.spielbar = false;
+        this.liveGame.aktuellerStich.karten.push(karteKopie);
+          axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
+            karte: karte
+        })
+            .then(response => this.error = '')
+            .catch(error => this.handleError(error));
+    },*/
 
-      this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
-      var karteKopie = karte;
-      karteKopie.gespieltVon = this.round.authID;
-      karteKopie.spielbar = false;
-      this.liveGame.aktuellerStich.karten.push(karteKopie);
-      axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
-        karte: karte
-      }).then(function (response) {
-        return _this3.error = '';
-      })["catch"](function (error) {
-        return _this3.handleError(error);
-      });
-    },
-    ansage: function ansage(_ansage) {
-      var _this4 = this;
+    /*ansage(ansage) {
+        axios.post('/api/live/' + this.liveGame.id + '/ansage', {
+            ansage: ansage
+        })
+            .catch(error => this.handleError(error));
+    },*/
 
-      axios.post('/api/live/' + this.liveGame.id + '/ansage', {
-        ansage: _ansage
-      })["catch"](function (error) {
-        return _this4.handleError(error);
-      });
+    /*reloadData() {
+        axios.get('/api/live/' + this.liveGame.id + '/reloadData')
+            .then(response => {
+                this.ich = response.data.ich;
+                this.liveGame = response.data.liveGame;
+                  this.ich.hand = Object.values(this.ich.hand);
+                this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+            });
     },
-    reloadData: function reloadData() {
-      var _this5 = this;
-
-      axios.get('/api/live/' + this.liveGame.id + '/reloadData').then(function (response) {
-        _this5.ich = response.data.ich;
-        _this5.liveGame = response.data.liveGame;
-        _this5.ich.hand = Object.values(_this5.ich.hand);
-        _this5.ich.moeglicheVorbehalte = Object.values(_this5.ich.moeglicheVorbehalte);
-      });
+      reloadPage() {
+        window.location.reload(true);
     },
-    reloadPage: function reloadPage() {
-      window.location.reload(true);
-    },
-    handleError: function handleError(error) {
-      if (error.response.status === 419) {
-        this.error = error.response.data.message;
-        this.reloadPage();
-      }
-
-      if (error.response.status === 422) {
-        this.error = error.response.data.message;
-        this.reloadData();
-      }
-    },
-    getSpieler: function getSpieler(position) {
-      var eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
-      var ergebnis = eigenerIndex + position;
-
-      if (ergebnis >= 4) {
-        ergebnis -= 4;
-      }
-
-      var spielerID = this.liveGame.spielerIDs[ergebnis];
-      return this.liveGame.spieler[spielerID];
-    },
-    letzterStich: function letzterStich() {
-      this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
-    },
-    armutKarteWechseln: function armutKarteWechseln(karte, richtung) {
-      if (richtung === 'mitte') {
-        if (this.armutKarten.length < 3) {
-          var index = this.ich.hand.indexOf(karte);
-          this.ich.hand.splice(index, 1);
-          karte.index = index;
-          this.armutKarten.push(karte);
+      handleError(error) {
+        if (error.response.status === 419) {
+            this.error = error.response.data.message;
+            this.reloadPage();
         }
-      }
+        if (error.response.status === 422) {
+            this.error = error.response.data.message;
+            this.reloadData();
+        }
+    },*/
 
-      if (richtung === 'hand') {
-        this.armutKarten.splice(this.armutKarten.indexOf(karte), 1);
-        this.ich.hand.splice(karte.index, 0, karte);
+    /*getSpieler(position) {
+        let eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
+          let ergebnis = eigenerIndex + position;
+        if (ergebnis >= 4) {
+            ergebnis -= 4;
+        }
+        let spielerID = this.liveGame.spielerIDs[ergebnis];
+          return this.liveGame.spieler[spielerID];
+    },
+      letzterStich() {
+        this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
+    },*/
+
+    /*armutKarteWechseln(karte, richtung) {
+        if (richtung === 'mitte') {
+            if (this.armutKarten.length < 3) {
+                let index = this.ich.hand.indexOf(karte);
+                this.ich.hand.splice(index, 1);
+                karte.index = index;
+                this.armutKarten.push(karte);
+            }
+        }
+        if (richtung === 'hand') {
+            this.armutKarten.splice(this.armutKarten.indexOf(karte), 1);
+            this.ich.hand.splice(karte.index, 0, karte);
+        }
+    },
+      armutAbgeben() {
+        axios.post('/api/live/' + this.liveGame.id + '/armutAbgeben', {
+            karten: this.armutKarten
+        })
+            .then(this.armutKarten = []);
+    },
+      armutMitnehmen(mitnehmen) {
+        axios.post('/api/live/' + this.liveGame.id + '/armutMitnehmen', {
+            mitnehmen: mitnehmen
+        });
+    },
+      armutZurueckgeben(mitnehmen) {
+        axios.post('/api/live/' + this.liveGame.id + '/armutZurueck', {
+            karten: this.armutKarten
+        })
+            .then(this.armutKarten = []);
+    }*/
+
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js&":
+/*!************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    karten: [Array, Object],
+    armut: {
+      type: Boolean,
+      required: false,
+      "default": false
+    }
+  },
+  computed: {}
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    karte: [Object, String],
+    armut: {
+      type: Boolean,
+      required: false,
+      "default": false
+    },
+    keinRoterRahmen: {
+      type: Boolean,
+      required: false,
+      "default": false
+    }
+  },
+  data: function data() {
+    return {
+      id: 0
+    };
+  },
+  created: function created() {
+    this.id = this.karte.id;
+  },
+  computed: {
+    wert: function wert() {
+      if (this.karte.wert === 1) {
+        return '9';
+      } else if (this.karte.wert === 2) {
+        return 'J';
+      } else if (this.karte.wert === 3) {
+        return 'Q';
+      } else if (this.karte.wert === 4) {
+        return 'K';
+      } else if (this.karte.wert === 5) {
+        return '10';
+      } else if (this.karte.wert === 6) {
+        return 'A';
+      } else {
+        return '';
       }
     },
-    armutAbgeben: function armutAbgeben() {
-      axios.post('/api/live/' + this.liveGame.id + '/armutAbgeben', {
-        karten: this.armutKarten
-      }).then(this.armutKarten = []);
+    wert_klasse: function wert_klasse() {
+      if (this.karte.wert === 1) {
+        return 'rank-9';
+      } else if (this.karte.wert === 2) {
+        return 'rank-j';
+      } else if (this.karte.wert === 3) {
+        return 'rank-q';
+      } else if (this.karte.wert === 4) {
+        return 'rank-k';
+      } else if (this.karte.wert === 5) {
+        return 'rank-10';
+      } else if (this.karte.wert === 6) {
+        return 'rank-a';
+      } else {
+        return '';
+      }
     },
-    armutMitnehmen: function armutMitnehmen(mitnehmen) {
-      axios.post('/api/live/' + this.liveGame.id + '/armutMitnehmen', {
-        mitnehmen: mitnehmen
-      });
-    },
-    armutZurueckgeben: function armutZurueckgeben(mitnehmen) {
-      axios.post('/api/live/' + this.liveGame.id + '/armutZurueck', {
-        karten: this.armutKarten
-      }).then(this.armutKarten = []);
+    farbe: function farbe() {
+      if (this.karte.farbe === 1) {
+        return 'diams';
+      } else if (this.karte.farbe === 2) {
+        return 'hearts';
+      } else if (this.karte.farbe === 3) {
+        return 'spades';
+      } else if (this.karte.farbe === 4) {
+        return 'clubs';
+      } else {
+        return '';
+      }
     }
   }
 });
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4192,10 +4182,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Stich.vue?vue&type=script&lang=js&":
-/*!*********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Stich.vue?vue&type=script&lang=js& ***!
-  \*********************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -4614,7 +4604,68 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//import Fullscreen from "vue-fullscreen/src/component.vue"
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {},
   props: {
@@ -4643,8 +4694,14 @@ __webpack_require__.r(__webpack_exports__);
       _this.round.online_players.push(player.id);
     }).leaving(function (player) {
       _this.round.online_players.splice(_this.round.online_players.indexOf(player.id), 1);
+
+      _this.round.ready_players = [];
     }).listen('RoundUpdated', function (e) {
-      _this.fetchData();
+      _this.fetchData().then(function (response) {
+        _this.$refs.live_game.copyDataFromProp();
+      });
+    }).listenForWhisper('ready', function (e) {
+      _this.round.ready_players.push(e.id);
     });
   },
   destroyed: function destroyed() {
@@ -4655,26 +4712,53 @@ __webpack_require__.r(__webpack_exports__);
     presenceChannel: function presenceChannel() {
       return window.Echo.join('round.' + this.round.id);
     },
-    playersOnline: function playersOnline() {
+    allPlayersOnline: function allPlayersOnline() {
       var _this2 = this;
 
       return this.pluck(this.round.active_players, 'id').every(function (id) {
         return _this2.round.online_players.includes(id);
       });
+    },
+    allPlayersReady: function allPlayersReady() {
+      var _this3 = this;
+
+      return this.pluck(this.round.active_players, 'id').every(function (id) {
+        return _this3.round.ready_players.includes(id);
+      });
+    },
+    not_ready_players: function not_ready_players() {
+      var _this4 = this;
+
+      return this.pluck(this.round.active_players, 'id').filter(function (id) {
+        return !_this4.round.ready_players.includes(id);
+      });
     }
   },
   methods: {
+    whisperReady: function whisperReady() {
+      this.round.ready_players.push(this.round.auth_id);
+      this.presenceChannel.whisper('ready', {
+        'id': this.round.auth_id
+      });
+    },
     reconnectChannels: function reconnectChannels() {
       this.round.online_players = this.pluck(Object.values(this.presenceChannel.subscription.members.members), 'id');
     },
     fetchData: function fetchData() {
-      var _this3 = this;
+      var _this5 = this;
 
-      axios.get('/api/rounds/' + this.roundProp.id + '/fetchData').then(function (response) {
-        _this3.round = response.data.data;
+      return new Promise(function (resolve, reject) {
+        axios.get('/api/rounds/' + _this5.roundProp.id + '/fetchData').then(function (response) {
+          _this5.round = response.data.data;
 
-        _this3.reconnectChannels();
+          _this5.reconnectChannels();
+
+          resolve(response);
+        });
       });
+    },
+    neuesSpielStarten: function neuesSpielStarten() {
+      axios.post('/api/live/' + this.round.live_round.id + '/spielStarten');
     },
     fullscreenOn: function fullscreenOn() {
       var elem = document.getElementById('fullscreen');
@@ -4690,7 +4774,7 @@ __webpack_require__.r(__webpack_exports__);
     fullscreenOff: function fullscreenOff() {
       document.exitFullscreen();
     },
-    fullscreenIfMobile: function fullscreenIfMobile() {
+    fullscreenOnIfMobile: function fullscreenOnIfMobile() {
       if (this.mobile && !this.fullscreen) {
         this.fullscreenOn();
       }
@@ -73300,6 +73384,15 @@ var render = function() {
                   },
                   focus: function($event) {
                     return _vm.scrollTo("#text-search")
+                  },
+                  keyup: function($event) {
+                    if (
+                      !$event.type.indexOf("key") &&
+                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                    ) {
+                      return null
+                    }
+                    return _vm.enterPressed($event)
                   }
                 }
               }),
@@ -74787,10 +74880,215 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e&":
-/*!************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e& ***!
-  \************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/LiveGame.vue?vue&type=template&id=1c3e07b4&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/LiveGame.vue?vue&type=template&id=1c3e07b4& ***!
+  \****************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "playingCards" }, [
+    _c(
+      "div",
+      {
+        staticClass:
+          "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
+        staticStyle: {
+          position: "absolute",
+          left: "25%",
+          transform: "translate(-50%)"
+        }
+      },
+      [_vm._v("\n        Spieler 1\n    ")]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
+        staticStyle: {
+          position: "absolute",
+          left: "50%",
+          transform: "translate(-50%)"
+        }
+      },
+      [_vm._v("\n        Spieler 2\n    ")]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
+        staticStyle: {
+          position: "absolute",
+          left: "75%",
+          transform: "translate(-50%)"
+        }
+      },
+      [_vm._v("\n        Spieler 3\n    ")]
+    ),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass:
+          "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-t-lg tw-text-gray-300 tw-text tw-px-4",
+        staticStyle: {
+          position: "absolute",
+          left: "50%",
+          bottom: "0",
+          transform: "translate(-50%)"
+        }
+      },
+      [_vm._v("\n        Spieler 0\n    ")]
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "center-absolute live-overlay tw-p-4 " }, [
+      _vm.istPhase(2) && _vm.ich.vorbehalt != null
+        ? _c("div", { staticClass: "tw-font-bold" }, [
+            _vm._v(
+              "\n            Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.\n        "
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _vm.istPhase(2) && _vm.ich.vorbehalt == null
+        ? _c(
+            "div",
+            {
+              staticClass:
+                "tw-flex tw-flex-col tw-justify-between tw-items-center"
+            },
+            [
+              _vm.binIchDran
+                ? _c("p", { staticClass: "tw-font-bold" }, [
+                    _vm._v("Wähle deinen Vorbehalt:")
+                  ])
+                : _c("p", { staticClass: "tw-font-bold" }, [
+                    _vm._v("Mögliche Vorbehalte:")
+                  ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "tw-flex tw-items-center" }, [
+                !_vm.ich.moeglicheVorbehalte.includes("Hochzeit")
+                  ? _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary tw-mr-6 tw-max-w-4xs",
+                        attrs: { disabled: !_vm.binIchDran },
+                        on: {
+                          click: function($event) {
+                            return _vm.vorbehaltSenden("Gesund")
+                          }
+                        }
+                      },
+                      [_vm._v("\n                    Gesund\n                ")]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "tw-flex tw-flex-col" },
+                  _vm._l(_vm.ich.moeglicheVorbehalte, function(vorbehalt) {
+                    return !_vm.soli.includes(vorbehalt) &&
+                      !_vm.farbsoli.includes(vorbehalt)
+                      ? _c("button", {
+                          staticClass: "btn btn-primary tw-my-1 tw-mr-6",
+                          attrs: { disabled: !_vm.binIchDran },
+                          domProps: { textContent: _vm._s(vorbehalt) },
+                          on: {
+                            click: function($event) {
+                              return _vm.vorbehaltSenden(vorbehalt)
+                            }
+                          }
+                        })
+                      : _vm._e()
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "tw-flex tw-flex-col tw-max-w-4xs" },
+                  _vm._l(_vm.ich.moeglicheVorbehalte, function(vorbehalt) {
+                    return _vm.soli.includes(vorbehalt)
+                      ? _c("button", {
+                          staticClass: "btn btn-primary tw-my-1 tw-mr-6",
+                          attrs: { disabled: !_vm.binIchDran },
+                          domProps: { textContent: _vm._s(vorbehalt) },
+                          on: {
+                            click: function($event) {
+                              return _vm.vorbehaltSenden(vorbehalt)
+                            }
+                          }
+                        })
+                      : _vm._e()
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "tw-flex tw-flex-col tw-max-w-2xs" },
+                  [
+                    !_vm.farbsoliAnzeigen
+                      ? _c("button", {
+                          staticClass: "btn btn-primary tw-my-1",
+                          attrs: { disabled: !_vm.binIchDran },
+                          domProps: { textContent: _vm._s("Farbsolo") },
+                          on: {
+                            click: function($event) {
+                              _vm.farbsoliAnzeigen = true
+                            }
+                          }
+                        })
+                      : _vm._e(),
+                    _vm._v(" "),
+                    _vm._l(_vm.ich.moeglicheVorbehalte, function(vorbehalt) {
+                      return _vm.farbsoli.includes(vorbehalt) &&
+                        _vm.farbsoliAnzeigen
+                        ? _c("button", {
+                            staticClass: "btn btn-outline-primary tw-my-1",
+                            attrs: { disabled: !_vm.binIchDran },
+                            domProps: { textContent: _vm._s(vorbehalt) },
+                            on: {
+                              click: function($event) {
+                                return _vm.vorbehaltSenden(vorbehalt)
+                              }
+                            }
+                          })
+                        : _vm._e()
+                    })
+                  ],
+                  2
+                )
+              ])
+            ]
+          )
+        : _vm._e()
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154& ***!
+  \****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -74878,10 +75176,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917&":
-/*!************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917& ***!
-  \************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002&":
+/*!****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002& ***!
+  \****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -74926,10 +75224,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5&":
-/*!*************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5& ***!
-  \*************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed& ***!
+  \*****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -75027,83 +75325,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/LiveGame.vue?vue&type=template&id=1c3e07b4&":
-/*!****************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/LiveGame.vue?vue&type=template&id=1c3e07b4& ***!
-  \****************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "playingCards" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
-          staticStyle: {
-            position: "absolute",
-            left: "25%",
-            transform: "translate(-50%)"
-          }
-        },
-        [_vm._v("\n        Spieler 1\n    ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
-          staticStyle: {
-            position: "absolute",
-            left: "50%",
-            transform: "translate(-50%)"
-          }
-        },
-        [_vm._v("\n        Spieler 2\n    ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4",
-          staticStyle: {
-            position: "absolute",
-            left: "75%",
-            transform: "translate(-50%)"
-          }
-        },
-        [_vm._v("\n        Spieler 3\n    ")]
-      )
-    ])
-  }
-]
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&":
-/*!***************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648& ***!
-  \***************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340&":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340& ***!
+  \*******************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -75200,10 +75425,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6&":
-/*!*************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6& ***!
-  \*************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6& ***!
+  \*****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -75853,7 +76078,7 @@ var render = function() {
     [
       _c(
         "tabs",
-        { on: { clicked: _vm.fullscreenIfMobile } },
+        { on: { clicked: _vm.fullscreenOnIfMobile } },
         [
           _c(
             "tab",
@@ -75926,7 +76151,9 @@ var render = function() {
                                     "tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0"
                                 },
                                 [
-                                  _vm.mobile && _vm.fullscreen
+                                  _vm.allPlayersOnline &&
+                                  _vm.mobile &&
+                                  _vm.fullscreen
                                     ? _c("i", {
                                         staticClass:
                                           "fas fa-compress tw-text-2xl tw-text-gray-600",
@@ -75936,18 +76163,14 @@ var render = function() {
                                 ]
                               ),
                               _vm._v(" "),
-                              _vm.mobile && !_vm.fullscreen
+                              _vm.allPlayersOnline &&
+                              _vm.mobile &&
+                              !_vm.fullscreen
                                 ? _c(
                                     "div",
                                     {
                                       staticClass:
-                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-2 tw-w-48 tw-rounded-xl",
-                                      staticStyle: {
-                                        position: "absolute",
-                                        top: "50%",
-                                        left: "50%",
-                                        transform: "translate(-50%, -50%)"
-                                      }
+                                        "center-absolute live-overlay tw-p-2 tw-w-48"
                                     },
                                     [
                                       _c("p", [
@@ -75965,18 +76188,15 @@ var render = function() {
                                   )
                                 : _vm._e(),
                               _vm._v(" "),
-                              _vm.mobile && !_vm.landscape && _vm.fullscreen
+                              _vm.allPlayersOnline &&
+                              _vm.mobile &&
+                              !_vm.landscape &&
+                              _vm.fullscreen
                                 ? _c(
                                     "div",
                                     {
                                       staticClass:
-                                        "tw-text-gray-200 tw-bg-gray-800 tw-bg-opacity-50 tw-p-4 tw-w-48 tw-rounded-xl",
-                                      staticStyle: {
-                                        position: "absolute",
-                                        top: "50%",
-                                        left: "50%",
-                                        transform: "translate(-50%, -50%)"
-                                      }
+                                        "center-absolute live-overlay tw-w-48"
                                     },
                                     [
                                       _c("p", [
@@ -75992,22 +76212,234 @@ var render = function() {
                                   )
                                 : _vm._e(),
                               _vm._v(" "),
-                              _c("live-game", {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value:
-                                      !_vm.mobile ||
-                                      (_vm.landscape && _vm.fullscreen),
-                                    expression:
-                                      "!mobile || (landscape && fullscreen)"
-                                  }
+                              !_vm.allPlayersOnline
+                                ? _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "center-absolute live-overlay tw-p-4"
+                                    },
+                                    [
+                                      _c("p", [
+                                        _vm._v(
+                                          "Bitte warte, bis alle Spieler online sind:"
+                                        )
+                                      ]),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "tw-grid tw-grid-cols-2 tw-gap-2"
+                                        },
+                                        _vm._l(
+                                          _vm.round.active_players,
+                                          function(player) {
+                                            return _c("div", [
+                                              _c("img", {
+                                                staticClass:
+                                                  "tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full",
+                                                class: {
+                                                  "tw-shadow-green": _vm.round.online_players.includes(
+                                                    player.id
+                                                  )
+                                                },
+                                                attrs: {
+                                                  src: player.avatar_path
+                                                }
+                                              }),
+                                              _vm._v(
+                                                "\n                                    " +
+                                                  _vm._s(player.surname) +
+                                                  "\n                                "
+                                              )
+                                            ])
+                                          }
+                                        ),
+                                        0
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _vm.allPlayersOnline &&
+                              !_vm.round.current_live_game &&
+                              (!_vm.mobile || (_vm.landscape && _vm.fullscreen))
+                                ? _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "center-absolute live-overlay tw-p-4"
+                                    },
+                                    [
+                                      !_vm.round.ready_players.includes(
+                                        _vm.round.auth_id
+                                      )
+                                        ? _c(
+                                            "div",
+                                            { staticClass: "tw-mb-4" },
+                                            [
+                                              _c(
+                                                "button",
+                                                {
+                                                  staticClass:
+                                                    "btn btn-primary",
+                                                  on: {
+                                                    click: _vm.whisperReady
+                                                  }
+                                                },
+                                                [
+                                                  _vm._v(
+                                                    "\n                                    Bereit?\n                                "
+                                                  )
+                                                ]
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.round.created_by.id ===
+                                      _vm.round.auth_id
+                                        ? _c("div", {}, [
+                                            _c(
+                                              "button",
+                                              {
+                                                staticClass:
+                                                  "btn btn-primary tw-mb-4",
+                                                attrs: {
+                                                  disabled:
+                                                     false &&
+                                                    false
+                                                },
+                                                on: {
+                                                  click: _vm.neuesSpielStarten
+                                                }
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                                    Neues Spiel starten\n                                "
+                                                )
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            !_vm.allPlayersReady
+                                              ? _c("p", [
+                                                  _vm._v(
+                                                    "\n                                    Bitte warte, bis alle Spieler bereit sind:\n                                "
+                                                  )
+                                                ])
+                                              : _c("p", [
+                                                  _vm._v(
+                                                    "\n                                    Alle Spieler sind bereit!\n                                "
+                                                  )
+                                                ])
+                                          ])
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _vm.round.created_by.id !==
+                                      _vm.round.auth_id
+                                        ? _c(
+                                            "div",
+                                            { staticClass: "tw-mb-4" },
+                                            [
+                                              !_vm.allPlayersReady
+                                                ? _c("p", [
+                                                    _vm._v(
+                                                      "\n                                    Bitte warte, bis alle Spieler bereit sind:\n                                "
+                                                    )
+                                                  ])
+                                                : _c("p", [
+                                                    _vm._v(
+                                                      "\n                                    Bitte warte, bis " +
+                                                        _vm._s(
+                                                          _vm.round.created_by
+                                                            .surname
+                                                        ) +
+                                                        " ein neues Spiel gestartet hat.\n                                "
+                                                    )
+                                                  ])
+                                            ]
+                                          )
+                                        : _vm._e(),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "tw-grid tw-grid-cols-2 tw-gap-2"
+                                        },
+                                        _vm._l(
+                                          _vm.round.active_players,
+                                          function(player) {
+                                            return _c("div", [
+                                              _c("img", {
+                                                staticClass:
+                                                  "tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full",
+                                                class: {
+                                                  "tw-shadow-green": _vm.round.ready_players.includes(
+                                                    player.id
+                                                  )
+                                                },
+                                                attrs: {
+                                                  src: player.avatar_path
+                                                }
+                                              }),
+                                              _vm._v(
+                                                "\n                                    " +
+                                                  _vm._s(player.surname) +
+                                                  "\n                                "
+                                              )
+                                            ])
+                                          }
+                                        ),
+                                        0
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value:
+                                        _vm.allPlayersOnline &&
+                                        (!_vm.mobile ||
+                                          (_vm.landscape && _vm.fullscreen)),
+                                      expression:
+                                        "allPlayersOnline && (!mobile || (landscape && fullscreen))"
+                                    }
+                                  ]
+                                },
+                                [
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass:
+                                        "tw-absolute tw-bottom-0 tw-left-0"
+                                    },
+                                    [
+                                      _c("i", {
+                                        staticClass:
+                                          "far fa-plus-square tw-text-3xl tw-text-gray-500 tw-ml-4 tw-mb-4 tw-cursor-pointer",
+                                        on: { click: _vm.neuesSpielStarten }
+                                      })
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm.round.current_live_game
+                                    ? _c("live-game", {
+                                        ref: "live_game",
+                                        attrs: { round: _vm.round }
+                                      })
+                                    : _vm._e()
                                 ],
-                                attrs: { round: _vm.round }
-                              })
-                            ],
-                            1
+                                1
+                              )
+                            ]
                           )
                         ]
                       )
@@ -93008,12 +93440,12 @@ var map = {
 	"./components/components/Tab.vue": "./resources/js/components/components/Tab.vue",
 	"./components/components/Tabs.vue": "./resources/js/components/components/Tabs.vue",
 	"./components/components/Toggle.vue": "./resources/js/components/components/Toggle.vue",
-	"./components/live/Grid.vue": "./resources/js/components/live/Grid.vue",
-	"./components/live/Hand.vue": "./resources/js/components/live/Hand.vue",
-	"./components/live/Karte.vue": "./resources/js/components/live/Karte.vue",
 	"./components/live/LiveGame.vue": "./resources/js/components/live/LiveGame.vue",
-	"./components/live/Spieler.vue": "./resources/js/components/live/Spieler.vue",
-	"./components/live/Stich.vue": "./resources/js/components/live/Stich.vue",
+	"./components/live/old/Grid.vue": "./resources/js/components/live/old/Grid.vue",
+	"./components/live/old/Hand.vue": "./resources/js/components/live/old/Hand.vue",
+	"./components/live/old/Karte.vue": "./resources/js/components/live/old/Karte.vue",
+	"./components/live/old/Spieler.vue": "./resources/js/components/live/old/Spieler.vue",
+	"./components/live/old/Stich.vue": "./resources/js/components/live/old/Stich.vue",
 	"./components/rounds/CreateGame.vue": "./resources/js/components/rounds/CreateGame.vue",
 	"./components/rounds/DeleteGame.vue": "./resources/js/components/rounds/DeleteGame.vue",
 	"./components/rounds/Round.vue": "./resources/js/components/rounds/Round.vue",
@@ -94532,213 +94964,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Grid.vue":
-/*!***********************************************!*\
-  !*** ./resources/js/components/live/Grid.vue ***!
-  \***********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Grid.vue?vue&type=template&id=1703506e& */ "./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e&");
-/* harmony import */ var _Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Grid.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Grid.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/live/Grid.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Grid.vue?vue&type=script&lang=js&":
-/*!************************************************************************!*\
-  !*** ./resources/js/components/live/Grid.vue?vue&type=script&lang=js& ***!
-  \************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Grid.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Grid.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e& ***!
-  \******************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Grid.vue?vue&type=template&id=1703506e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Grid.vue?vue&type=template&id=1703506e&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_1703506e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Hand.vue":
-/*!***********************************************!*\
-  !*** ./resources/js/components/live/Hand.vue ***!
-  \***********************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Hand.vue?vue&type=template&id=0422c917& */ "./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917&");
-/* harmony import */ var _Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Hand.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Hand.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/live/Hand.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Hand.vue?vue&type=script&lang=js&":
-/*!************************************************************************!*\
-  !*** ./resources/js/components/live/Hand.vue?vue&type=script&lang=js& ***!
-  \************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Hand.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Hand.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917&":
-/*!******************************************************************************!*\
-  !*** ./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917& ***!
-  \******************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Hand.vue?vue&type=template&id=0422c917& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Hand.vue?vue&type=template&id=0422c917&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_0422c917___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Karte.vue":
-/*!************************************************!*\
-  !*** ./resources/js/components/live/Karte.vue ***!
-  \************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Karte.vue?vue&type=template&id=2ed075d5& */ "./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5&");
-/* harmony import */ var _Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Karte.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Karte.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/js/components/live/Karte.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Karte.vue?vue&type=script&lang=js&":
-/*!*************************************************************************!*\
-  !*** ./resources/js/components/live/Karte.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Karte.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Karte.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5& ***!
-  \*******************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Karte.vue?vue&type=template&id=2ed075d5& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Karte.vue?vue&type=template&id=2ed075d5&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_2ed075d5___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./resources/js/components/live/LiveGame.vue":
 /*!***************************************************!*\
   !*** ./resources/js/components/live/LiveGame.vue ***!
@@ -94808,18 +95033,225 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Spieler.vue":
-/*!**************************************************!*\
-  !*** ./resources/js/components/live/Spieler.vue ***!
-  \**************************************************/
+/***/ "./resources/js/components/live/old/Grid.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/live/old/Grid.vue ***!
+  \***************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Spieler.vue?vue&type=template&id=3731d648& */ "./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&");
-/* harmony import */ var _Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Spieler.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Grid.vue?vue&type=template&id=72b07154& */ "./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154&");
+/* harmony import */ var _Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Grid.vue?vue&type=script&lang=js& */ "./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/live/old/Grid.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Grid.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Grid.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Grid.vue?vue&type=template&id=72b07154& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Grid.vue?vue&type=template&id=72b07154&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Grid_vue_vue_type_template_id_72b07154___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Hand.vue":
+/*!***************************************************!*\
+  !*** ./resources/js/components/live/old/Hand.vue ***!
+  \***************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Hand.vue?vue&type=template&id=98718002& */ "./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002&");
+/* harmony import */ var _Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Hand.vue?vue&type=script&lang=js& */ "./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/live/old/Hand.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js&":
+/*!****************************************************************************!*\
+  !*** ./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Hand.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Hand.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002&":
+/*!**********************************************************************************!*\
+  !*** ./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002& ***!
+  \**********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Hand.vue?vue&type=template&id=98718002& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Hand.vue?vue&type=template&id=98718002&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Hand_vue_vue_type_template_id_98718002___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Karte.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/live/old/Karte.vue ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Karte.vue?vue&type=template&id=73badbed& */ "./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed&");
+/* harmony import */ var _Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Karte.vue?vue&type=script&lang=js& */ "./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/live/old/Karte.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Karte.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Karte.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed& ***!
+  \***********************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Karte.vue?vue&type=template&id=73badbed& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Karte.vue?vue&type=template&id=73badbed&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Karte_vue_vue_type_template_id_73badbed___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/live/old/Spieler.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/live/old/Spieler.vue ***!
+  \******************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Spieler.vue?vue&type=template&id=29c9d340& */ "./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340&");
+/* harmony import */ var _Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Spieler.vue?vue&type=script&lang=js& */ "./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -94829,8 +95261,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -94840,55 +95272,55 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/live/Spieler.vue"
+component.options.__file = "resources/js/components/live/old/Spieler.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&":
-/*!***************************************************************************!*\
-  !*** ./resources/js/components/live/Spieler.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************/
+/***/ "./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Spieler.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&":
-/*!*********************************************************************************!*\
-  !*** ./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648& ***!
-  \*********************************************************************************/
+/***/ "./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340& ***!
+  \*************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=template&id=3731d648& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Spieler.vue?vue&type=template&id=3731d648&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Spieler.vue?vue&type=template&id=29c9d340& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Spieler.vue?vue&type=template&id=29c9d340&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_3731d648___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Spieler_vue_vue_type_template_id_29c9d340___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Stich.vue":
-/*!************************************************!*\
-  !*** ./resources/js/components/live/Stich.vue ***!
-  \************************************************/
+/***/ "./resources/js/components/live/old/Stich.vue":
+/*!****************************************************!*\
+  !*** ./resources/js/components/live/old/Stich.vue ***!
+  \****************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Stich.vue?vue&type=template&id=e48bddd6& */ "./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6&");
-/* harmony import */ var _Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Stich.vue?vue&type=script&lang=js& */ "./resources/js/components/live/Stich.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Stich.vue?vue&type=template&id=5ab711a6& */ "./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6&");
+/* harmony import */ var _Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Stich.vue?vue&type=script&lang=js& */ "./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -94898,8 +95330,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
@@ -94909,38 +95341,38 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 /* hot reload */
 if (false) { var api; }
-component.options.__file = "resources/js/components/live/Stich.vue"
+component.options.__file = "resources/js/components/live/old/Stich.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Stich.vue?vue&type=script&lang=js&":
-/*!*************************************************************************!*\
-  !*** ./resources/js/components/live/Stich.vue?vue&type=script&lang=js& ***!
-  \*************************************************************************/
+/***/ "./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./Stich.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Stich.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Stich.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Stich.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6&":
-/*!*******************************************************************************!*\
-  !*** ./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6& ***!
-  \*******************************************************************************/
+/***/ "./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6& ***!
+  \***********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Stich.vue?vue&type=template&id=e48bddd6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/Stich.vue?vue&type=template&id=e48bddd6&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./Stich.vue?vue&type=template&id=5ab711a6& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/live/old/Stich.vue?vue&type=template&id=5ab711a6&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_e48bddd6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Stich_vue_vue_type_template_id_5ab711a6___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

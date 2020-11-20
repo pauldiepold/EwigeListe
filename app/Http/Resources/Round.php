@@ -30,14 +30,15 @@ class Round extends JsonResource
             'created_by' => $this->createdBy,
 
             'online_players' => [],
-            'authID' => auth()->id(),
+            'ready_players' => [],
+            'auth_id' => auth()->id(),
 
             'games' => GameResource::collection($this->games),
             'players' => PlayerFullResource::collection($this->players),
             'groups' => GroupResource::collection($this->groups),
-            'live_round' => $this->liveRound,
-            'live_game' => $this->liveRound->currentLiveGame(),
-            'ich' => $this->liveRound->currentLiveGame()->getSpieler(auth()->id()),
+            'live_round' => new LiveRound($this->liveRound),
+            'current_live_game' => new LiveGame($this->liveRound->currentLiveGame()),
+            'ich' => $this->when($this->liveRound->currentLiveGame(), fn() => $this->liveRound->currentLiveGame()->getSpieler(auth()->id())),
         ];
     }
 }

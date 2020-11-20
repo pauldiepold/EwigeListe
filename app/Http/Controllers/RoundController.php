@@ -97,7 +97,7 @@ class RoundController extends Controller
 
         if ($validated->get('liveGame'))
         {
-            $round->startLiveRound();
+            $round->createLiveRound();
         }
 
         return $round->path();
