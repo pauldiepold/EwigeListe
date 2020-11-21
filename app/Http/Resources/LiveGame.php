@@ -18,6 +18,9 @@ class LiveGame extends JsonResource
             'id' => $this->id,
             'phase' => $this->phase,
             'dran' => $this->dran,
+            'aktuellerStich' => $this->aktuellerStich,
+            'letzterStich' => $this->letzterStich,
+            'spielerIDs' => $this->spielerIDs,
 
         ];
     }

@@ -19,7 +19,7 @@ module.exports = {
                 },
                 orange: {
                     dark: 'rgb(176, 74, 67)',
-                    default: '#D16341',
+                    500: '#D16341',
                     lighter: 'rgba(209, 99, 65, 0.18)',
                 },
                 blue: {
@@ -52,6 +52,7 @@ module.exports = {
             },
             boxShadow: {
                 green: '0 0 6px 3px rgb(88, 169, 117)',
+                'green-darker': '0 0 6px 3px rgb(41, 177, 89)',
                 red: '0 0 6px 3px rgb(202, 114, 114)',
                 xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
                 sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

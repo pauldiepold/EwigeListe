@@ -14,6 +14,12 @@ import Vue2TouchEvents from 'vue2-touch-events';
 Vue.use(VueScrollTo, {offset: -70});
 Vue.use(Vue2TouchEvents, {swipeTolerance: 70});
 
+Vue.mixin({
+    methods: {
+        pluck: (array, key) => array.map(o => o[key])
+    }
+})
+
 global.vm = new Vue({
     el: '#app',
     components: {},

@@ -816,6 +816,7 @@ class LiveGame extends Model
             $this->spieltyp == 'Hochzeit' ||
             $this->spieltyp == 'Stille Hochzeit' ||
             $this->spieltyp == 'Trumpfsolo' ||
+            $this->spieltyp == 'Armut' ||
             $this->spieltyp == '')
         {
             if ($karte->wert == 2 || $karte->wert == 3) return true;

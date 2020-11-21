@@ -3,22 +3,20 @@
          class="card-live back tw-invisible">
         *
     </div>
-    <a v-else-if="armut"
-       class="card-live"
-       href="#"
+    <div v-else-if="armut"
+       class="card-live card-clickable tw-cursor-pointer"
        :class="[wert_klasse, farbe]"
        @click="$emit('armut', karte)">
         <span class="rank" v-html="wert"></span>
         <span class="suit" v-html="'&' + farbe + ';'"></span>
-    </a>
-    <a v-else-if="karte.spielbar"
-       class="card-live"
-       href="#"
+    </div>
+    <div v-else-if="karte.spielbar"
+       class="card-live card-clickable tw-cursor-pointer"
        :class="[wert_klasse, farbe]"
        @click="$emit('karteSpielen', karte)">
         <span class="rank" v-html="wert"></span>
         <span class="suit" v-html="'&' + farbe + ';'"></span>
-    </a>
+    </div>
     <div v-else-if="!karte.spielbar"
          class="card-live"
          :class="[wert_klasse, farbe, !keinRoterRahmen ? 'karteNichtSpielbar' : '']">

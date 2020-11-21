@@ -54,9 +54,6 @@ export default {
                     console.log(error);
                 });
         },
-        pluck(array, key) {
-            return array.map(o => o[key]);
-        },
     }
 };
 </script>

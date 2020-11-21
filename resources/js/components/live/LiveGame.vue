@@ -1,20 +1,38 @@
 <template>
     <div class="playingCards">
-        <div style="position: absolute; left: 25%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
-            Spieler 1
+
+        <div class="tw-absolute live-overlay tw-p-3 tw-m-2 tw-bottom-0 tw-left-0 tw-text-3xl tw-flex tw-flex-col">
+            <i class="fas fa-history tw-cursor-pointer tw-mb-4"
+               :class="{'tw-text-orange-500': letzterStichEingeblendet}"
+               @click="letzterStich"></i>
+            <i class="far fa-plus-square tw-cursor-pointer"
+               @click="$emit('neues-spiel-starten')"></i>
         </div>
-        <div style="position: absolute; left: 50%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
-            Spieler 2
+
+        <spieler :round="round" :liveGame="liveGame"/>
+
+        <!-- ******** Hand ********* -->
+        <div style="position: absolute; left: 35%; bottom: 0; transform: translate(-50%);" class="tw--mb-12">
+            <hand class="tw-mb-0 tw-mt-3"
+                  v-if="ich.hand !== '' && liveGame.phase > 0"
+                  :karten="ich.hand"
+                  :armut="binIchDran && (istPhase(3) || istPhase(33))"
+                  @karteSpielen="karteSpielen"
+                  @armut="armutKarteWechseln($event, 'mitte')"/>
         </div>
-        <div style="position: absolute; left: 75%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-text tw-px-4">
-            Spieler 3
-        </div>
-        <div style="position: absolute; left: 50%; bottom: 0; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-t-lg tw-text-gray-300 tw-text tw-px-4">
-            Spieler 0
+
+        <div v-if="(istPhase(4) || istPhase(101))" class="live-overlay tw-p-3"
+             style="position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);">
+            <!-- ******** Aktueller Stich ********* -->
+            <div v-if="istPhase(4) && !letzterStichEingeblendet">
+                <stich :stich="liveGame.aktuellerStich.karten"
+                       :round="round"/>
+            </div>
+            <!-- ******** Letzter Stich ********* -->
+            <div v-if="(istPhase(4) || istPhase(101)) && letzterStichEingeblendet">
+                <stich :stich="liveGame.letzterStich.karten"
+                       :round="round"/>
+            </div>
         </div>
 
         <!--<p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p>
@@ -27,7 +45,7 @@
         -->
 
         <!-- ******** Vorbehalte ********* -->
-        <div class="center-absolute live-overlay tw-p-4 ">
+        <div v-if="istPhase(2)" class="center-absolute live-overlay tw-p-4 ">
             <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
                 Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
             </div>
@@ -79,69 +97,58 @@
         </div>
 
 
-        <!-- ******** Armut *********
-        <div v-if="istPhase(3) && !binIchDran">
-            Die Armut wählt Ihre Karten.
-        </div>
+        <!-- ******** Armut ********* -->
+        <div v-if="(istPhase(3) || istPhase(32) || istPhase(33))" class="live-overlay tw-p-3"
+             style="position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);">
+            <div v-if="istPhase(3) && !binIchDran">
+                Die Armut wählt Ihre Karten.
+            </div>
 
-        <div v-if="istPhase(3) && binIchDran">
-            Wähle aus, welche Karten du abgeben möchtest!
-            <hand class="tw-mb-0 tw-mt-3"
-                  v-if="armutKarten.length > 0"
-                  :karten="armutKarten"
-                  :armut="true"
-                  @armut="armutKarteWechseln($event, 'hand')"/>
-            <button v-if="armutKarten.length === 3"
-                    @click="armutAbgeben"
-                    class="btn btn-primary">
-                Karten abgeben
-            </button>
-        </div>
+            <div v-if="istPhase(3) && binIchDran">
+                Wähle aus, welche Karten du abgeben möchtest!
+                <hand class="tw-mb-0 tw-mt-6"
+                      v-if="armutKarten.length > 0"
+                      :karten="armutKarten"
+                      :armut="true"
+                      @armut="armutKarteWechseln($event, 'hand')"/>
+                <button v-if="armutKarten.length === 3"
+                        @click="armutAbgeben"
+                        class="btn btn-primary">
+                    Karten abgeben
+                </button>
+            </div>
 
-        <div v-if="istPhase(32) && binIchDran">
-            <p class="tw-font-bold">
-                Willst du die Armut mitnehmen?
-            </p>
-            <button class="btn btn-primary tw-mr-6"
-                    @click="armutMitnehmen(true)">
-                Ja!
-            </button>
-            <button class="btn btn-primary tw-ml-6"
-                    @click="armutMitnehmen(false)">
-                Nein!
-            </button>
-        </div>
+            <div v-if="istPhase(32) && binIchDran">
+                <p class="tw-font-bold">
+                    Willst du die Armut mitnehmen?
+                </p>
+                <button class="btn btn-primary tw-mr-6"
+                        @click="armutMitnehmen(true)">
+                    Ja!
+                </button>
+                <button class="btn btn-primary tw-ml-6"
+                        @click="armutMitnehmen(false)">
+                    Nein!
+                </button>
+            </div>
 
-        <div v-if="istPhase(33) && binIchDran">
-            Wähle aus, welche Karten du zurückgeben möchtest!
-            <hand class="tw-mb-0 tw-mt-3"
-                  v-if="armutKarten.length > 0"
-                  :karten="armutKarten"
-                  :armut="true"
-                  @armut="armutKarteWechseln($event, 'hand')"/>
-            <button v-if="armutKarten.length === 3"
-                    @click="armutZurueckgeben"
-                    class="btn btn-primary">
-                Karten zurückgeben
-            </button>
-        </div>-->
-
-        <!-- ******** Aktueller Stich *********
-        <div v-if="istPhase(4) && !letzterStichEingeblendet">
-            <stich :stich="liveGame.aktuellerStich.karten"
-                   :auth-id="round.authID"
-                   :spieler-ids="liveGame.spielerIDs"/>
+            <div v-if="istPhase(33) && binIchDran">
+                Wähle aus, welche Karten du zurückgeben möchtest!
+                <hand class="tw-mb-0 tw-mt-3"
+                      v-if="armutKarten.length > 0"
+                      :karten="armutKarten"
+                      :armut="true"
+                      @armut="armutKarteWechseln($event, 'hand')"/>
+                <button v-if="armutKarten.length === 3"
+                        @click="armutZurueckgeben"
+                        class="btn btn-primary">
+                    Karten zurückgeben
+                </button>
+            </div>
         </div>
 
 
-        &lt;!&ndash; ******** Letzter Stich ********* &ndash;&gt;
-        <div v-if="(istPhase(4) || istPhase(101)) && letzterStichEingeblendet">
-            <stich :stich="liveGame.letzterStich.karten"
-                   :auth-id="round.authID"
-                   :spieler-ids="liveGame.spielerIDs"/>
-        </div>
-
-        <div v-if="istPhase(101) && !letzterStichEingeblendet">
+        <!--<div v-if="istPhase(101) && !letzterStichEingeblendet">
             <div v-html="liveGame.wertung"/>
             <button class="btn btn-primary tw-mt-6"
                     v-if="true"
@@ -150,19 +157,6 @@
             </button>
         </div>-->
 
-
-        <!-- ******** Hand *********
-        <div
-            class="tw-col-start-2 tw-row-start-3 tw-col-span-2 lg:tw-col-start-2 lg:tw-row-start-3 lg:tw-col-span-2 tw-flex tw-items-center tw-p-4">
-            <div>
-                <hand class="tw-mb-0 tw-mt-3"
-                      v-if="ich.hand !== '' && liveGame.phase > 0"
-                      :karten="ich.hand"
-                      :armut="binIchDran && (istPhase(3) || istPhase(33))"
-                      @karteSpielen="karteSpielen"
-                      @armut="armutKarteWechseln($event, 'mitte')"/>
-            </div>
-        </div>-->
 
         <!-- ******** Ich *********
         <div class="tw-col-start-1 tw-row-start-3 lg:tw-col-start-1 tw-flex tw-items-center tw-justify-center tw-py-4">
@@ -277,7 +271,7 @@ export default {
 
                     if (this.liveGame.aktuellerStich.karten.length === 0) {
                         this.letzterStichEingeblendet = true
-                        setTimeout(() => this.letzterStichEingeblendet = false, 2555)
+                        setTimeout(() => this.letzterStichEingeblendet = false, 2000)
                     }
                 });
         } else {
@@ -294,9 +288,9 @@ export default {
                 .private('liveRound.' + this.round.live_round.id + '.' + this.round.auth_id);
         },
 
-        /*aktiv() {
-            return !this.liveGame.spielerIDsInaktiv.includes(this.round.authID);
-        },*/
+        aktiv() {
+            return this.pluck(this.round.active_players, 'id').includes(this.round.auth_id);
+        },
 
         binIchDran() {
             return this.liveGame.dran === this.round.auth_id;
@@ -322,9 +316,6 @@ export default {
             this.ich.hand = Object.values(this.ich.hand);
             this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
         },
-        pluck(array, key) {
-            return array.map(o => o[key]);
-        },
 
         istPhase(phase) {
             return this.liveGame.phase === phase;
@@ -338,19 +329,21 @@ export default {
                 .catch(error => this.handleError(error));
         },
 
-        /*karteSpielen(karte) {
-            this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
-            let karteKopie = karte;
-            karteKopie.gespieltVon = this.round.authID;
-            karteKopie.spielbar = false;
-            this.liveGame.aktuellerStich.karten.push(karteKopie);
+        karteSpielen(karte) {
+            if (this.binIchDran) {
+                this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
+                let karteKopie = karte;
+                karteKopie.gespieltVon = this.round.auth_id;
+                karteKopie.spielbar = false;
+                this.liveGame.aktuellerStich.karten.push(karteKopie);
 
-            axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
-                karte: karte
-            })
-                .then(response => this.error = '')
-                .catch(error => this.handleError(error));
-        },*/
+                axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
+                    karte: karte
+                })
+                    .then(response => this.error = '')
+                    .catch(error => this.handleError(error));
+            }
+        },
 
         /*ansage(ansage) {
             axios.post('/api/live/' + this.liveGame.id + '/ansage', {
@@ -395,13 +388,13 @@ export default {
             let spielerID = this.liveGame.spielerIDs[ergebnis];
 
             return this.liveGame.spieler[spielerID];
-        },
+        },*/
 
         letzterStich() {
             this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
-        },*/
+        },
 
-        /*armutKarteWechseln(karte, richtung) {
+        armutKarteWechseln(karte, richtung) {
             if (richtung === 'mitte') {
                 if (this.armutKarten.length < 3) {
                     let index = this.ich.hand.indexOf(karte);
@@ -434,7 +427,7 @@ export default {
                 karten: this.armutKarten
             })
                 .then(this.armutKarten = []);
-        }*/
+        }
     }
 };
 </script>

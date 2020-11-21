@@ -11,7 +11,7 @@
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false" @clicked="alert('test')">
                 <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
                     <div
-                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0"
+                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-overflow-hidden"
                         :class="{'tw-rounded-xl tw-shadow-xl': !fullscreen}"
                         style="background-image: url('/img/wood.jpg');">
                         <div class="tw-relative tw-h-full tw-w-full">
@@ -90,11 +90,10 @@
                             </div>
 
                             <div v-show="allPlayersOnline && (!mobile || (landscape && fullscreen))">
-                                <div class="tw-absolute tw-bottom-0 tw-left-0">
-                                    <i class="far fa-plus-square tw-text-3xl tw-text-gray-500 tw-ml-4 tw-mb-4 tw-cursor-pointer"
-                                       @click="neuesSpielStarten"></i>
-                                </div>
-                                <live-game ref="live_game" v-if="round.current_live_game" :round="round"/>
+                                <live-game v-if="round.current_live_game"
+                                           ref="live_game"
+                                           :round="round"
+                                           @neues-spiel-starten="neuesSpielStarten"/>
                             </div>
                         </div>
                     </div>
@@ -137,6 +136,7 @@ export default {
     mounted() {
     },
     created() {
+        this.orderActivePlayers();
         this.getOrientation();
         this.getFullscreen();
         window.addEventListener("resize", this.getOrientation);
@@ -155,6 +155,7 @@ export default {
             .listen('RoundUpdated', e => {
                 this.fetchData()
                     .then((response) => {
+                        this.orderActivePlayers();
                         this.$refs.live_game.copyDataFromProp();
                     });
             })
@@ -185,6 +186,37 @@ export default {
         },
     },
     methods: {
+        orderActivePlayers() {
+            /* Aktive Spieler sortieren: Immer ausgehend von der eigenen Sitzposition */
+            /* Nur wenn man selbst aktiv ist */
+            if (this.pluck(this.round.players, 'id').includes(this.round.auth_id)) {
+                let output = [];
+                let i;
+                let counter;
+                let startIndex = this.round.players.find(player => player.id === this.round.auth_id).index;
+
+                /* Wenn man selbst aussetzt, und bei 7er Runden möglicherweise auch der nächste, Index erhöhen */
+                while (!this.pluck(this.round.active_players, 'index').includes(startIndex)) {
+                    if (startIndex >= this.round.players.length - 1) {
+                        startIndex = 0;
+                    } else {
+                        startIndex++;
+                    }
+                }
+                counter = this.pluck(this.round.active_players, 'index').indexOf(startIndex);
+
+                for (i = 0; i <= 3; i++) {
+                    output.push(this.round.active_players[counter]);
+                    if (counter >= 3) {
+                        counter = 0;
+                    } else {
+                        counter++;
+                    }
+                }
+
+                this.round.active_players = output;
+            }
+        },
         whisperReady() {
             this.round.ready_players.push(this.round.auth_id);
             this.presenceChannel
@@ -245,10 +277,6 @@ export default {
 
         deleteLastGame() {
             this.round.games.splice(this.round.games.indexOf(this.round.games.length - 1), 1);
-        },
-
-        pluck(array, key) {
-            return array.map(o => o[key]);
         },
     },
 };
