@@ -66,7 +66,7 @@
                                         </button>
                                     </div>
                                     <div v-if="round.created_by.id === round.auth_id" class="">
-                                        <button class="btn btn-primary tw-mb-4" :disabled="false && !allPlayersReady"
+                                        <button class="btn btn-primary tw-mb-4" :disabled="!allPlayersReady"
                                                 @click="neuesSpielStarten">
                                             Neues Spiel starten
                                         </button>
