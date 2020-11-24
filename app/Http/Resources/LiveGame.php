@@ -25,10 +25,10 @@ class LiveGame extends JsonResource
             'wertung' => $this->wertung,
             'messages' => $this->messages,
             'spieltyp' => $this->spieltyp,
-            'spieler0' => $this->spieler0,
+            /*'spieler0' => $this->spieler0,
             'spieler1' => $this->spieler1,
             'spieler2' => $this->spieler2,
-            'spieler3' => $this->spieler3,
+            'spieler3' => $this->spieler3,*/
         ];
     }
 }

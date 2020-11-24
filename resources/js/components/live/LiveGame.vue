@@ -7,7 +7,7 @@
             <i class="fas fa-info-circle tw-cursor-pointer"
                :class="{'tw-text-orange-500': infoEingeblendet}"
                @click="infoEingeblendet = !infoEingeblendet"></i>
-            <i class="fas fa-history tw-cursor-pointer tw-my-4"
+            <i class="fas fa-history tw-cursor-pointer tw-mt-4"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
             <!--<i class="fas fa-plus-circle tw-cursor-pointer"
