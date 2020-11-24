@@ -10,8 +10,8 @@
             <i class="fas fa-history tw-cursor-pointer tw-my-4"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <i class="fas fa-plus-circle tw-cursor-pointer"
-               @click="$emit('neues-spiel-starten')"></i>
+            <!--<i class="fas fa-plus-circle tw-cursor-pointer"
+               @click="$emit('neues-spiel-starten')"></i>-->
         </div>
 
         <!-- ******** Messages ********* -->
