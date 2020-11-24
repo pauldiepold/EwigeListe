@@ -16,7 +16,7 @@ Vue.use(Vue2TouchEvents, {swipeTolerance: 70});
 
 Vue.mixin({
     methods: {
-        pluck: (array, key) => array.map(o => o[key])
+        pluck: (array, key) => array.map(o => o[key]),
     }
 })
 

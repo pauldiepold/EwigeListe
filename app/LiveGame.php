@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\RoundUpdated;
 use App\Live\Anzeige;
 use App\Live\Deck;
 use App\Live\Karte;
@@ -129,7 +130,10 @@ class LiveGame extends Model
         'letzterStich' => 'object',
         'aktuellerStich' => 'object',
         'beendet' => 'boolean',
-        'gewinntRe' => 'boolean'
+        'gewinntRe' => 'boolean',
+        'messages' => 'collection',
+        'geheiratet' => 'boolean',
+        'geschmissen' => 'boolean',
     ];
 
     public function getArmutKartenAttribute($value)
@@ -304,6 +308,33 @@ class LiveGame extends Model
         $karte->spielbar = false;
 
         $this->karteAufAktuellenStichLegen($karte);
+
+        if (($karte->id == 44 || $karte->id == 45) &&
+            ($this->spieltyp == 'Normalspiel' ||
+             $this->spieltyp == 'Stille Hochzeit'))
+        {
+            $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+
+            $this->alte_gespielt++;
+
+            if ($this->alte_gespielt >= 2)
+            {
+                if ($this->spieltyp == 'Stille Hochzeit')
+                {
+                    $this->setAnzeige('spieltyp', $spieler->id, 'Stille Hochzeit');
+                }
+                foreach ($this->spielerIDs as $spielerID)
+                {
+                    $spieler = $this->getSpieler($spielerID);
+                    if (!$spieler->isRe)
+                    {
+                        $spieler->isRe = false;
+                        $this->spielerSpeichern($spieler);
+                        $this->setAnzeige('partei', $spieler->id, 'Kontra-Partei');
+                    }
+                }
+            }
+        }
     }
 
     public function stichVerteilen()
@@ -333,6 +364,7 @@ class LiveGame extends Model
                 return $value === true;
             })->count() == 1)
         {
+            $this->geheiratet = true;
             $heirater = $this->getSpielerByPosition($this->vorbehalte->search('Hochzeit', true));
             $stecher = $this->getSpieler($this->letzterStich->stecher);
 
@@ -340,27 +372,48 @@ class LiveGame extends Model
             {
                 // Geheiratet
                 $stecher->isRe = true;
-
-                if ($heirater->ansage === true)
-                {
-                    $stecher->ansage = true;
-                } elseif ($stecher->ansage === true)
-                {
-                    // To-Do Ansagen der Gegner löschen
-                    $heirater->ansage = true;
-                }
-
-                if ($stecher->absage !== null)
-                {
-                    // To-Do Absagen der Gegner löschen
-                    $heirater->absage = $stecher->absage;
-                } elseif ($heirater->absage !== null)
-                {
-                    $stecher->absage = $heirater->absage;
-                }
-
                 $this->spielerSpeichern($heirater);
                 $this->spielerSpeichern($stecher);
+
+                $res = collect();
+                $kontras = collect();
+                foreach ($this->spielerIDs as $spielerID)
+                {
+                    $spieler = $this->getSpieler($spielerID);
+                    if ($spieler->isRe)
+                    {
+                        $res->push($spieler);
+                    } else
+                    {
+                        $kontras->push($spieler);
+                    }
+                }
+
+                $reAnsage = $res->contains(fn($value, $key) => $value->ansage);
+                $kontraAnsage = $kontras->contains(fn($value, $key) => $value->ansage);
+
+                $reAbsagen = $res->where('absage', '!=', null);
+                $reAbsage = $reAbsagen->count() != 0 ? $reAbsagen->first()->absage : null;
+                $kontraAbsagen = $kontras->where('absage', '!=', null);
+                $kontraAbsage = $kontraAbsagen->count() != 0 ? $kontraAbsagen->first()->absage : null;
+
+                foreach ($res as $spieler)
+                {
+                    $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+                    if ($spieler->ansage && !$spieler->absage) $this->setAnzeige('ansage', $spieler->id, 'Re');
+                    $spieler->ansage = $reAnsage;
+                    $spieler->absage = $reAbsage;
+                    $this->spielerSpeichern($spieler);
+                }
+
+                foreach ($kontras as $spieler)
+                {
+                    $this->setAnzeige('partei', $spieler->id, 'Kontra-Partei');
+                    if ($spieler->ansage && !$spieler->absage) $this->setAnzeige('ansage', $spieler->id, 'Kontra');
+                    $spieler->ansage = $kontraAnsage;
+                    $spieler->absage = $kontraAbsage;
+                    $this->spielerSpeichern($spieler);
+                }
             }
         }
     }
@@ -534,6 +587,8 @@ class LiveGame extends Model
     public function vorbehalteAbhandeln()
     {
         $vorbehaltIndex = null;
+        $this->setAnzeige('vorbehalt', 0, '');
+
         foreach ($this->vorbehalte as $key => $vorbehalt)
         {
             if ($this->istSolo($vorbehalt))
@@ -547,7 +602,7 @@ class LiveGame extends Model
 
         if ($this->vorbehalte->containsStrict('Schmeißen'))
         {
-            $this->schmeissen();
+            $this->schmeissen($key);
 
             return;
         }
@@ -600,39 +655,40 @@ class LiveGame extends Model
         $spieler->isRe = true;
         $this->spielerSpeichern($spieler);
 
-        $this->alleSpielerKontraSetzen($spieler->id);
+        $this->spieltyp = $vorbehalt;
 
-        if (!$istStilleHochzeit)
+        if ($istStilleHochzeit)
         {
+            $this->pushMessage("Es wird ein Normalspiel gespielt!");
+            $this->alleSpielerKontraSetzen($spieler->id, false);
+        } else
+        {
+            $this->pushMessage("<b>$spieler->name</b> spielt ein $vorbehalt!");
+            $this->alleSpielerKontraSetzen($spieler->id, true);
+
+            $this->setAnzeige('spieltyp', $spieler->id, $vorbehalt);
+            $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+
             $this->dran = $spieler->id;
         }
-        $this->spieltyp = $vorbehalt;
 
         $this->spielStarten();
     }
 
-    public function schmeissen()
+    public function schmeissen($position)
     {
-        foreach ($this->spielerIDs as $spielerID)
-        {
-            $spieler = $this->getSpieler($spielerID);
+        $schmeisser = $this->getSpielerByPosition($position);
 
-            $spieler->hand = collect();
-            $spieler->stiche = collect();
-            $spieler->armutKarten = collect();
+        $this->geschmissen = true;
+        $this->beendet = true;
+        $this->phase = 101;
+        $this->save();
 
-            $spieler->moeglicheVorbehalte = collect();
-            $spieler->vorbehalt = null;
-            $spieler->isRe = null;
-            $spieler->ansage = null;
-            $spieler->absage = null;
-            $spieler->punkte = null;
+        $newGame = $this->liveRound->starteNeuesSpiel();
+        $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+        $newGame->save();
 
-            $this->spielerSpeichern($spieler);
-        }
-
-        $this->dran = $this->vorhand;
-        $this->phase = 0;
+        broadcast(new RoundUpdated($this->liveRound->round->id));
     }
 
     public function armutSpielen($position)
@@ -643,6 +699,9 @@ class LiveGame extends Model
         $this->spieltyp = 'Armut';
 
         $armutSpieler = $this->getSpielerByPosition($position);
+        $this->setAnzeige('spieltyp', $armutSpieler->id, 'Armut');
+        $this->setAnzeige('partei', $armutSpieler->id, 'Re-Partei');
+        $this->pushMessage("<b>$armutSpieler->name</b> spielt eine Armut!");
 
         $this->dran = $armutSpieler->id;
     }
@@ -654,6 +713,10 @@ class LiveGame extends Model
         $spieler = $this->getSpielerByPosition($position);
         $spieler->isRe = true;
 
+        $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+        $this->setAnzeige('spieltyp', $spieler->id, 'Hochzeit');
+        $this->pushMessage("<b>$spieler->name</b> spielt eine Hochzeit!");
+
         $this->alleSpielerKontraSetzen();
 
         $this->spielerSpeichern($spieler);
@@ -664,6 +727,7 @@ class LiveGame extends Model
     public function normalspielSpielen()
     {
         $this->spieltyp = 'Normalspiel';
+        $this->pushMessage("Es wird ein Normalspiel gespielt!");
 
         $this->setReUndKontra();
 
@@ -680,7 +744,7 @@ class LiveGame extends Model
         $this->moeglicheAnAbsagenBerechnen();
     }
 
-    public function alleSpielerKontraSetzen($except = null)
+    public function alleSpielerKontraSetzen($except = null, $anzeige = false)
     {
         foreach ($this->spielerIDs as $spielerID)
         {
@@ -691,6 +755,10 @@ class LiveGame extends Model
             {
                 $spieler->isRe = false;
                 $this->spielerSpeichern($spieler);
+                if ($anzeige)
+                {
+                    $this->setAnzeige('partei', $spieler->id, 'Kontra-Partei');
+                }
             }
         }
     }
@@ -1329,8 +1397,6 @@ class LiveGame extends Model
         $this->gewinntRe = $gewinntRe;
         $this->wertungsPunkte = $wertungsPunkte;
         $this->wertung = $punkteString;
-
-        dd($punkteString);
     }
 
     public function spielErgebnisUebertragen()
@@ -1359,9 +1425,15 @@ class LiveGame extends Model
         if ($vorbehalt == 'Gesund')
         {
             $spieler->vorbehalt = true;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
+        } elseif ($vorbehalt == 'Stille Hochzeit')
+        {
+            $spieler->vorbehalt = $vorbehalt;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
         } else
         {
             $spieler->vorbehalt = $vorbehalt;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Vorbehalt');
         }
 
         $this->spielerSpeichern($spieler);
@@ -1442,12 +1514,16 @@ class LiveGame extends Model
         $spieler->ansage = true;
         $this->spielerSpeichern($spieler);
 
-        $this->mitspielerSagtAuchAn();
-
-        $anzeige = $this->anzeige;
         $ansage = $spieler->isRe ? 'Re' : 'Kontra';
-        $anzeige->set('ansage', $spieler->id, $ansage);
-        $this->anzeige = $anzeige;
+        if ($this->spieltyp != 'Hochzeit' || $this->geheiratet)
+        {
+            $this->mitspielerSagtAuchAn();
+
+            $this->setAnzeige('partei', $spieler->id, $ansage . '-Partei');
+        }
+
+        $this->setAnzeige('ansage', $spieler->id, $ansage);
+        $this->pushMessage("<b>$spieler->name</b>: $ansage!");
     }
 
     public function absageMachen($absageZahl)
@@ -1467,11 +1543,19 @@ class LiveGame extends Model
         $spieler->absage = $absageZahl;
         $this->spielerSpeichern($spieler);
 
-        $this->mitspielerSagtAuchAb();
+        if ($this->spieltyp != 'Hochzeit' || $this->geheiratet)
+        {
+            $this->mitspielerSagtAuchAb();
+        }
 
-        $anzeige = $this->anzeige;
-        $anzeige->set('absage', $spieler->id, $absageZahl);
-        $this->anzeige = $anzeige;
+        $this->setAnzeige('absage', $spieler->id, $absageZahl);
+        if ($absageZahl == 0)
+        {
+            $this->pushMessage("<b>$spieler->name</b>: Schwarz!");
+        } else
+        {
+            $this->pushMessage("<b>$spieler->name</b>: Keine $absageZahl!");
+        }
     }
 
     public function mitspielerSagtAuchAn()
@@ -1533,10 +1617,39 @@ class LiveGame extends Model
 
         $armutSpieler->isRe = true;
         $spieler->isRe = true;
+        $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
 
         $this->spielerSpeichern($armutSpieler);
         $this->spielerSpeichern($spieler);
 
-        $this->alleSpielerKontraSetzen();
+        $this->alleSpielerKontraSetzen($spieler->id, true);
+    }
+
+    public function pushMessage($message, $name = null)
+    {
+        $messages = $this->messages;
+        if ($name)
+        {
+            $message = "<b>$name:</b> $message";
+        }
+
+        $messages->prepend($message);
+        $this->messages = $messages;
+    }
+
+    public function setAnzeige($attribut, $spielerID, $wert)
+    {
+        $anzeige = $this->anzeige;
+        if ($spielerID == 0)
+        {
+            foreach ($this->spielerIDs as $ID)
+            {
+                $anzeige->set($attribut, $ID, $wert);
+            }
+        } else
+        {
+            $anzeige->set($attribut, $spielerID, $wert);
+        }
+        $this->anzeige = $anzeige;
     }
 }

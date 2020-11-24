@@ -2,9 +2,9 @@
     <div>
         <tabs @clicked="fullscreenOnIfMobile">
             <tab name="Runde" icon="fa-play-circle" :selected="true">
-                <create-game :round="round" @updated="fetchData"/>
+                <create-game v-if="round.live_round === null" :round="round" @updated="fetchData"/>
                 <round-table :round="round"/>
-                <delete-game :round="round" @updated="fetchData(); deleteLastGame();"/>
+                <delete-game v-if="round.live_round === null" :round="round" @updated="fetchData(); deleteLastGame();"/>
                 <round-info :round="round"/>
             </tab>
 
@@ -53,38 +53,46 @@
                             <!-- Spieler bereit? -->
                             <div
                                 v-if="allPlayersOnline && !round.current_live_game && (!mobile || (landscape && fullscreen))"
-                                class="center-absolute live-overlay tw-p-4">
-                                <div v-if="!round.ready_players.includes(round.auth_id)" class="tw-mb-4">
-                                    <button class="btn btn-primary" @click="whisperReady">
-                                        Bereit?
-                                    </button>
+                                class="center-absolute live-overlay tw-p-4 tw-flex tw-content-center tw-justify-around tw-w-1/3"
+                                :class="{'tw-w-3/4': round.last_live_game}">
+                                <div class="tw-mr-3 tw-pt-4" v-if="round.last_live_game"
+                                     v-html="round.last_live_game.wertung">
+
                                 </div>
-                                <div v-if="round.created_by.id === round.auth_id" class="">
-                                    <button class="btn btn-primary tw-mb-4" :disabled="false && !allPlayersReady"
-                                            @click="neuesSpielStarten">
-                                        Neues Spiel starten
-                                    </button>
-                                    <p v-if="!allPlayersReady">
-                                        Bitte warte, bis alle Spieler bereit sind:
-                                    </p>
-                                    <p v-else>
-                                        Alle Spieler sind bereit!
-                                    </p>
-                                </div>
-                                <div v-if="round.created_by.id !== round.auth_id" class="tw-mb-4">
-                                    <p v-if="!allPlayersReady">
-                                        Bitte warte, bis alle Spieler bereit sind:
-                                    </p>
-                                    <p v-else>
-                                        Bitte warte, bis {{ round.created_by.surname }} ein neues Spiel gestartet hat.
-                                    </p>
-                                </div>
-                                <div class="tw-grid tw-grid-cols-2 tw-gap-2">
-                                    <div v-for="player in round.active_players">
-                                        <img :src="player.avatar_path"
-                                             class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : round.ready_players.includes(player.id)}">
-                                        {{ player.surname }}
+                                <div class="tw-ml-3">
+                                    <div v-if="!round.ready_players.includes(round.auth_id)" class="tw-mb-4">
+                                        <button class="btn btn-primary" @click="whisperReady">
+                                            Bereit?
+                                        </button>
+                                    </div>
+                                    <div v-if="round.created_by.id === round.auth_id" class="">
+                                        <button class="btn btn-primary tw-mb-4" :disabled="false && !allPlayersReady"
+                                                @click="neuesSpielStarten">
+                                            Neues Spiel starten
+                                        </button>
+                                        <p v-if="!allPlayersReady">
+                                            Bitte warte, bis alle Spieler bereit sind:
+                                        </p>
+                                        <p v-else>
+                                            Alle Spieler sind bereit!
+                                        </p>
+                                    </div>
+                                    <div v-if="round.created_by.id !== round.auth_id" class="tw-mb-4">
+                                        <p v-if="!allPlayersReady">
+                                            Bitte warte, bis alle Spieler bereit sind:
+                                        </p>
+                                        <p v-else>
+                                            Bitte warte, bis {{ round.created_by.surname }} ein neues Spiel gestartet
+                                            hat.
+                                        </p>
+                                    </div>
+                                    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                        <div v-for="player in round.active_players">
+                                            <img :src="player.avatar_path"
+                                                 class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
+                                                 :class="{ 'tw-shadow-green' : round.ready_players.includes(player.id)}">
+                                            {{ player.surname }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +101,9 @@
                                 <live-game v-if="round.current_live_game"
                                            ref="live_game"
                                            :round="round"
-                                           @neues-spiel-starten="neuesSpielStarten"/>
+                                           :mobile="mobile"
+                                           @neues-spiel-starten="neuesSpielStarten"
+                                           @message="whisperMessage"/>
                             </div>
                         </div>
                     </div>
@@ -161,6 +171,9 @@ export default {
             })
             .listenForWhisper('ready', e => {
                 this.round.ready_players.push(e.id);
+            })
+            .listenForWhisper('message', e => {
+                //this.$refs.live_game.pushMessage(e.message);
             });
     },
     destroyed() {
@@ -222,6 +235,12 @@ export default {
             this.presenceChannel
                 .whisper('ready', {
                     'id': this.round.auth_id,
+                });
+        },
+        whisperMessage(message) {
+            this.presenceChannel
+                .whisper('message', {
+                    'message': message
                 });
         },
 

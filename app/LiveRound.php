@@ -52,9 +52,22 @@ class LiveRound extends Model
             return null;
         } else
         {
-            $liveGame = $this->liveGames()->first();
+            $liveGame = $this->liveGames->first();
 
             return !$liveGame->beendet ? $liveGame : null;
+        }
+    }
+
+    public function lastLiveGame()
+    {
+        if ($this->liveGames->count() == 0)
+        {
+            return null;
+        } else
+        {
+            $liveGame = $this->liveGames->first();
+
+            return $liveGame->beendet ? $liveGame : null;
         }
     }
 
@@ -90,6 +103,7 @@ class LiveRound extends Model
             'live_round_id' => $this->id,
             'vorhand' => $activePlayers->first()->pivot->player_id,
             'dran' => $activePlayers->first()->pivot->player_id,
+            'alte_gespielt' => 0,
             'phase' => 0,
             'aktuellerStich' => new Stich(),
             'letzterStich' => new Stich(),
@@ -99,6 +113,9 @@ class LiveRound extends Model
             'spieler2' => $spieler2,
             'spieler3' => $spieler3,
             'anzeige' => new Anzeige($activePlayers),
+            'messages' => collect(),
+            'geheiratet' => false,
+            'geschmissen' => false,
         ]);
 
         $liveGame->kartenGeben();
@@ -106,5 +123,7 @@ class LiveRound extends Model
         $liveGame->phase = 2;
 
         $liveGame->save();
+
+        return $liveGame;
     }
 }

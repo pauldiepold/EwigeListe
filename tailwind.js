@@ -51,7 +51,7 @@ module.exports = {
                 '8xs': '2rem',
             },
             boxShadow: {
-                green: '0 0 6px 3px rgb(88, 169, 117)',
+                green: '0 0 6px 2px rgb(88, 169, 117)',
                 'green-darker': '0 0 6px 3px rgb(41, 177, 89)',
                 red: '0 0 6px 3px rgb(202, 114, 114)',
                 xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',

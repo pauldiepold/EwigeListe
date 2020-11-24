@@ -7,7 +7,7 @@
 @endpush
 @if($rounds_count > 0)
     <div class="tw--mx-3 tw-flex tw-justify-center d-none" id="archiveTable">
-        <div class="tw-max-w-5xl">
+        <div class="tw-max-w-5xl md:tw-max-w-7xl">
             <table class="table roundsTable">
                 <thead>
                     <tr>

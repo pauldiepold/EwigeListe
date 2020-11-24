@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Live;
 
+use App\Events\RoundUpdated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\KarteSpielen;
 use App\Live\Deck;
@@ -64,6 +65,8 @@ class GameController extends Controller
         }
 
         $liveGame->save();
+
+        return 'success';
     }
 
     public function armutAbgeben(LiveGame $liveGame, Request $request)
@@ -191,6 +194,7 @@ class GameController extends Controller
             $liveGame->spielErgebnisUebertragen();
 
             $liveGame->save();
+            broadcast(new RoundUpdated($liveGame->round->id));
 
             return 'Spiel beendet';
         }

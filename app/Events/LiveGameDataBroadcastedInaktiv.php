@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\LiveGame;
+use App\Http\Resources\LiveGame as LiveGameResource;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -43,7 +44,7 @@ class LiveGameDataBroadcastedInaktiv implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'liveGame' => $this->liveGame
+            'liveGame' => new LiveGameResource($this->liveGame),
         ];
     }
 }

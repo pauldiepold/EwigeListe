@@ -16,18 +16,10 @@ class Anzeige
             foreach ($players as $player)
             {
                 $spieler->put($player->id, collect([
-                    'surname' => $player->surname,
-                    'name' => $player->name,
-                    'id' => $player->id,
-                    'avatar' => $player->avatar_path,
-                    'punkte' => rand(-25, 25),
-                    'ansage' => false,
-                    'absage' => false,
-                    'kreuzDameGespielt' => false,
-                    'solo' => false,
-                    'hochzeit' => false,
-                    'armut' => false,
-                    'online' => true,
+                    'ansage' => '',
+                    'spieltyp' => '',
+                    'partei' => '',
+                    'vorbehalt' => '',
                 ]));
             }
             $this->spieler = $spieler;
@@ -55,21 +47,22 @@ class Anzeige
         }
     }
 
-    public function set($attribut, $spielerID, $ansage)
+    public function set($attribut, $spielerID, $wert)
     {
         if ($attribut == 'absage')
         {
-            if ($ansage == '0')
+            if ($wert == '0')
             {
-                $ansage = 'Schwarz';
+                $wert = 'Schwarz';
             } else
             {
-                $ansage = 'Keine ' . $ansage;
+                $wert = 'keine ' . $wert;
             }
         }
+        $attribut = $attribut == 'absage' ? 'ansage' : $attribut;
 
         $spieler = $this->spieler->get($spielerID);
-        $spieler->put($attribut, $ansage);
+        $spieler->put($attribut, $wert);
         $this->spieler->put($spielerID, $spieler);
     }
 }

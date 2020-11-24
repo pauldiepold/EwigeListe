@@ -1,18 +1,38 @@
 <template>
     <div class="playingCards">
 
-        <div class="tw-absolute live-overlay tw-p-3 tw-m-2 tw-bottom-0 tw-left-0 tw-text-3xl tw-flex tw-flex-col">
-            <i class="fas fa-history tw-cursor-pointer tw-mb-4"
+        <!-- ******** Buttons links ********* -->
+        <div class="tw-absolute live-overlay tw-p-3 tw-m-2 tw-left-0 tw-text-3xl tw-flex tw-flex-col"
+             style="top: 50%; transform: translate(0, -50%);">
+            <i class="fas fa-info-circle tw-cursor-pointer"
+               :class="{'tw-text-orange-500': infoEingeblendet}"
+               @click="infoEingeblendet = !infoEingeblendet"></i>
+            <i class="fas fa-history tw-cursor-pointer tw-my-4"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <i class="far fa-plus-square tw-cursor-pointer"
+            <i class="fas fa-plus-circle tw-cursor-pointer"
                @click="$emit('neues-spiel-starten')"></i>
         </div>
 
-        <spieler :round="round" :liveGame="liveGame"/>
+        <!-- ******** Messages ********* -->
+        <div v-if="infoEingeblendet"
+             class="tw-absolute live-overlay tw-px-3 tw-pt-2 tw-pb-1 tw-m-2 md:tw-text-sm tw-text-xs tw-flex tw-flex-col tw-w-1/5 tw-text-left tw-h-40 tw-overflow-y-auto"
+             style="top: 50%; right:0; transform: translate(0, -50%);">
+            <ul class="tw-mb-0">
+                <li v-for="(message, index) in liveGame.messages"
+                    :key="message"
+                    :id="index === liveGame.messages.length - 1 ? 'lastMessage' : ''"
+                    v-html="message"
+                    class="tw-mb-1"/>
+            </ul>
+        </div>
+
+        <!-- ******** Spieler ********* -->
+        <spieler :round="round" :liveGame="liveGame" :ich="ich"
+                 @ansage="ansage"/>
 
         <!-- ******** Hand ********* -->
-        <div style="position: absolute; left: 35%; bottom: 0; transform: translate(-50%);" class="tw--mb-12">
+        <div style="position: absolute; left: 31%; bottom: 0; transform: translate(-50%);" class="tw--mb-12">
             <hand class="tw-mb-0 tw-mt-3"
                   v-if="ich.hand !== '' && liveGame.phase > 0"
                   :karten="ich.hand"
@@ -21,7 +41,7 @@
                   @armut="armutKarteWechseln($event, 'mitte')"/>
         </div>
 
-        <div v-if="(istPhase(4) || istPhase(101))" class="live-overlay tw-p-3"
+        <div v-if="(istPhase(4) || istPhase(101))"
              style="position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);">
             <!-- ******** Aktueller Stich ********* -->
             <div v-if="istPhase(4) && !letzterStichEingeblendet">
@@ -35,17 +55,10 @@
             </div>
         </div>
 
-        <!--<p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p>
-
-        <div v-else>
-            <h4 v-if="istPhase(0)">Spielvorbereitung</h4>
-            <h4 v-if="istPhase(1) || istPhase(3)">Spielfindung</h4>
-            <h4 v-if="istPhase(4)">Spiel &#45;&#45; {{ liveGame.spieltyp }}</h4>
-        </div>
-        -->
+        <!--<p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p> -->
 
         <!-- ******** Vorbehalte ********* -->
-        <div v-if="istPhase(2)" class="center-absolute live-overlay tw-p-4 ">
+        <div v-if="istPhase(2)" class="center-absolute live-overlay tw-p-2 tw-pt-1">
             <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
                 Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
             </div>
@@ -53,18 +66,20 @@
             <div v-if="istPhase(2) && ich.vorbehalt == null"
                  class="tw-flex tw-flex-col tw-justify-between tw-items-center">
 
-                <p v-if="binIchDran" class="tw-font-bold">Wähle deinen Vorbehalt:</p>
-                <p v-else class="tw-font-bold">Mögliche Vorbehalte:</p>
+                <p v-if="binIchDran" class="tw-font-bold tw-mb-1">Wähle deinen Vorbehalt:</p>
+                <p v-else class="tw-font-bold tw-mb-1">Mögliche Vorbehalte:</p>
 
                 <div class="tw-flex tw-items-center">
                     <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
                             :disabled="!binIchDran"
+                            :class="{'btn-sm': mobile}"
                             v-if="!ich.moeglicheVorbehalte.includes('Hochzeit')"
                             @click="vorbehaltSenden('Gesund')">
                         Gesund
                     </button>
                     <div class="tw-flex tw-flex-col">
                         <button class="btn btn-primary tw-my-1 tw-mr-6"
+                                :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in ich.moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
@@ -73,6 +88,7 @@
                     </div>
                     <div class="tw-flex tw-flex-col tw-max-w-4xs">
                         <button class="btn btn-primary tw-my-1 tw-mr-6"
+                                :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in ich.moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
@@ -81,11 +97,13 @@
                     </div>
                     <div class="tw-flex tw-flex-col tw-max-w-2xs">
                         <button class="btn btn-primary tw-my-1"
+                                :class="{'btn-sm': mobile}"
                                 @click="farbsoliAnzeigen = true"
                                 v-text="'Farbsolo'"
                                 v-if="!farbsoliAnzeigen"
                                 :disabled="!binIchDran"/>
-                        <button class="btn btn-outline-primary tw-my-1"
+                        <button class="btn btn-primary tw-my-1"
+                                :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in ich.moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
@@ -147,92 +165,8 @@
             </div>
         </div>
 
-
-        <!--<div v-if="istPhase(101) && !letzterStichEingeblendet">
-            <div v-html="liveGame.wertung"/>
-            <button class="btn btn-primary tw-mt-6"
-                    v-if="true"
-                    @click="spielStarten">
-                Neues Spiel starten
-            </button>
-        </div>-->
-
-
-        <!-- ******** Ich *********
-        <div class="tw-col-start-1 tw-row-start-3 lg:tw-col-start-1 tw-flex tw-items-center tw-justify-center tw-py-4">
-            <spieler :spieler="getSpieler(0)"
-                     :live-game="liveGame">
-
-                <template v-slot:letzterStich>
-                    <button class="btn btn-sm btn-outline-primary tw-my-1"
-                            @click="letzterStich"
-                            v-text="letzterStichEingeblendet ? 'Ausblenden' : 'Letzter Stich'"/>
-                </template>
-
-                <template v-slot:ansagen>
-                    <div v-if="istPhase(4)">
-                        <button class="btn btn-primary btn-sm tw-my-1"
-                                @click="ansage(ich.moeglicheAnAbsage)"
-                                v-if="binIchDran && ich.moeglicheAnAbsage"
-                                v-text="ich.moeglicheAnAbsage">
-                        </button>
-                    </div>
-                </template>
-
-            </spieler>
-        </div>-->
-
-        <!--
-        &lt;!&ndash; ******** Spieler 1 ********* &ndash;&gt;
-        <div class="tw-col-start-1 tw-row-start-1 lg:tw-row-start-2 tw-flex tw-items-center tw-justify-center">
-            <spieler :spieler="getSpieler(1)"
-                     :live-game="liveGame"
-                     @letzterStich="letzterStich">
-                <template v-slot:letzterStich>
-                    <button class="btn btn-sm btn-outline-primary tw-my-1"
-                            @click="letzterStich"
-                            v-text="letzterStichEingeblendet ? 'Ausblenden' : 'Letzter Stich'"/>
-                </template>
-            </spieler>
-        </div>
-
-        &lt;!&ndash; ******** Spieler 2 ********* &ndash;&gt;
-        <div class="tw-col-start-2 tw-row-start-1 tw-flex tw-items-center tw-justify-center">
-            <spieler :spieler="getSpieler(2)"
-                     :live-game="liveGame"
-                     @letzterStich="letzterStich">
-                <template v-slot:letzterStich>
-                    <button class="btn btn-sm btn-outline-primary tw-my-1"
-                            @click="letzterStich"
-                            v-text="letzterStichEingeblendet ? 'Ausblenden' : 'Letzter Stich'"/>
-                </template>
-            </spieler>
-        </div>
-
-        &lt;!&ndash; ******** Spieler 3 ********* &ndash;&gt;
-        <div class="tw-col-start-3 tw-row-start-1 lg:tw-row-start-2 tw-flex tw-items-center tw-justify-center">
-            <spieler :spieler="getSpieler(3)"
-                     :live-game="liveGame"
-                     @letzterStich="letzterStich">
-                <template v-slot:letzterStich>
-                    <button class="btn btn-sm btn-outline-primary tw-my-1"
-                            @click="letzterStich"
-                            v-text="letzterStichEingeblendet ? 'Ausblenden' : 'Letzter Stich'"/>
-                </template>
-            </spieler>
-        </div>-->
-
         <!--<div class="tw-flex-1" v-if="!aktiv">
             Du setzt dieses Spiel aus!
-        </div>-->
-
-        <!--<div class="tw-flex tw-justify-around tw-items-center">
-            <span v-if="liveGame !== 'null'">LiveGameID: {{ liveGame.id }}</span>
-            <button class="btn btn-primary"
-                    v-if="true"
-                    @click="spielStarten">
-                Neues Spiel starten
-            </button>
         </div>-->
     </div>
 </template>
@@ -242,18 +176,23 @@
 export default {
     props: {
         round: Object,
+        mobile: Boolean,
     },
 
     data() {
         return {
             liveGame: 'null',
+            oldLiveGame: '',
             ich: 'null',
             error: '',
             soli: ['Fleischlos', 'Bubensolo', 'Damensolo', 'Königssolo'],
             farbsoli: ['Trumpfsolo', 'Farbsolo Herz', 'Farbsolo Pik', 'Farbsolo Kreuz'],
             farbsoliAnzeigen: false,
             letzterStichEingeblendet: false,
+            infoEingeblendet: false,
             armutKarten: [],
+            infoTimeout: '',
+            stichTimeout: '',
         }
     },
 
@@ -269,10 +208,19 @@ export default {
                     this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
                     this.error = '';
 
-                    if (this.liveGame.aktuellerStich.karten.length === 0) {
-                        this.letzterStichEingeblendet = true
-                        setTimeout(() => this.letzterStichEingeblendet = false, 2000)
+                    if (this.liveGame.aktuellerStich.karten.length === 0 &&
+                        this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
+                        this.letzterStichEingeblendet = true;
+                        clearTimeout(this.stichTimeout);
+                        this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
                     }
+                    if (this.liveGame.messages.length >= 0 &&
+                        this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
+                        this.infoEingeblendet = true
+                        clearTimeout(this.infoTimeout);
+                        this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 2000)
+                    }
+                    this.oldLiveGame = e.liveGame;
                 });
         } else {
             this.privateChannel
@@ -295,16 +243,6 @@ export default {
         binIchDran() {
             return this.liveGame.dran === this.round.auth_id;
         },
-
-        /*reOderKontra() {
-            if (this.ich.isRe === true) {
-                return 'Re';
-            } else if (this.ich.isRe === false) {
-                return 'Kontra';
-            } else {
-                return 'Keins von beidem Fehler';
-            }
-        },*/
     },
 
     watch: {},
@@ -312,6 +250,7 @@ export default {
     methods: {
         copyDataFromProp() {
             this.liveGame = this.round.current_live_game;
+            this.oldLiveGame = this.round.current_live_game;
             this.ich = this.round.ich;
             this.ich.hand = Object.values(this.ich.hand);
             this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
@@ -325,7 +264,6 @@ export default {
             axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
                 vorbehalt: vorbehalt
             })
-                .then(response => this.error = '')
                 .catch(error => this.handleError(error));
         },
 
@@ -345,14 +283,14 @@ export default {
             }
         },
 
-        /*ansage(ansage) {
+        ansage(ansage) {
             axios.post('/api/live/' + this.liveGame.id + '/ansage', {
                 ansage: ansage
             })
                 .catch(error => this.handleError(error));
-        },*/
+        },
 
-        /*reloadData() {
+        reloadData() {
             axios.get('/api/live/' + this.liveGame.id + '/reloadData')
                 .then(response => {
                     this.ich = response.data.ich;
@@ -376,19 +314,7 @@ export default {
                 this.error = error.response.data.message;
                 this.reloadData();
             }
-        },*/
-
-        /*getSpieler(position) {
-            let eigenerIndex = this.liveGame.spielerIDs.indexOf(this.round.authID);
-
-            let ergebnis = eigenerIndex + position;
-            if (ergebnis >= 4) {
-                ergebnis -= 4;
-            }
-            let spielerID = this.liveGame.spielerIDs[ergebnis];
-
-            return this.liveGame.spieler[spielerID];
-        },*/
+        },
 
         letzterStich() {
             this.letzterStichEingeblendet = !this.letzterStichEingeblendet;

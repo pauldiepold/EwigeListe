@@ -21,7 +21,7 @@ Broadcast::channel('round.{round}', function ($user, Round $round)
 {
     if ($user->id)
     {
-        return [ 'id' => $user->id ];
+        return ['id' => $user->id];
     }
 });
 
@@ -29,7 +29,7 @@ Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRoun
 {
     if ($user->can('update', $liveRound))
     {
-        return [ 'id' => $user->id ];
+        return ['id' => $user->id];
     }
 });
 
