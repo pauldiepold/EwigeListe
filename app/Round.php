@@ -35,6 +35,9 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereLiveRoundId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read mixed $active_players
+ * @property-read mixed $dealer_index
+ * @property-read mixed $inactive_players
  */
 class Round extends Model
 {

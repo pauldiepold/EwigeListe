@@ -16,15 +16,6 @@ use Illuminate\Validation\Rule;
 
 class GameController extends Controller
 {
-    public function reloadData(LiveGame $liveGame)
-    {
-        return response()
-            ->json([
-                'ich' => $liveGame->getSpieler(),
-                'liveGame' => $liveGame
-            ]);
-    }
-
     public function vorbehalt(LiveGame $liveGame, Request $request)
     {
         abort_if($liveGame->phase != 2, 422, 'Falsche Phase!');
@@ -85,7 +76,9 @@ class GameController extends Controller
         $karten = collect();
         foreach ($validated['karten'] as $karte)
         {
-            $karten->push($liveGame->getKarteVonSpieler($karte['id']));
+            $karte_temp = $liveGame->getKarteVonSpieler($karte['id']);
+            $karte_temp->armut_zurueck = true;
+            $karten->push($karte_temp);
         }
 
         $liveGame->armutKartenAbgeben($karten);
@@ -111,6 +104,8 @@ class GameController extends Controller
             $spieler = $liveGame->getSpieler();
             $armutSpieler = $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'));
 
+            $liveGame->pushMessage("<b>$spieler->name</b>: nimmt die Armut mit!");
+
             $hand = $spieler->hand->concat($armutSpieler->armutKarten);
 
             $spieler->hand = $hand;
@@ -120,6 +115,7 @@ class GameController extends Controller
             $liveGame->dran = $spieler->id;
 
             $liveGame->phase = 33;
+            $liveGame->kartenSortieren();
         } else
         {
             $liveGame->naechstenSpielerBerechnen();
@@ -194,7 +190,7 @@ class GameController extends Controller
             $liveGame->spielErgebnisUebertragen();
 
             $liveGame->save();
-            broadcast(new RoundUpdated($liveGame->round->id));
+            broadcast(new RoundUpdated($liveGame->liveRound->round->id));
 
             return 'Spiel beendet';
         }

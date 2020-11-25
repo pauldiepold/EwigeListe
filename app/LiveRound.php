@@ -103,7 +103,8 @@ class LiveRound extends Model
             'live_round_id' => $this->id,
             'vorhand' => $activePlayers->first()->pivot->player_id,
             'dran' => $activePlayers->first()->pivot->player_id,
-            'alte_gespielt' => 0,
+            'resOffengelegt' => 0,
+            'kontrasOffengelegt' => 0,
             'phase' => 0,
             'aktuellerStich' => new Stich(),
             'letzterStich' => new Stich(),
@@ -114,6 +115,8 @@ class LiveRound extends Model
             'spieler3' => $spieler3,
             'anzeige' => new Anzeige($activePlayers),
             'messages' => collect(),
+            'winners' => collect(),
+            'augen' => collect(),
             'geheiratet' => false,
             'geschmissen' => false,
         ]);

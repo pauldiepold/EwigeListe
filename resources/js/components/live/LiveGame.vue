@@ -4,13 +4,14 @@
         <!-- ******** Buttons links ********* -->
         <div class="tw-absolute live-overlay tw-p-3 tw-m-2 tw-left-0 tw-text-3xl tw-flex tw-flex-col"
              style="top: 50%; transform: translate(0, -50%);">
-            <i class="fas fa-info-circle tw-cursor-pointer"
+            <i class="fas fa-sync tw-cursor-pointer" @click="$emit('reload-live-game')"></i>
+            <i class="fas fa-info-circle tw-cursor-pointer tw-mt-4"
                :class="{'tw-text-orange-500': infoEingeblendet}"
                @click="infoEingeblendet = !infoEingeblendet"></i>
             <i class="fas fa-history tw-cursor-pointer tw-mt-4"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <!--<i class="fas fa-plus-circle tw-cursor-pointer"
+            <!--<i class="fas fa-plus-circle tw-cursor-pointer tw-mt-4"
                @click="$emit('neues-spiel-starten')"></i>-->
         </div>
 
@@ -55,7 +56,7 @@
             </div>
         </div>
 
-        <!--<p v-if="error !== ''" v-text="error" class="tw-font-bold tw-text-red-700 tw-my-4"></p> -->
+        <!--<div v-if="error !== ''" v-text="error" class="center-absolute tw-text-gray-200 tw-bg-white tw-bg-opacity-50 tw-rounded-xl tw-p-6 tw-z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
         <div v-if="istPhase(2)" class="center-absolute live-overlay tw-p-2 tw-pt-1">
@@ -116,15 +117,16 @@
 
 
         <!-- ******** Armut ********* -->
-        <div v-if="(istPhase(3) || istPhase(32) || istPhase(33))" class="live-overlay tw-p-3"
-             style="position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%);">
+        <div v-if="(istPhase(3) || ((istPhase(32) || istPhase(33)) && binIchDran))" class="live-overlay tw-p-3"
+             style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             <div v-if="istPhase(3) && !binIchDran">
                 Die Armut wählt Ihre Karten.
             </div>
 
             <div v-if="istPhase(3) && binIchDran">
-                Wähle aus, welche Karten du abgeben möchtest!
-                <hand class="tw-mb-0 tw-mt-6"
+                <div>Wähle aus, welche Karten du abgeben möchtest!</div>
+                <div v-if="armutError" class="tw-font-bold tw-text-red-600">Du musst all deinen Trumpf abgeben!</div>
+                <hand class="tw-mb-0 tw-mt-6" style="margin-left: 26.2%;"
                       v-if="armutKarten.length > 0"
                       :karten="armutKarten"
                       :armut="true"
@@ -152,7 +154,7 @@
 
             <div v-if="istPhase(33) && binIchDran">
                 Wähle aus, welche Karten du zurückgeben möchtest!
-                <hand class="tw-mb-0 tw-mt-3"
+                <hand class="tw-mb-0 tw-mt-3" style="margin-left: 28.5%;"
                       v-if="armutKarten.length > 0"
                       :karten="armutKarten"
                       :armut="true"
@@ -191,21 +193,19 @@ export default {
             letzterStichEingeblendet: false,
             infoEingeblendet: false,
             armutKarten: [],
+            armutError: false,
             infoTimeout: '',
             stichTimeout: '',
         }
     },
 
     created() {
-        this.copyDataFromProp();
+        this.saveNewData(this.round.current_live_game, this.round.ich);
 
         if (this.aktiv) {
             this.privateChannel
                 .listen('LiveGameDataBroadcasted', e => {
-                    this.liveGame = e.liveGame;
-                    this.ich = e.ich;
-                    this.ich.hand = Object.values(this.ich.hand);
-                    this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+                    this.saveNewData(e.liveGame, e.ich, false);
                     this.error = '';
 
                     if (this.liveGame.aktuellerStich.karten.length === 0 &&
@@ -218,7 +218,7 @@ export default {
                         this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
                         this.infoEingeblendet = true
                         clearTimeout(this.infoTimeout);
-                        this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 2000)
+                        this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
                     }
                     this.oldLiveGame = e.liveGame;
                 });
@@ -249,56 +249,15 @@ export default {
 
     methods: {
         copyDataFromProp() {
-            this.liveGame = this.round.current_live_game;
-            this.oldLiveGame = this.round.current_live_game;
-            this.ich = this.round.ich;
+            this.saveNewData(this.round.current_live_game, this.round.ich);
+        },
+
+        saveNewData(liveGame, ich, old = true) {
+            this.liveGame = liveGame;
+            if (old) this.oldLiveGame = liveGame;
+            this.ich = ich;
             this.ich.hand = Object.values(this.ich.hand);
             this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-        },
-
-        istPhase(phase) {
-            return this.liveGame.phase === phase;
-        },
-
-        vorbehaltSenden(vorbehalt) {
-            axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
-                vorbehalt: vorbehalt
-            })
-                .catch(error => this.handleError(error));
-        },
-
-        karteSpielen(karte) {
-            if (this.binIchDran) {
-                this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
-                let karteKopie = karte;
-                karteKopie.gespieltVon = this.round.auth_id;
-                karteKopie.spielbar = false;
-                this.liveGame.aktuellerStich.karten.push(karteKopie);
-
-                axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
-                    karte: karte
-                })
-                    .then(response => this.error = '')
-                    .catch(error => this.handleError(error));
-            }
-        },
-
-        ansage(ansage) {
-            axios.post('/api/live/' + this.liveGame.id + '/ansage', {
-                ansage: ansage
-            })
-                .catch(error => this.handleError(error));
-        },
-
-        reloadData() {
-            axios.get('/api/live/' + this.liveGame.id + '/reloadData')
-                .then(response => {
-                    this.ich = response.data.ich;
-                    this.liveGame = response.data.liveGame;
-
-                    this.ich.hand = Object.values(this.ich.hand);
-                    this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
-                });
         },
 
         reloadPage() {
@@ -312,12 +271,30 @@ export default {
             }
             if (error.response.status === 422) {
                 this.error = error.response.data.message;
-                this.reloadData();
+                this.$emit('reload-live-game');
             }
+        },
+
+        istPhase(phase) {
+            return this.liveGame.phase === phase;
+        },
+
+        ansage(ansage) {
+            axios.post('/api/live/' + this.liveGame.id + '/ansage', {
+                ansage: ansage
+            })
+                .catch(error => this.handleError(error));
         },
 
         letzterStich() {
             this.letzterStichEingeblendet = !this.letzterStichEingeblendet;
+        },
+
+        vorbehaltSenden(vorbehalt) {
+            axios.post('/api/live/' + this.liveGame.id + '/vorbehalt', {
+                vorbehalt: vorbehalt
+            })
+                .catch(error => this.handleError(error));
         },
 
         armutKarteWechseln(karte, richtung) {
@@ -336,10 +313,17 @@ export default {
         },
 
         armutAbgeben() {
+            if (this.ich.hand.filter(karte => karte.trumpf).length !== 0) {
+                this.armutError = true;
+                return;
+            } else {
+                this.armutError = false;
+            }
             axios.post('/api/live/' + this.liveGame.id + '/armutAbgeben', {
                 karten: this.armutKarten
             })
-                .then(this.armutKarten = []);
+                .then(this.armutKarten = [])
+                .catch(error => this.handleError(error));
         },
 
         armutMitnehmen(mitnehmen) {
@@ -353,7 +337,23 @@ export default {
                 karten: this.armutKarten
             })
                 .then(this.armutKarten = []);
-        }
+        },
+
+        karteSpielen(karte) {
+            if (this.binIchDran) {
+                this.ich.hand.splice(this.ich.hand.indexOf(karte), 1);
+                let karteKopie = karte;
+                karteKopie.gespieltVon = this.round.auth_id;
+                karteKopie.spielbar = false;
+                this.liveGame.aktuellerStich.karten.push(karteKopie);
+
+                axios.post('/api/live/' + this.liveGame.id + '/karteSpielen', {
+                    karte: karte
+                })
+                    .then(response => this.error = '')
+                    .catch(error => this.handleError(error));
+            }
+        },
     }
 };
 </script>

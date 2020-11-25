@@ -55,11 +55,46 @@
                                 v-if="allPlayersOnline && !round.current_live_game && (!mobile || (landscape && fullscreen))"
                                 class="center-absolute live-overlay tw-p-4 tw-flex tw-content-center tw-justify-around tw-w-1/3"
                                 :class="{'tw-w-3/4': round.last_live_game}">
-                                <div class="tw-mr-3 tw-pt-4" v-if="round.last_live_game"
-                                     v-html="round.last_live_game.wertung">
-
+                                <div class="tw-mr-3 tw-pt-4 tw-flex tw-flex-col tw-justify-center"
+                                     v-if="round.last_live_game">
+                                    <div class="tw-font-bold">{{ round.last_live_game.spieltyp }}</div>
+                                    <div class="tw-flex tw-justify-around tw-my-2">
+                                        <div>Re: {{ round.last_live_game.augen[0] }}</div>
+                                        <div>Kontra: {{ round.last_live_game.augen[1] }}</div>
+                                    </div>
+                                    <table class="tw-w-full">
+                                        <tr v-for="(item, index) in round.last_live_game.wertung"
+                                            class="tw-border-0"
+                                            :class="{'tw-border-b': index === round.last_live_game.wertung.length - 1}">
+                                            <td class="tw-text-left">{{ item[0] }}</td>
+                                            <td>{{ item[1] }}</td>
+                                        </tr>
+                                        <tr class="tw-border-0">
+                                            <td></td>
+                                            <td>
+                                                {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
+                                                    round.last_live_game.wertungsPunkte < 0 ? '-' : ''
+                                                }}{{
+                                                    round.last_live_game.wertungsPunkte
+                                                }}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <div class="tw-flex tw-justify-around tw-my-2">
+                                        <div v-for="player in round.active_players"
+                                             v-if="round.last_live_game.winners.includes(player.id)">
+                                            <img :src="player.avatar_path"
+                                                 class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
+                                                 alt="">
+                                            {{ player.surname }}
+                                        </div>
+                                    </div>
+                                    <div class=" tw-mb-2">
+                                        <b>{{ round.last_live_game.gewinntRe ? 'Re' : 'Kontra' }}</b> gewinnt mit
+                                        {{ round.last_live_game.wertungsPunkte }} Punkten!
+                                    </div>
                                 </div>
-                                <div class="tw-ml-3">
+                                <div class="tw-ml-3 tw-flex tw-flex-col tw-justify-around">
                                     <div v-if="!round.ready_players.includes(round.auth_id)" class="tw-mb-4">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
@@ -103,7 +138,8 @@
                                            :round="round"
                                            :mobile="mobile"
                                            @neues-spiel-starten="neuesSpielStarten"
-                                           @message="whisperMessage"/>
+                                           @message="whisperMessage"
+                                           @reload-live-game="reloadLiveGame"/>
                             </div>
                         </div>
                     </div>
@@ -163,11 +199,7 @@ export default {
                 this.round.ready_players = [];
             })
             .listen('RoundUpdated', e => {
-                this.fetchData()
-                    .then((response) => {
-                        this.orderActivePlayers();
-                        this.$refs.live_game.copyDataFromProp();
-                    });
+                this.reloadLiveGame();
             })
             .listenForWhisper('ready', e => {
                 this.round.ready_players.push(e.id);
@@ -256,6 +288,16 @@ export default {
                         this.reconnectChannels();
                         resolve(response);
                     });
+            });
+        },
+
+        reloadLiveGame() {
+            this.fetchData()
+            .then((response) => {
+                this.orderActivePlayers();
+                if (this.round.current_live_game) {
+                    this.$refs.live_game.copyDataFromProp();
+                }
             });
         },
 

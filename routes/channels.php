@@ -17,7 +17,7 @@ use App\Player;
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('round.{round}', function ($user, Round $round)
+Broadcast::channel('round.{round}', function ($user, Round $round) // Verbunden mit Round.vue - jeder darf
 {
     if ($user->id)
     {

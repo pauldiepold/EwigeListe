@@ -97,7 +97,6 @@ Route::middleware('auth')->group(function ()
             Route::post('live/{liveGame}/armutZurueck', 'Live\GameController@armutZurueckgeben');
             Route::post('live/{liveGame}/karteSpielen', 'Live\GameController@karteSpielen');
             Route::post('live/{liveGame}/ansage', 'Live\GameController@ansage');
-            Route::get('live/{liveGame}/reloadData', 'Live\GameController@reloadData');
         });
 
         Route::post('users/{user}/avatar', 'Api\UserAvatarController@store')->name('avatar');

@@ -18,7 +18,7 @@
   width: 4.3em;
   height: 5.7em;
   border: 0px solid #666;
-  box-shadow: .2em .2em .5em #333, inset 0px 0px 5px 0px #333 !important;
+  box-shadow: .2em .2em .5em #333, inset 0px 0px 5px 0px #333;
   border-radius: .3em;
   -moz-border-radius: .3em;
   -webkit-border-radius: .3em;
@@ -31,8 +31,10 @@
   font-family: Arial, sans-serif;
   position: relative;
   background-color: #fff;
-  -moz-box-shadow: .2em .2em .5em #333;
-  -webkit-box-shadow: .2em .2em .5em #333;
+}
+
+.armut-karte {
+  box-shadow: 0.2em 0.2em 0.5em #333, inset 0 0 8px 1px #29973e !important;
 }
 
 .playingCards .card-clickable.card-live {

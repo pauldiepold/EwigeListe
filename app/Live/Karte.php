@@ -18,6 +18,7 @@ class Karte
 
     public $trumpf;
     public $spielbar;
+    public $armut_zurueck;
 
     public $gespieltVon;
 
@@ -28,6 +29,7 @@ class Karte
         $this->trumpf = false;
         $this->spielbar = false;
         $this->gespieltVon = false;
+        $this->armut_zurueck = false;
 
         $this->farbe = $farbe;
 
@@ -67,6 +69,7 @@ class Karte
         $karte->trumpf = $input->trumpf;
         $karte->spielbar = $input->spielbar;
         $karte->gespieltVon = $input->gespieltVon;
+        $karte->armut_zurueck = $input->armut_zurueck;
 
         return $karte;
     }
