@@ -1160,15 +1160,15 @@ class LiveGame extends Model
 
         /* **** Gegen die Alten **** */
         if ($gewinntRe == false) $wertungsPunkte++;
-        if ($rePunkte != 120) $wertung->push(['Gegen die Alten', '+1']);
+        if ($gewinntRe == false) $wertung->push(['Gegen die Alten', '+1']);
 
         /* **** Re **** */
         if ($reAnsage) $wertungsPunkte += 2;
-        if ($rePunkte != 120) $wertung->push(['Re angesagt', '+2']);
+        if ($rePunkte) $wertung->push(['Re angesagt', '+2']);
 
         /* **** Kontra **** */
         if ($kontraAnsage) $wertungsPunkte += 2;
-        if ($rePunkte != 120) $wertung->push(['Kontra angesagt', '+2']);
+        if ($kontraAnsage) $wertung->push(['Kontra angesagt', '+2']);
 
         /* **** Absagen **** */
         if ($reAbsage !== null || $kontraAbsage !== null)
