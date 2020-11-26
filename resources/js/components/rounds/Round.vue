@@ -17,28 +17,35 @@
                         <div class="tw-relative tw-h-full tw-w-full">
 
                             <!-- Fullscreen ausschalten -->
-                            <div class="tw-absolute tw-ml-2 tw-mt-2 tw-top-0 tw-left-0">
-                                <i v-if="allPlayersOnline && mobile && fullscreen"
-                                   class="fas fa-compress tw-text-2xl tw-text-gray-600"
+                            <div class="tw-absolute tw-m-2 tw-top-0 tw-right-0">
+                                <i v-if="fullscreen"
+                                   class="fas fa-compress xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-text-gray-300"
                                    @click="fullscreenOff"></i>
                             </div>
 
+                            <!-- Fullscreen einschalten -->
+                            <div class="tw-absolute tw-m-2 tw-top-0 tw-right-0">
+                                <i v-if="!fullscreen"
+                                   class="fas fa-expand xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-text-gray-300"
+                                   @click="fullscreenOn"></i>
+                            </div>
+
                             <!-- Fullscreen? -->
-                            <div v-if="allPlayersOnline && mobile && !fullscreen"
+                            <div v-if="mobile && !fullscreen"
                                  class="center-absolute live-overlay tw-p-2 tw-w-48">
                                 <p> Bitte aktiviere den Fullscreen-Modus! </p>
                                 <i class="fas fa-expand tw-text-4xl" @click="fullscreenOn"></i>
                             </div>
 
                             <!-- Landscape Modus? -->
-                            <div v-if="allPlayersOnline && mobile && !landscape && fullscreen"
-                                 class="center-absolute live-overlay tw-w-48">
-                                <p>Bitte drehe dein Gerät in den Landscape Modus!</p>
+                            <div v-if="mobile && !landscape && fullscreen"
+                                 class="center-absolute live-overlay tw-w-48 tw-p-4">
+                                <p class="tw-mb-2">Bitte drehe dein Gerät in den Landscape Modus!</p>
                                 <i class="fas fa-sync tw-text-4xl"></i>
                             </div>
 
                             <!-- Spieler Online? -->
-                            <div v-if="!allPlayersOnline" class="center-absolute live-overlay tw-p-4">
+                            <div v-if="!allPlayersOnline && (!mobile || (landscape && fullscreen))" class="center-absolute live-overlay tw-p-4">
                                 <p>Bitte warte, bis alle Spieler online sind:</p>
                                 <div class="tw-grid tw-grid-cols-2 tw-gap-2">
                                     <div v-for="player in round.active_players">
@@ -83,7 +90,7 @@
                                         </tr>
                                     </table>
                                     <div class="tw-flex tw-justify-around tw-my-2">
-                                        <div v-for="player in round.active_players"
+                                        <div v-for="player in round.players"
                                              v-if="round.last_live_game.winners.includes(player.id)">
                                             <img :src="player.avatar_path"
                                                  class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
@@ -98,18 +105,18 @@
                                 </div>
 
                                 <!-- Ready Check -->
-                                <div v-if="!allPlayersReady" class="tw-flex tw-flex-col tw-justify-center">
-                                    <div v-if="aktiv && !round.ready_players.includes(round.auth_id)" class="tw-mb-4">
+                                <div class="tw-flex tw-flex-col tw-justify-center">
+                                    <div v-if="aktiv && !allPlayersReady && !round.ready_players.includes(round.auth_id)" class="tw-mb-4">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
                                         </button>
                                     </div>
-                                    <div v-if="aktiv" class="tw-mb-2">
+                                    <div v-if="aktiv && !allPlayersReady" class="tw-mb-2">
                                         <p>
                                             Bitte warte, bis alle Spieler bereit sind:
                                         </p>
                                     </div>
-                                    <div v-if="aktiv" class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                    <div v-if="aktiv && !allPlayersReady" class="tw-grid tw-grid-cols-2 tw-gap-2">
                                         <div v-for="player in round.active_players">
                                             <img :src="player.avatar_path"
                                                  class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
@@ -341,10 +348,10 @@ export default {
         },
         getOrientation() {
             this.landscape = window.innerWidth > window.innerHeight;
-            this.mobile = window.screen.width <= 900;
-            if (!this.mobile && this.fullscreen) {
+            this.mobile = window.screen.width < 1024;
+            /*if (!this.mobile && this.fullscreen) {
                 this.fullscreenOff();
-            }
+            }*/
         },
 
         deleteLastGame() {

@@ -33,6 +33,7 @@ module.exports = {
             },
             spacing: {
                 '7': '1.75rem',
+                '14': '3.5rem',
             },
             padding: {
                 '50p': '50%',
@@ -53,6 +54,8 @@ module.exports = {
             boxShadow: {
                 green: '0 0 6px 2px rgb(88, 169, 117)',
                 'green-darker': '0 0 6px 3px rgb(41, 177, 89)',
+                'green-darker-lg': '0 0 20px 5px rgb(41, 177, 89)',
+                'green-darker-xl': '0 0 25px 7px rgb(41, 177, 89)',
                 red: '0 0 6px 3px rgb(202, 114, 114)',
                 xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
                 sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

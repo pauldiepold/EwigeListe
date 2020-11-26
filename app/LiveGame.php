@@ -622,11 +622,14 @@ class LiveGame extends Model
             }
         }
 
-        if ($this->vorbehalte->containsStrict('Schmeißen'))
+        foreach ($this->vorbehalte as $key => $vorbehalt)
         {
-            $this->schmeissen($key);
+            if ($vorbehalt === 'Schmeißen')
+            {
+                $this->schmeissen($key);
 
-            return;
+                return;
+            }
         }
 
         foreach ($this->vorbehalte as $key => $vorbehalt)
@@ -1433,6 +1436,9 @@ class LiveGame extends Model
     {
         $round = $this->liveRound->round;
         $game = $round->addNewGame($this->winners->toArray(), $this->wertungsPunkte, false, $this->id);
+
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
     }
 
     public function setVorbehalt($vorbehalt)

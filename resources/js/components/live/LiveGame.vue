@@ -3,13 +3,13 @@
 
         <!-- ******** Buttons links ********* -->
         <div
-            class="tw-absolute live-overlay md:tw-p-3 tw-p-2 tw-m-2 tw-left-0 md:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
+            class="tw-absolute live-overlay lg:tw-p-3 tw-p-2 tw-m-2 tw-left-0 lg:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
             style="top: 50%; transform: translate(0, -50%);">
             <div v-if="zuschauerEingeblendet && round.watching_players.length !== 0" class="tw-border-b-2 tw-mb-3">
                 <div v-for="player in round.watching_players"
                      class="tw-mb-2">
-                    <img :src="player.avatar_path"
-                         class="tw-mx-auto md:tw-h-10 md:tw-w-10 tw-h-8 tw-w-8 tw-rounded-full">
+                    <img :src="player.avatar_path" :title="player.name"
+                         class="tw-mx-auto xl:tw-h-12 xl:tw-w-12 lg:tw-h-10 lg:tw-w-10 tw-h-8 tw-w-8 tw-rounded-full">
                 </div>
             </div>
             <!--<i class="fas fa-users tw-cursor-pointer"
@@ -18,17 +18,17 @@
             <i class="fas fa-history tw-cursor-pointer"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <i class="fas fa-info-circle tw-cursor-pointer md:tw-mt-4 tw-mt-3"
+            <i class="fas fa-info-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
                :class="{'tw-text-orange-500': infoEingeblendet}"
                @click="infoEingeblendet = !infoEingeblendet"></i>
-            <i class="fas fa-sync tw-cursor-pointer md:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>
-            <!--<i class="fas fa-plus-circle tw-cursor-pointer md:tw-mt-4 tw-mt-3"
+            <!--<i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>-->
+            <!--<i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
                @click="$emit('neues-spiel-starten')"></i>-->
         </div>
 
         <!-- ******** Messages ********* -->
         <div v-if="infoEingeblendet"
-             class="tw-absolute live-overlay tw-px-3 tw-pt-2 tw-pb-1 tw-m-2 md:tw-text-sm tw-text-xs tw-flex tw-flex-col tw-w-1/5 tw-text-left tw-h-40 tw-overflow-y-auto"
+             class="tw-absolute live-overlay tw-px-3 tw-pt-2 tw-pb-1 tw-m-2 lg:tw-text-sm tw-text-xs tw-flex tw-flex-col tw-w-1/5 tw-text-left tw-h-40 tw-overflow-y-auto"
              style="top: 50%; right:0; transform: translate(0, -50%);">
             <ul class="tw-mb-0">
                 <li v-for="(message, index) in liveGame.messages"
@@ -80,12 +80,11 @@
         <!--<div v-if="error !== ''" v-text="error" class="center-absolute tw-text-gray-200 tw-bg-white tw-bg-opacity-50 tw-rounded-xl tw-p-6 tw-z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
-
         <div v-if="pluck(round.inactive_players, 'id').includes(round.auth_id) && istPhase(2)"
              class="center-absolute live-overlay tw-py-3 tw-px-4 tw-font-bold">
             Du setzt dieses Spiel aus!
         </div>
-        <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay tw-p-2 tw-pt-1">
+        <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay lg:tw-px-4 lg:tw-py-3 tw-p-2 tw-pt-1">
             <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
                 Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
             </div>
@@ -93,8 +92,8 @@
             <div v-if="istPhase(2) && ich.vorbehalt == null"
                  class="tw-flex tw-flex-col tw-justify-between tw-items-center">
 
-                <p v-if="binIchDran" class="tw-font-bold tw-mb-1">Wähle deinen Vorbehalt:</p>
-                <p v-else class="tw-font-bold tw-mb-1">Mögliche Vorbehalte:</p>
+                <p v-if="binIchDran" class="tw-font-bold lg:tw-mb-2 tw-mb-1">Wähle deinen Vorbehalt:</p>
+                <p v-else class="tw-font-bold lg:tw-mb-2 tw-mb-1">Mögliche Vorbehalte:</p>
 
                 <div class="tw-flex tw-items-center">
                     <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
