@@ -43,11 +43,23 @@
                              @remove-player="removePlayer"/>
         </sortable-players-list>
 
-        <div class="custom-control custom-checkbox tw-my-6">
-            <input class="custom-control-input" type="checkbox" v-model="liveGame" id="liveGame">
-            <label class="custom-control-label" for="liveGame">
-                Runde online spielen?
-            </label>
+        <div class="d-flex justify-content-center align-items-center tw-my-6">
+            <a href="#" class="no-underline tw-font-bold tw-text-lg tw-text-gray-800"
+               @click="liveGame = false">
+                Offline
+            </a>
+            <div class="mx-2">
+                <i class="fas fa-toggle-on tw-text-gray-700 tw-text-4xl tw-cursor-pointer"
+                   v-if="liveGame"
+                   @click="liveGame = !liveGame"/>
+                <i class="fas fa-toggle-on tw-text-gray-700 tw-text-4xl fa-flip-horizontal tw-cursor-pointer"
+                   v-if="!liveGame"
+                   @click="liveGame = !liveGame"/>
+            </div>
+            <a href="#" class="tw-font-bold tw-text-lg no-underline tw-text-gray-800"
+               @click="liveGame = true">
+                Online
+            </a>
         </div>
 
         <form @submit.prevent="submit">

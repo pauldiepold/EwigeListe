@@ -14,13 +14,14 @@ class AddAltegespieltToLivegames extends Migration
     public function up()
     {
         Schema::table('live_games', function (Blueprint $table) {
-            $table->integer('resOffengelegt')->nullable()->after('dran');
-            $table->integer('kontrasOffengelegt')->nullable()->after('dran');
-            $table->boolean('geheiratet')->nullable()->after('dran');
-            $table->text('messages')->nullable()->after('dran');
-            $table->boolean('geschmissen')->nullable()->after('dran');
-            $table->text('winners')->nullable()->after('dran');
-            $table->text('augen')->nullable()->after('dran');
+            $table->boolean('geheiratet')->nullable()->after('aktuellerStich');
+            $table->text('messages')->nullable()->after('aktuellerStich');
+            $table->boolean('geschmissen')->nullable()->after('aktuellerStich');
+            $table->integer('kontrasOffengelegt')->nullable()->after('aktuellerStich');
+            $table->integer('resOffengelegt')->nullable()->after('aktuellerStich');
+            $table->text('winners')->nullable()->after('wertung');
+            $table->text('augen')->nullable()->after('wertung');
+            $table->text('stiche')->nullable()->after('aktuellerStich');
         });
     }
 
@@ -32,6 +33,7 @@ class AddAltegespieltToLivegames extends Migration
     public function down()
     {
         Schema::table('live_games', function (Blueprint $table) {
+            $table->dropColumn('stiche');
             $table->dropColumn('kontrasOffengelegt');
             $table->dropColumn('resOffengelegt');
             $table->dropColumn('geheiratet');

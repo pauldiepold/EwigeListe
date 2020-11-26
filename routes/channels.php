@@ -21,31 +21,29 @@ Broadcast::channel('round.{round}', function ($user, Round $round) // Verbunden 
 {
     if ($user->id)
     {
-        return ['id' => $user->id];
+        return [
+            'id' => $user->id,
+            'name' => $user->player->surname . ' ' . $user->player->name,
+            'avatar_path' => $user->avatar_path,
+        ];
     }
 });
 
 Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRound)
 {
-    if ($user->can('update', $liveRound))
+    if ($user->id)
     {
-        return ['id' => $user->id];
+        return true;
     }
 });
 
-Broadcast::channel(
-    'liveRound.{liveRound}.{player}',
-    function ($user, LiveRound $liveRound, Player $player)
+Broadcast::channel('liveRound.{liveRound}.{player}', function ($user, LiveRound $liveRound, Player $player)
+{
+    if ($user->id == $player->id)
     {
-        if ($user->id == $player->id)
+        if ($user->can('update', $liveRound))
         {
-            if ($user->can('update', $liveRound))
-            {
-                return [
-                    'id' => $user->id,
-                    'name' => $user->player->surname . ' ' . $user->player->name
-                ];
-            }
+            return true;
         }
     }
-);
+});

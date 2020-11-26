@@ -2,16 +2,27 @@
     <div class="playingCards">
 
         <!-- ******** Buttons links ********* -->
-        <div class="tw-absolute live-overlay tw-p-3 tw-m-2 tw-left-0 tw-text-3xl tw-flex tw-flex-col"
-             style="top: 50%; transform: translate(0, -50%);">
-            <i class="fas fa-sync tw-cursor-pointer" @click="$emit('reload-live-game')"></i>
-            <i class="fas fa-info-circle tw-cursor-pointer tw-mt-4"
-               :class="{'tw-text-orange-500': infoEingeblendet}"
-               @click="infoEingeblendet = !infoEingeblendet"></i>
-            <i class="fas fa-history tw-cursor-pointer tw-mt-4"
+        <div
+            class="tw-absolute live-overlay md:tw-p-3 tw-p-2 tw-m-2 tw-left-0 md:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
+            style="top: 50%; transform: translate(0, -50%);">
+            <div v-if="zuschauerEingeblendet && round.watching_players.length !== 0" class="tw-border-b-2 tw-mb-3">
+                <div v-for="player in round.watching_players"
+                     class="tw-mb-2">
+                    <img :src="player.avatar_path"
+                         class="tw-mx-auto md:tw-h-10 md:tw-w-10 tw-h-8 tw-w-8 tw-rounded-full">
+                </div>
+            </div>
+            <!--<i class="fas fa-users tw-cursor-pointer"
+               :class="{'tw-text-orange-500': zuschauerEingeblendet}"
+               @click="zuschauerEingeblendet = !zuschauerEingeblendet"></i>-->
+            <i class="fas fa-history tw-cursor-pointer"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <!--<i class="fas fa-plus-circle tw-cursor-pointer tw-mt-4"
+            <i class="fas fa-info-circle tw-cursor-pointer md:tw-mt-4 tw-mt-3"
+               :class="{'tw-text-orange-500': infoEingeblendet}"
+               @click="infoEingeblendet = !infoEingeblendet"></i>
+            <i class="fas fa-sync tw-cursor-pointer md:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>
+            <!--<i class="fas fa-plus-circle tw-cursor-pointer md:tw-mt-4 tw-mt-3"
                @click="$emit('neues-spiel-starten')"></i>-->
         </div>
 
@@ -28,12 +39,22 @@
             </ul>
         </div>
 
+        <!-- ******** An- und Absagen ********* -->
+        <div v-if="aktiv && liveGame.phase === 4"
+             style="position: absolute; left: 0; top: 0%; transform: translate(0, 0%);">
+            <button class="btn btn-primary tw-mt-3 tw-ml-3"
+                    @click="ansage(ich.moeglicheAnAbsage)"
+                    v-if="liveGame.dran === round.auth_id && ich.moeglicheAnAbsage"
+                    v-text="ich.moeglicheAnAbsage">
+            </button>
+        </div>
+
         <!-- ******** Spieler ********* -->
-        <spieler :round="round" :liveGame="liveGame" :ich="ich"
-                 @ansage="ansage"/>
+        <spieler :round="round" :liveGame="liveGame"/>
 
         <!-- ******** Hand ********* -->
-        <div style="position: absolute; left: 31%; bottom: 0; transform: translate(-50%);" class="tw--mb-12">
+        <div v-if="aktiv" style="position: absolute; left: 31%; bottom: 0; transform: translate(-50%);"
+             class="tw--mb-12">
             <hand class="tw-mb-0 tw-mt-3"
                   v-if="ich.hand !== '' && liveGame.phase > 0"
                   :karten="ich.hand"
@@ -59,7 +80,12 @@
         <!--<div v-if="error !== ''" v-text="error" class="center-absolute tw-text-gray-200 tw-bg-white tw-bg-opacity-50 tw-rounded-xl tw-p-6 tw-z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
-        <div v-if="istPhase(2)" class="center-absolute live-overlay tw-p-2 tw-pt-1">
+
+        <div v-if="pluck(round.inactive_players, 'id').includes(round.auth_id) && istPhase(2)"
+             class="center-absolute live-overlay tw-py-3 tw-px-4 tw-font-bold">
+            Du setzt dieses Spiel aus!
+        </div>
+        <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay tw-p-2 tw-pt-1">
             <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
                 Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
             </div>
@@ -117,7 +143,8 @@
 
 
         <!-- ******** Armut ********* -->
-        <div v-if="(istPhase(3) || ((istPhase(32) || istPhase(33)) && binIchDran))" class="live-overlay tw-p-3"
+        <div v-if="aktiv && ((istPhase(3) || ((istPhase(32) || istPhase(33)) && binIchDran)))"
+             class="live-overlay tw-p-3"
              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             <div v-if="istPhase(3) && !binIchDran">
                 Die Armut wählt Ihre Karten.
@@ -179,6 +206,7 @@ export default {
     props: {
         round: Object,
         mobile: Boolean,
+        aktiv: Boolean,
     },
 
     data() {
@@ -192,6 +220,7 @@ export default {
             farbsoliAnzeigen: false,
             letzterStichEingeblendet: false,
             infoEingeblendet: false,
+            zuschauerEingeblendet: true,
             armutKarten: [],
             armutError: false,
             infoTimeout: '',
@@ -200,44 +229,30 @@ export default {
     },
 
     created() {
-        this.saveNewData(this.round.current_live_game, this.round.ich);
+        this.saveNewData(this.round.current_live_game, this.round.ich, true);
 
         if (this.aktiv) {
             this.privateChannel
                 .listen('LiveGameDataBroadcasted', e => {
-                    this.saveNewData(e.liveGame, e.ich, false);
-                    this.error = '';
-
-                    if (this.liveGame.aktuellerStich.karten.length === 0 &&
-                        this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
-                        this.letzterStichEingeblendet = true;
-                        clearTimeout(this.stichTimeout);
-                        this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
-                    }
-                    if (this.liveGame.messages.length >= 0 &&
-                        this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
-                        this.infoEingeblendet = true
-                        clearTimeout(this.infoTimeout);
-                        this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
-                    }
-                    this.oldLiveGame = e.liveGame;
+                    this.saveNewData(e.liveGame, e.ich);
                 });
         } else {
-            this.privateChannel
+            this.privateChannelZuschauer
                 .listen('LiveGameDataBroadcastedInaktiv', e => {
-                    this.liveGame = e.liveGame;
+                    this.saveNewData(e.liveGame);
                 });
         }
     },
 
     computed: {
+        privateChannelZuschauer() {
+            return window.Echo
+                .private('liveRound.' + this.round.live_round.id);
+        },
+
         privateChannel() {
             return window.Echo
                 .private('liveRound.' + this.round.live_round.id + '.' + this.round.auth_id);
-        },
-
-        aktiv() {
-            return this.pluck(this.round.active_players, 'id').includes(this.round.auth_id);
         },
 
         binIchDran() {
@@ -249,15 +264,35 @@ export default {
 
     methods: {
         copyDataFromProp() {
-            this.saveNewData(this.round.current_live_game, this.round.ich);
+            this.saveNewData(this.round.current_live_game, this.round.ich, true);
         },
 
-        saveNewData(liveGame, ich, old = true) {
+        saveNewData(liveGame, ich = null, old = false) {
             this.liveGame = liveGame;
+            this.error = '';
+
             if (old) this.oldLiveGame = liveGame;
-            this.ich = ich;
-            this.ich.hand = Object.values(this.ich.hand);
-            this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+
+            if (this.liveGame.aktuellerStich.karten.length === 0 &&
+                this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
+                this.letzterStichEingeblendet = true;
+                clearTimeout(this.stichTimeout);
+                this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
+            }
+            if (this.liveGame.messages.length >= 0 &&
+                this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
+                this.infoEingeblendet = true
+                clearTimeout(this.infoTimeout);
+                this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
+            }
+
+            if (!old) this.oldLiveGame = liveGame;
+
+            if (this.aktiv) {
+                this.ich = ich;
+                this.ich.hand = Object.values(this.ich.hand);
+                this.ich.moeglicheVorbehalte = Object.values(this.ich.moeglicheVorbehalte);
+            }
         },
 
         reloadPage() {

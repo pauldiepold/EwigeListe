@@ -30,6 +30,7 @@ class LiveGame extends JsonResource
             'gewinntRe' => $this->when($this->beendet, $this->gewinntRe),
             'wertungsPunkte' => $this->when($this->beendet, $this->wertungsPunkte),
             'kontrasOffengelegt' => $this->kontrasOffengelegt,
+            'stiche' => $this->stiche,
             /*'spieler0' => $this->spieler0,
             'spieler1' => $this->spieler1,
             'spieler2' => $this->spieler2,

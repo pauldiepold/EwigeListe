@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Stiche;
 use App\Events\RoundUpdated;
 use App\Live\Anzeige;
 use App\Live\Deck;
@@ -88,6 +89,8 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWertungsPunkte($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWinners($value)
  * @mixin \Eloquent
+ * @property mixed|null $stiche
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStiche($value)
  */
 class LiveGame extends Model
 {
@@ -151,18 +154,8 @@ class LiveGame extends Model
         'winners' => 'collection',
         'wertung' => 'collection',
         'augen' => 'collection',
+        //'stiche' => Stiche::class,
     ];
-
-    public function getArmutKartenAttribute($value)
-    {
-        $collection = $this->castAttribute('armutKarten', $value);
-        $karten = $collection->map(function ($item, $key)
-        {
-            return Karte::create((object) $item);
-        });
-
-        return $karten;
-    }
 
     public function getAktuellerStichAttribute($value)
     {
@@ -378,6 +371,7 @@ class LiveGame extends Model
 
         $this->letzterStich = $stich;
         $this->aktuellerStich = new Stich();
+        //$this->stiche->push($stich);
 
         $this->checkenObGeheiratet();
 
@@ -1164,7 +1158,7 @@ class LiveGame extends Model
 
         /* **** Re **** */
         if ($reAnsage) $wertungsPunkte += 2;
-        if ($rePunkte) $wertung->push(['Re angesagt', '+2']);
+        if ($reAnsage) $wertung->push(['Re angesagt', '+2']);
 
         /* **** Kontra **** */
         if ($kontraAnsage) $wertungsPunkte += 2;
@@ -1438,7 +1432,7 @@ class LiveGame extends Model
     public function spielErgebnisUebertragen()
     {
         $round = $this->liveRound->round;
-        $game = $round->addNewGame($this->winners->toArray(), $this->wertungsPunkte);
+        $game = $round->addNewGame($this->winners->toArray(), $this->wertungsPunkte, false, $this->id);
     }
 
     public function setVorbehalt($vorbehalt)

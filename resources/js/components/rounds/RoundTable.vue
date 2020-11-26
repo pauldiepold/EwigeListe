@@ -12,7 +12,7 @@
                                     <a :href="player.path">
                                         <img :src="player.avatar_path"
                                              class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : round.online_players.includes(player.id)}">
+                                             :class="{ 'tw-shadow-green' : pluck(round.online_players, 'id').includes(player.id)}">
                                     </a>
 
                                     <a :class="{ 'text-dark': round.dealer_index !== player.index,

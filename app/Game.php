@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Model;
 class Game extends Model
 {
 
-    protected $fillable = ['points', 'solo', 'dealerIndex', 'misplay', 'created_by', 'round_id'];
+    protected $guarded = [];
 
     protected $touches = ['round'];
 

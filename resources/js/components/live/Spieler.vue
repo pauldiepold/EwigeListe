@@ -1,13 +1,5 @@
 <template>
     <div>
-        <div v-if="liveGame.phase === 4"
-             style="position: absolute; left: 0; top: 30%; transform: translate(0, -50%);">
-            <button class="btn btn-primary tw-mb-1 tw-ml-2"
-                    @click="$emit('ansage', ich.moeglicheAnAbsage)"
-                    v-if="liveGame.dran === round.auth_id && ich.moeglicheAnAbsage"
-                    v-text="ich.moeglicheAnAbsage">
-            </button>
-        </div>
         <div style="position: absolute; left: 15%; bottom: 0; transform: translate(-50%);"
              class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-t-lg tw-text-gray-300 tw-px-3 tw-py-1 tw-text-sm tw-z-50 tw-flex tw-flex-col"
              :class="{'tw-shadow-green-darker': liveGame.dran === round.active_players[0].id}">
@@ -113,7 +105,6 @@ export default {
     props: {
         round: Object,
         liveGame: Object,
-        ich: Object,
     },
 
     data() {

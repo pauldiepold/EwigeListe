@@ -156,7 +156,7 @@ class Round extends Model
         return $players;
     }
 
-    public function addNewGame($winners, $pointsRound, $misplay = false)
+    public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = false)
     {
         $players = $this->getActivePlayers();
         $solo = (count($winners) != 2 ? true : false);
@@ -169,6 +169,7 @@ class Round extends Model
             'dealerIndex' => $this->getDealerIndex(),
             'created_by' => Auth::user()->player->id,
             'round_id' => $this->id,
+            'live_game_id' => $liveGameID,
         ]);
 
         foreach ($players as $player)

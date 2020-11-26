@@ -15,18 +15,15 @@ class LiveGameDataBroadcastedInaktiv implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private $liveGame;
-    private $playerID;
 
     /**
      * Create a new event instance.
      *
      * @param $liveGame
-     * @param $playerID
      */
-    public function __construct($liveGame, $playerID)
+    public function __construct($liveGame)
     {
         $this->liveGame = $liveGame;
-        $this->playerID = $playerID;
     }
 
     /**
@@ -37,7 +34,7 @@ class LiveGameDataBroadcastedInaktiv implements ShouldBroadcastNow
     public function broadcastOn()
     {
         return new PrivateChannel(
-            'liveRound.' . $this->liveGame->live_round_id . '.' . $this->playerID
+            'liveRound.' . $this->liveGame->live_round_id
         );
     }
 

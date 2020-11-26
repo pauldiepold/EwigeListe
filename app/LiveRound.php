@@ -117,6 +117,7 @@ class LiveRound extends Model
             'messages' => collect(),
             'winners' => collect(),
             'augen' => collect(),
+            'stiche' => collect(),
             'geheiratet' => false,
             'geschmissen' => false,
         ]);

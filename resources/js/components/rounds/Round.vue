@@ -44,7 +44,7 @@
                                     <div v-for="player in round.active_players">
                                         <img :src="player.avatar_path"
                                              class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : round.online_players.includes(player.id)}">
+                                             :class="{ 'tw-shadow-green' : pluck(round.online_players, 'id').includes(player.id)}">
                                         {{ player.surname }}
                                     </div>
                                 </div>
@@ -55,7 +55,9 @@
                                 v-if="allPlayersOnline && !round.current_live_game && (!mobile || (landscape && fullscreen))"
                                 class="center-absolute live-overlay tw-p-4 tw-flex tw-content-center tw-justify-around tw-w-1/3"
                                 :class="{'tw-w-3/4': round.last_live_game}">
-                                <div class="tw-mr-3 tw-pt-4 tw-flex tw-flex-col tw-justify-center"
+
+                                <!-- Wertung anzeigen -->
+                                <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
                                      v-if="round.last_live_game">
                                     <div class="tw-font-bold">{{ round.last_live_game.spieltyp }}</div>
                                     <div class="tw-flex tw-justify-around tw-my-2">
@@ -65,7 +67,7 @@
                                     <table class="tw-w-full">
                                         <tr v-for="(item, index) in round.last_live_game.wertung"
                                             class="tw-border-0"
-                                            :class="{'tw-border-b': index === round.last_live_game.wertung.length - 1}">
+                                            :class="{'tw-border-b-2': index === round.last_live_game.wertung.length - 1}">
                                             <td class="tw-text-left">{{ item[0] }}</td>
                                             <td>{{ item[1] }}</td>
                                         </tr>
@@ -94,40 +96,29 @@
                                         {{ round.last_live_game.wertungsPunkte }} Punkten!
                                     </div>
                                 </div>
-                                <div class="tw-ml-3 tw-flex tw-flex-col tw-justify-around">
-                                    <div v-if="!round.ready_players.includes(round.auth_id)" class="tw-mb-4">
+
+                                <!-- Ready Check -->
+                                <div v-if="!allPlayersReady" class="tw-flex tw-flex-col tw-justify-center">
+                                    <div v-if="aktiv && !round.ready_players.includes(round.auth_id)" class="tw-mb-4">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
                                         </button>
                                     </div>
-                                    <div v-if="round.created_by.id === round.auth_id" class="">
-                                        <button class="btn btn-primary tw-mb-4" :disabled="!allPlayersReady"
-                                                @click="neuesSpielStarten">
-                                            Neues Spiel starten
-                                        </button>
-                                        <p v-if="!allPlayersReady">
+                                    <div v-if="aktiv" class="tw-mb-2">
+                                        <p>
                                             Bitte warte, bis alle Spieler bereit sind:
                                         </p>
-                                        <p v-else>
-                                            Alle Spieler sind bereit!
-                                        </p>
                                     </div>
-                                    <div v-if="round.created_by.id !== round.auth_id" class="tw-mb-4">
-                                        <p v-if="!allPlayersReady">
-                                            Bitte warte, bis alle Spieler bereit sind:
-                                        </p>
-                                        <p v-else>
-                                            Bitte warte, bis {{ round.created_by.surname }} ein neues Spiel gestartet
-                                            hat.
-                                        </p>
-                                    </div>
-                                    <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                    <div v-if="aktiv" class="tw-grid tw-grid-cols-2 tw-gap-2">
                                         <div v-for="player in round.active_players">
                                             <img :src="player.avatar_path"
                                                  class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
                                                  :class="{ 'tw-shadow-green' : round.ready_players.includes(player.id)}">
                                             {{ player.surname }}
                                         </div>
+                                    </div>
+                                    <div v-if="!aktiv || (aktiv && allPlayersReady)">
+                                        Neue Runde wird gestartet...
                                     </div>
                                 </div>
                             </div>
@@ -137,6 +128,7 @@
                                            ref="live_game"
                                            :round="round"
                                            :mobile="mobile"
+                                           :aktiv="aktiv"
                                            @neues-spiel-starten="neuesSpielStarten"
                                            @message="whisperMessage"
                                            @reload-live-game="reloadLiveGame"/>
@@ -189,20 +181,24 @@ export default {
         window.addEventListener("fullscreenchange", this.getFullscreen);
         this.presenceChannel
             .here(players => {
-                this.round.online_players = this.pluck(players, 'id');
+                this.round.online_players = players;
+                this.getWatchingPlayers();
             })
             .joining(player => {
-                this.round.online_players.push(player.id);
+                this.round.online_players.push(player);
+                this.getWatchingPlayers();
             })
             .leaving(player => {
-                this.round.online_players.splice(this.round.online_players.indexOf(player.id), 1);
+                this.round.online_players.splice(this.round.online_players.indexOf(player), 1);
                 this.round.ready_players = [];
+                this.getWatchingPlayers();
             })
             .listen('RoundUpdated', e => {
                 this.reloadLiveGame();
             })
             .listenForWhisper('ready', e => {
                 this.round.ready_players.push(e.id);
+                this.readyCheck();
             })
             .listenForWhisper('message', e => {
                 //this.$refs.live_game.pushMessage(e.message);
@@ -213,13 +209,16 @@ export default {
         window.removeEventListener("fullscreenchange", this.getFullscreen);
     },
     computed: {
+        aktiv() {
+            return this.pluck(this.round.active_players, 'id').includes(this.round.auth_id);
+        },
         presenceChannel() {
             return window.Echo
                 .join('round.' + this.round.id);
         },
         allPlayersOnline() {
             return this.pluck(this.round.active_players, 'id')
-                .every(id => this.round.online_players.includes(id));
+                .every(id => this.pluck(this.round.online_players, 'id').includes(id));
         },
         allPlayersReady() {
             return this.pluck(this.round.active_players, 'id')
@@ -231,6 +230,11 @@ export default {
         },
     },
     methods: {
+        getWatchingPlayers() {
+            this.round.watching_players = this.round.online_players.filter(player => {
+                return !this.pluck(this.round.active_players, 'id').includes(player.id);
+            });
+        },
         orderActivePlayers() {
             /* Aktive Spieler sortieren: Immer ausgehend von der eigenen Sitzposition */
             /* Nur wenn man selbst aktiv ist */
@@ -262,8 +266,14 @@ export default {
                 this.round.active_players = output;
             }
         },
+        readyCheck() {
+            if ((this.round.auth_id === this.round.first_player.id) && this.allPlayersReady) {
+                this.neuesSpielStarten();
+            }
+        },
         whisperReady() {
             this.round.ready_players.push(this.round.auth_id);
+            this.readyCheck();
             this.presenceChannel
                 .whisper('ready', {
                     'id': this.round.auth_id,
@@ -277,7 +287,8 @@ export default {
         },
 
         reconnectChannels() {
-            this.round.online_players = this.pluck(Object.values(this.presenceChannel.subscription.members.members), 'id');
+            this.round.online_players = Object.values(this.presenceChannel.subscription.members.members);
+            this.getWatchingPlayers();
         },
 
         fetchData() {
@@ -293,12 +304,12 @@ export default {
 
         reloadLiveGame() {
             this.fetchData()
-            .then((response) => {
-                this.orderActivePlayers();
-                if (this.round.current_live_game) {
-                    this.$refs.live_game.copyDataFromProp();
-                }
-            });
+                .then((response) => {
+                    this.orderActivePlayers();
+                    if (this.round.current_live_game) {
+                        this.$refs.live_game.copyDataFromProp();
+                    }
+                });
         },
 
         neuesSpielStarten() {
