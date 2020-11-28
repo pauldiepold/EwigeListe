@@ -35,13 +35,14 @@ use Illuminate\Support\Facades\DB;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereLiveRoundId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read mixed $active_players
+ * @property-read mixed $dealer_index
+ * @property-read mixed $inactive_players
  */
 class Round extends Model
 {
 
     protected $fillable = ['created_by', 'liveGame'];
-
-    protected $appends = ['players_string', 'path'];
 
     protected $attributes = [];
 
@@ -69,14 +70,10 @@ class Round extends Model
         return $this->path();
     }
 
-    public function startLiveRound()
+    public function createLiveRound()
     {
         $liveRound = $this->liveRound()->create();
         $this->liveRound()->associate($liveRound)->save();
-
-        $liveRound->starteNeuesSpiel();
-
-        return;
     }
 
     public function getLastGame()
@@ -84,21 +81,36 @@ class Round extends Model
         return $this->games->last();
     }
 
+    public function getDealerIndexAttribute()
+    {
+        return $this->getDealerIndex();
+    }
+
     public function getDealerIndex()
     {
         return $this
-                   ->games()
+                   ->games
                    ->where('solo', 0)
                    ->where('misplay', 0)
                    ->count()
                % $this
-                   ->players()
+                   ->players
                    ->count();
+    }
+
+    public function getInactivePlayersAttribute()
+    {
+        return $this->getInactivePlayers();
     }
 
     public function getInactivePlayers()
     {
         return $this->players->diff($this->getActivePlayers());
+    }
+
+    public function getActivePlayersAttribute()
+    {
+        return $this->getActivePlayers();
     }
 
     public function getActivePlayers($sortPlayers = true)
@@ -138,16 +150,16 @@ class Round extends Model
 
         foreach ($playerIndices as $playerIndex)
         {
-            $players->push($this->players()->wherePivot('index', $playerIndex)->get()->first());
+            $players->push($this->players->where('pivot.index', $playerIndex)->first());
         }
 
         return $players;
     }
 
-    public function addNewGame($winners, $pointsRound, $misplay = false)
+    public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = null)
     {
         $players = $this->getActivePlayers();
-        $solo = (count($winners) != 2 ? true : false);
+        $solo = count($winners) != 2;
         $solo = $misplay ? false : $solo;
 
         $game = Game::create([
@@ -157,6 +169,7 @@ class Round extends Model
             'dealerIndex' => $this->getDealerIndex(),
             'created_by' => Auth::user()->player->id,
             'round_id' => $this->id,
+            'live_game_id' => $liveGameID,
         ]);
 
         foreach ($players as $player)

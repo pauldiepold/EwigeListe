@@ -23,6 +23,8 @@ class Spieler
     public $moeglicheAnAbsage;
     public $punkte;
 
+    public $parteiOffengelegt;
+
     /**
      * LivePlayer constructor.
      * @param $playerID
@@ -36,6 +38,7 @@ class Spieler
         $this->name = $playerName;
         $this->avatar = $avatar;
         $this->index = $playerIndex;
+        $this->parteiOffengelegt = 0;
 
         $this->hand = collect();
         $this->stiche = collect();
@@ -60,6 +63,7 @@ class Spieler
             $spieler->name = $input->name;
             $spieler->avatar = $input->avatar;
             $spieler->index = $input->index;
+            $spieler->parteiOffengelegt = $input->parteiOffengelegt;
 
             if ($input->hand != '')
             {

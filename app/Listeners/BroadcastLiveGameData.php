@@ -21,9 +21,6 @@ class BroadcastLiveGameData
             event(new LiveGameDataBroadcasted($event->liveGame, $spielerID));
         }
 
-        foreach ($event->liveGame->spielerIDsInaktiv as $spielerID)
-        {
-            event(new LiveGameDataBroadcastedInaktiv($event->liveGame, $spielerID));
-        }
+        event(new LiveGameDataBroadcastedInaktiv($event->liveGame));
     }
 }

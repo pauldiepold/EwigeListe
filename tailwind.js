@@ -5,8 +5,13 @@ module.exports = {
     },
     theme: {
         extend: {
+            screens: {
+                lg: '1124px',
+                xl: '1480px',
+            },
             colors: {
                 gray: {
+                    100: '#f1f1ef',
                     200: '#f3f3f3',
                     300: '#e4e4e4',
                     400: '#d1d1d1',
@@ -18,7 +23,7 @@ module.exports = {
                 },
                 orange: {
                     dark: 'rgb(176, 74, 67)',
-                    default: '#D16341',
+                    500: '#D16341',
                     lighter: 'rgba(209, 99, 65, 0.18)',
                 },
                 blue: {
@@ -32,6 +37,10 @@ module.exports = {
             },
             spacing: {
                 '7': '1.75rem',
+                '14': '3.5rem',
+            },
+            padding: {
+                '50p': '50%',
             },
             maxWidth: {
                 '6xs': '4rem',
@@ -45,6 +54,23 @@ module.exports = {
                 '6xs': '4rem',
                 '7xs': '3rem',
                 '8xs': '2rem',
+            },
+            boxShadow: {
+                green: '0 0 6px 2px rgb(88, 169, 117)',
+                'green-darker': '0 0 6px 3px rgb(41, 177, 89)',
+                'green-darker-lg': '0 0 20px 5px rgb(41, 177, 89)',
+                'green-darker-xl': '0 0 25px 7px rgb(41, 177, 89)',
+                red: '0 0 6px 3px rgb(202, 114, 114)',
+                xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
+                sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+                outline: '0 0 0 3px rgba(66, 153, 225, 0.5)',
+                none: 'none',
             },
             gridTemplateColumns: {
                 'livegame': 'minmax(max-content, max-content) minmax(0, 1fr) minmax(max-content, max-content)',

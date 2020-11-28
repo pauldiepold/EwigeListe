@@ -42,12 +42,33 @@ class LiveRound extends Model
 
     public function liveGames()
     {
-        return $this->hasMany(LiveGame::class);
+        return $this->hasMany(LiveGame::class)->latest();
     }
 
     public function currentLiveGame()
     {
-        return $this->liveGames()->latest()->first();
+        if ($this->liveGames->count() == 0)
+        {
+            return null;
+        } else
+        {
+            $liveGame = $this->liveGames->first();
+
+            return !$liveGame->beendet ? $liveGame : null;
+        }
+    }
+
+    public function lastLiveGame()
+    {
+        if ($this->liveGames->count() == 0)
+        {
+            return null;
+        } else
+        {
+            $liveGame = $this->liveGames->first();
+
+            return $liveGame->beendet ? $liveGame : null;
+        }
     }
 
     public function games()
@@ -78,11 +99,10 @@ class LiveRound extends Model
             );
         }
 
-        $this->liveGames()->create([
+        $liveGame = $this->liveGames()->create([
             'live_round_id' => $this->id,
             'vorhand' => $activePlayers->first()->pivot->player_id,
             'dran' => $activePlayers->first()->pivot->player_id,
-            'phase' => 0,
             'aktuellerStich' => new Stich(),
             'letzterStich' => new Stich(),
             'spielerIDsInaktiv' => $spielerIDsInaktiv,
@@ -91,6 +111,17 @@ class LiveRound extends Model
             'spieler2' => $spieler2,
             'spieler3' => $spieler3,
             'anzeige' => new Anzeige($activePlayers),
+            'messages' => collect(),
+            'winners' => collect(),
+            'stiche' => collect(),
         ]);
+
+        $liveGame->kartenGeben();
+        $liveGame->moeglicheVorbehalteBerechnen();
+        $liveGame->phase = 2;
+
+        $liveGame->save();
+
+        return $liveGame;
     }
 }

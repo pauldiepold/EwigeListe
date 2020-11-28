@@ -26,3 +26,18 @@ $yellow: #ffed4a;
 $green: #38c172;
 $teal: #4dc0b5;
 $cyan: #6cb2eb;
+
+$grid-breakpoints: (
+        xs: 0,
+        sm: 640px,
+        md: 768px,
+        lg: 1124px,
+        xl: 1480px,
+);
+
+$container-max-widths: (
+        sm: 610px,
+        md: 720px,
+        lg: 1080px,
+        xl: 1420px,
+);

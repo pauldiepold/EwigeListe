@@ -12,6 +12,7 @@
 // Variables
 @import 'abstracts/variables';
 
+@import 'playing_cards/cards';
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
@@ -35,6 +36,7 @@ $fa-font-path: "../webfonts";
 @import 'components/modal';
 @import 'components/sonstiges';
 @import 'components/table';
+
 
 @import 'layout/allgemein';
 

@@ -4,13 +4,13 @@
     </a>
 </div>
 
-<nav class="tw-bg-blue tw-sticky tw-top-0 tw-z-50">
+<nav class="tw-bg-blue tw-z-50">
     <div class="tw-max-w-md tw-mx-1 tw-flex tw-justify-around tw-mx-auto">
         <a href="/">
             <nav-icon icon="fa-home" tooltip="Startseite"></nav-icon>
         </a>
         @auth
-            @if(Auth::user()->player->rounds->count() != 0)
+            @if(Auth::user()->player->rounds()->count() != 0)
                 <a href="{{ route('rounds.current') }}">
                     <nav-icon icon="fa-play-circle" tooltip="Aktuelle Runde"></nav-icon>
                 </a>

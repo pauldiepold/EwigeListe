@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Casts\Stiche;
+use App\Events\RoundUpdated;
 use App\Live\Anzeige;
 use App\Live\Deck;
 use App\Live\Karte;
@@ -16,7 +18,7 @@ use Illuminate\Support\Collection;
  *
  * @property int $id
  * @property int $live_round_id
- * @property \Illuminate\Support\Collection $spielerIDsInaktiv
+ * @property Collection $spielerIDsInaktiv
  * @property object $spieler0
  * @property object $spieler1
  * @property object $spieler2
@@ -26,16 +28,23 @@ use Illuminate\Support\Collection;
  * @property int $stichNr
  * @property int $vorhand
  * @property int $dran
+ * @property Collection|null $augen
+ * @property Collection|null $winners
+ * @property bool|null $geschmissen
+ * @property Collection|null $messages
+ * @property bool|null $geheiratet
+ * @property int|null $kontrasOffengelegt
+ * @property int|null $resOffengelegt
  * @property string $spieltyp
  * @property object $letzterStich
  * @property object $aktuellerStich
  * @property bool|null $gewinntRe
  * @property int|null $wertungsPunkte
- * @property string $wertung
+ * @property Collection $wertung
  * @property bool $beendet
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Game $game
+ * @property-read \App\Game|null $game
  * @property-read mixed $absagen
  * @property-read mixed $aktueller_stich
  * @property-read mixed $ansagen
@@ -47,32 +56,53 @@ use Illuminate\Support\Collection;
  * @property-read mixed $spieler_indize
  * @property-read mixed $vorbehalte
  * @property-read \App\LiveRound $liveRound
- * @property-read \App\Round $round
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereAktuellerStich($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereAnzeige($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereBeendet($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereDran($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereGewinntRe($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereLetzterStich($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereLiveRoundId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame wherePhase($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpieler0($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpieler1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpieler2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpieler3($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpielerIDsInaktiv($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereSpieltyp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereStichNr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereVorhand($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereWertung($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveGame whereWertungsPunkte($value)
+ * @property-read \App\Round|null $round
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAktuellerStich($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAnzeige($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAugen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereBeendet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereDran($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereGeheiratet($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereGeschmissen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereGewinntRe($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontrasOffengelegt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereLetzterStich($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereLiveRoundId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereMessages($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame wherePhase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereResOffengelegt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler0($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler3($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpielerIDsInaktiv($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieltyp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStichNr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereVorhand($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWertung($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWertungsPunkte($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWinners($value)
  * @mixin \Eloquent
+ * @property mixed|null $stiche
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStiche($value)
+ * @property bool|null $reAnsage
+ * @property bool|null $kontraAnsage
+ * @property int|null $reAbsage
+ * @property int|null $kontraAbsage
+ * @property int|null $kontraAugen
+ * @property int|null $reAugen
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAbsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAnsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAugen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAbsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAnsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAugen($value)
  */
 class LiveGame extends Model
 {
@@ -80,23 +110,20 @@ class LiveGame extends Model
         'saved' => LiveGameSaved::class
     ];
 
-    protected $hidden = [
-        'anzeige',
-        'spieler0',
-        'spieler1',
-        'spieler2',
-        'spieler3',
-    ];
+    public function game()
+    {
+        return $this->hasOne(Game::class);
+    }
 
-    protected $appends = [
-        'vorbehalte',
-        'ansagen',
-        'absagen',
-        'res',
-        'spielerIDs',
-        'spielerIndize',
-        'spieler'
-    ];
+    public function round()
+    {
+        return $this->hasOneThrough(Round::class, Game::class);
+    }
+
+    public function liveRound()
+    {
+        return $this->belongsTo(LiveRound::class);
+    }
 
     protected $guarded = [];
 
@@ -117,6 +144,16 @@ class LiveGame extends Model
         'gewinntRe' => null,
         'wertungsPunkte' => null,
         'wertung' => '',
+        'geschmissen' => false,
+        'geheiratet' => false,
+        'resOffengelegt' => 0,
+        'kontrasOffengelegt' => 0,
+        'reAnsage' => false,
+        'kontraAnsage' => false,
+        'reAbsage' => null,
+        'kontraAbsage' => null,
+        'reAugen' => null,
+        'kontraAugen' => null,
     ];
 
     protected $casts = [
@@ -129,19 +166,17 @@ class LiveGame extends Model
         'letzterStich' => 'object',
         'aktuellerStich' => 'object',
         'beendet' => 'boolean',
-        'gewinntRe' => 'boolean'
+        'gewinntRe' => 'boolean',
+        'messages' => 'collection',
+        'geschmissen' => 'boolean',
+        'geheiratet' => 'boolean',
+        'winners' => 'collection',
+        'wertung' => 'collection',
+        'augen' => 'collection',
+        'reAnsage' => 'boolean',
+        'kontraAnsage' => 'boolean',
+        //'stiche' => Stiche::class,
     ];
-
-    public function getArmutKartenAttribute($value)
-    {
-        $collection = $this->castAttribute('armutKarten', $value);
-        $karten = $collection->map(function ($item, $key)
-        {
-            return Karte::create((object) $item);
-        });
-
-        return $karten;
-    }
 
     public function getAktuellerStichAttribute($value)
     {
@@ -231,28 +266,6 @@ class LiveGame extends Model
         return $vorbehalte;
     }
 
-    public function getAnsagenAttribute()
-    {
-        $ansagen = collect();
-        $ansagen->push($this->spieler0->ansage);
-        $ansagen->push($this->spieler1->ansage);
-        $ansagen->push($this->spieler2->ansage);
-        $ansagen->push($this->spieler3->ansage);
-
-        return $ansagen;
-    }
-
-    public function getAbsagenAttribute()
-    {
-        $absagen = collect();
-        $absagen->push($this->spieler0->absage);
-        $absagen->push($this->spieler1->absage);
-        $absagen->push($this->spieler2->absage);
-        $absagen->push($this->spieler3->absage);
-
-        return $absagen;
-    }
-
     public function getResAttribute()
     {
         $res = collect();
@@ -262,21 +275,6 @@ class LiveGame extends Model
         $res->put($this->spieler3->id, $this->spieler3->isRe);
 
         return $res;
-    }
-
-    public function game()
-    {
-        return $this->hasOne(Game::class);
-    }
-
-    public function round()
-    {
-        return $this->hasOneThrough(Round::class, Game::class);
-    }
-
-    public function liveRound()
-    {
-        return $this->belongsTo(LiveRound::class);
     }
 
     public function kartenGeben()
@@ -304,6 +302,43 @@ class LiveGame extends Model
         $karte->spielbar = false;
 
         $this->karteAufAktuellenStichLegen($karte);
+
+        if (($karte->id == 44 || $karte->id == 45) &&
+            ($this->spieltyp == 'Normalspiel' || $this->spieltyp == 'Stille Hochzeit'))
+        {
+            if (!$spieler->parteiOffengelegt || $this->spieltyp == 'Stille Hochzeit')
+            {
+                $this->resOffengelegt++;
+                $spieler->parteiOffengelegt++;
+                $this->spielerSpeichern($spieler);
+                $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+            }
+            $this->parteienEindeutig();
+        }
+    }
+
+    public function parteienEindeutig()
+    {
+        if (($this->spieltyp == 'Normalspiel' && ($this->resOffengelegt >= 2 || $this->kontrasOffengelegt >= 2)) ||
+            ($this->spieltyp == 'Stille Hochzeit' && ($this->resOffengelegt >= 2 || $this->kontrasOffengelegt >= 3)))
+        {
+            if ($this->spieltyp == 'Stille Hochzeit')
+            {
+                $reSpielerID = $this->res->filter(function ($value, $key)
+                {
+                    return $value;
+                })->keys()->first();
+
+                $this->setAnzeige('spieltyp', $reSpielerID, 'Stille Hochzeit');
+            }
+            foreach ($this->spielerIDs as $spielerID)
+            {
+                $spieler = $this->getSpieler($spielerID);
+
+                $partei = $spieler->isRe ? 'Re-Partei' : 'Kontra-Partei';
+                $this->setAnzeige('partei', $spieler->id, $partei);
+            }
+        }
     }
 
     public function stichVerteilen()
@@ -319,6 +354,7 @@ class LiveGame extends Model
 
         $this->letzterStich = $stich;
         $this->aktuellerStich = new Stich();
+        //$this->stiche->push($stich);
 
         $this->checkenObGeheiratet();
 
@@ -327,7 +363,7 @@ class LiveGame extends Model
 
     public function checkenObGeheiratet()
     {
-        if ($this->spieltyp == 'Hochzeit' &&
+        if ($this->spieltyp == 'Hochzeit' && !$this->geheiratet &&
             $this->res->filter(function ($value, $key)
             {
                 return $value === true;
@@ -340,27 +376,46 @@ class LiveGame extends Model
             {
                 // Geheiratet
                 $stecher->isRe = true;
-
-                if ($heirater->ansage === true)
-                {
-                    $stecher->ansage = true;
-                } elseif ($stecher->ansage === true)
-                {
-                    // To-Do Ansagen der Gegner löschen
-                    $heirater->ansage = true;
-                }
-
-                if ($stecher->absage !== null)
-                {
-                    // To-Do Absagen der Gegner löschen
-                    $heirater->absage = $stecher->absage;
-                } elseif ($heirater->absage !== null)
-                {
-                    $stecher->absage = $heirater->absage;
-                }
-
-                $this->spielerSpeichern($heirater);
+                $this->geheiratet = true;
+                $this->setAnzeige('partei', $stecher->id, 'Re-Partei');
+                $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
+                $this->pushMessage("<b>$stecher->name:</b> hat geheiratet!");
                 $this->spielerSpeichern($stecher);
+
+                $this->alleSpielerKontraSetzen($stecher->id, true);
+
+                $this->kontraAnsage = false;
+                $this->kontraAbsage = null;
+
+                foreach ($this->spielerIDs as $spielerID)
+                {
+                    $spieler = $this->getSpieler($spielerID);
+
+                    if ($spieler->id == $heirater->id) continue;
+
+                    if ($spieler->id == $stecher->id)
+                    {
+                        if ($spieler->ansage)
+                        {
+                            $this->reAnsage = true;
+                            $this->setAnzeige('ansage', $spieler->id, 'Re');
+                        }
+                        if ($spieler->absage) $this->reAbsage = $spieler->absage;
+                        continue;
+                    }
+
+                    if ($spieler->ansage) $this->kontraAnsage = true;
+                    if ($spieler->absage) $this->kontraAbsage = $spieler->absage;
+                }
+            }
+            if ($heirater->id == $stecher->id && $this->stichNr == 3)
+            {
+                // Hochzeit spielt alleine
+                $this->geheiratet = true;
+                $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
+                $this->pushMessage("<b>$heirater->name:</b> spielt alleine!");
+
+                $this->alleSpielerKontraSetzen($stecher->id, true);
             }
         }
     }
@@ -534,6 +589,8 @@ class LiveGame extends Model
     public function vorbehalteAbhandeln()
     {
         $vorbehaltIndex = null;
+        $this->setAnzeige('vorbehalt', 0, '');
+
         foreach ($this->vorbehalte as $key => $vorbehalt)
         {
             if ($this->istSolo($vorbehalt))
@@ -545,11 +602,14 @@ class LiveGame extends Model
             }
         }
 
-        if ($this->vorbehalte->containsStrict('Schmeißen'))
+        foreach ($this->vorbehalte as $key => $vorbehalt)
         {
-            $this->schmeissen();
+            if ($vorbehalt === 'Schmeißen')
+            {
+                $this->schmeissen($key);
 
-            return;
+                return;
+            }
         }
 
         foreach ($this->vorbehalte as $key => $vorbehalt)
@@ -600,39 +660,40 @@ class LiveGame extends Model
         $spieler->isRe = true;
         $this->spielerSpeichern($spieler);
 
-        $this->alleSpielerKontraSetzen($spieler->id);
+        $this->spieltyp = $vorbehalt;
 
-        if (!$istStilleHochzeit)
+        if ($istStilleHochzeit)
         {
+            $this->pushMessage("Es wird ein Normalspiel gespielt!");
+            $this->alleSpielerKontraSetzen($spieler->id, false);
+        } else
+        {
+            $this->pushMessage("<b>$spieler->name</b> spielt ein $vorbehalt!");
+            $this->alleSpielerKontraSetzen($spieler->id, true);
+
+            $this->setAnzeige('spieltyp', $spieler->id, $vorbehalt);
+            $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
+
             $this->dran = $spieler->id;
         }
-        $this->spieltyp = $vorbehalt;
 
         $this->spielStarten();
     }
 
-    public function schmeissen()
+    public function schmeissen($position)
     {
-        foreach ($this->spielerIDs as $spielerID)
-        {
-            $spieler = $this->getSpieler($spielerID);
+        $schmeisser = $this->getSpielerByPosition($position);
 
-            $spieler->hand = collect();
-            $spieler->stiche = collect();
-            $spieler->armutKarten = collect();
+        $this->geschmissen = true;
+        $this->beendet = true;
+        $this->phase = 101;
+        $this->save();
 
-            $spieler->moeglicheVorbehalte = collect();
-            $spieler->vorbehalt = null;
-            $spieler->isRe = null;
-            $spieler->ansage = null;
-            $spieler->absage = null;
-            $spieler->punkte = null;
+        $newGame = $this->liveRound->starteNeuesSpiel();
+        $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+        $newGame->save();
 
-            $this->spielerSpeichern($spieler);
-        }
-
-        $this->dran = $this->vorhand;
-        $this->phase = 0;
+        broadcast(new RoundUpdated($this->liveRound->round->id));
     }
 
     public function armutSpielen($position)
@@ -643,6 +704,9 @@ class LiveGame extends Model
         $this->spieltyp = 'Armut';
 
         $armutSpieler = $this->getSpielerByPosition($position);
+        $this->setAnzeige('spieltyp', $armutSpieler->id, 'Armut');
+        $this->setAnzeige('partei', $armutSpieler->id, 'Re-Partei');
+        $this->pushMessage("<b>$armutSpieler->name</b> spielt eine Armut!");
 
         $this->dran = $armutSpieler->id;
     }
@@ -654,6 +718,9 @@ class LiveGame extends Model
         $spieler = $this->getSpielerByPosition($position);
         $spieler->isRe = true;
 
+        $this->setAnzeige('spieltyp', $spieler->id, 'Hochzeit');
+        $this->pushMessage("<b>$spieler->name</b> spielt eine Hochzeit!");
+
         $this->alleSpielerKontraSetzen();
 
         $this->spielerSpeichern($spieler);
@@ -664,6 +731,7 @@ class LiveGame extends Model
     public function normalspielSpielen()
     {
         $this->spieltyp = 'Normalspiel';
+        $this->pushMessage("Es wird ein Normalspiel gespielt!");
 
         $this->setReUndKontra();
 
@@ -677,10 +745,10 @@ class LiveGame extends Model
         $this->trumpfBerechnen();
         $this->kartenSortieren();
         $this->spielbareKartenBerechnen();
-        $this->moeglicheAnAbsagenBerechnen();
+        $this->moeglicheAnAbsagenEintragen();
     }
 
-    public function alleSpielerKontraSetzen($except = null)
+    public function alleSpielerKontraSetzen($except = null, $anzeige = false)
     {
         foreach ($this->spielerIDs as $spielerID)
         {
@@ -691,6 +759,10 @@ class LiveGame extends Model
             {
                 $spieler->isRe = false;
                 $this->spielerSpeichern($spieler);
+                if ($anzeige)
+                {
+                    $this->setAnzeige('partei', $spieler->id, 'Kontra-Partei');
+                }
             }
         }
     }
@@ -816,6 +888,7 @@ class LiveGame extends Model
             $this->spieltyp == 'Hochzeit' ||
             $this->spieltyp == 'Stille Hochzeit' ||
             $this->spieltyp == 'Trumpfsolo' ||
+            $this->spieltyp == 'Armut' ||
             $this->spieltyp == '')
         {
             if ($karte->wert == 2 || $karte->wert == 3) return true;
@@ -940,9 +1013,10 @@ class LiveGame extends Model
         }
     }
 
-    public function istSpielerDran($spielerID = null)
+    public function istSpielerDran($spielerID = null, $ansageVorDemSpiel = false)
     {
         $spielerID = $spielerID ?? auth()->id();
+        if ($ansageVorDemSpiel && $this->stichNr == 1 && $this->aktuellerStich->count() == 0) return;
         if ($this->dran != $spielerID)
         {
             abort(422, 'Du bist nicht dran!');
@@ -982,12 +1056,8 @@ class LiveGame extends Model
     public function wertungBerechnen()
     {
         $rePunkte = 0;
-        $reAnsage = null;
-        $reAbsage = null;
         $reKarten = collect();
         $kontraPunkte = 0;
-        $kontraAnsage = null;
-        $kontraAbsage = null;
         $kontraKarten = collect();
         $schwarzGespielt = false;
 
@@ -1002,9 +1072,6 @@ class LiveGame extends Model
                 {
                     $reKarten = $reKarten->concat($stich->karten);
                 }
-
-                if ($spieler->ansage) $reAnsage = true;
-                if ($spieler->absage !== null) $reAbsage = $spieler->absage;
             } else
             {
                 $kontraPunkte += $spieler->punkte;
@@ -1013,9 +1080,6 @@ class LiveGame extends Model
                 {
                     $kontraKarten = $kontraKarten->concat($stich->karten);
                 }
-
-                if ($spieler->ansage) $kontraAnsage = true;
-                if ($spieler->absage !== null) $kontraAbsage = $spieler->absage;
             }
         }
 
@@ -1026,21 +1090,21 @@ class LiveGame extends Model
         $kontraAnsage = null;
         $kontraAbsage = null;*/
 
-        $punkteString = '';
+        $wertung = collect();
         $wertungsPunkte = 0;
 
-        $punkteString .= 'Re: ' . $rePunkte . '<br>';
-        $punkteString .= 'Kontra: ' . $kontraPunkte . '<br>';
+        $this->reAugen = $rePunkte;
+        $this->kontraAugen = $kontraPunkte;
 
         $punktegrenze = 120;
-        if ($reAbsage !== null)
+        if ($this->reAbsage !== null)
         {
-            $punktegrenze = 240 - $reAbsage;
-            $absage = $reAbsage;
-        } elseif ($kontraAbsage !== null)
+            $punktegrenze = 240 - $this->reAbsage;
+            $absage = $this->reAbsage;
+        } elseif ($this->kontraAbsage !== null)
         {
-            $punktegrenze = $kontraAbsage;
-            $absage = $kontraAbsage;
+            $punktegrenze = $this->kontraAbsage;
+            $absage = $this->kontraAbsage;
         }
 
 
@@ -1058,43 +1122,43 @@ class LiveGame extends Model
 
         /* **** Gewonnen **** */
         if ($rePunkte != 120) $wertungsPunkte++;
-        if ($rePunkte != 120) $punkteString .= '+1 Gewonnen<br>';
+        if ($rePunkte != 120) $wertung->push(['Gewonnen', '+1']);
 
         /* **** Gegen die Alten **** */
         if ($gewinntRe == false) $wertungsPunkte++;
-        if ($gewinntRe == false) $punkteString .= '+1 Gegen die Alten<br>';
+        if ($gewinntRe == false) $wertung->push(['Gegen die Alten', '+1']);
 
         /* **** Re **** */
-        if ($reAnsage) $wertungsPunkte += 2;
-        if ($reAnsage) $punkteString .= '+2 Re angesagt<br>';
+        if ($this->reAnsage) $wertungsPunkte += 2;
+        if ($this->reAnsage) $wertung->push(['Re angesagt', '+2']);
 
         /* **** Kontra **** */
-        if ($kontraAnsage) $wertungsPunkte += 2;
-        if ($kontraAnsage) $punkteString .= '+2 Kontra angesagt<br>';
+        if ($this->kontraAnsage) $wertungsPunkte += 2;
+        if ($this->kontraAnsage) $wertung->push(['Kontra angesagt', '+2']);
 
         /* **** Absagen **** */
-        if ($reAbsage !== null || $kontraAbsage !== null)
+        if ($this->reAbsage !== null || $this->kontraAbsage !== null)
         {
             $absagePunkte = (120 - $absage) / 30;
             $wertungsPunkte += $absagePunkte;
 
-            if ($reAbsage === 0 || $kontraAbsage === 0)
+            if ($this->reAbsage === 0 || $this->kontraAbsage === 0)
             {
-                $punkteString .= '+' . $absagePunkte . ' Schwarz angesagt<br>';
+                $wertung->push(['Schwarz angesasgt', '+' . $absagePunkte]);
             } else
             {
-                $punkteString .= '+' . $absagePunkte . ' Keine ' . $absage . ' angesagt<br>';
+                $wertung->push(['Keine ' . $absage . ' angesagt', '+' . $absagePunkte]);
             }
         }
 
         /* **** Punkte für Erreichte Augen **** */
         $gewinnerAugen = $gewinntRe ? $rePunkte : $kontraPunkte;
-        if ($gewinntRe && $kontraAbsage !== null || !$gewinntRe && $reAbsage !== null) // Verlorene Absage
+        if ($gewinntRe && $this->kontraAbsage !== null || !$gewinntRe && $this->reAbsage !== null) // Verlorene Absage
         {
             $augenPunkte = (int) floor(($gewinnerAugen - $absage) / 30);
             if ($augenPunkte)
             {
-                $punkteString .= '+' . $augenPunkte . ' Weil ' . 30 * $augenPunkte . ' über Absage gespielt<br>';
+                $wertung->push([30 * $augenPunkte . ' über Absage gespielt', '+' . $augenPunkte]);
             }
         } else
         { // Alle Anderen Fälle inklusive gewonnene Absage
@@ -1102,10 +1166,10 @@ class LiveGame extends Model
 
             if ($schwarzGespielt)
             {
-                $punkteString .= '+' . $augenPunkte . ' Schwarz gespielt<br>';
+                $wertung->push(['Schwarz gespielt', '+' . $augenPunkte]);
             } elseif ($augenPunkte)
             {
-                $punkteString .= '+' . $augenPunkte . ' Keine ' . ceil((240 - $gewinnerAugen) / 30) * 30 . ' gespielt<br>';
+                $wertung->push(['Keine ' . ceil((240 - $gewinnerAugen) / 30) * 30 . ' gespielt', '+' . $augenPunkte]);
             }
         }
         $wertungsPunkte += $augenPunkte;
@@ -1126,11 +1190,11 @@ class LiveGame extends Model
                         if ($gewinntRe)
                         {
                             $wertungsPunkte++;
-                            $punkteString .= '+1 Fuchs gefangen<br>';
+                            $wertung->push(['Fuchs gefangen', '+1']);
                         } else
                         {
                             $wertungsPunkte--;
-                            $punkteString .= '-1 Fuchs gefangen<br>';
+                            $wertung->push(['Fuchs gefangen', '-1']);
                         }
                     }
                 }
@@ -1145,11 +1209,11 @@ class LiveGame extends Model
                         if ($gewinntRe)
                         {
                             $wertungsPunkte--;
-                            $punkteString .= '-1 Fuchs gefangen<br>';
+                            $wertung->push(['Fuchs gefangen', '-1']);
                         } else
                         {
                             $wertungsPunkte++;
-                            $punkteString .= '+1 Fuchs gefangen<br>';
+                            $wertung->push(['Fuchs gefangen', '+1']);
                         }
                     }
                 }
@@ -1250,44 +1314,44 @@ class LiveGame extends Model
                 if ($reMachtKarlchen)
                 {
                     $wertungsPunkte++;
-                    $punkteString .= '+1 Karlchen<br>';
+                    $wertung->push(['Karlchen', '+1']);
                 }
                 if ($kontraMachtKarlchen)
                 {
                     $wertungsPunkte--;
-                    $punkteString .= '-1 Karlchen<br>';
+                    $wertung->push(['Karlchen', '-1']);
                 }
                 if ($reFaengtKarlchen)
                 {
                     $wertungsPunkte += $reFaengtKarlchen;
-                    $punkteString .= '+' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
+                    $wertung->push(['Karlchen gefangen', '+' . $reFaengtKarlchen]);
                 }
                 if ($kontraFaengtKarlchen)
                 {
                     $wertungsPunkte -= $kontraFaengtKarlchen;
-                    $punkteString .= '-' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
+                    $wertung->push(['Karlchen gefangen', '-' . $kontraFaengtKarlchen]);
                 }
             } else
             {
                 if ($reMachtKarlchen)
                 {
                     $wertungsPunkte--;
-                    $punkteString .= '-1 Karlchen<br>';
+                    $wertung->push(['Karlchen', '-1']);
                 }
                 if ($kontraMachtKarlchen)
                 {
                     $wertungsPunkte++;
-                    $punkteString .= '+1 Karlchen<br>';
+                    $wertung->push(['Karlchen', '+1']);
                 }
                 if ($reFaengtKarlchen)
                 {
                     $wertungsPunkte -= $reFaengtKarlchen;
-                    $punkteString .= '-' . $reFaengtKarlchen . ' Karlchen gefangen<br>';
+                    $wertung->push(['Karlchen gefangen', '-' . $reFaengtKarlchen]);
                 }
                 if ($kontraFaengtKarlchen)
                 {
                     $wertungsPunkte += $kontraFaengtKarlchen;
-                    $punkteString .= '+' . $kontraFaengtKarlchen . ' Karlchen gefangen<br>';
+                    $wertung->push(['Karlchen gefangen', '+' . $kontraFaengtKarlchen]);
                 }
             }
 
@@ -1307,48 +1371,33 @@ class LiveGame extends Model
                         || !$stecher->isRe && !$gewinntRe)
                     {
                         $wertungsPunkte++;
-                        $punkteString .= '+1 Doppelkopf<br>';
+                        $wertung->push(['Doppelkopf', '+1']);
                     } else
                     {
                         $wertungsPunkte--;
-                        $punkteString .= '-1 Doppelkopf<br>';
+                        $wertung->push(['Doppelkopf', '-1']);
                     }
                 }
             }
         }
 
-        if ($gewinntRe)
+        $this->winners = $this->res->filter(function ($value, $key) use ($gewinntRe)
         {
-            $punkteString = '<b>Re</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
-        } else
-        {
-            $punkteString = '<b>Kontra</b> hat gewonnen mit ' . $wertungsPunkte . ' Punkten!<br><br>' . $punkteString;
-        }
+            return $value === $gewinntRe;
+        })->keys();
 
         $this->gewinntRe = $gewinntRe;
         $this->wertungsPunkte = $wertungsPunkte;
-        $this->wertung = $punkteString;
-
-        dd($punkteString);
+        $this->wertung = $wertung;
     }
 
     public function spielErgebnisUebertragen()
     {
-        if ($this->gewinntRe)
-        {
-            $winners = $this->res->filter(function ($value, $key)
-            {
-                return $value === true;
-            })->keys()->toArray();
-        } else
-        {
-            $winners = $this->res->filter(function ($value, $key)
-            {
-                return $value === false;
-            })->keys()->toArray();
-        }
         $round = $this->liveRound->round;
-        $game = $round->addNewGame($winners, $this->wertungsPunkte);
+        $game = $round->addNewGame($this->winners->toArray(), $this->wertungsPunkte, false, $this->id);
+
+        Profile::updateManyStats($round->profiles());
+        Group::updateManyStats($round->groups, $round->updated_at);
     }
 
     public function setVorbehalt($vorbehalt)
@@ -1358,9 +1407,15 @@ class LiveGame extends Model
         if ($vorbehalt == 'Gesund')
         {
             $spieler->vorbehalt = true;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
+        } elseif ($vorbehalt == 'Stille Hochzeit')
+        {
+            $spieler->vorbehalt = $vorbehalt;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
         } else
         {
             $spieler->vorbehalt = $vorbehalt;
+            $this->setAnzeige('vorbehalt', $spieler->id, 'Vorbehalt');
         }
 
         $this->spielerSpeichern($spieler);
@@ -1382,124 +1437,134 @@ class LiveGame extends Model
         return $gegner->keys();
     }
 
-    public function habenMeineGegnerAngesagt($spielerID)
+    public function habenMeineGegnerAngesagt($spieler)
     {
-        $gegner = $this->getSpieler($this->getGegnerIDs($spielerID)->first());
-
-        return $gegner->ansage;
+        return $spieler->isRe ? $this->kontraAnsage !== false : $this->reAnsage !== false;
     }
 
-    public function habenMeineGegnerAbgesagt($spielerID)
+    public function habenMeineGegnerAbgesagt($spieler)
     {
-        $gegner = $this->getSpieler($this->getGegnerIDs($spielerID)->first());
-
-        return $gegner->absage;
+        return $spieler->isRe ? $this->kontraAbsage !== null : $this->reAbsage !== null;
     }
 
-    public function moeglicheAnAbsagenBerechnen()
+    public function moeglicheAnAbsagenEintragen()
     {
         foreach ($this->spielerIDs as $key => $spielerID)
         {
             $spieler = $this->getSpieler($spielerID);
 
-            $ansageBisStich = $this->habenMeineGegnerAngesagt($spieler->id) ? 3 : 2;
-
-            if ($spieler->ansage === null && $this->stichNr <= $ansageBisStich)
-            {
-                $spieler->moeglicheAnAbsage = $spieler->isRe ? 'Re' : 'Kontra';
-            } elseif ($spieler->ansage !== null && // Hat schon angesagt
-                      $spieler->absage === null && // Hat noch nicht abgesagt
-                      $this->stichNr <= 3)         // Darf nur bis zum dritten Stich absagen
-            {
-                $spieler->moeglicheAnAbsage = 90;
-            } elseif ($spieler->ansage !== null &&                         // Hat schon angesagt
-                      $spieler->absage > 0 &&                              // Hat schon abgesagt und noch nicht Schwarz gesagt
-                      $this->stichNr <= 3 + (120 - $spieler->absage) / 30) // Darf nur bis zum dritten Stich absagen
-            {
-                $absage = $spieler->absage - 30;
-                $absage = $absage == 0 ? 'Schwarz' : strval($absage);
-                $spieler->moeglicheAnAbsage = $absage;
-            } else
-            {
-                $spieler->moeglicheAnAbsage = null;
-            }
+            $spieler->moeglicheAnAbsage = $this->moeglicheAnAbsageBerechnen($spieler);
 
             $this->spielerSpeichern($spieler);
         }
     }
 
-    public function ansageMachen()
+    public function moeglicheAnAbsageBerechnen($spieler)
     {
-        $spieler = $this->getSpieler();
+        $ansageBisStich = $this->habenMeineGegnerAngesagt($spieler) ? 3 : 2;
+        $ansage = $spieler->isRe ? $this->reAnsage : $this->kontraAnsage;
+        $absage = $spieler->isRe ? $this->reAbsage : $this->kontraAbsage;
 
-        $ansageBisStich = $this->habenMeineGegnerAngesagt($spieler->id) ? 3 : 2;
-
-        abort_if($this->stichNr > $ansageBisStich, 422, 'Es kann keine Ansage mehr gemacht werden.');
-
-        abort_if($spieler->ansage !== null, 422, 'Du hast bereits eine Ansage gemacht!');
-
-        $spieler->ansage = true;
-        $this->spielerSpeichern($spieler);
-
-        $this->mitspielerSagtAuchAn();
-
-        $anzeige = $this->anzeige;
-        $ansage = $spieler->isRe ? 'Re' : 'Kontra';
-        $anzeige->set('ansage', $spieler->id, $ansage);
-        $this->anzeige = $anzeige;
-    }
-
-    public function absageMachen($absageZahl)
-    {
-        $spieler = $this->getSpieler();
-
-        $zahl = (int) ceil((120 - $absageZahl) / 30);
-
-        abort_if($spieler->ansage === null, 422, 'Du musst erst eine Ansage machen!');
-
-        abort_if($this->stichNr > 2 + $zahl, 422, 'Es kann keine Ansage mehr gemacht werden.');
-
-        abort_if($absageZahl < 90 && $spieler->absage != $absageZahl + 30, 422, 'Du musst zuvor absagen!');
-
-        abort_if($this->habenMeineGegnerAbgesagt($spieler->id), 422, 'Du hast keine Ahnung wie das Spiel funktioniert, SPACKO!');
-
-        $spieler->absage = $absageZahl;
-        $this->spielerSpeichern($spieler);
-
-        $this->mitspielerSagtAuchAb();
-
-        $anzeige = $this->anzeige;
-        $anzeige->set('absage', $spieler->id, $absageZahl);
-        $this->anzeige = $anzeige;
-    }
-
-    public function mitspielerSagtAuchAn()
-    {
-        $spieler = $this->getSpieler();
-
-        foreach ($this->res as $spielerID => $isRe)
+        if (!$ansage && $this->stichNr <= $ansageBisStich)
         {
-            if ($isRe === $spieler->isRe && $spielerID != $spieler->id)
-            {
-                $mitspieler = $this->getSpieler($spielerID);
-                $mitspieler->ansage = $spieler->ansage;
-                $this->spielerSpeichern($mitspieler);
-            }
+            return $spieler->isRe ? 'Re' : 'Kontra';
+        } elseif ($ansage &&                                // Hat schon angesagt
+                  $absage === null &&                       // Hat noch nicht abgesagt
+                  $this->stichNr <= $ansageBisStich + 1 &&                    // Darf nur bis zum dritten Stich absagen
+                  !$this->habenMeineGegnerAbgesagt($spieler))    // Gegner dürfen nicht abgesagt haben
+        {
+            return 90;
+        } elseif ($ansage &&                                                                         // Hat schon angesagt
+                  $absage > 0 &&                                                                         // Hat schon abgesagt und noch nicht Schwarz gesagt
+                  $this->stichNr <= $ansageBisStich + 1 + (120 - $absage) / 30 &&                    // Darf nur bis zum dritten Stich absagen
+                  !$this->habenMeineGegnerAbgesagt($spieler))                                        // Gegner dürfen nicht abgesagt haben
+        {
+            $moeglicheAbsage = $absage - 30;
+            $moeglicheAbsage = $moeglicheAbsage == 0 ? 'Schwarz' : strval($moeglicheAbsage);
+
+            return $moeglicheAbsage;
+        } else
+        {
+            return null;
         }
     }
 
-    public function mitspielerSagtAuchAb()
+    public function getAnsage($spieler)
+    {
+        return $spieler->isRe ? $this->reAnsage : $this->kontraAnsage;
+    }
+
+    public function getAbsage($spieler)
+    {
+        return $spieler->isRe ? $this->reAbsage : $this->kontraAbsage;
+    }
+
+    public function setAnsage($spieler)
+    {
+        if ($spieler->isRe) $this->reAnsage = true;
+        else                $this->kontraAnsage = true;
+
+        $spieler->ansage = true;
+        $this->spielerSpeichern($spieler);
+    }
+
+    public function setAbsage($spieler, $absage)
+    {
+        if ($spieler->isRe) $this->reAbsage = $absage;
+        else                $this->kontraAbsage = $absage;
+
+        $spieler->absage = $absage;
+        $this->spielerSpeichern($spieler);
+    }
+
+    public function ansageMachen($ansage)
     {
         $spieler = $this->getSpieler();
 
-        foreach ($this->res as $spielerID => $isRe)
+        abort_if($this->moeglicheAnAbsageBerechnen($spieler) != $ansage, 422, 'Du darfst diese Ansage nicht machen.');
+
+        $this->setAnsage($spieler);
+
+        $ansage = $spieler->isRe ? 'Re' : 'Kontra';
+        if ($this->spieltyp != 'Hochzeit') $this->setAnzeige('partei', $spieler->id, $ansage . '-Partei');
+        $this->setAnzeige('ansage', $spieler->id, $ansage);
+        $this->pushMessage("<b>$spieler->name</b>: $ansage!");
+
+        $this->wurdeOffengelegtDurchAnAbsage($spieler);
+    }
+
+    public function absageMachen($absage)
+    {
+        $absageZahl = $absage == 'Schwarz' ? 0 : intval($absage);
+        $spieler = $this->getSpieler();
+
+        abort_if($this->moeglicheAnAbsageBerechnen($spieler) != $absage, 422, 'Du darfst diese Absage nicht machen.');
+
+        $this->setAbsage($spieler, $absageZahl);
+
+        $ansage = $spieler->isRe ? 'Re' : 'Kontra';
+        if ($this->spieltyp != 'Hochzeit') $this->setAnzeige('partei', $spieler->id, $ansage . '-Partei');
+
+        $this->wurdeOffengelegtDurchAnAbsage($spieler);
+
+        $this->setAnzeige('absage', $spieler->id, $absageZahl);
+
+        $message = $absageZahl == 0 ? 'Schwarz!' : "Keine $absageZahl!";
+        $this->pushMessage("<b>$spieler->name</b>: $message");
+    }
+
+    public function wurdeOffengelegtDurchAnAbsage($spieler)
+    {
+        if (($this->spieltyp == 'Normalspiel' && !$spieler->parteiOffengelegt) ||
+            ($this->spieltyp == 'Stille Hochzeit' && !$spieler->isRe))
         {
-            if ($isRe === $spieler->isRe && $spielerID != $spieler->id)
-            {
-                $mitspieler = $this->getSpieler($spielerID);
-                $mitspieler->absage = $spieler->absage;
-                $this->spielerSpeichern($mitspieler);
-            }
+            if ($spieler->isRe) $this->resOffengelegt++;
+            else                $this->kontrasOffengelegt++;
+
+            $spieler->parteiOffengelegt++;
+            $this->spielerSpeichern($spieler);
+
+            $this->parteienEindeutig();
         }
     }
 
@@ -1514,6 +1579,8 @@ class LiveGame extends Model
             $spieler->karteAusHandEntfernen($karte);
         }
 
+        abort_if($spieler->hand->where('trumpf', true)->count() != 0, 422, 'Du musst all deinen Trumpf abgeben!');
+
         $this->spielerSpeichern($spieler);
     }
 
@@ -1526,16 +1593,54 @@ class LiveGame extends Model
             $spieler->karteAusHandEntfernen($karte);
         }
 
+        $trumpf = 0;
+        foreach ($karten as $karte)
+        {
+            if ($this->istTrumpf($karte)) $trumpf++;
+        }
+
+        $message = $trumpf == 0 ? 'Ohne Trumpf zurück!' : "Mit $trumpf Trumpf zurück!";
+        $this->pushMessage($message);
+
         $armutSpieler = $this->getSpielerByPosition($this->vorbehalte->search('Armut'));
         $hand = $armutSpieler->hand->concat($karten);
         $armutSpieler->hand = $hand;
 
         $armutSpieler->isRe = true;
         $spieler->isRe = true;
+        $this->setAnzeige('partei', $spieler->id, 'Re-Partei');
 
         $this->spielerSpeichern($armutSpieler);
         $this->spielerSpeichern($spieler);
 
-        $this->alleSpielerKontraSetzen();
+        $this->alleSpielerKontraSetzen($spieler->id, true);
+    }
+
+    public function pushMessage($message, $name = null)
+    {
+        $messages = $this->messages;
+        if ($name)
+        {
+            $message = "<b>$name:</b> $message";
+        }
+
+        $messages->prepend($message);
+        $this->messages = $messages;
+    }
+
+    public function setAnzeige($attribut, $spielerID, $wert)
+    {
+        $anzeige = $this->anzeige;
+        if ($spielerID == 0)
+        {
+            foreach ($this->spielerIDs as $ID)
+            {
+                $anzeige->set($attribut, $ID, $wert);
+            }
+        } else
+        {
+            $anzeige->set($attribut, $spielerID, $wert);
+        }
+        $this->anzeige = $anzeige;
     }
 }

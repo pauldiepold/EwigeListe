@@ -13,14 +13,23 @@
 ********************************************************************/
 
 .karteNichtSpielbar {
+<<<<<<< HEAD
   border: 2px solid #ff0505 !important;
+=======
+  box-shadow: inset 0px 0px 6px 1px #ff0000 !important;
+>>>>>>> master
 }
 
 .playingCards .card-live {
   display: inline-block;
   width: 4.3em;
   height: 5.7em;
+<<<<<<< HEAD
   border: 1px solid #666;
+=======
+  border: 0px solid #666;
+  box-shadow: 0.2em 0.2em 0.5em #333, inset 0px 0px 5px 0px #333;
+>>>>>>> master
   border-radius: 0.3em;
   -moz-border-radius: 0.3em;
   -webkit-border-radius: 0.3em;
@@ -34,16 +43,30 @@
   font-family: Arial, sans-serif;
   position: relative;
   background-color: #fff;
+<<<<<<< HEAD
   box-shadow: 0.2em 0.2em 0.5em #333;
 }
 
 .playingCards a.card-live {
+=======
+}
+
+.armut-karte {
+  box-shadow: 0.2em 0.2em 0.5em #333, inset 0 0 8px 1px #29973e !important;
+}
+
+.playingCards .card-clickable.card-live {
+>>>>>>> master
   text-decoration: none;
 }
 
 /* selected and hover state */
 
+<<<<<<< HEAD
 .playingCards a.card-live:hover, .playingCards a.card-live:active, .playingCards a.card-live:focus,
+=======
+.playingCards .card-clickable.card-live:hover, .playingCards .card-clickable.card-live:active, .playingCards .card-clickable.card-live:focus,
+>>>>>>> master
 .playingCards label.card-live:hover,
 .playingCards .card-selected {
   bottom: 1em;
@@ -617,6 +640,7 @@
 }
 
 .playingCards ul.hand li:nth-child(2) {
+<<<<<<< HEAD
   left: 2.3em;
 }
 
@@ -670,6 +694,61 @@
 
 .playingCards ul.hand li:nth-child(15) {
   left: 15.4em;
+=======
+  left: 2.4em;
+}
+
+.playingCards ul.hand li:nth-child(3) {
+  left: 4.8em;
+}
+
+.playingCards ul.hand li:nth-child(4) {
+  left: 7.2em;
+}
+
+.playingCards ul.hand li:nth-child(5) {
+  left: 9.6em;
+}
+
+.playingCards ul.hand li:nth-child(6) {
+  left: 12em;
+}
+
+.playingCards ul.hand li:nth-child(7) {
+  left: 14.4em;
+}
+
+.playingCards ul.hand li:nth-child(8) {
+  left: 16.8em;
+}
+
+.playingCards ul.hand li:nth-child(9) {
+  left: 19.2em;
+}
+
+.playingCards ul.hand li:nth-child(10) {
+  left: 21.6em;
+}
+
+.playingCards ul.hand li:nth-child(11) {
+  left: 24em;
+}
+
+.playingCards ul.hand li:nth-child(12) {
+  left: 26.4em;
+}
+
+.playingCards ul.hand li:nth-child(13) {
+  left: 28.8em;
+}
+
+.playingCards ul.hand li:nth-child(14) {
+  left: 31.2em;
+}
+
+.playingCards ul.hand li:nth-child(15) {
+  left: 33.6em;
+>>>>>>> master
 }
 
 .playingCards ul.hand li:nth-child(16) {

@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereSurname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read mixed $path
  */
 class Player extends Model
 {
@@ -56,6 +57,11 @@ class Player extends Model
     ];
 
     protected $fillable = ['surname', 'name'];
+
+    public function getPathAttribute()
+    {
+        return $this->path();
+    }
 
     public function path()
     {

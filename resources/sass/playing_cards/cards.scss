@@ -10,14 +10,15 @@
 /* card itself
 ********************************************************************/
 .karteNichtSpielbar {
-  border: 2px solid #ff0505 !important;
+  box-shadow: inset 0px 0px 6px 1px #ff0000 !important;
 }
 
 .playingCards .card-live {
   display: inline-block;
   width: 4.3em;
   height: 5.7em;
-  border: 1px solid #666;
+  border: 0px solid #666;
+  box-shadow: .2em .2em .5em #333, inset 0px 0px 5px 0px #333;
   border-radius: .3em;
   -moz-border-radius: .3em;
   -webkit-border-radius: .3em;
@@ -30,19 +31,20 @@
   font-family: Arial, sans-serif;
   position: relative;
   background-color: #fff;
-  -moz-box-shadow: .2em .2em .5em #333;
-  -webkit-box-shadow: .2em .2em .5em #333;
-  box-shadow: .2em .2em .5em #333;
 }
 
-.playingCards a.card-live {
+.armut-karte {
+  box-shadow: 0.2em 0.2em 0.5em #333, inset 0 0 8px 1px #29973e !important;
+}
+
+.playingCards .card-clickable.card-live {
   text-decoration: none;
 }
 
 /* selected and hover state */
-.playingCards a.card-live:hover, .playingCards a.card-live:active, .playingCards a.card-live:focus,
+.playingCards .card-clickable.card-live:hover, .playingCards .card-clickable.card-live:active, .playingCards .card-clickable.card-live:focus,
 .playingCards label.card-live:hover,
-.playingCards .card-selected  {
+.playingCards .card-selected {
   bottom: 1em;
 }
 
@@ -606,7 +608,7 @@
   bottom: 0;
 }
 
-$abstand: 2.3em;
+$abstand: 2.4em;
 .playingCards ul.hand li:nth-child(1) {
   left: 0;
 }
@@ -664,7 +666,7 @@ $abstand: 2.3em;
 }
 
 .playingCards ul.hand li:nth-child(15) {
-  left: 15.4em;
+  left: $abstand*14;
 }
 
 .playingCards ul.hand li:nth-child(16) {
