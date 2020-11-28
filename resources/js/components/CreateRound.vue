@@ -42,7 +42,7 @@
                              :logged-in-player-id="loggedInPlayerId"
                              @remove-player="removePlayer"/>
         </sortable-players-list>
-<!--
+
         <div class="d-flex justify-content-center align-items-center tw-my-6">
             <a href="#" class="no-underline tw-font-bold tw-text-lg tw-text-gray-800"
                @click="liveGame = false">
@@ -60,7 +60,7 @@
                @click="liveGame = true">
                 Online
             </a>
-        </div>-->
+        </div>
 
         <form @submit.prevent="submit">
             <button :disabled="players.length < 4"
