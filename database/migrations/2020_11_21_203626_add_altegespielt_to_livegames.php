@@ -17,11 +17,16 @@ class AddAltegespieltToLivegames extends Migration
             $table->boolean('geheiratet')->nullable()->after('aktuellerStich');
             $table->text('messages')->nullable()->after('aktuellerStich');
             $table->boolean('geschmissen')->nullable()->after('aktuellerStich');
-            $table->integer('kontrasOffengelegt')->nullable()->after('aktuellerStich');
-            $table->integer('resOffengelegt')->nullable()->after('aktuellerStich');
+            $table->smallInteger('kontrasOffengelegt')->nullable()->after('aktuellerStich');
+            $table->smallInteger('resOffengelegt')->nullable()->after('aktuellerStich');
+            $table->smallInteger('kontraAbsage')->nullable()->after('aktuellerStich');
+            $table->smallInteger('reAbsage')->nullable()->after('aktuellerStich');
+            $table->boolean('kontraAnsage')->nullable()->after('aktuellerStich');
+            $table->boolean('reAnsage')->nullable()->after('aktuellerStich');
             $table->text('winners')->nullable()->after('wertung');
-            $table->text('augen')->nullable()->after('wertung');
-            $table->text('stiche')->nullable()->after('aktuellerStich');
+            $table->text('stiche')->nullable()->after('wertung');
+            $table->smallInteger('reAugen')->nullable()->after('wertung');
+            $table->smallInteger('kontraAugen')->nullable()->after('wertung');
         });
     }
 
@@ -33,14 +38,19 @@ class AddAltegespieltToLivegames extends Migration
     public function down()
     {
         Schema::table('live_games', function (Blueprint $table) {
-            $table->dropColumn('stiche');
-            $table->dropColumn('kontrasOffengelegt');
-            $table->dropColumn('resOffengelegt');
             $table->dropColumn('geheiratet');
             $table->dropColumn('messages');
             $table->dropColumn('geschmissen');
+            $table->dropColumn('kontrasOffengelegt');
+            $table->dropColumn('resOffengelegt');
+            $table->dropColumn('kontraAbsage');
+            $table->dropColumn('reAbsage');
+            $table->dropColumn('kontraAnsage');
+            $table->dropColumn('reAnsage');
             $table->dropColumn('winners');
-            $table->dropColumn('augen');
+            $table->dropColumn('stiche');
+            $table->dropColumn('reAugen');
+            $table->dropColumn('kontraAugen');
         });
     }
 }

@@ -68,8 +68,8 @@
                                      v-if="round.last_live_game">
                                     <div class="tw-font-bold">{{ round.last_live_game.spieltyp }}</div>
                                     <div class="tw-flex tw-justify-around tw-my-2">
-                                        <div>Re: {{ round.last_live_game.augen[0] }}</div>
-                                        <div>Kontra: {{ round.last_live_game.augen[1] }}</div>
+                                        <div>Re: {{ round.last_live_game.reAugen }}</div>
+                                        <div>Kontra: {{ round.last_live_game.kontraAugen }}</div>
                                     </div>
                                     <table class="tw-w-full">
                                         <tr v-for="(item, index) in round.last_live_game.wertung"

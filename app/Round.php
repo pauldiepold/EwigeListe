@@ -156,10 +156,10 @@ class Round extends Model
         return $players;
     }
 
-    public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = false)
+    public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = null)
     {
         $players = $this->getActivePlayers();
-        $solo = (count($winners) != 2 ? true : false);
+        $solo = count($winners) != 2;
         $solo = $misplay ? false : $solo;
 
         $game = Game::create([

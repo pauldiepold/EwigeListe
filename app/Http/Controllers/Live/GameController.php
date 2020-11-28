@@ -198,7 +198,7 @@ class GameController extends Controller
         $liveGame->naechstenSpielerBerechnen();
         $liveGame->spielbareKartenBerechnen();
         $liveGame->kartenSortieren();
-        $liveGame->moeglicheAnAbsagenBerechnen();
+        $liveGame->moeglicheAnAbsagenEintragen();
 
         $liveGame->save();
 
@@ -210,7 +210,7 @@ class GameController extends Controller
         abort_if($liveGame->phase != 4, 422, 'Falsche Phase!');
 
         $liveGame->istSpielerAktiv();
-        $liveGame->istSpielerDran();
+        $liveGame->istSpielerDran(null, true);
 
         $validated = $request->validate([
             'ansage' => [
@@ -223,13 +223,12 @@ class GameController extends Controller
 
         if ($ansage == 'Re' || $ansage == 'Kontra')
         {
-            $liveGame->ansageMachen();
+            $liveGame->ansageMachen($ansage);
         } else {
-            $absage = $ansage == 'Schwarz' ? 0 : intval($ansage);
-            $liveGame->absageMachen($absage);
+            $liveGame->absageMachen($ansage);
         }
 
-        $liveGame->moeglicheAnAbsagenBerechnen();
+        $liveGame->moeglicheAnAbsagenEintragen();
 
         $liveGame->save();
 

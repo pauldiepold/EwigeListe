@@ -3,7 +3,7 @@
 
         <!-- ******** Buttons links ********* -->
         <div
-            class="tw-absolute live-overlay lg:tw-p-3 tw-p-2 tw-m-2 tw-left-0 lg:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
+            class="tw-absolute live-overlay lg:tw-p-3 tw-p-2 tw-m-2 tw-left-0 xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
             style="top: 50%; transform: translate(0, -50%);">
             <div v-if="zuschauerEingeblendet && round.watching_players.length !== 0" class="tw-border-b-2 tw-mb-3">
                 <div v-for="player in round.watching_players"
@@ -44,7 +44,7 @@
              style="position: absolute; left: 0; top: 0%; transform: translate(0, 0%);">
             <button class="btn btn-primary tw-mt-3 tw-ml-3"
                     @click="ansage(ich.moeglicheAnAbsage)"
-                    v-if="liveGame.dran === round.auth_id && ich.moeglicheAnAbsage"
+                    v-if="(liveGame.dran === round.auth_id || (liveGame.stichNr === 1 && liveGame.aktuellerStich.karten.length === 0)) && ich.moeglicheAnAbsage"
                     v-text="ich.moeglicheAnAbsage">
             </button>
         </div>

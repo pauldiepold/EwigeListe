@@ -5,6 +5,10 @@ module.exports = {
     },
     theme: {
         extend: {
+            screens: {
+                lg: '1124px',
+                xl: '1480px',
+            },
             colors: {
                 gray: {
                     100: '#f1f1ef',
