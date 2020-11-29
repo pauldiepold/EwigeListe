@@ -31,6 +31,6 @@
         @endforeach
     </div>
 
-    <a href="{{ route('groups.create') }}" class="tw-my-6 btn btn-primary">Neue Gruppe erstellen</a>
+    <a href="{{ route('groups.create') }}" class="tw-my-6 btn btn-primary">Neue Liste erstellen</a>
 
 @endsection

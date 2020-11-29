@@ -6,6 +6,7 @@
                 <round-table :round="round"/>
                 <delete-game v-if="round.live_round === null" :round="round" @updated="fetchData(); deleteLastGame();"/>
                 <round-info :round="round"/>
+                <delete-round :round="round"/>
             </tab>
 
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false" @clicked="alert('test')">

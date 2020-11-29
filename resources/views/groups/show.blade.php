@@ -84,84 +84,88 @@
 
         </tab>
 
-        <tab name="Statistiken" icon="fa-chart-area">
-            <template v-slot:default="props">
+        @if($group->records->count() != 0)
+            <tab name="Statistiken" icon="fa-chart-area">
+                <template v-slot:default="props">
 
-                <h4 class="tw-my-4">Rekorde:</h4>
-                <div class="row justify-content-center">
-                    <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
-                        <table class="table table-sm table-borderless text-left">
-                            @forelse($group->records as $row)
-                                @php $row = collect($row); @endphp
-                                <tr>
-                                    <td class="tw-mb-4">
-                                        {!! $row->shift() !!}
-                                    </td>
-                                    <td>
-                                        <b>{{ $row->shift() }}</b>
-                                    </td>
-                                    <td>
-                                        {!! $row->shift() !!}
-                                    </td>
-                                </tr>
-                            @empty
-                                <h5>Diese Gruppe hat noch keine Rekorde.</h5>
-                            @endforelse
-                        </table>
+                    <h4 class="tw-my-4">Rekorde:</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
+                            <table class="table table-sm table-borderless text-left">
+                                @forelse($group->records as $row)
+                                    @php $row = collect($row); @endphp
+                                    <tr>
+                                        <td class="tw-mb-4">
+                                            {!! $row->shift() !!}
+                                        </td>
+                                        <td>
+                                            <b>{{ $row->shift() }}</b>
+                                        </td>
+                                        <td>
+                                            {!! $row->shift() !!}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <h5>Diese Gruppe hat noch keine Rekorde.</h5>
+                                @endforelse
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                <h4 class="tw-mt-8 tw-mb-4">Statistiken:</h4>
-                <div class="row justify-content-center">
-                    <div class="col-sm-8 col-md-7 col-lg-5 col-xl-4">
-                        <table class="table table-sm table-borderless text-left">
-                            @forelse($group->stats as $row)
-                                @php $row = collect($row); @endphp
-                                <tr>
-                                    <td{!! $row->contains('margin') ? ' class="pb-3"' : '' !!}>
-                                        {!! $row->shift() !!}
-                                    </td>
-                                    <td>
-                                        <b>{{ $row->shift() }}</b>
-                                    </td>
-                                </tr>
-                            @empty
+                    <h4 class="tw-mt-8 tw-mb-4">Statistiken:</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-sm-8 col-md-7 col-lg-5 col-xl-4">
+                            <table class="table table-sm table-borderless text-left">
+                                @forelse($group->stats as $row)
+                                    @php $row = collect($row); @endphp
+                                    <tr>
+                                        <td{!! $row->contains('margin') ? ' class="pb-3"' : '' !!}>
+                                            {!! $row->shift() !!}
+                                        </td>
+                                        <td>
+                                            <b>{{ $row->shift() }}</b>
+                                        </td>
+                                    </tr>
+                                @empty
 
-                            @endforelse
-                        </table>
+                                @endforelse
+                            </table>
+                        </div>
                     </div>
-                </div>
 
-                @if($group->rounds->count() >= 5)
-                    <h4 class="tw-mt-8">Anzahl der Spiele:</h4>
-                    <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
-                @endif
-            </template>
-        </tab>
+                    @if($group->rounds->count() >= 5)
+                        <h4 class="tw-mt-8">Anzahl der Spiele:</h4>
+                        <group-graph :group_id="{{ $group->id }}" :key="props.tabKey"></group-graph>
+                    @endif
+                </template>
+            </tab>
+        @endif
 
-        <tab name="Abzeichen" icon="fa-award">
-            <div class="sm:tw-flex tw-max-w-2xl tw-mx-auto">
-                @forelse($badges as $type)
-                    @php $typeDeutsch = $badges->keys()->get($loop->index) == 'points' ? 'Punkte' : 'Spiele'; @endphp
-                    <div class="sm:tw-flex-1 tw-mb-10">
-                        @foreach($type as $year)
-                            <h5>Die meisten {{ $typeDeutsch }} {{ $type->keys()->get($loop->index) }}: </h5>
-                            @foreach($year as $badge)
-                                <badge
-                                        date="{{ $badge->date->formatLocalized('%B %Y') }}"
-                                        name="{{ $badge->player->surname }}"
-                                        value="{{ $badge->value }}"
-                                        type="{{ $badge->type }}"
-                                        path="{{ $badge->playerPath() }}"
-                                ></badge>
+        @if($badges->count() != 0)
+            <tab name="Abzeichen" icon="fa-award">
+                <div class="sm:tw-flex tw-max-w-2xl tw-mx-auto">
+                    @forelse($badges as $type)
+                        @php $typeDeutsch = $badges->keys()->get($loop->index) == 'points' ? 'Punkte' : 'Spiele'; @endphp
+                        <div class="sm:tw-flex-1 tw-mb-10">
+                            @foreach($type as $year)
+                                <h5>Die meisten {{ $typeDeutsch }} {{ $type->keys()->get($loop->index) }}: </h5>
+                                @foreach($year as $badge)
+                                    <badge
+                                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                            name="{{ $badge->player->surname }}"
+                                            value="{{ $badge->value }}"
+                                            type="{{ $badge->type }}"
+                                            path="{{ $badge->playerPath() }}"
+                                    ></badge>
+                                @endforeach
                             @endforeach
-                        @endforeach
-                    </div>
-                @empty
-                    <h5 class="tw-mx-auto">Diese Runde hat noch keine Abzeichen.</h5>
-                @endforelse
-            </div>
-        </tab>
+                        </div>
+                    @empty
+                        <h5 class="tw-mx-auto">Diese Runde hat noch keine Abzeichen.</h5>
+                    @endforelse
+                </div>
+            </tab>
+        @endif
 
         <tab name="Rundenarchiv" icon="fa-history">
             @include('rounds.inc.archiveTable')

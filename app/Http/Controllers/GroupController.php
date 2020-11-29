@@ -6,6 +6,7 @@ use App\Group;
 use App\Player;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class GroupController extends Controller
 {
