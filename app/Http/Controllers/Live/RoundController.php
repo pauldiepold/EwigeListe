@@ -22,4 +22,22 @@ class RoundController extends Controller
 
         return 'success';
     }
+
+    public function updateRegeln(LiveRound $liveRound, Request $request)
+    {
+        $validatedData = $request->validate([
+            'schweinchen' => 'required|boolean',
+            'fuchsSticht' => 'required|boolean',
+            'schweinchenTrumpfsolo' => 'required|boolean',
+            'koenigsSolo' => 'required|boolean',
+            'karlchen' => 'required|boolean',
+            'karlchenFangen' => 'required|boolean',
+        ]);
+
+        $liveRound->update($validatedData);
+
+        broadcast(new RoundUpdated($liveRound->round->id));
+
+        return 'success';
+    }
 }

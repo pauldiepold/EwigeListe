@@ -1,7 +1,9 @@
 <template>
     <div
         class="d-flex align-items-center justify-content-between group">
-        <div class="font-weight-bold">
+        <div class="font-weight-bold tw-flex tw-justify-start tw-items-center">
+            <img :src="player.avatar_path"
+                 class="tw-mr-3 md:tw-h-10 md:tw-w-10 tw-h-8 tw-w-8 tw-rounded-full">
             {{player.surname.concat(' ', player.name)}}
         </div>
         <div style="font-size: 1.1rem;" class="tw-cursor-default tw-flex">

@@ -27,9 +27,32 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $schweinchen
+ * @property int|null $fuchsSticht
+ * @property int|null $schweinchenTrumpfsolo
+ * @property int|null $koenigsSolo
+ * @property int|null $karlchen
+ * @property int|null $karlchenFangen
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereFuchsSticht($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKarlchen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKarlchenFangen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKoenigsSolo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereSchweinchen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereSchweinchenTrumpfsolo($value)
  */
 class LiveRound extends Model
 {
+    protected $attributes = [
+        'schweinchen' => true,
+        'fuchsSticht' => false,
+        'schweinchenTrumpfsolo' => false,
+        'koenigsSolo' => true,
+        'karlchen' => true,
+        'karlchenFangen' => false,
+    ];
+
+    protected $guarded = [];
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

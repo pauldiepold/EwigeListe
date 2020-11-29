@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function ()
     Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');
     Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable')->name('rounds.archiveTable');
 
+    Route::patch('/liveRounds/{liveRound}', 'Live\RoundController@updateRegeln')->name('liveRounds.updateRegeln');
 
     /* *********** Groups ************** */
     Route::get('liste', 'GroupController@show')->name('ewigeListe');

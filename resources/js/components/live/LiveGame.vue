@@ -24,6 +24,17 @@
             <!--<i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>-->
             <!--<i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
                @click="$emit('neues-spiel-starten')"></i>-->
+
+            <!-- ******** An- und Absagen ********* -->
+            <div
+                v-if="aktiv && liveGame.phase === 4 && (liveGame.dran === round.auth_id || (liveGame.stichNr === 1 && liveGame.aktuellerStich.karten.length === 0)) && ich.moeglicheAnAbsage"
+                class="tw-border-t-2 tw-mt-3 tw-mb-0">
+                <button class="btn btn-primary btn-sm tw-mb-0"
+                        :disabled="ansageDeaktiviert"
+                        @click="ansage(ich.moeglicheAnAbsage)"
+                        v-text="ich.moeglicheAnAbsage">
+                </button>
+            </div>
         </div>
 
         <!-- ******** Messages ********* -->
@@ -37,16 +48,6 @@
                     v-html="message"
                     class="tw-mb-1"/>
             </ul>
-        </div>
-
-        <!-- ******** An- und Absagen ********* -->
-        <div v-if="aktiv && liveGame.phase === 4"
-             style="position: absolute; left: 0; top: 0%; transform: translate(0, 0%);">
-            <button class="btn btn-primary tw-mt-3 tw-ml-3"
-                    @click="ansage(ich.moeglicheAnAbsage)"
-                    v-if="(liveGame.dran === round.auth_id || (liveGame.stichNr === 1 && liveGame.aktuellerStich.karten.length === 0)) && ich.moeglicheAnAbsage"
-                    v-text="ich.moeglicheAnAbsage">
-            </button>
         </div>
 
         <!-- ******** Spieler ********* -->
@@ -118,7 +119,7 @@
                                 v-for="vorbehalt in ich.moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
-                                v-if="soli.includes(vorbehalt)"
+                                v-if="soli.includes(vorbehalt) && (vorbehalt !== 'Königssolo' || round.live_round.koenigsSolo)"
                                 :disabled="!binIchDran"/>
                     </div>
                     <div class="tw-flex tw-flex-col tw-max-w-2xs">
@@ -220,10 +221,12 @@ export default {
             letzterStichEingeblendet: false,
             infoEingeblendet: false,
             zuschauerEingeblendet: true,
+            ansageDeaktiviert: false,
             armutKarten: [],
             armutError: false,
             infoTimeout: '',
             stichTimeout: '',
+            ansageTimeout: '',
         }
     },
 
@@ -314,6 +317,8 @@ export default {
         },
 
         ansage(ansage) {
+            this.ansageDeaktiviert = true;
+            this.ansageTimeout = setTimeout(() => this.ansageDeaktiviert = false, 2000)
             axios.post('/api/live/' + this.liveGame.id + '/ansage', {
                 ansage: ansage
             })

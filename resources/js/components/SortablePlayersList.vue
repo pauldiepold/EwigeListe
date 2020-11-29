@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto" style="max-width: 19rem;">
+    <div class="mx-auto" style="max-width: 24rem;">
         <ul>
             <slot/>
         </ul>

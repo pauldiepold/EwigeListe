@@ -15,10 +15,11 @@
                    placeholder="Bitte Namen eingeben"/>
 
             <div class="tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto tw-bg-gray-200 tw-rounded-lg">
-                <div class="tw-px-2 tw-py-1 tw-mx-1 tw-my-2 text-left tw-cursor-pointer"
+                <div class="tw-px-2 tw-py-1 tw-mx-1 tw-my-2 tw-cursor-pointer tw-flex tw-items-center tw-justify-start"
                      v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
-                    {{ player.surname.concat(' ', player.name) }}
+                    <avatar :path="player.avatar_path" width="6" class="tw-mr-2"></avatar>
+                    <div>{{ player.surname.concat(' ', player.name) }}</div>
                 </div>
                 <div class="tw-px-3 tw-py-2 text-left" v-if="filteredPlayers.length===0">
                     Spieler wurde nicht gefunden.
@@ -44,10 +45,10 @@
         </sortable-players-list>
 
         <div class="d-flex justify-content-center align-items-center tw-my-6">
-            <a href="#" class="no-underline tw-font-bold tw-text-lg tw-text-gray-800"
+            <div class="no-underline tw-font-bold tw-text-lg tw-text-gray-800 tw-cursor-pointer"
                @click="liveGame = false">
                 Offline
-            </a>
+            </div>
             <div class="mx-2">
                 <i class="fas fa-toggle-on tw-text-gray-700 tw-text-4xl tw-cursor-pointer"
                    v-if="liveGame"
@@ -56,10 +57,10 @@
                    v-if="!liveGame"
                    @click="liveGame = !liveGame"/>
             </div>
-            <a href="#" class="tw-font-bold tw-text-lg no-underline tw-text-gray-800"
+            <div class="tw-font-bold tw-text-lg no-underline tw-text-gray-800 tw-cursor-pointer"
                @click="liveGame = true">
                 Online
-            </a>
+            </div>
         </div>
 
         <form @submit.prevent="submit">
@@ -128,7 +129,7 @@ export default {
     created() {
         let self = this;
         let player = self.allPlayers.filter(player => player.id === self.loggedInPlayerId)
-        self.players.push(player[0]);
+        this.addPlayer(player[0]);
     },
 
     computed: {
@@ -157,6 +158,21 @@ export default {
                 if (self.filteredGroups.map(v => v.id).includes(groupID)) {
                     output.push(groupID);
                 }
+            });
+
+            return output;
+        },
+        defaultGroups() {
+            let output = [];
+
+            this.players.forEach(function (player) {
+                player.profiles.forEach(function (profile) {
+                    if (profile.default) {
+                        if (!output.includes(profile.group_id)) {
+                            output.push(profile.group_id)
+                        }
+                    }
+                });
             });
 
             return output;

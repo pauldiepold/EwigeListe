@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Casts\Stiche;
+use App\Casts\SticheCast;
 use App\Events\RoundUpdated;
 use App\Live\Anzeige;
 use App\Live\Deck;
@@ -12,6 +12,7 @@ use App\Live\Spieler;
 use App\Live\Stich;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * App\LiveGame
@@ -103,6 +104,8 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAbsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAnsage($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAugen($value)
+ * @property int|null $schweinchen
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSchweinchen($value)
  */
 class LiveGame extends Model
 {
@@ -145,6 +148,7 @@ class LiveGame extends Model
         'wertungsPunkte' => null,
         'wertung' => '',
         'geschmissen' => false,
+        'schweinchen' => false,
         'geheiratet' => false,
         'resOffengelegt' => 0,
         'kontrasOffengelegt' => 0,
@@ -175,7 +179,7 @@ class LiveGame extends Model
         'augen' => 'collection',
         'reAnsage' => 'boolean',
         'kontraAnsage' => 'boolean',
-        //'stiche' => Stiche::class,
+        'stiche' => SticheCast::class,
     ];
 
     public function getAktuellerStichAttribute($value)
@@ -294,6 +298,7 @@ class LiveGame extends Model
 
     public function karteSpielen($karte)
     {
+        Log::debug('test');
         $spieler = $this->getSpieler();
         $spieler->karteAusHandEntfernen($karte);
         $this->spielerSpeichern($spieler);
@@ -359,6 +364,8 @@ class LiveGame extends Model
         $this->checkenObGeheiratet();
 
         $this->stichNr = $this->stichNr + 1;
+
+        $this->stiche->push($stich);
     }
 
     public function checkenObGeheiratet()
@@ -440,15 +447,55 @@ class LiveGame extends Model
                 $siegerKarte = $this->besteKarteBestimmen($siegerKarten, $ersteKarte->farbe);
             }
         }
+        if ($this->liveRound->schweinchen &&
+            ($this->spieltyp == 'Normalspiel' ||
+             $this->spieltyp == 'Armut' ||
+             $this->spieltyp == 'Hochzeit' ||
+             $this->spieltyp == 'Stille Hochzeit' ||
+             ($this->spieltyp == 'Trumpfsolo' && $this->liveRound->schweinchenTrumpfsolo)))
+        {
+            $this->istSchweinchen($stich, $siegerKarte);
+        }
 
         return $this->getSpieler($siegerKarte->gespieltVon);
+    }
+
+    public function istSchweinchen($stich, $siegerKarte)
+    {
+        if ($stich->karten->where('rang', 14)->count() > 0) // Ist ein Fuchs im Stich?
+        {
+            $fuchs = $stich->karten->where('rang', 14)->first();
+            $spieler = $this->getSpieler($fuchs->gespieltVon);
+            $hatFuchs = $spieler->hand->search(fn($item, $key) => $item->rang == 14);
+
+            if ($hatFuchs) // Hat Fuchs-Besitzer noch einen Fuchs?
+            {
+                if ($this->liveRound->fuchsSticht) // Muss Fuchs Stechen für Schweinchen?
+                {
+                    if ($siegerKarte->rang != 14) // Hat Fuchs nicht gestochen?
+                    {
+                        return;
+                    }
+                }
+
+                $this->schweinchen = true;
+                $this->pushMessage("<b>$spieler->name:</b> Schweinchen!");
+            }
+        }
     }
 
     public function besteKarteBestimmen($karten, $farbe = null)
     {
         if ($farbe === null)
         {
-            $maxRang = $karten->max('rang');
+            if ($this->schweinchen && $karten->where('rang', 14)->count() == 1)
+            {
+                $maxRang = 14;
+            } else
+            {
+                $maxRang = $karten->max('rang');
+            }
+
             $siegerKarten = $karten->where('rang', $maxRang);
 
             if ($maxRang == 23 && $this->stichtZweiteHerz10DieErste())
@@ -1307,6 +1354,18 @@ class LiveGame extends Model
                         }
                     }
                 }
+            }
+
+            if (!$this->liveRound->karlchen)
+            {
+                $reMachtKarlchen = false;
+                $kontraMachtKarlchen = false;
+            }
+
+            if (!$this->liveRound->karlchenFangen)
+            {
+                $reFaengtKarlchen = 0;
+                $kontraFaengtKarlchen = 0;
             }
 
             if ($gewinntRe)

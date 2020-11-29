@@ -7,7 +7,7 @@ use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
-class Stiche implements CastsAttributes
+class SticheCast implements CastsAttributes
 {
     /**
      * Cast the given value.
@@ -20,15 +20,14 @@ class Stiche implements CastsAttributes
      */
     public function get($model, $key, $value, $attributes)
     {
-        $collection = collect($value);
+        $collection = new Collection(json_decode($value));
         if ($collection->count() > 0)
         {
-            $stiche = collect($value)->map(function ($item, $key)
+            $stiche = $collection->map(function ($item, $key)
             {
                 return Stich::create((object) $item);
             });
-        } else
-        {
+        } else {
             $stiche = collect();
         }
 
@@ -51,6 +50,6 @@ class Stiche implements CastsAttributes
             throw new InvalidArgumentException('The given value is not an Collection instance.');
         }
 
-        return $value->toJson();
+        return json_encode($value);
     }
 }

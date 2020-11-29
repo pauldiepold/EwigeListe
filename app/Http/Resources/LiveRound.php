@@ -16,6 +16,12 @@ class LiveRound extends JsonResource
     {
         return [
             'id' => $this->id,
+            'schweinchen' => $this->schweinchen,
+            'fuchsSticht' => $this->fuchsSticht,
+            'schweinchenTrumpfsolo' => $this->schweinchenTrumpfsolo,
+            'koenigsSolo' => $this->koenigsSolo,
+            'karlchen' => $this->karlchen,
+            'karlchenFangen' => $this->karlchenFangen,
         ];
     }
 }

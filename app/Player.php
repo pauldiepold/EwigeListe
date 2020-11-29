@@ -56,6 +56,10 @@ class Player extends Model
         'hide' => false,
     ];
 
+    protected $appends = [
+        'avatar_path',
+    ];
+
     protected $fillable = ['surname', 'name'];
 
     public function getPathAttribute()

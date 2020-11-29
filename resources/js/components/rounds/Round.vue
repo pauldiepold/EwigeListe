@@ -45,7 +45,8 @@
                             </div>
 
                             <!-- Spieler Online? -->
-                            <div v-if="!allPlayersOnline && (!mobile || (landscape && fullscreen))" class="center-absolute live-overlay tw-p-4">
+                            <div v-if="!allPlayersOnline && (!mobile || (landscape && fullscreen))"
+                                 class="center-absolute live-overlay tw-p-4">
                                 <p>Bitte warte, bis alle Spieler online sind:</p>
                                 <div class="tw-grid tw-grid-cols-2 tw-gap-2">
                                     <div v-for="player in round.active_players">
@@ -106,7 +107,9 @@
 
                                 <!-- Ready Check -->
                                 <div class="tw-flex tw-flex-col tw-justify-center">
-                                    <div v-if="aktiv && !allPlayersReady && !round.ready_players.includes(round.auth_id)" class="tw-mb-4">
+                                    <div
+                                        v-if="aktiv && !allPlayersReady && !round.ready_players.includes(round.auth_id)"
+                                        class="tw-mb-4">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
                                         </button>
@@ -148,6 +151,14 @@
             <tab v-if="round.games.length >= 4" name="Statistiken" icon="fa-chart-area" :selected="false">
                 <template v-slot:default="props">
                     <round-graph :round_id="round.id" :key="props.tabKey"></round-graph>
+                </template>
+            </tab>
+
+            <tab v-if="round.live_round" name="Einstellungen" icon="fa-cog" :selected="false">
+                <template v-slot:default="props">
+                    <round-settings :round="round"
+                                    :key="props.tabKey"
+                                    ref="round_settings"/>
                 </template>
             </tab>
 
@@ -313,6 +324,7 @@ export default {
             this.fetchData()
                 .then((response) => {
                     this.orderActivePlayers();
+                    this.$refs.round_settings.copyDataFromProp();
                     if (this.round.current_live_game) {
                         this.$refs.live_game.copyDataFromProp();
                     }
