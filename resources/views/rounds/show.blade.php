@@ -1,5 +1,7 @@
 @extends('layouts.main')
 
+@section('title', 'Rundenübersicht')
+
 @section('content')
 
     <round :round-prop='@json($roundResource)'
