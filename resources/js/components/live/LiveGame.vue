@@ -22,8 +22,8 @@
                :class="{'tw-text-orange-500': infoEingeblendet}"
                @click="infoEingeblendet = !infoEingeblendet"></i>
             <!--<i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>-->
-            <!--<i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               @click="$emit('neues-spiel-starten')"></i>-->
+            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+               @click="$emit('neues-spiel-starten')"></i>
 
             <!-- ******** An- und Absagen ********* -->
             <div
@@ -143,7 +143,7 @@
 
 
         <!-- ******** Armut ********* -->
-        <div v-if="aktiv && ((istPhase(3) || ((istPhase(32) || istPhase(33)) && binIchDran)))"
+        <div v-if="aktiv && ((istPhase(3) || ((istPhase(32) || istPhase(33)))))"
              class="live-overlay tw-p-3"
              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             <div v-if="istPhase(3) && !binIchDran">
@@ -177,6 +177,9 @@
                         @click="armutMitnehmen(false)">
                     Nein!
                 </button>
+            </div>
+            <div v-if="istPhase(32) && !binIchDran">
+                {{ round.active_players.find(player => player.id === liveGame.dran).surname }} überlegt ...
             </div>
 
             <div v-if="istPhase(33) && binIchDran">
@@ -277,15 +280,19 @@ export default {
 
             if (this.liveGame.aktuellerStich.karten.length === 0 &&
                 this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
+                if (this.letzterStichEingeblendet === false) {
+                    clearTimeout(this.stichTimeout);
+                    this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
+                }
                 this.letzterStichEingeblendet = true;
-                clearTimeout(this.stichTimeout);
-                this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
             }
             if (this.liveGame.messages.length >= 0 &&
                 this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
-                this.infoEingeblendet = true
-                clearTimeout(this.infoTimeout);
-                this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
+                if (this.infoEingeblendet === false) {
+                    clearTimeout(this.infoTimeout);
+                    this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
+                }
+                this.infoEingeblendet = true;
             }
 
             if (!old) this.oldLiveGame = liveGame;

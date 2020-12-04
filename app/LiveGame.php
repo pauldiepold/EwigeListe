@@ -727,9 +727,9 @@ class LiveGame extends Model
         $this->spielStarten();
     }
 
-    public function schmeissen($position)
+    public function schmeissen($position = null)
     {
-        $schmeisser = $this->getSpielerByPosition($position);
+        $schmeisser = $position ? $this->getSpielerByPosition($position) : null;
 
         $this->geschmissen = true;
         $this->beendet = true;
@@ -737,7 +737,8 @@ class LiveGame extends Model
         $this->save();
 
         $newGame = $this->liveRound->starteNeuesSpiel();
-        $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+        if ($schmeisser) $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+        else $newGame->pushMessage('Niemand wollte die Armut mitnehmen. Neues Spiel gestartet!');
         $newGame->save();
 
         broadcast(new RoundUpdated($this->liveRound->round->id));
@@ -894,6 +895,12 @@ class LiveGame extends Model
             $hand = $spieler->hand;
 
             $trumpf = $hand->where('trumpf', true)->sortByDesc('id');
+            if ($this->schweinchen && $trumpf->where('rang', '14')->count() > 0)
+            {
+                $schweinchen = $trumpf->where('rang', '14')->first();
+                $trumpf = $trumpf->where('rang', '!=', '14');
+                $trumpf->prepend($schweinchen);
+            }
             $trumpf = $trumpf->values();
 
             $farbe = $hand->where('trumpf', false);
@@ -1268,7 +1275,13 @@ class LiveGame extends Model
 
 
             /* **** Karlchen **** */
-            $hoechsterRang = $this->letzterStich->karten->max('rang');
+            if ($this->schweinchen && $this->letzterStich->karten->where('rang', 14)->count() == 1)
+            {
+                $hoechsterRang = 14;
+            } else
+            {
+                $hoechsterRang = $this->letzterStich->karten->max('rang');
+            }
             $hoechsteKarte = $this->letzterStich->karten->where('rang', $hoechsterRang)->first();
             $karlchen = $this->letzterStich->karten->where('rang', 18);
 

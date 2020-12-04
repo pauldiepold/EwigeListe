@@ -9,7 +9,8 @@
                 <delete-round :round="round"/>
             </tab>
 
-            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false" @clicked="alert('test')">
+            <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false"
+                 @clicked="alert('test')" v-touch:swipe.stop="">
                 <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
                     <div
                         class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-overflow-hidden"
