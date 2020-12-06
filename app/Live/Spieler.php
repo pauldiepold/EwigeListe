@@ -8,10 +8,10 @@ class Spieler
 {
     public $id;
     public $name;
-    public $avatar;
     public $index;
 
     public $hand;
+    public $hand_save;
     public $stiche;
     public $armutKarten;
 
@@ -30,17 +30,16 @@ class Spieler
      * @param $playerID
      * @param $playerName
      * @param $playerIndex
-     * @param $avatar
      */
-    public function __construct($playerID = '', $playerName = '', $playerIndex = '', $avatar = '')
+    public function __construct($playerID = '', $playerName = '', $playerIndex = '')
     {
         $this->id = $playerID;
         $this->name = $playerName;
-        $this->avatar = $avatar;
         $this->index = $playerIndex;
         $this->parteiOffengelegt = 0;
 
         $this->hand = collect();
+        $this->hand_save = collect();
         $this->stiche = collect();
         $this->armutKarten = collect();
 
@@ -61,7 +60,6 @@ class Spieler
 
             $spieler->id = $input->id;
             $spieler->name = $input->name;
-            $spieler->avatar = $input->avatar;
             $spieler->index = $input->index;
             $spieler->parteiOffengelegt = $input->parteiOffengelegt;
 
@@ -76,6 +74,19 @@ class Spieler
             } else
             {
                 $spieler->hand = $input->hand;
+            }
+
+            if ($input->hand_save != '')
+            {
+
+                $hand_save = collect($input->hand_save)->map(function ($item, $key)
+                {
+                    return Karte::create($item);
+                });
+                $spieler->hand_save = $hand_save;
+            } else
+            {
+                $spieler->hand_save = $input->hand_save;
             }
 
             $stiche = collect($input->stiche)->map(function ($item, $key)

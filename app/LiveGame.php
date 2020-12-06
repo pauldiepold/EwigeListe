@@ -289,6 +289,7 @@ class LiveGame extends Model
         {
             $spieler = $this->getSpieler($spielerID);
             $spieler->hand = $deck->getkarten($key);
+            $spieler->hand_save = $deck->getkarten($key);
             $this->spielerSpeichern($spieler);
         }
 
@@ -991,12 +992,15 @@ class LiveGame extends Model
      * @param null $spielerID
      * @return Spieler
      */
-    public function getSpieler($spielerID = null)
+    public function getSpieler($spielerID = null, $hand_save = true)
     {
         $spielerID = $spielerID ?? auth()->id();
         $spielerString = $this->getSpielerString($spielerID);
 
-        return $this->$spielerString;
+        $spieler = $this->$spielerString;
+        if (!$hand_save) $spieler->hand_save = '';
+
+        return $spieler;
     }
 
     /**
@@ -1179,8 +1183,11 @@ class LiveGame extends Model
         if ($rePunkte != 120) $wertung->push(['Gewonnen', '+1']);
 
         /* **** Gegen die Alten **** */
-        if ($gewinntRe == false) $wertungsPunkte++;
-        if ($gewinntRe == false) $wertung->push(['Gegen die Alten', '+1']);
+        if ($this->spieltyp == 'Normalspiel' || $this->spieltyp == 'Hochzeit' || $this->spieltyp == 'Armut')
+        {
+            if ($gewinntRe == false) $wertungsPunkte++;
+            if ($gewinntRe == false) $wertung->push(['Gegen die Alten', '+1']);
+        }
 
         /* **** Re **** */
         if ($this->reAnsage) $wertungsPunkte += 2;

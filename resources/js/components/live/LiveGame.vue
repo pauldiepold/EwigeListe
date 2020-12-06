@@ -22,8 +22,8 @@
                :class="{'tw-text-orange-500': infoEingeblendet}"
                @click="infoEingeblendet = !infoEingeblendet"></i>
             <!--<i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>-->
-            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               @click="$emit('neues-spiel-starten')"></i>
+            <!--<i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+               @click="$emit('neues-spiel-starten')"></i>-->
 
             <!-- ******** An- und Absagen ********* -->
             <div
@@ -246,6 +246,9 @@ export default {
                 .listen('LiveGameDataBroadcastedInaktiv', e => {
                     this.saveNewData(e.liveGame);
                 });
+        }
+        if (this.liveGame.messages.length != 0) {
+            this.infoEingeblendet = true
         }
     },
 

@@ -5,7 +5,7 @@
                 Anzahl Spiele: {{ round.games.length }}
             </p>
 
-            <div v-if="round.games.length >= 4">
+            <div v-if="round.games.length >= 4 && gameLengthSeconds < 60*40 && gameLengthSeconds > 120">
                 <p>
                     Durchschnittliche Spieldauer: {{ gameLength }}
                 </p>
@@ -30,10 +30,14 @@ moment.locale('de');
 export default {
     props: ['round'],
     data() {
-        return {}
+        return {
+            time: '',
+            now: ''
+        }
     },
     created() {
-
+        this.now = moment();
+        this.timer = setInterval(this.updateGameLength, 1000)
     },
     computed: {
         beginOfRound() {
@@ -46,8 +50,8 @@ export default {
             return moment(this.round.games[0].created_at);
         },
         gameLengthSeconds() {
-            if (false && moment().diff(this.lastGame, 'seconds') < 60 * 30) {
-                return moment().diff(this.firstGame, 'seconds') / (this.round.games.length);
+            if (this.now.diff(this.lastGame, 'seconds') < 60 * 30) {
+                return this.now.diff(this.firstGame, 'seconds') / (this.round.games.length);
             } else {
                 return this.lastGame.diff(this.firstGame, 'seconds') / (this.round.games.length - 1);
             }
@@ -57,6 +61,9 @@ export default {
         },
     },
     methods: {
+        updateGameLength() {
+            this.now = moment();
+        }
     }
 };
 </script>

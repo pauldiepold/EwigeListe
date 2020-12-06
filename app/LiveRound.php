@@ -44,11 +44,11 @@ class LiveRound extends Model
 {
     protected $attributes = [
         'schweinchen' => true,
-        'fuchsSticht' => false,
+        'fuchsSticht' => true,
         'schweinchenTrumpfsolo' => false,
         'koenigsSolo' => true,
         'karlchen' => true,
-        'karlchenFangen' => false,
+        'karlchenFangen' => true,
     ];
 
     protected $guarded = [];
@@ -118,7 +118,6 @@ class LiveRound extends Model
                 $player->id,
                 $player->surname . ' ' . $player->name,
                 $player->pivot->index,
-                $player->avatar,
             );
         }
 

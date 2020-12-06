@@ -85,9 +85,9 @@
                                             <td></td>
                                             <td>
                                                 {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
-                                                    round.last_live_game.wertungsPunkte < 0 ? '-' : ''
+                                                round.last_live_game.wertungsPunkte < 0 ? '-' : ''
                                                 }}{{
-                                                    round.last_live_game.wertungsPunkte
+                                                round.last_live_game.wertungsPunkte
                                                 }}
                                             </td>
                                         </tr>
@@ -111,17 +111,18 @@
                                 <div class="tw-flex tw-flex-col tw-justify-center">
                                     <div
                                         v-if="aktiv && !allPlayersReady && !round.ready_players.includes(round.auth_id)"
-                                        class="tw-mb-4">
+                                        class="tw-mb-3">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
                                         </button>
                                     </div>
                                     <div v-if="aktiv && !allPlayersReady" class="tw-mb-2">
                                         <p>
-                                            Bitte warte, bis alle Spieler bereit sind:
+                                            Das nächste Spiel startet, sobald alle Spieler bereit sind:
                                         </p>
                                     </div>
-                                    <div v-if="aktiv && !allPlayersReady" class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                    <div v-if="aktiv && !allPlayersReady"
+                                         class="tw-grid tw-grid-cols-2 tw-gap-2">
                                         <div v-for="player in round.active_players">
                                             <img :src="player.avatar_path"
                                                  class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
