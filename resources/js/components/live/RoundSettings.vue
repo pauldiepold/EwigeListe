@@ -16,7 +16,8 @@
                                 'fa-toggle-off': !schweinchen,
                                 'tw-text-orange-500': schweinchen && changeable,
                                 'tw-text-gray-700': !schweinchen && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
             <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -32,7 +33,8 @@
                                 'fa-toggle-off': !fuchsSticht,
                                 'tw-text-orange-500': fuchsSticht && changeable,
                                 'tw-text-gray-700': !fuchsSticht && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
             <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -48,7 +50,8 @@
                                 'fa-toggle-off': !schweinchenTrumpfsolo,
                                 'tw-text-orange-500': schweinchenTrumpfsolo && changeable,
                                 'tw-text-gray-700': !schweinchenTrumpfsolo && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
@@ -68,7 +71,8 @@
                                 'fa-toggle-off': !koenigsSolo,
                                 'tw-text-orange-500': koenigsSolo && changeable,
                                 'tw-text-gray-700': !koenigsSolo && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
@@ -88,7 +92,8 @@
                                 'fa-toggle-off': !karlchen,
                                 'tw-text-orange-500': karlchen && changeable,
                                 'tw-text-gray-700': !karlchen && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
             <div v-if="karlchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -104,7 +109,8 @@
                                 'fa-toggle-off': !karlchenFangen,
                                 'tw-text-orange-500': karlchenFangen && changeable,
                                 'tw-text-gray-700': !karlchenFangen && changeable,
-                                'tw-text-gray-600': !changeable}"/>
+                                'tw-text-gray-600': !changeable,
+                                'tw-cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
