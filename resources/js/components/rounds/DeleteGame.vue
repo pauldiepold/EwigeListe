@@ -11,7 +11,7 @@
             </button>
         </div>
         <div v-if="confirm === true" class="tw-mt-2">
-            <button @click="submit" type="button" class="btn btn-danger">
+            <button @click="submit" type="button" class="btn btn-primary">
                 <div class="d-flex vertical-align-center">
                     <span v-if="loading">
                         <i class="fa fa-spinner fa-spin text-lg mr-2"

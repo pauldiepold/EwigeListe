@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="round.games.length === 0">
         <button v-if="!show" @click="show = true" class="btn btn-outline-primary mt-4">Runde löschen</button>
         <button v-if="show" @click="show = false" class="btn btn-outline-primary mt-4">Abbrechen</button>
         <br>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <tabs @clicked="fullscreenOnIfMobile">
+        <tabs @clicked="fullscreenOnIfMobile" ref="tabs">
             <tab name="Runde" icon="fa-play-circle" :selected="true">
                 <create-game v-if="round.live_round === null" :round="round" @updated="fetchData"/>
                 <round-table :round="round"/>
@@ -64,8 +64,16 @@
                             <div
                                 v-if="allPlayersOnline && !round.current_live_game && (!mobile || (landscape && fullscreen))"
                                 class="center-absolute live-overlay tw-p-4 tw-flex tw-content-center tw-justify-around tw-w-1/3"
-                                :class="{'tw-w-3/4': round.last_live_game}">
+                                :class="{'tw-w-3/4': round.last_live_game || aktiv && !allPlayersReady && round.games.length === 0}">
 
+                                <!-- Regeln vor dem ersten Spiel ändern -->
+                                <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
+                                     v-if="aktiv && !allPlayersReady && round.games.length === 0">
+                                    <div class="tw-mb-4">
+                                        <button @click="$refs.tabs.selectTabByName('Einstellungen');" class="btn btn-primary">Regeln anpassen</button>
+                                    </div>
+                                    Die Regeln können nur vor Beginn des ersten Spiels angepasst werden.
+                                </div>
                                 <!-- Wertung anzeigen -->
                                 <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
                                      v-if="round.last_live_game">
@@ -117,7 +125,10 @@
                                         </button>
                                     </div>
                                     <div v-if="aktiv && !allPlayersReady" class="tw-mb-2">
-                                        <p>
+                                        <p v-if="round.games.length === 0">
+                                            Das erste Spiel startet, sobald alle Spieler bereit sind:
+                                        </p>
+                                        <p v-else>
                                             Das nächste Spiel startet, sobald alle Spieler bereit sind:
                                         </p>
                                     </div>

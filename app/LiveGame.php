@@ -330,8 +330,7 @@ class LiveGame extends Model
         {
             if ($this->spieltyp == 'Stille Hochzeit')
             {
-                $reSpielerID = $this->res->filter(function ($value, $key)
-                {
+                $reSpielerID = $this->res->filter(function ($value, $key) {
                     return $value;
                 })->keys()->first();
 
@@ -372,8 +371,7 @@ class LiveGame extends Model
     public function checkenObGeheiratet()
     {
         if ($this->spieltyp == 'Hochzeit' && !$this->geheiratet &&
-            $this->res->filter(function ($value, $key)
-            {
+            $this->res->filter(function ($value, $key) {
                 return $value === true;
             })->count() == 1)
         {
@@ -450,10 +448,10 @@ class LiveGame extends Model
         }
         if ($this->liveRound->schweinchen &&
             ($this->spieltyp == 'Normalspiel' ||
-             $this->spieltyp == 'Armut' ||
-             $this->spieltyp == 'Hochzeit' ||
-             $this->spieltyp == 'Stille Hochzeit' ||
-             ($this->spieltyp == 'Trumpfsolo' && $this->liveRound->schweinchenTrumpfsolo)))
+                $this->spieltyp == 'Armut' ||
+                $this->spieltyp == 'Hochzeit' ||
+                $this->spieltyp == 'Stille Hochzeit' ||
+                ($this->spieltyp == 'Trumpfsolo' && $this->liveRound->schweinchenTrumpfsolo)))
         {
             $this->istSchweinchen($stich, $siegerKarte);
         }
@@ -518,10 +516,10 @@ class LiveGame extends Model
     public function stichtZweiteHerz10DieErste()
     {
         return ($this->stichNr != 12 &&
-                $this->spieltyp != 'Bubensolo' &&
-                $this->spieltyp != 'Damensolo' &&
-                $this->spieltyp != 'Königssolo' &&
-                $this->spieltyp != 'Fleischlos');
+            $this->spieltyp != 'Bubensolo' &&
+            $this->spieltyp != 'Damensolo' &&
+            $this->spieltyp != 'Königssolo' &&
+            $this->spieltyp != 'Fleischlos');
     }
 
     public function moeglicheVorbehalteBerechnen()
@@ -1216,14 +1214,14 @@ class LiveGame extends Model
         $gewinnerAugen = $gewinntRe ? $rePunkte : $kontraPunkte;
         if ($gewinntRe && $this->kontraAbsage !== null || !$gewinntRe && $this->reAbsage !== null) // Verlorene Absage
         {
-            $augenPunkte = (int) floor(($gewinnerAugen - $absage) / 30);
+            $augenPunkte = (int)floor(($gewinnerAugen - $absage) / 30);
             if ($augenPunkte)
             {
                 $wertung->push([30 * $augenPunkte . ' über Absage gespielt', '+' . $augenPunkte]);
             }
         } else
         { // Alle Anderen Fälle inklusive gewonnene Absage
-            $augenPunkte = (int) floor(abs(($gewinnerAugen - 121) / 30));
+            $augenPunkte = (int)floor(abs(($gewinnerAugen - 121) / 30));
 
             if ($schwarzGespielt)
             {
@@ -1380,12 +1378,12 @@ class LiveGame extends Model
             {
                 $reMachtKarlchen = false;
                 $kontraMachtKarlchen = false;
-            }
 
-            if (!$this->liveRound->karlchenFangen)
-            {
-                $reFaengtKarlchen = 0;
-                $kontraFaengtKarlchen = 0;
+                if (!$this->liveRound->karlchenFangen)
+                {
+                    $reFaengtKarlchen = 0;
+                    $kontraFaengtKarlchen = 0;
+                }
             }
 
             if ($gewinntRe)
@@ -1460,8 +1458,7 @@ class LiveGame extends Model
             }
         }
 
-        $this->winners = $this->res->filter(function ($value, $key) use ($gewinntRe)
-        {
+        $this->winners = $this->res->filter(function ($value, $key) use ($gewinntRe) {
             return $value === $gewinntRe;
         })->keys();
 
@@ -1508,8 +1505,7 @@ class LiveGame extends Model
 
         $reOderKontra = $ich->isRe;
 
-        $gegner = $this->res->filter(function ($value, $key) use ($reOderKontra)
-        {
+        $gegner = $this->res->filter(function ($value, $key) use ($reOderKontra) {
             return $value != $reOderKontra;
         });
 
@@ -1548,15 +1544,15 @@ class LiveGame extends Model
         {
             return $spieler->isRe ? 'Re' : 'Kontra';
         } elseif ($ansage &&                                // Hat schon angesagt
-                  $absage === null &&                       // Hat noch nicht abgesagt
-                  $this->stichNr <= $ansageBisStich + 1 &&                    // Darf nur bis zum dritten Stich absagen
-                  !$this->habenMeineGegnerAbgesagt($spieler))    // Gegner dürfen nicht abgesagt haben
+            $absage === null &&                       // Hat noch nicht abgesagt
+            $this->stichNr <= $ansageBisStich + 1 &&                    // Darf nur bis zum dritten Stich absagen
+            !$this->habenMeineGegnerAbgesagt($spieler))    // Gegner dürfen nicht abgesagt haben
         {
             return 90;
         } elseif ($ansage &&                                                                         // Hat schon angesagt
-                  $absage > 0 &&                                                                         // Hat schon abgesagt und noch nicht Schwarz gesagt
-                  $this->stichNr <= $ansageBisStich + 1 + (120 - $absage) / 30 &&                    // Darf nur bis zum dritten Stich absagen
-                  !$this->habenMeineGegnerAbgesagt($spieler))                                        // Gegner dürfen nicht abgesagt haben
+            $absage > 0 &&                                                                         // Hat schon abgesagt und noch nicht Schwarz gesagt
+            $this->stichNr <= $ansageBisStich + 1 + (120 - $absage) / 30 &&                    // Darf nur bis zum dritten Stich absagen
+            !$this->habenMeineGegnerAbgesagt($spieler))                                        // Gegner dürfen nicht abgesagt haben
         {
             $moeglicheAbsage = $absage - 30;
             $moeglicheAbsage = $moeglicheAbsage == 0 ? 'Schwarz' : strval($moeglicheAbsage);

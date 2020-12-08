@@ -11,8 +11,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="schweinchen = !schweinchen"
-                       :class="{'fa-toggle-on tw-text-orange-500': schweinchen, 'fa-toggle-off': !schweinchen}"/>
+                    <i class="fas fa-2x " @click="changeable ? schweinchen = !schweinchen : ''"
+                       :class="{'fa-toggle-on': schweinchen,
+                                'fa-toggle-off': !schweinchen,
+                                'tw-text-orange-500': schweinchen && changeable,
+                                'tw-text-gray-700': !schweinchen && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
             <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -23,8 +27,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="fuchsSticht = !fuchsSticht"
-                       :class="{'fa-toggle-on tw-text-orange-500': fuchsSticht, 'fa-toggle-off': !fuchsSticht}"/>
+                    <i class="fas fa-2x " @click="changeable ? fuchsSticht = !fuchsSticht : ''"
+                       :class="{'fa-toggle-on': fuchsSticht,
+                                'fa-toggle-off': !fuchsSticht,
+                                'tw-text-orange-500': fuchsSticht && changeable,
+                                'tw-text-gray-700': !fuchsSticht && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
             <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -35,8 +43,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="schweinchenTrumpfsolo = !schweinchenTrumpfsolo"
-                       :class="{'fa-toggle-on tw-text-orange-500': schweinchenTrumpfsolo, 'fa-toggle-off': !schweinchenTrumpfsolo}"/>
+                    <i class="fas fa-2x " @click="changeable ? schweinchenTrumpfsolo = !schweinchenTrumpfsolo : ''"
+                       :class="{'fa-toggle-on': schweinchenTrumpfsolo,
+                                'fa-toggle-off': !schweinchenTrumpfsolo,
+                                'tw-text-orange-500': schweinchenTrumpfsolo && changeable,
+                                'tw-text-gray-700': !schweinchenTrumpfsolo && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
         </div>
@@ -51,8 +63,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="koenigsSolo = !koenigsSolo"
-                       :class="{'fa-toggle-on tw-text-orange-500': koenigsSolo, 'fa-toggle-off': !koenigsSolo}"/>
+                    <i class="fas fa-2x " @click="changeable ? koenigsSolo = !koenigsSolo : ''"
+                       :class="{'fa-toggle-on': koenigsSolo,
+                                'fa-toggle-off': !koenigsSolo,
+                                'tw-text-orange-500': koenigsSolo && changeable,
+                                'tw-text-gray-700': !koenigsSolo && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
         </div>
@@ -67,8 +83,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="karlchen = !karlchen"
-                       :class="{'fa-toggle-on tw-text-orange-500': karlchen, 'fa-toggle-off': !karlchen}"/>
+                    <i class="fas fa-2x " @click="changeable ? karlchen = !karlchen : ''"
+                       :class="{'fa-toggle-on': karlchen,
+                                'fa-toggle-off': !karlchen,
+                                'tw-text-orange-500': karlchen && changeable,
+                                'tw-text-gray-700': !karlchen && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
             <div v-if="karlchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
@@ -79,8 +99,12 @@
                     </small>
                 </div>
                 <div class=" ml-4">
-                    <i class="fas fa-2x tw-text-gray-700" @click="karlchenFangen = !karlchenFangen"
-                       :class="{'fa-toggle-on tw-text-orange-500': karlchenFangen, 'fa-toggle-off': !karlchenFangen}"/>
+                    <i class="fas fa-2x " @click="changeable ? karlchenFangen = !karlchenFangen : ''"
+                       :class="{'fa-toggle-on': karlchenFangen,
+                                'fa-toggle-off': !karlchenFangen,
+                                'tw-text-orange-500': karlchenFangen && changeable,
+                                'tw-text-gray-700': !karlchenFangen && changeable,
+                                'tw-text-gray-600': !changeable}"/>
                 </div>
             </div>
         </div>
@@ -88,7 +112,7 @@
         <div class="tw-text-center" v-if="pluck(round.players, 'id').includes(round.auth_id)">
             <form @submit.prevent="submit">
                 <button type="submit"
-                        :disabled="round.games.length !== 0 || round.current_live_game"
+                        :disabled="!changeable"
                         class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto">
                     <span>
                         <i v-if="loading"
@@ -100,7 +124,7 @@
                     </span>
                 </button>
             </form>
-            <small v-if="round.games.length !== 0 || round.current_live_game" class="form-text text-muted">
+            <small v-if="!changeable" class="form-text text-muted">
                 Die Regeln können nur vor Beginn der Runde geändert werden.
             </small>
         </div>
@@ -129,7 +153,11 @@ export default {
         this.copyDataFromProp();
     },
 
-    computed: {},
+    computed: {
+        changeable() {
+            return this.round.games.length === 0 && !this.round.current_live_game
+        }
+    },
     methods: {
         copyDataFromProp() {
             this.schweinchen = this.round.live_round.schweinchen;
@@ -141,6 +169,9 @@ export default {
         },
         submit() {
             this.loading = true;
+            if (!this.karlchen) {
+                this.karlchenFangen = false
+            }
 
             axios.post('/liveRounds/' + this.round.live_round.id, {
                 '_method': 'PATCH',

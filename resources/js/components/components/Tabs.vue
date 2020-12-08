@@ -33,12 +33,20 @@ export default {
     data() {
         return {
             tabs: [],
-            selectedTab: ''
+            selectedTab: '',
+            mobile: false
         };
     },
 
     created() {
+        this.getOrientation();
+        window.addEventListener("resize", this.getOrientation);
         this.tabs = this.$children;
+    },
+
+    destroyed() {
+        window.removeEventListener("resize", this.getOrientation);
+        window.removeEventListener("fullscreenchange", this.getFullscreen);
     },
 
     mounted() {
@@ -50,7 +58,13 @@ export default {
         });
     },
 
+    computed: {
+    },
+
     methods: {
+        selectTabByName(name) {
+            this.selectTab(this.tabs.find(tab => tab.$props.name === name));
+        },
         selectTab(selectedTab) {
             if (selectedTab.name === 'Live') {
                 this.$emit('clicked');
@@ -63,10 +77,14 @@ export default {
             this.selectedTab = selectedTab;
         },
         swipeLeft() {
-            this.selectTab(this.tabs[this.nextIndex('right')]);
+            if (this.mobile) {
+                this.selectTab(this.tabs[this.nextIndex('right')]);
+            }
         },
         swipeRight() {
-            this.selectTab(this.tabs[this.nextIndex('left')]);
+            if (this.mobile) {
+                this.selectTab(this.tabs[this.nextIndex('left')]);
+            }
         },
         currentIndex() {
             return this.tabs.indexOf(this.selectedTab);
@@ -88,7 +106,10 @@ export default {
                     return 0;
                 }
             }
-        }
+        },
+        getOrientation() {
+            this.mobile = window.screen.width < 1024;
+        },
     }
 };
 </script>
