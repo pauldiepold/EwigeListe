@@ -27,8 +27,7 @@ class RoundController extends Controller
 
         $groups = Group::all();
 
-        $rounds_count = Round::whereHas('groups', function (Builder $query) use ($selectedGroup)
-        {
+        $rounds_count = Round::whereHas('groups', function (Builder $query) use ($selectedGroup) {
             $query->where('groups.id', '=', $selectedGroup->id);
         })
             ->count();
@@ -177,35 +176,33 @@ class RoundController extends Controller
 
     public function archiveTable(Group $group, Player $player = null)
     {
-        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group)
-        {
+        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group) {
             $query->where('groups.id', '=', $group->id);
         });
 
         if (isset($player))
         {
-            $roundsQuery->whereHas('players', function (Builder $query) use ($player)
-            {
+            $roundsQuery->whereHas('players', function (Builder $query) use ($player) {
                 $query->where('players.id', '=', $player->id);
             });
         }
 
         $rounds = $roundsQuery
-            ->with('players')
+            ->with('players', 'liveRound')
             ->withCount(['games', 'groups']);
 
         return Datatables::of($rounds)
-            ->addColumn('players', function ($round)
-            {
+            ->addColumn('players', function ($round) {
                 return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
             })
-            ->addColumn('date', function ($round)
-            {
+            ->addColumn('date', function ($round) {
                 return $round->updated_at->format('d.m.Y');
             })
-            ->addColumn('playerIDs', function ($round)
-            {
+            ->addColumn('playerIDs', function ($round) {
                 return $round->players->pluck('id');
+            })
+            ->addColumn('liveRound', function ($round) {
+                return $round->liveRound ? '<i class="fas fa-dice tw-text-gray-800"></i>' : '';
             })
             ->escapeColumns([''])
             ->orderColumn('date', 'updated_at $1')

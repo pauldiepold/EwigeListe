@@ -13,6 +13,7 @@
                     <tr>
                         <th>Datum</th>
                         <th>Spiele</th>
+                        <th>Online</th>
                         {{-- <th>Listen</th>--}}
                         <th>Teilnehmende Spieler</th>
                     </tr>
@@ -43,6 +44,11 @@
                             data: 'games_count',
                             name: 'games_count',
                             orderSequence: ["desc", "asc"]
+                        },
+                        {
+                            data: 'liveRound',
+                            name: 'liveRound',
+                            orderable: false,
                         },
                         /*{
                             data: 'groups_count',
