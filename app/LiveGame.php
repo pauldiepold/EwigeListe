@@ -726,7 +726,7 @@ class LiveGame extends Model
         $this->spielStarten();
     }
 
-    public function schmeissen($position = null)
+    public function schmeissen($position = null, $niemand_armut = false)
     {
         $schmeisser = $position ? $this->getSpielerByPosition($position) : null;
 
@@ -736,8 +736,8 @@ class LiveGame extends Model
         $this->save();
 
         $newGame = $this->liveRound->starteNeuesSpiel();
-        if ($schmeisser) $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
-        else $newGame->pushMessage('Niemand wollte die Armut mitnehmen. Neues Spiel gestartet!');
+        if ($niemand_armut) $newGame->pushMessage('Niemand wollte die Armut mitnehmen. Neues Spiel gestartet!');
+        else $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
         $newGame->save();
 
         broadcast(new RoundUpdated($this->liveRound->round->id));

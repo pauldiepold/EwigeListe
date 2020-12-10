@@ -77,7 +77,13 @@
                                 <!-- Wertung anzeigen -->
                                 <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
                                      v-if="round.last_live_game">
-                                    <div class="tw-font-bold">{{ round.last_live_game.spieltyp }}</div>
+                                    <div class="tw-font-bold"
+                                         v-if="pluck(round.games[round.games.length - 1].players, 'id').includes(round.auth_id)">
+                                        <span v-if="round.last_live_game.winners.includes(round.auth_id)">
+                                            Du hast gewonnen!
+                                        </span>
+                                        <span v-else>Du hast verloren!</span>
+                                    </div>
                                     <div class="tw-flex tw-justify-around tw-my-2">
                                         <div>Re: {{ round.last_live_game.reAugen }}</div>
                                         <div>Kontra: {{ round.last_live_game.kontraAugen }}</div>
@@ -113,6 +119,7 @@
                                         <b>{{ round.last_live_game.gewinntRe ? 'Re' : 'Kontra' }}</b> gewinnt mit
                                         {{ round.last_live_game.wertungsPunkte }} Punkten!
                                     </div>
+                                    <!--<div class="">{{ round.last_live_game.spieltyp }}</div>-->
                                 </div>
 
                                 <!-- Ready Check -->

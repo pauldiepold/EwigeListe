@@ -122,7 +122,7 @@ class GameController extends Controller
 
             if ($liveGame->dran == $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'))->id)
             {
-                $liveGame->schmeissen();
+                $liveGame->schmeissen(null, true);
             }
         }
         $liveGame->save();

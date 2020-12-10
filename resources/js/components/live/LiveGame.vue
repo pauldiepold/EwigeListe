@@ -15,15 +15,18 @@
             <!--<i class="fas fa-users tw-cursor-pointer"
                :class="{'tw-text-orange-500': zuschauerEingeblendet}"
                @click="zuschauerEingeblendet = !zuschauerEingeblendet"></i>-->
-            <i class="fas fa-history tw-cursor-pointer"
+            <i class="fas fa-history tw-cursor-pointer" title="letzten Stich einblenden"
                :class="{'tw-text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
             <i class="fas fa-info-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               :class="{'tw-text-orange-500': infoEingeblendet}"
+               :class="{'tw-text-orange-500': infoEingeblendet}" title="Infos einblenden"
                @click="infoEingeblendet = !infoEingeblendet"></i>
-            <!--<i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3" @click="$emit('reload-live-game')"></i>-->
-            <!--<i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               @click="$emit('neues-spiel-starten')"></i>-->
+            <i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+               :class="{'fa-spin tw-text-orange-500': reloadingData}"
+               @click="reloadData"
+               title="Daten neu laden"></i>
+            <!--            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+                           @click="$emit('neues-spiel-starten')"></i>-->
 
             <!-- ******** An- und Absagen ********* -->
             <div
@@ -222,7 +225,9 @@ export default {
             farbsoli: ['Trumpfsolo', 'Farbsolo Herz', 'Farbsolo Pik', 'Farbsolo Kreuz'],
             farbsoliAnzeigen: false,
             letzterStichEingeblendet: false,
-            infoEingeblendet: false,
+            infoEingeblendet: true,
+            reloadingData: false,
+            reloadingTimeout: '',
             zuschauerEingeblendet: true,
             ansageDeaktiviert: false,
             armutKarten: [],
@@ -247,9 +252,9 @@ export default {
                     this.saveNewData(e.liveGame);
                 });
         }
-        if (this.liveGame.messages.length != 0) {
+        /*if (this.liveGame.messages.length != 0) {
             this.infoEingeblendet = true
-        }
+        }*/
     },
 
     computed: {
@@ -283,18 +288,18 @@ export default {
 
             if (this.liveGame.aktuellerStich.karten.length === 0 &&
                 this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
+                this.letzterStichEingeblendet = true;
                 if (this.letzterStichEingeblendet === false) {
                     clearTimeout(this.stichTimeout);
                     this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
                 }
-                this.letzterStichEingeblendet = true;
             }
             if (this.liveGame.messages.length >= 0 &&
                 this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
-                if (this.infoEingeblendet === false) {
+                /*if (this.infoEingeblendet === false) {
                     clearTimeout(this.infoTimeout);
                     this.infoTimeout = setTimeout(() => this.infoEingeblendet = false, 4000)
-                }
+                }*/
                 this.infoEingeblendet = true;
             }
 
@@ -309,6 +314,14 @@ export default {
 
         reloadPage() {
             window.location.reload(true);
+        },
+
+        reloadData() {
+            this.$emit('reload-live-game');
+            this.reloadingData = true;
+            clearTimeout(this.reloadingTimeout);
+            this.reloadingTimeout = setTimeout(() => this.reloadingData = false, 1000)
+
         },
 
         handleError(error) {
