@@ -288,11 +288,11 @@ export default {
 
             if (this.liveGame.aktuellerStich.karten.length === 0 &&
                 this.oldLiveGame.aktuellerStich.karten.length !== this.liveGame.aktuellerStich.karten.length) {
-                this.letzterStichEingeblendet = true;
                 if (this.letzterStichEingeblendet === false) {
                     clearTimeout(this.stichTimeout);
                     this.stichTimeout = setTimeout(() => this.letzterStichEingeblendet = false, 2000)
                 }
+                this.letzterStichEingeblendet = true;
             }
             if (this.liveGame.messages.length >= 0 &&
                 this.oldLiveGame.messages.length !== this.liveGame.messages.length) {
