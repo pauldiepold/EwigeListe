@@ -1181,7 +1181,7 @@ class LiveGame extends Model
         }
 
         /* **** Gewonnen **** */
-        if (!($this->reAnsage && $this->kontraAnsage))
+        if (!($this->reAnsage && $this->kontraAnsage && $rePunkte == 120))
         {
             $wertungsPunkte++;
             $wertung->push(['Gewonnen', '+1']);
