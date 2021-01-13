@@ -565,11 +565,7 @@ class LiveGame extends Model
 
     public function istArmut($hand)
     {
-        $wenigerAls3Trumpf = $hand->where('trumpf', true)->count() <= 3;
-
-        $hoechsterTrumpfFuchs = $hand->max('rang') == 14;
-
-        return $wenigerAls3Trumpf || $hoechsterTrumpfFuchs;
+        return $wenigerAls3Trumpf = $hand->where('trumpf', true)->count() <= 3;
     }
 
     public function istHochzeit($hand)
@@ -583,7 +579,9 @@ class LiveGame extends Model
         $fuenfOderMehrNeunen = $neunen->count() >= 5;
         $vierUnterschiedlicheNeunen = $neunen->unique('farbe')->count() >= 4;
 
-        return $fuenfOderMehrNeunen || $vierUnterschiedlicheNeunen;
+        $keineKarteUeberFuchs = $hand->max('rang') <= 14;
+
+        return $fuenfOderMehrNeunen || $vierUnterschiedlicheNeunen || $keineKarteUeberFuchs;
     }
 
     public function hatSpielerVorbehaltOffengelegt($spielerID = null)
