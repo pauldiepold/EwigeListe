@@ -299,7 +299,6 @@ class LiveGame extends Model
 
     public function karteSpielen($karte)
     {
-        Log::debug('test');
         $spieler = $this->getSpieler();
         $spieler->karteAusHandEntfernen($karte);
         $this->spielerSpeichern($spieler);
@@ -359,7 +358,6 @@ class LiveGame extends Model
 
         $this->letzterStich = $stich;
         $this->aktuellerStich = new Stich();
-        //$this->stiche->push($stich);
 
         $this->checkenObGeheiratet();
 
@@ -726,7 +724,7 @@ class LiveGame extends Model
 
     public function schmeissen($position = null, $niemand_armut = false)
     {
-        $schmeisser = $position ? $this->getSpielerByPosition($position) : null;
+        $schmeisser = $position == null ? $this->getSpielerByPosition($position) : null;
 
         $this->geschmissen = true;
         $this->beendet = true;
@@ -1172,11 +1170,20 @@ class LiveGame extends Model
             $kontraPunkte++;
         }
 
-        $gewinntRe = $rePunkte > $punktegrenze ? true : false;
+        if ($this->kontraAnsage && !$this->reAnsage)
+        {
+            $gewinntRe = $rePunkte >= $punktegrenze;
+        } else
+        {
+            $gewinntRe = $rePunkte > $punktegrenze;
+        }
 
         /* **** Gewonnen **** */
-        if ($rePunkte != 120) $wertungsPunkte++;
-        if ($rePunkte != 120) $wertung->push(['Gewonnen', '+1']);
+        if (!($this->reAnsage && $this->kontraAnsage && $rePunkte == 120))
+        {
+            $wertungsPunkte++;
+            $wertung->push(['Gewonnen', '+1']);
+        }
 
         /* **** Gegen die Alten **** */
         if ($this->spieltyp == 'Normalspiel' || $this->spieltyp == 'Hochzeit' || $this->spieltyp == 'Armut')
