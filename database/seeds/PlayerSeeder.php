@@ -1,6 +1,10 @@
 <?php
 
 use App\Game;
+use App\Group;
+use App\Player;
+use App\Round;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
@@ -17,13 +21,33 @@ class PlayerSeeder extends Seeder
      */
     public function run()
     {
-        $date300 = Carbon::now()->subMinutes(60*24*300);
-        factory('App\User')->create(['email' => 'paul@paul.de', 'password' => Hash::make('paul')]);
-        factory('App\User')->create(['email' => 'test2@test.de']);
-        factory('App\User')->create(['email' => 'test3@test.de']);
-        factory('App\User')->create(['email' => 'test4@test.de']);
+        $date300 = Carbon::now()->subMinutes(60 * 24 * 300);
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Diepold', 'surname' => 'Paul'])->id;
+            },
+            'email' => 'paul@paul.de',
+            'password' => Hash::make('paul')]);
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Haide', 'surname' => 'Isi'])->id;
+            },
+            'email' => 'test2@test.de',
+            'password' => Hash::make('paul')]);
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Kuhn', 'surname' => 'Lina'])->id;
+            },
+            'email' => 'test3@test.de',
+            'password' => Hash::make('paul')]);
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Klauda', 'surname' => 'Chrissi'])->id;
+            },
+            'email' => 'test4@test.de',
+            'password' => Hash::make('paul')]);
 
-        factory('App\User', intval(config('database.seed.players')))->create([
+        User::factory()->count(intval(config('database.seed.players')))->create([
             'created_at' => $date300,
             'updated_at' => $date300
         ]);
@@ -32,20 +56,20 @@ class PlayerSeeder extends Seeder
 
         $allPlayers = App\Player::all();
 
-        $group = factory('App\Group')->create([
+        $group = Group::factory()->create([
             'created_by' => $allPlayers->random(),
             'name' => 'Ewige Liste',
             'created_at' => $date300,
             'updated_at' => $date300,
-            ]);
+        ]);
         $group->addPlayers($allPlayers);
         DB::table('profiles')->update(['created_at' => $date300, 'updated_at' => $date300]);
 
-        $groups = factory('App\Group', intval(config('database.seed.groups')))->create([
+        $groups = Group::factory()->count(intval(config('database.seed.groups')))->create([
             'created_by' => $allPlayers->random(),
             'created_at' => $date300,
             'updated_at' => $date300,
-            ]);
+        ]);
 
         for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)
         {
@@ -53,7 +77,7 @@ class PlayerSeeder extends Seeder
 
             $playerInRound = $allPlayers->random(rand(4, 7));
 
-            $round = factory('App\Round')->create([
+            $round = Round::factory()->create([
                 'created_by' => $playerInRound->random(),
                 'created_at' => $date,
                 'updated_at' => $date
@@ -112,25 +136,25 @@ class PlayerSeeder extends Seeder
                         $points = 3 * $pointsRound;
                         $misplayed = false;
                     } elseif (count($winners) == 3 &&
-                              !in_array($player->id, $winners))    // Solo verloren
+                        !in_array($player->id, $winners))    // Solo verloren
                     {
                         $soloist = $misplay ? false : true;
                         $won = false;
                         $points = -3 * $pointsRound;
                         $misplayed = $misplay ? true : false;
                     } elseif ((count($winners) == 2 &&
-                               in_array($player->id, $winners)) ||
-                              (count($winners) == 3 &&
-                               in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
+                            in_array($player->id, $winners)) ||
+                        (count($winners) == 3 &&
+                            in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
                     {
                         $soloist = false;
                         $won = true;
                         $points = 1 * $pointsRound;
                         $misplayed = false;
                     } elseif ((count($winners) == 2 &&
-                               !in_array($player->id, $winners)) ||
-                              (count($winners) == 1 &&
-                               !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
+                            !in_array($player->id, $winners)) ||
+                        (count($winners) == 1 &&
+                            !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
                     {
                         $soloist = false;
                         $won = false;
@@ -158,13 +182,11 @@ class PlayerSeeder extends Seeder
             $round->save();
         }
 
-        App\Profile::all()->each(function ($profile, $key)
-        {
+        App\Profile::all()->each(function ($profile, $key) {
             $profile->calculate();
         });
 
-        App\Group::all()->each(function ($group, $key)
-        {
+        App\Group::all()->each(function ($group, $key) {
             $group->calculate();
             $group->calculateBadges();
         });

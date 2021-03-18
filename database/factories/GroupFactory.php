@@ -1,18 +1,36 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Group;
-use Faker\Generator as Faker;
+use App\Player;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
-$factory->define(Group::class, function (Faker $faker)
+class GroupFactory extends Factory
 {
-    return [
-        'name' => e($faker->lastName),
-        'created_by' => function ()
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Group::class;
 
-        {
-            return factory('App\Player')->create()->id;
-        }
-    ];
-});
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'name' => e($this->faker->lastName),
+            'created_by' => function ()
+
+            {
+                return Player::factory()->create()->id;
+            }
+        ];
+    }
+}
+

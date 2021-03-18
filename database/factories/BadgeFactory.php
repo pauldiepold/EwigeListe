@@ -1,27 +1,46 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
+use App\Group;
 use App\Badge;
+use App\Player;
 use Carbon\Carbon;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
-$factory->define(Badge::class, function (Faker $faker) {
-    $date = Carbon::createFromDate($faker->year('now'), $faker->month('now'), 1);
+class BadgeFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Badge::class;
 
-    return [
-        'year' => $date,
-        'month' => $date,
-        'value' => $faker->randomNumber(3),
-        'type' => 'points',
-        'group_id' => function ()
-        {
-            return factory('App\Group')->create()->id;
-        },
-        'player_id' => function ()
-        {
-            return factory('App\Player')->create()->id;
-        }
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        $date = Carbon::createFromDate($this->faker->year('now'), $this->faker->month('now'), 1);
+        return [
+            'year' => $date,
+            'month' => $date,
+            'value' => $this->faker->randomNumber(3),
+            'type' => 'points',
+            'group_id' => function ()
+            {
+                return Group::factory()->create()->id;
+            },
+            'player_id' => function ()
+            {
+                return Player::factory()->create()->id;
+            }
 
-    ];
-});
+        ];
+    }
+}
+

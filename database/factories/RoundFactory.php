@@ -1,13 +1,33 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(App\Round::class, function (Faker $faker)
+use App\Player;
+use App\Round;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+
+class RoundFactory extends Factory
 {
-    return [
-        'created_by' => function ()
-        {
-            return factory('App\Player')->create()->id;
-        },
-    ];
-});
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = Round::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'created_by' => function ()
+            {
+                return Player::factory()->create()->id;
+            },
+        ];
+    }
+}
