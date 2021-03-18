@@ -1042,18 +1042,22 @@ class LiveGame extends Model
             }
         }
 
-        /*$rePunkte = 155;
+        $rePunkte = 140;
         $reAnsage = true;
-        $reAbsage = 90;
+        $reAbsage = 60;
         $kontraPunkte = 240 - $rePunkte;
         $kontraAnsage = null;
-        $kontraAbsage = null;*/
+        $kontraAbsage = null;
 
         $wertung = collect();
         $wertungsPunkte = 0;
 
         $this->reAugen = $rePunkte;
         $this->kontraAugen = $kontraPunkte;
+        $this->reAnsage = $reAnsage;
+        $this->reAbsage = $reAbsage;
+        $this->kontraAnsage = $kontraAnsage;
+        $this->kontraAbsage = $kontraAbsage;
 
         $punktegrenze = 120;
         if ($this->reAbsage !== null)

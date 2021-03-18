@@ -38,14 +38,14 @@ var cardsScript = document.currentScript;
 
         // Play is called whenever a card in an hand is clicked.  If the hand is active
         // then playCard is called.
-        play: function (card) {
+        /*play: function (card) {
             if (card.parents(".active-hand").length > 0) {
                 this.playCard(card);
             }
-        },
+        },*/
 
         // Remove a card from the hand.
-        remove: function (card) {
+        /*remove: function (card) {
             var hand = card.parent();
             card.remove();
 
@@ -53,7 +53,7 @@ var cardsScript = document.currentScript;
             if (hand.hasClass("fan")) {
                 this.fan(hand);
             }
-        },
+        },*/
 
         fan: function (hand, cfg) {
             var options = $.extend({}, this.options),
@@ -66,7 +66,7 @@ var cardsScript = document.currentScript;
             hand.data("fan", 'radius: ' + options.radius + '; spacing: ' + options.spacing);
             addCardImages(hand, options.cards);
 
-            cards = hand.find("img.playingCard");
+            cards = hand.find("img.card");
             if (cards.length === 0) {
                 return;
             }
@@ -99,7 +99,7 @@ var cardsScript = document.currentScript;
 
             addCardImages($hand, options.cards);
 
-            cards = $hand.find('img.playingCard');
+            cards = $hand.find('img.card');
             if (cards.length === 0) {
                 return;
             }
@@ -153,7 +153,7 @@ var cardsScript = document.currentScript;
         hand.empty();
         for (i = 0; i < cards.length; ++i) {
             src = "src='" + module.options.imagesUrl + cards[i] + '.svg' + "'";
-            hand.append("<img class='playingCard' " + src + ">");
+            hand.append("<img class='card' " + src + ">");
         }
     }
 
@@ -289,6 +289,7 @@ var cardsScript = document.currentScript;
     $(window).on('load', function () {
         // Adjust the cards in a fan, except ones using KO.
         $(".fan:not([data-bind])").each(function () {
+            console.log('test');
             module.fan($(this));
         });
 
@@ -298,7 +299,7 @@ var cardsScript = document.currentScript;
         });
 
         // Call cards.play, when a card is clicked in an active hand.
-        $(".hand").on("click", "img.playingCard", function () {
+        $(".hand").on("click", "img.card", function () {
             module.play($(this));
         });
     });

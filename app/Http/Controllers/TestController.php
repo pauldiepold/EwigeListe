@@ -23,14 +23,13 @@ class TestController extends Controller
 
     public function test()
     {
-        $deck = new Deck();
+        /*$deck = new Deck();
 
         $deck = $deck->deck->get(0);
 
         $test = collect(['isRe' => 10, 'hand' => $deck, 'ansage' => 20, 'absage' => 40]);
 
-        $test->put('isRe', false);
-
+        $test->put('isRe', false);*/
 
         return view('test.index');
     }

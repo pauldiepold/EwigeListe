@@ -57,7 +57,7 @@
         <spieler :round="round" :liveGame="liveGame"/>
 
         <!-- ******** Hand ********* -->
-        <div v-if="aktiv" style="position: absolute; left: 31%; bottom: 0; transform: translate(-50%);"
+        <div v-if="aktiv" style="position: absolute; left: 58%; bottom: 0; transform: translate(-50%);"
              class="tw--mb-12">
             <hand class="tw-mb-0 tw-mt-3"
                   v-if="ich.hand !== '' && liveGame.phase > 0"

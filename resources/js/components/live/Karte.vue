@@ -1,28 +1,20 @@
 <template>
-    <div v-if="karte === 'unsichtbar'"
-         class="card-live back tw-invisible">
+    <div v-if="karte === 'unsichtbar'" class="tw-invisible">
         *
     </div>
     <div v-else-if="armut"
-         class="card-live card-clickable tw-cursor-pointer"
-         :class="[wert_klasse, farbe, karte.armut_zurueck ? 'armut-karte' : '']"
          @click="$emit('armut', karte)">
-        <span class="rank" v-html="wert"></span>
-        <span class="suit" v-html="'&' + farbe + ';'"></span>
+        <img class="card" :src="'/cards/' + filename">
     </div>
+    <!--         class="card-live card-clickable tw-cursor-pointer"-->
     <div v-else-if="karte.spielbar"
-         class="card-live card-clickable tw-cursor-pointer"
-         :class="[wert_klasse, farbe]"
          @click="$emit('karteSpielen', karte)">
-        <span class="rank" v-html="wert"></span>
-        <span class="suit" v-html="'&' + farbe + ';'"></span>
+        <img class="card" :src="'/cards/' + filename">
     </div>
-    <div v-else-if="!karte.spielbar"
-         class="card-live"
-         :class="[wert_klasse, farbe/*, !keinRoterRahmen ? 'karteNichtSpielbar' : ''*/]">
-        <span class="rank" v-html="wert"></span>
-        <span class="suit" v-html="'&' + farbe + ';'"></span>
+    <div v-else-if="!karte.spielbar">
+        <img class="card" :src="'/cards/' + filename">
     </div>
+
 
 </template>
 
@@ -70,36 +62,22 @@ export default {
                 return '';
             }
         },
-        wert_klasse() {
-            if (this.karte.wert === 1) {
-                return 'rank-9';
-            } else if (this.karte.wert === 2) {
-                return 'rank-j';
-            } else if (this.karte.wert === 3) {
-                return 'rank-q';
-            } else if (this.karte.wert === 4) {
-                return 'rank-k';
-            } else if (this.karte.wert === 5) {
-                return 'rank-10';
-            } else if (this.karte.wert === 6) {
-                return 'rank-a';
-            } else {
-                return '';
-            }
-        },
         farbe() {
             if (this.karte.farbe === 1) {
-                return 'diams';
+                return 'D';
             } else if (this.karte.farbe === 2) {
-                return 'hearts';
+                return 'H';
             } else if (this.karte.farbe === 3) {
-                return 'spades';
+                return 'S';
             } else if (this.karte.farbe === 4) {
-                return 'clubs';
+                return 'C';
             } else {
                 return '';
             }
         },
+        filename() {
+            return this.wert + this.farbe + '.svg';
+        }
     },
 };
 </script>

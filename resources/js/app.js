@@ -1,6 +1,6 @@
 require('./bootstrap');
 require('./scripts/custom.js');
-/*require('./scripts/cards.js');*/
+require('./scripts/cards.js');
 
 const files = require.context('./', true, /\.vue$/i)
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
