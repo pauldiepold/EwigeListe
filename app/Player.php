@@ -32,7 +32,7 @@ class Player extends Model
 
     public function getAvatarPathAttribute()
     {
-        return $this->user->avatar_path;
+        return $this->user ? $this->user->avatar_path : '';
     }
 
     public function calculate()
