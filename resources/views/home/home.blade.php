@@ -8,7 +8,7 @@
 
     @auth
         @if($currentRounds->count() > 0)
-            <h4 class="mb-3">Letzte Runden:</h4>
+            <h4 class="mb-3">Aktive Runden:</h4>
             <div class="mb-5">
                 @foreach($currentRounds as $round)
                     <div class="card mb-3 mx-auto" style="max-width: 24rem;">
