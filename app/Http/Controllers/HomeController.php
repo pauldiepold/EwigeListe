@@ -12,7 +12,8 @@ use App\Game;
 use App\Round;
 use App\Comment;
 
-class HomeController extends Controller {
+class HomeController extends Controller
+{
 
     public function __construct()
     {
@@ -25,30 +26,10 @@ class HomeController extends Controller {
 
         $group = Group::find(1);
 
-        /* ****** Aktive Runden ******** */
-        $currentGamesFiltered = Game::where('created_at', '>=', Carbon::now()->subDay()->toDateTimeString())
-            ->orderBy('created_at', 'desc')
-            ->with(['round.players', 'players'])
-            ->get()
-            ->unique('round_id');
-
-        $currentGames = $currentGamesFiltered->values();
-        $currentRounds = collect();
-        $currentPlayers = collect();
-        foreach ($currentGames as $game)
-        {
-            foreach ($game->players as $player)
-            {
-                if (!$currentPlayers->contains($player->id))
-                {
-                    $currentPlayers->push($player->id);
-                } else
-                {
-                    continue 2;
-                }
-            }
-            $currentRounds->push($game->round);
-        }
+        $currentRounds = Round::where('updated_at', '>=', Carbon::now()->subDay()->toDateTimeString())
+            ->with(['players', 'games'])
+            ->latest('updated_at')
+            ->get();
 
         return view('home.home', compact('group', 'currentRounds', 'comments'));
     }
