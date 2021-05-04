@@ -28,6 +28,7 @@ class HomeController extends Controller
 
         $currentRounds = Round::where('updated_at', '>=', Carbon::now()->subDay()->toDateTimeString())
             ->with(['players', 'games'])
+            ->has('games')
             ->latest('updated_at')
             ->get();
 

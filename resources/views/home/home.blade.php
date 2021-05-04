@@ -18,7 +18,7 @@
                         <div class="card-body p-2">
                             <span class="text-muted" style="font-size: 0.8rem;">
                                 <a href="{{ $round->path() }}"><i class="fas fa-eye fa-2x text-dark"></i></a><br>
-                                Letztes Spiel: {{ $round->games->count() > 0 ? printDate($round->games->last()->created_at) : '' }}
+                                Letztes Spiel: {{ printDate($round->games->last()->created_at) }}
                             </span>
                         </div>
                     </div>
