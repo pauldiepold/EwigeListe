@@ -807,6 +807,10 @@ class LiveGame extends Model
                 $trumpf = $trumpf->where('rang', '!=', '14');
                 $trumpf->prepend($schweinchen);
             }
+            if ($this->spieltyp == 'Königssolo')
+            {
+                $trumpf = $hand->where('trumpf', true)->sortByDesc('farbe');
+            }
             $trumpf = $trumpf->values();
 
             $farbe = $hand->where('trumpf', false);
