@@ -47,22 +47,22 @@ class Deck
         $this->deck->push(new Karte(18, 2, 4)); // Herz König
         $this->deck->push(new Karte(17, 2, 1)); // Herz 9
         $this->deck->push(new Karte(16, 2, 1)); // Herz 9
-        $this->deck->push(new Karte(15, 4, 6)); // Pik
-        $this->deck->push(new Karte(14, 4, 6)); // Pik
-        $this->deck->push(new Karte(13, 4, 5)); // Pik
-        $this->deck->push(new Karte(12, 4, 5)); // Pik
-        $this->deck->push(new Karte(11, 4, 4)); // Pik
-        $this->deck->push(new Karte(10, 4, 4)); // Pik
-        $this->deck->push(new Karte(9, 4, 1)); // Pik
-        $this->deck->push(new Karte(8, 4, 1)); // Pik
-        $this->deck->push(new Karte(7, 3, 6)); // Kreuz
-        $this->deck->push(new Karte(6, 3, 6)); // Kreuz
-        $this->deck->push(new Karte(5, 3, 5)); // Kreuz
-        $this->deck->push(new Karte(4, 3, 5)); // Kreuz
-        $this->deck->push(new Karte(3, 3, 4)); // Kreuz
-        $this->deck->push(new Karte(2, 3, 4)); // Kreuz
-        $this->deck->push(new Karte(1, 3, 1)); // Kreuz
-        $this->deck->push(new Karte(0, 3, 1)); // Kreuz
+        $this->deck->push(new Karte(15, 4, 6)); // Kreuz
+        $this->deck->push(new Karte(14, 4, 6)); // Kreuz
+        $this->deck->push(new Karte(13, 4, 5)); // Kreuz
+        $this->deck->push(new Karte(12, 4, 5)); // Kreuz
+        $this->deck->push(new Karte(11, 4, 4)); // Kreuz
+        $this->deck->push(new Karte(10, 4, 4)); // Kreuz
+        $this->deck->push(new Karte(9, 4, 1)); // Kreuz
+        $this->deck->push(new Karte(8, 4, 1)); // Kreuz
+        $this->deck->push(new Karte(7, 3, 6)); // Pik
+        $this->deck->push(new Karte(6, 3, 6)); // Pik
+        $this->deck->push(new Karte(5, 3, 5)); // Pik
+        $this->deck->push(new Karte(4, 3, 5)); // Pik
+        $this->deck->push(new Karte(3, 3, 4)); // Pik
+        $this->deck->push(new Karte(2, 3, 4)); // Pik
+        $this->deck->push(new Karte(1, 3, 1)); // Pik
+        $this->deck->push(new Karte(0, 3, 1)); // Pik
 
         $this->deck = $this->deck->shuffle();
         $this->deck = $this->deck->split(4);

@@ -395,12 +395,16 @@ class LiveGame extends Model
             if ($this->schweinchen && $karten->where('rang', 14)->count() == 1)
             {
                 $maxRang = 14;
+                $siegerKarten = $karten->where('rang', $maxRang);
+            } elseif ($this->spieltyp == 'Königssolo')
+            {
+                $maxRang = $karten->max('farbe');
+                $siegerKarten = $karten->where('farbe', $maxRang);
             } else
             {
                 $maxRang = $karten->max('rang');
+                $siegerKarten = $karten->where('rang', $maxRang);
             }
-
-            $siegerKarten = $karten->where('rang', $maxRang);
 
             if ($maxRang == 23 && $this->stichtZweiteHerz10DieErste())
             {
