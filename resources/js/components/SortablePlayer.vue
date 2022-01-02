@@ -12,7 +12,7 @@
                  v-show="player.id !== loggedInPlayerId">
                 <i class="fas fa-trash text-danger"></i>
             </div>
-            <div class="tw-pl-2 tw-pr-5 tw--mr-4 tw--my-2 tw-flex tw-items-center tw-cursor-pointer"
+            <div class="tw-pl-1 tw-pr-2 tw--mr-2 tw-flex tw-items-center tw-cursor-pointer"
                  v-show="players.length > 1"
                  v-handle>
                 <i class="fas fa-grip-vertical"></i>
