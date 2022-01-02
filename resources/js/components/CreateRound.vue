@@ -29,15 +29,15 @@
 
 
         <h5 class="mt-4" v-if="players.length !== 0">
-            {{ players.length }} Spieler:
+            {{ players.length }} Spieler:<br>
+            <span class="tw-text-xs">(Ändern der Reihenfolge durch Ziehen)</span>
         </h5>
 
         <sortable-players-list lockAxis="y"
                                :useDragHandle="true"
                                v-model:list="players">
             <sortable-player v-for="(player, index) in players"
-                             v-bind:key="player.id"
-                             :players="players"
+                             :key="player.id"
                              :player="player"
                              :index="index"
                              :logged-in-player-id="loggedInPlayerId"
@@ -201,7 +201,7 @@ export default {
             return player.surname.concat(' ', player.name);
         },
         inSelectedPlayers(player) {
-            return this.players.includes(player);
+            return this.players.map(o => o.id).includes(player.id);
         },
         inSelectedGroups(group) {
             return this.groups.includes(group.id);
