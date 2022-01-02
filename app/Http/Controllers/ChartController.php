@@ -92,25 +92,25 @@ class ChartController extends Controller
             {
                 $points->push($points->last() + $game->pivot->points);
             }
-            $dates->push(($currentDate->formatLocalized('%e. %h %Y')));
+            $dates->push(($currentDate->isoFormat('D. MMM YYYY')));
 
             if ($i == 0)
             {
                 $date = $currentDate->startOfDay();
-                $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+                $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i);
             }
 
             while ($date->lessThan($currentDate->startOfDay()))
             {
-                $gameDates->push(($date->formatLocalized('%e. %h %Y')));
+                $gameDates->push(($date->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i + 1);
                 $date->addDay();
             }
 
             $i++;
         }
-        $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+        $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
         $gameCounter->push($i);
 
         $n = ceil($i/700);
@@ -132,6 +132,7 @@ class ChartController extends Controller
             $query->where('groups.id', '=', $group->id);
         })
             ->oldest()
+            ->select(['created_at'])
             ->get();
 
         $gameDates = collect();
@@ -144,20 +145,20 @@ class ChartController extends Controller
             if ($i == 0)
             {
                 $date = $currentDate->startOfDay();
-                $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+                $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i);
             }
 
             while ($date->lessThan($currentDate->startOfDay()))
             {
-                $gameDates->push(($date->formatLocalized('%e. %h %Y')));
+                $gameDates->push(($date->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i + 1);
                 $date->addDay();
             }
 
             $i++;
         }
-        $gameDates->push(($currentDate->formatLocalized('%e. %h %Y')));
+        $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
         $gameCounter->push($i);
 
         $data = collect();

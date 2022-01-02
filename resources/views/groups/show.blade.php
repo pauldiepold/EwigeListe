@@ -151,7 +151,7 @@
                                 <h5>Die meisten {{ $typeDeutsch }} {{ $type->keys()->get($loop->index) }}: </h5>
                                 @foreach($year as $badge)
                                     <badge
-                                            date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                            date="{{ $badge->date->isoFormat('MMMM YYYY') }}"
                                             name="{{ $badge->player->surname }}"
                                             value="{{ $badge->value }}"
                                             type="{{ $badge->type }}"

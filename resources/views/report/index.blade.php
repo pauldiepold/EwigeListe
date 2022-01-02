@@ -47,7 +47,7 @@
                                                 <a href="{{ str_replace('www.', '', $action['url']) }}">{{ substr(str_replace('www.', '', $action['url']), 22) }}</a>
                                             </td>
                                             <td>{{ array_key_exists('timeSpent', $action) ? floor($action['timeSpent']/60) . "m " . $action['timeSpent']%60 . "s": '' }}</td>
-                                        <!-- <td>{{ Carbon\Carbon::createFromTimestamp($action['timestamp'], 'Europe/Amsterdam')->formatLocalized('%H:%M') }}</td> -->
+                                        <!-- <td>{{ Carbon\Carbon::createFromTimestamp($action['timestamp'], 'Europe/Amsterdam')->isoFormat('H:m') }}</td> -->
                                             <td>{{ substr($action['serverTimePretty'], 10) }}</td>
                                         </tr>
                                     @endforeach
