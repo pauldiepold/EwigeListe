@@ -84,7 +84,7 @@
         <!--<div v-if="error !== ''" v-text="error" class="center-absolute tw-text-gray-200 tw-bg-white tw-bg-opacity-50 tw-rounded-xl tw-p-6 tw-z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
-        <div v-if="pluck(round.inactive_players, 'id').includes(round.auth_id) && istPhase(2)"
+        <div v-if="round.inactive_players.map(v => v.id).includes(round.auth_id) && istPhase(2)"
              class="center-absolute live-overlay tw-py-3 tw-px-4 tw-font-bold">
             Du setzt dieses Spiel aus!
         </div>
@@ -110,19 +110,17 @@
                     <div class="tw-flex tw-flex-col">
                         <button class="btn btn-primary tw-my-1 tw-mr-6"
                                 :class="{'btn-sm': mobile}"
-                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                v-for="vorbehalt in moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
-                                v-if="!soli.includes(vorbehalt) && !farbsoli.includes(vorbehalt)"
                                 :disabled="!binIchDran"/>
                     </div>
                     <div class="tw-flex tw-flex-col tw-max-w-4xs">
                         <button class="btn btn-primary tw-my-1 tw-mr-6"
                                 :class="{'btn-sm': mobile}"
-                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                v-for="vorbehalt in moeglicheSoli"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
-                                v-if="soli.includes(vorbehalt) && (vorbehalt !== 'Königssolo' || round.live_round.koenigsSolo)"
                                 :disabled="!binIchDran"/>
                     </div>
                     <div class="tw-flex tw-flex-col tw-max-w-2xs">
@@ -134,10 +132,10 @@
                                 :disabled="!binIchDran"/>
                         <button class="btn btn-primary tw-my-1"
                                 :class="{'btn-sm': mobile}"
-                                v-for="vorbehalt in ich.moeglicheVorbehalte"
+                                v-for="vorbehalt in moeglicheFarbsoli"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
-                                v-if="farbsoli.includes(vorbehalt) && farbsoliAnzeigen"
+                                v-if="farbsoliAnzeigen"
                                 :disabled="!binIchDran"/>
                     </div>
                 </div>
@@ -271,6 +269,24 @@ export default {
         binIchDran() {
             return this.liveGame.dran === this.round.auth_id;
         },
+
+        moeglicheVorbehalte() {
+            return this.ich.moeglicheVorbehalte.filter(
+                (vorbehalt) => !this.soli.includes(vorbehalt) && !this.farbsoli.includes(vorbehalt)
+            )
+        },
+
+        moeglicheSoli() {
+            return this.ich.moeglicheVorbehalte.filter(
+                (vorbehalt) => this.soli.includes(vorbehalt) && (vorbehalt !== 'Königssolo' || this.round.live_round.koenigsSolo)
+            )
+        },
+
+        moeglicheFarbsoli() {
+            return this.ich.moeglicheVorbehalte.filter(
+                (vorbehalt) => this.farbsoli.includes(vorbehalt)
+            )
+        }
     },
 
     watch: {},

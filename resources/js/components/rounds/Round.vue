@@ -10,7 +10,7 @@
             </tab>
 
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false"
-                 @clicked="alert('test')" v-touch:swipe.stop="">
+                 @clicked="alert('test')">
                 <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
                     <div
                         class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-overflow-hidden"
@@ -54,7 +54,7 @@
                                     <div v-for="player in round.active_players">
                                         <img :src="player.avatar_path"
                                              class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : pluck(round.online_players, 'id').includes(player.id)}">
+                                             :class="{ 'tw-shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
                                         {{ player.surname }}
                                     </div>
                                 </div>
@@ -78,7 +78,7 @@
                                 <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
                                      v-if="round.last_live_game">
                                     <div class="tw-font-bold"
-                                         v-if="pluck(round.games[round.games.length - 1].players, 'id').includes(round.auth_id)">
+                                         v-if="round.games[round.games.length - 1].players.map(o => o['id']).includes(round.auth_id)">
                                         <span v-if="round.last_live_game.winners.includes(round.auth_id)">
                                             Du hast gewonnen!
                                         </span>
@@ -243,55 +243,55 @@ export default {
                 //this.$refs.live_game.pushMessage(e.message);
             });
     },
-    destroyed() {
+    unmounted() {
         window.removeEventListener("resize", this.getOrientation);
         window.removeEventListener("fullscreenchange", this.getFullscreen);
     },
     computed: {
         aktiv() {
-            return this.pluck(this.round.active_players, 'id').includes(this.round.auth_id);
+            return this.round.active_players.map(o => o['id']).includes(this.round.auth_id);
         },
         presenceChannel() {
             return window.Echo
                 .join('round.' + this.round.id);
         },
         allPlayersOnline() {
-            return this.pluck(this.round.active_players, 'id')
-                .every(id => this.pluck(this.round.online_players, 'id').includes(id));
+            return this.round.active_players.map(o => o['id'])
+                .every(id => this.round.online_players.map(o => o['id']).includes(id));
         },
         allPlayersReady() {
-            return this.pluck(this.round.active_players, 'id')
+            return this.round.active_players.map(o => o['id'])
                 .every(id => this.round.ready_players.includes(id));
         },
         not_ready_players() {
-            return this.pluck(this.round.active_players, 'id')
+            return this.round.active_players.map(o => o['id'])
                 .filter(id => !this.round.ready_players.includes(id));
         },
     },
     methods: {
         getWatchingPlayers() {
             this.round.watching_players = this.round.online_players.filter(player => {
-                return !this.pluck(this.round.active_players, 'id').includes(player.id);
+                return !this.round.active_players.map(o => o['id']).includes(player.id);
             });
         },
         orderActivePlayers() {
             /* Aktive Spieler sortieren: Immer ausgehend von der eigenen Sitzposition */
             /* Nur wenn man selbst aktiv ist */
-            if (this.pluck(this.round.players, 'id').includes(this.round.auth_id)) {
+            if (this.round.players.map(o => o['id']).includes(this.round.auth_id)) {
                 let output = [];
                 let i;
                 let counter;
                 let startIndex = this.round.players.find(player => player.id === this.round.auth_id).index;
 
                 /* Wenn man selbst aussetzt, und bei 7er Runden möglicherweise auch der nächste, Index erhöhen */
-                while (!this.pluck(this.round.active_players, 'index').includes(startIndex)) {
+                while (!this.round.active_players.map(o => o['index']).includes(startIndex)) {
                     if (startIndex >= this.round.players.length - 1) {
                         startIndex = 0;
                     } else {
                         startIndex++;
                     }
                 }
-                counter = this.pluck(this.round.active_players, 'index').indexOf(startIndex);
+                counter = this.round.active_players.map(o => o['index']).indexOf(startIndex);
 
                 for (i = 0; i <= 3; i++) {
                     output.push(this.round.active_players[counter]);

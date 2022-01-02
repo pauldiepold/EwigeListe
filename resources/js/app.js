@@ -2,30 +2,22 @@ require('./bootstrap');
 require('./scripts/custom.js');
 /*require('./scripts/cards.js');*/
 
-const files = require.context('./', true, /\.vue$/i)
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-import Vue from 'vue';
-
-//import fullscreen from 'vue-fullscreen';
+import {createApp} from 'vue';
+import {plugin as Slicksort} from 'vue-slicksort';
 import VueScrollTo from 'vue-scrollto';
-import Vue2TouchEvents from 'vue2-touch-events';
 
-//Vue.use(fullscreen)
-Vue.use(VueScrollTo, {offset: -70});
-Vue.use(Vue2TouchEvents, {swipeTolerance: 70});
+const app = createApp({})
+    .use(VueScrollTo, {offset: -70})
+    .use(Slicksort);
 
-Vue.mixin({
-    methods: {
-        pluck: (array, key) => array.map(o => o[key]),
-    }
-})
+const files = require.context('./', true, /\.vue$/i)
+files.keys().map(key => app.component(key.split('/').pop().split('.')[0], files(key).default))
 
-global.vm = new Vue({
+app.mount('#app');
+/*global.vm = new Vue({
     el: '#app',
     components: {},
     data: {},
     methods: {}
-});
-
-Vue.config.productionTip = false;
+});*/

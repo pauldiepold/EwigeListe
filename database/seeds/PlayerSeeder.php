@@ -26,26 +26,26 @@ class PlayerSeeder extends Seeder
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Diepold', 'surname' => 'Paul'])->id;
             },
-            'email' => 'paul@paul.de',
-            'password' => Hash::make('paul')]);
+            'email' => 'test1@test.de',
+            'password' => Hash::make('test')]);
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Haide', 'surname' => 'Isi'])->id;
             },
             'email' => 'test2@test.de',
-            'password' => Hash::make('paul')]);
+            'password' => Hash::make('test')]);
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Kuhn', 'surname' => 'Lina'])->id;
             },
             'email' => 'test3@test.de',
-            'password' => Hash::make('paul')]);
+            'password' => Hash::make('test')]);
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Klauda', 'surname' => 'Chrissi'])->id;
             },
             'email' => 'test4@test.de',
-            'password' => Hash::make('paul')]);
+            'password' => Hash::make('test')]);
 
         User::factory()->count(intval(config('database.seed.players')))->create([
             'created_at' => $date300,

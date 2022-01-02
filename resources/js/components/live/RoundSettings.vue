@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <div class="tw-text-center" v-if="pluck(round.players, 'id').includes(round.auth_id)">
+        <div class="tw-text-center" v-if="round.players.map(v => v.id).includes(round.auth_id)">
             <form @submit.prevent="submit">
                 <button type="submit"
                         :disabled="!changeable"

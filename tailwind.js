@@ -1,8 +1,8 @@
 module.exports = {
     prefix: 'tw-',
-    purge: {
-        enabled: false,
-    },
+    content: [
+        './resources/**/*.{html,js,scss,css,vue,php}'
+    ],
     theme: {
         extend: {
             screens: {

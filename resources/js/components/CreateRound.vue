@@ -34,7 +34,7 @@
 
         <sortable-players-list lockAxis="y"
                                :useDragHandle="true"
-                               v-model="players">
+                               v-model:list="players">
             <sortable-player v-for="(player, index) in players"
                              v-bind:key="player.id"
                              :players="players"

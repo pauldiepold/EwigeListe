@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="row justify-content-center mt-4" v-touch:swipe.stop="">
+        <div class="row justify-content-center mt-4">
             <div class="col col-xl-6 col-lg-8 col-md-10 col-sm-12">
                 <div class="table-responsive">
                     <table class="table mb-1">
@@ -12,11 +12,11 @@
                                     <a :href="player.path">
                                         <img :src="player.avatar_path"
                                              class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : pluck(round.online_players, 'id').includes(player.id)}">
+                                             :class="{ 'tw-shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
                                     </a>
 
                                     <a :class="{ 'text-dark': round.dealer_index !== player.index,
-                                                 'active-player': round.players.length > 5 && pluck(round.active_players, 'id').includes(player.id) }"
+                                                 'active-player': round.players.length > 5 && round.active_players.map(o => o['id']).includes(player.id) }"
                                        :href="player.path">
                                         {{ player.surname }}
                                     </a>
@@ -71,7 +71,7 @@ export default {
             for (i = 0; i < this.round.games.length; i++) {
                 output[i] = [];
                 for (k = 0; k < this.round.players.length; k++) {
-                    if (this.pluck(this.round.games[i].players, 'id').includes(this.round.players[k].id)) {
+                    if (this.round.games[i].players.map(o => o['id']).includes(this.round.players[k].id)) {
                         player = this.round.games[i].players.find(player => player.id === this.round.players[k].id);
                         playerPoints[k] = playerPoints[k] + player.points;
                         output[i][k] = {points: playerPoints[k], won: player.won};
@@ -83,7 +83,6 @@ export default {
             return output;
         }
     },
-    methods: {
-    }
+    methods: {}
 };
 </script>

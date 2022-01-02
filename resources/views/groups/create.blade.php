@@ -17,9 +17,4 @@
         <button type="submit" class="btn btn-primary">Liste erstellen</button>
     </form>
 
-    {{--
-    <create-group :all-players="{{ $allPlayers }}">
-    </create-group>
---}}
-
 @endsection

@@ -6,6 +6,7 @@
 
 <script>
     export default {
+        name: 'Tab',
         props: {
             name: {
                 required: true
@@ -42,6 +43,12 @@
             } else {
                 this.isActive = this.selected;
             }
+        },
+
+        created() {
+
+            this.$parent.tabs.push(this);
+
         },
     };
 </script>

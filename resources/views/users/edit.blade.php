@@ -15,7 +15,7 @@
 
     <tabs>
 
-        <tab name="listen" icon="fa-list-alt" v-touch:swipe.stop="">
+        <tab name="listen" icon="fa-list-alt">
             <template v-slot:default="props">
 
                 <h5 class="tw-mb-4 tw-font-bold">Standard-Listen auswählen</h5>
@@ -32,7 +32,7 @@
             </template>
         </tab>
 
-        <tab name="name" icon="fa-user" :selected="true" v-touch:swipe.stop="">
+        <tab name="name" icon="fa-user" :selected="true">
 
             <h5 class="tw-mb-6 tw-font-bold">Namen und Profilbild ändern</h5>
 
@@ -69,7 +69,7 @@
             </form>
         </tab>
 
-        <tab name="email" icon="fa-at" v-touch:swipe.stop="">
+        <tab name="email" icon="fa-at">
 
             <h5 class="tw-mb-6 tw-font-bold">E-Mail ändern</h5>
 
@@ -91,7 +91,7 @@
             </form>
         </tab>
 
-        <tab name="passwort" icon="fa-key" v-touch:swipe.stop="">
+        <tab name="passwort" icon="fa-key">
 
             <h5 class="tw-mb-6 tw-font-bold">Passwort ändern</h5>
 

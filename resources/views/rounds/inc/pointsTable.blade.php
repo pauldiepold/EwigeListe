@@ -1,5 +1,5 @@
 {{-- Input: collection $colRound --}}
-<div class="row justify-content-center mt-4" v-touch:swipe.stop="">
+<div class="row justify-content-center mt-4">
     <div class="col col-xl-6 col-lg-8 col-md-10 col-sm-12">
         <div class="table-responsive">
             <table class="table mb-1">

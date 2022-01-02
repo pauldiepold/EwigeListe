@@ -1,7 +1,5 @@
 <template>
-    <div style="min-height: 50vh;"
-         v-touch:swipe.left="swipeLeft"
-         v-touch:swipe.right="swipeRight">
+    <div style="min-height: 50vh;">
         <div class="tw-sticky tw-top-0 tw-z-50 tw-pt-2 tw--mx-4 tw-flex tw-justify-center"
              style="background-color: #f1f1ef;">
             <ul class="tw-flex-1 tw-flex tw-justify-around tw-border-b tw-border-gray-400 tw-max-w-md">
@@ -41,24 +39,11 @@ export default {
     created() {
         this.getOrientation();
         window.addEventListener("resize", this.getOrientation);
-        this.tabs = this.$children;
     },
 
-    destroyed() {
+    unmounted() {
         window.removeEventListener("resize", this.getOrientation);
         window.removeEventListener("fullscreenchange", this.getFullscreen);
-    },
-
-    mounted() {
-        let self = this;
-        self.tabs.forEach(function (tab) {
-            if (tab.isActive === true) {
-                self.selectedTab = tab;
-            }
-        });
-    },
-
-    computed: {
     },
 
     methods: {
@@ -75,37 +60,6 @@ export default {
             });
 
             this.selectedTab = selectedTab;
-        },
-        swipeLeft() {
-            if (this.mobile) {
-                this.selectTab(this.tabs[this.nextIndex('right')]);
-            }
-        },
-        swipeRight() {
-            if (this.mobile) {
-                this.selectTab(this.tabs[this.nextIndex('left')]);
-            }
-        },
-        currentIndex() {
-            return this.tabs.indexOf(this.selectedTab);
-        },
-        nextIndex(direction) {
-            let length = this.tabs.length;
-            let index = this.currentIndex();
-
-            if (direction === 'left') {
-                if (index > 0) {
-                    return index - 1;
-                } else if (index === 0) {
-                    return length - 1;
-                }
-            } else if (direction === 'right') {
-                if (index < (length - 1)) {
-                    return index + 1;
-                } else if (index === length - 1) {
-                    return 0;
-                }
-            }
         },
         getOrientation() {
             this.mobile = window.screen.width < 1024;

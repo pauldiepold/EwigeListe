@@ -33,7 +33,7 @@ export default {
             let karten = ['unsichtbar', 'unsichtbar', 'unsichtbar', 'unsichtbar'];
 
             this.stich.forEach(karte => {
-                let position = this.pluck(this.round.active_players, 'id').indexOf(karte.gespieltVon);
+                let position = this.round.active_players.map(v => v.id).indexOf(karte.gespieltVon);
                 karten[position] = karte;
             });
 

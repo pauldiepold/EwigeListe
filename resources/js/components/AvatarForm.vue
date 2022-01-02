@@ -8,14 +8,12 @@
             </div>
         </form>
 
-        <cropper
-                v-if="file_picked"
-                class="tw-h-64"
-                :src="src"
-                :stencil-props="{
-                    aspectRatio: 1/1
-                }"
-                @change="change">
+        <cropper class="tw-h-64"
+                 v-if="file_picked"
+                 :src="src"
+                 :stencil-props="{aspectRatio: 1}"
+                 backgroundClass="cropper-background"
+                 @change="change">
         </cropper>
 
         <button @click="persist"
@@ -34,47 +32,48 @@
 </template>
 
 <script>
-    import {Cropper} from "vue-advanced-cropper";
+import {Cropper} from "vue-advanced-cropper";
+import 'vue-advanced-cropper/dist/style.css';
 
-    export default {
-        components: {
-            Cropper,
-        },
+export default {
+    components: {
+        Cropper,
+    },
 
-        props: ['user'],
+    props: ['user'],
 
-        data() {
-            return {
-                src: this.user.avatar_path,
-                avatar: '',
-                result: this.user.avatar_path,
-                file_picked: false,
-                loading: false
-            }
-        },
-
-        methods: {
-            onFilePicked(avatar) {
-                this.src = avatar.src;
-                this.avatar = avatar.file;
-                this.file_picked = true;
-            },
-
-            change({coordinates, canvas}) {
-                this.result = canvas.toDataURL();
-            },
-
-            persist() {
-                if (!this.result) return;
-
-                this.loading = true;
-
-                axios.post(`/api/users/${this.user.id}/avatar`, {avatar: this.result})
-                    .then(() => {
-                        this.file_picked = false;
-                        this.loading = false;
-                    });
-            }
+    data() {
+        return {
+            src: this.user.avatar_path,
+            avatar: '',
+            result: this.user.avatar_path,
+            file_picked: false,
+            loading: false
         }
-    };
+    },
+
+    methods: {
+        onFilePicked(avatar) {
+            this.src = avatar.src;
+            this.avatar = avatar.file;
+            this.file_picked = true;
+        },
+
+        change({coordinates, canvas}) {
+            this.result = canvas.toDataURL();
+        },
+
+        persist() {
+            if (!this.result) return;
+
+            this.loading = true;
+
+            axios.post(`/api/users/${this.user.id}/avatar`, {avatar: this.result})
+                .then(() => {
+                    this.file_picked = false;
+                    this.loading = false;
+                });
+        }
+    }
+};
 </script>
