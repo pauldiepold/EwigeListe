@@ -29,8 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         Paginator::defaultView('pagination.pagination');
-		setlocale(LC_TIME, "de_DE");
+		setlocale(LC_TIME, config('app.locale'));
 		Carbon::setLocale(config('app.locale'));
-		Carbon::setUtf8(true);
     }
 }

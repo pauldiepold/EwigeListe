@@ -126,7 +126,7 @@
                             <tr>
                                 <td class="pb-4">Meiste Spiele in einem Monat:
                                     <span class="small-text">
-                                        <br>(im {{ $profile->mostGamesMonthDate->formatLocalized('%B %Y') }})
+                                        <br>(im {{ $profile->mostGamesMonthDate->isoFormat('MMMM YYYY') }})
                                     </span>
                                 </td>
                                 <td class="font-weight-bold pb-4">{{ $profile->mostGamesMonth }}</td>
@@ -265,7 +265,7 @@
                         @foreach($type as $badge)
                             @isset($badge->player)
                                 <badge
-                                        date="{{ $badge->date->formatLocalized('%B %Y') }}"
+                                        date="{{ $badge->date->isoFormat('MMMM YYYY') }}"
                                         name="{{ $badge->player->surname }}"
                                         value="{{ $badge->value }}"
                                         type="{{ $badge->type }}"
