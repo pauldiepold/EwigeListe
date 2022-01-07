@@ -70,7 +70,9 @@
                                 <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
                                      v-if="aktiv && !allPlayersReady && round.games.length === 0">
                                     <div class="tw-mb-4">
-                                        <button @click="$refs.tabs.selectTabByName('Einstellungen');" class="btn btn-primary">Regeln anpassen</button>
+                                        <button @click="$refs.tabs.selectTabByName('Einstellungen');"
+                                                class="btn btn-primary">Regeln anpassen
+                                        </button>
                                     </div>
                                     Die Regeln können nur vor Beginn des ersten Spiels angepasst werden.
                                 </div>
@@ -99,21 +101,22 @@
                                             <td></td>
                                             <td>
                                                 {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
-                                                round.last_live_game.wertungsPunkte < 0 ? '-' : ''
+                                                    round.last_live_game.wertungsPunkte < 0 ? '-' : ''
                                                 }}{{
-                                                round.last_live_game.wertungsPunkte
+                                                    round.last_live_game.wertungsPunkte
                                                 }}
                                             </td>
                                         </tr>
                                     </table>
                                     <div class="tw-flex tw-justify-around tw-my-2">
-                                        <div v-for="player in round.players"
-                                             v-if="round.last_live_game.winners.includes(player.id)">
-                                            <img :src="player.avatar_path"
-                                                 class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                                 alt="">
-                                            {{ player.surname }}
-                                        </div>
+                                        <template v-for="player in round.players">
+                                            <div v-if="round.last_live_game.winners.includes(player.id)">
+                                                <img :src="player.avatar_path"
+                                                     class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
+                                                     alt="">
+                                                {{ player.surname }}
+                                            </div>
+                                        </template>
                                     </div>
                                     <div class=" tw-mb-2">
                                         <b>{{ round.last_live_game.gewinntRe ? 'Re' : 'Kontra' }}</b> gewinnt mit
@@ -221,6 +224,7 @@ export default {
         this.presenceChannel
             .here(players => {
                 this.round.online_players = players;
+                this.addAIsToOnlinePlayers();
                 this.getWatchingPlayers();
             })
             .joining(player => {
@@ -242,6 +246,7 @@ export default {
             .listenForWhisper('message', e => {
                 //this.$refs.live_game.pushMessage(e.message);
             });
+        this.addAIsToOnlinePlayers();
     },
     unmounted() {
         window.removeEventListener("resize", this.getOrientation);
@@ -269,6 +274,14 @@ export default {
         },
     },
     methods: {
+        addAIsToOnlinePlayers() {
+            this.round.active_players_short.forEach(active_player_short => {
+                if (active_player_short.is_ai) {
+                    this.round.online_players.push(active_player_short);
+                    this.round.ready_players.push(active_player_short.id);
+                }
+            });
+        },
         getWatchingPlayers() {
             this.round.watching_players = this.round.online_players.filter(player => {
                 return !this.round.active_players.map(o => o['id']).includes(player.id);
@@ -327,6 +340,7 @@ export default {
 
         reconnectChannels() {
             this.round.online_players = Object.values(this.presenceChannel.subscription.members.members);
+            this.addAIsToOnlinePlayers();
             this.getWatchingPlayers();
         },
 

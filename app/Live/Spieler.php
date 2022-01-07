@@ -9,6 +9,7 @@ class Spieler
     public $id;
     public $name;
     public $index;
+    public $ai;
 
     public $hand;
     public $hand_save;
@@ -31,11 +32,21 @@ class Spieler
      * @param $playerName
      * @param $playerIndex
      */
-    public function __construct($playerID = '', $playerName = '', $playerIndex = '')
+    public function __construct($player = null)
     {
-        $this->id = $playerID;
-        $this->name = $playerName;
-        $this->index = $playerIndex;
+        if ($player)
+        {
+            $this->id = $player->id;
+            $this->name = $player->surname . ' ' . $player->name;
+            $this->index = $player->pivot->index;
+            $this->ai = $player->is_ai ? new AI($player) : null;
+        } else
+        {
+            $this->id = '';
+            $this->name = '';
+            $this->index = '';
+            $this->ai = null;
+        }
         $this->parteiOffengelegt = 0;
 
         $this->hand = collect();
@@ -61,13 +72,15 @@ class Spieler
             $spieler->id = $input->id;
             $spieler->name = $input->name;
             $spieler->index = $input->index;
+
+            $spieler->ai = $input->ai ? AI::create(collect($input->ai)) : null;
+
             $spieler->parteiOffengelegt = $input->parteiOffengelegt;
 
             if ($input->hand != '')
             {
 
-                $hand = collect($input->hand)->map(function ($item, $key)
-                {
+                $hand = collect($input->hand)->map(function ($item, $key) {
                     return Karte::create($item);
                 });
                 $spieler->hand = $hand;
@@ -79,8 +92,7 @@ class Spieler
             if ($input->hand_save != '')
             {
 
-                $hand_save = collect($input->hand_save)->map(function ($item, $key)
-                {
+                $hand_save = collect($input->hand_save)->map(function ($item, $key) {
                     return Karte::create($item);
                 });
                 $spieler->hand_save = $hand_save;
@@ -89,8 +101,7 @@ class Spieler
                 $spieler->hand_save = $input->hand_save;
             }
 
-            $stiche = collect($input->stiche)->map(function ($item, $key)
-            {
+            $stiche = collect($input->stiche)->map(function ($item, $key) {
                 return Stich::create($item);
             });
             $spieler->stiche = $stiche;
@@ -98,8 +109,7 @@ class Spieler
             if ($input->armutKarten != '')
             {
 
-                $armutKarten = collect($input->armutKarten)->map(function ($item, $key)
-                {
+                $armutKarten = collect($input->armutKarten)->map(function ($item, $key) {
                     return Karte::create($item);
                 });
                 $spieler->armutKarten = $armutKarten;
@@ -125,8 +135,7 @@ class Spieler
 
     public function karteAusHandEntfernen($karte)
     {
-        $index = $this->hand->search(function ($item, $key) use ($karte)
-        {
+        $index = $this->hand->search(function ($item, $key) use ($karte) {
             return $item->id == $karte->id;
         });
 
@@ -148,5 +157,10 @@ class Spieler
             $punkte += $stich->punkteZaehlen();
         }
         $this->punkte = $punkte;
+    }
+
+    public function getAIString()
+    {
+        return $this->hand->map(fn($card) => $card->getAIString());
     }
 }

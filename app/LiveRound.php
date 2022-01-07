@@ -83,36 +83,51 @@ class LiveRound extends Model
         {
             $spielerString = 'spieler' . $key;
 
-            $$spielerString = new Spieler(
-                $player->id,
-                $player->surname . ' ' . $player->name,
-                $player->pivot->index,
-            );
+            $$spielerString = new Spieler($player);
         }
 
-        $liveGame = $this->liveGames()->create([
-            'live_round_id' => $this->id,
-            'vorhand' => $activePlayers->first()->pivot->player_id,
-            'dran' => $activePlayers->first()->pivot->player_id,
-            'aktuellerStich' => new Stich(),
-            'letzterStich' => new Stich(),
-            'spielerIDsInaktiv' => $spielerIDsInaktiv,
-            'spieler0' => $spieler0,
-            'spieler1' => $spieler1,
-            'spieler2' => $spieler2,
-            'spieler3' => $spieler3,
-            'anzeige' => new Anzeige($activePlayers),
-            'messages' => collect(),
-            'winners' => collect(),
-            'stiche' => collect(),
-        ]);
+        $liveGame = new LiveGame;
+
+        $liveGame->live_round_id = $this->id;
+        $liveGame->is_with_ai = $activePlayers->contains(function ($player, $key) {
+            return $player->is_ai;
+        });
+        $liveGame->vorhand = $activePlayers->first()->pivot->player_id;
+        $liveGame->dran = $activePlayers->first()->pivot->player_id;
+        $liveGame->aktuellerStich = new Stich();
+        $liveGame->letzterStich = new Stich();
+        $liveGame->spielerIDsInaktiv = $spielerIDsInaktiv;
+        $liveGame->spieler0 = $spieler0;
+        $liveGame->spieler1 = $spieler1;
+        $liveGame->spieler2 = $spieler2;
+        $liveGame->spieler3 = $spieler3;
+        $liveGame->anzeige = new Anzeige($activePlayers);
+        $liveGame->messages = collect();
+        $liveGame->winners = collect();
+        $liveGame->stiche = collect();
 
         $liveGame->kartenGeben();
         $liveGame->moeglicheVorbehalteBerechnen();
         $liveGame->phase = 2;
 
+        if ($liveGame->is_with_ai)
+        {
+            if ($liveGame->spieler0->moeglicheVorbehalte->contains('Hochzeit') ||
+                $liveGame->spieler1->moeglicheVorbehalte->contains('Hochzeit') ||
+                $liveGame->spieler2->moeglicheVorbehalte->contains('Hochzeit') ||
+                $liveGame->spieler3->moeglicheVorbehalte->contains('Hochzeit'))
+            {
+                $this->starteNeuesSpiel();
+
+                return 0;
+            }
+            $liveGame->pushMessage('Im Spiel mit KI sind keine Schweinchen, Hochzeiten oder Soli möglich.');
+            $liveGame->handleVorbehalteInAIGame();
+            $liveGame->checkForAITurn();
+        }
+
         $liveGame->save();
 
-        return $liveGame;
+        return 0;
     }
 }

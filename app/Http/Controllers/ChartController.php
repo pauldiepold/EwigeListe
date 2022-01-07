@@ -70,8 +70,7 @@ class ChartController extends Controller
     {
         $games = $profile->player
             ->games()
-            ->whereHas('round.groups', function (Builder $query) use ($profile)
-            {
+            ->whereHas('round.groups', function (Builder $query) use ($profile) {
                 $query->where('groups.id', '=', $profile->group_id);
             })
             ->oldest()
@@ -113,7 +112,7 @@ class ChartController extends Controller
         $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
         $gameCounter->push($i);
 
-        $n = ceil($i/700);
+        $n = ceil($i / 700);
 
         $data = collect();
         $data->put('dates', $dates->nth($n));
@@ -127,43 +126,29 @@ class ChartController extends Controller
 
     public function homeChart(Group $group)
     {
-        $games = Game::whereHas('round.groups', function (Builder $query) use ($group)
-        {
-            $query->where('groups.id', '=', $group->id);
-        })
-            ->oldest()
-            ->select(['created_at'])
+        $games = Game::select([
+            DB::raw('Date(created_at) as date'),
+            DB::raw('count(*) as counter')
+        ])
+            ->whereHas('round.groups', function (Builder $query) use ($group) {
+                $query->where('groups.id', '=', $group->id);
+            })
+            ->groupBy('date')
+            ->orderBy('date')
             ->get();
 
-        $gameDates = collect();
+        $gameDates = $games->pluck('date');
+        $counter = 0;
         $gameCounter = collect();
-        $i = 0;
         foreach ($games as $game)
         {
-            $currentDate = $game->created_at;
-
-            if ($i == 0)
-            {
-                $date = $currentDate->startOfDay();
-                $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
-                $gameCounter->push($i);
-            }
-
-            while ($date->lessThan($currentDate->startOfDay()))
-            {
-                $gameDates->push(($date->isoFormat('D. MMM YYYY')));
-                $gameCounter->push($i + 1);
-                $date->addDay();
-            }
-
-            $i++;
+            $gameCounter->push($counter += $game->counter);
         }
-        $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
-        $gameCounter->push($i);
 
-        $data = collect();
-        $data->put('gameDates', $gameDates);
-        $data->put('gameCounter', $gameCounter);
+        $data = collect([
+            'gameDates' => $gameDates,
+            'gameCounter' => $gameCounter,
+        ]);
 
         return ($data->toArray());
     }

@@ -16,6 +16,7 @@ class LiveGame extends JsonResource
     {
         return [
             'id' => $this->id,
+            'is_with_ai' => $this->is_with_ai,
             'phase' => $this->phase,
             'dran' => $this->dran,
             'stichNr' => $this->stichNr,

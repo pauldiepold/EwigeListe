@@ -68,6 +68,7 @@ class LiveGame extends Model
     ];
 
     protected $casts = [
+        'is_with_ai' => 'boolean',
         'spieler0' => 'object',
         'spieler1' => 'object',
         'spieler2' => 'object',
@@ -144,6 +145,11 @@ class LiveGame extends Model
         );
     }
 
+    public function getPlayingWithAiAttribute()
+    {
+
+    }
+
     public function getSpielerIDsAttribute()
     {
         $spielerIDs = collect();
@@ -204,13 +210,13 @@ class LiveGame extends Model
         $this->kartenSortieren();
     }
 
-    public function karteSpielen($karte)
+    public function karteSpielen($karte, $spieler = null)
     {
-        $spieler = $this->getSpieler();
+        $spieler = $spieler ?: $this->getSpieler();
         $spieler->karteAusHandEntfernen($karte);
         $this->spielerSpeichern($spieler);
 
-        $karte->gespieltVon = auth()->id();
+        $karte->gespieltVon = $spieler->id;
         $karte->spielbar = false;
 
         $this->karteAufAktuellenStichLegen($karte);
@@ -351,7 +357,7 @@ class LiveGame extends Model
                 $siegerKarte = $this->besteKarteBestimmen($siegerKarten, $ersteKarte->farbe);
             }
         }
-        if ($this->liveRound->schweinchen &&
+        if ($this->liveRound->schweinchen && !$this->is_with_ai &&
             ($this->spieltyp == 'Normalspiel' ||
                 $this->spieltyp == 'Armut' ||
                 $this->spieltyp == 'Hochzeit' ||
@@ -1637,5 +1643,74 @@ class LiveGame extends Model
             $anzeige->set($attribut, $spielerID, $wert);
         }
         $this->anzeige = $anzeige;
+    }
+
+    public function handleVorbehalteInAIGame()
+    {
+        $players = [
+            $this->spieler0,
+            $this->spieler1,
+            $this->spieler2,
+            $this->spieler3,
+        ];
+        foreach ($players as $spieler)
+        {
+            if ($spieler->moeglicheVorbehalte->contains('Hochzeit'))
+            {
+                $spieler->vorbehalt = 'Hochzeit';
+                $this->setAnzeige('vorbehalt', $spieler->id, 'Vorbehalt');
+            } else
+            {
+                $spieler->vorbehalt = true;
+                $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
+            }
+            $this->spielerSpeichern($spieler);
+        }
+        $this->vorbehalteAbhandeln();
+    }
+
+    public function checkForAITurn()
+    {
+        $spieler = $this->getSpieler($this->dran);
+        if ($spieler->ai)
+        {
+            $karte = $spieler->ai->getBestCard($this);
+
+            $this->kartenSortieren();
+            $this->istKarteSpielbar($karte);
+
+            $this->karteSpielen($karte, $spieler);
+
+            if ($this->aktuellerStich->count() == 4)
+            {
+                $this->stichVerteilen();
+            }
+
+            if ($this->spielBeendet())
+            {
+                $this->beendet = true;
+                $this->phase = 101;
+
+                $this->punkteZaehlen();
+
+                $this->wertungBerechnen();
+                $this->spielErgebnisUebertragen();
+
+                $this->save();
+                broadcast(new RoundUpdated($this->liveRound->round->id));
+
+                return 'Spiel beendet';
+            }
+
+            $this->naechstenSpielerBerechnen();
+            $this->spielbareKartenBerechnen();
+            $this->kartenSortieren();
+            $this->moeglicheAnAbsagenEintragen();
+
+            $this->save();
+
+            return $this->checkForAITurn();
+        }
+        return 'no ai turn';
     }
 }

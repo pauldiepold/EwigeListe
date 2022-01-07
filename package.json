@@ -36,8 +36,5 @@
     "vue-loader": "^16.8.3",
     "vue-scrollto": "^2.20.0",
     "vue-slicksort": "^2.0.0-alpha.5"
-  },
-  "dependencies": {
-    "@vue/compat": "^3.2.26"
   }
 }

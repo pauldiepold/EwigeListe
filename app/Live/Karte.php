@@ -73,4 +73,17 @@ class Karte
 
         return $karte;
     }
+
+    public function getAIString()
+    {
+        $farben = [1 => 'd', 2 => 'h', 3 => 's', 4 => 'c'];
+        $werte = [1 => 'n', 2 => 'j', 3 => 'q', 4 => 'k', 5 => 't', 6 => 'a'];
+
+        return $farben[$this->farbe] . $werte[$this->wert];
+    }
+
+    public function matchesAIString($aiString)
+    {
+        return $aiString == $this->getAIString();
+    }
 }

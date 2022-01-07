@@ -20,6 +20,7 @@ class Player extends JsonResource
             'id' => $this->id,
             'surname' => $this->surname,
             'name' => $this->name,
+            'is_ai' => $this->is_ai,
             'won' => $this->whenPivotLoaded('game_player', fn() => $this->pivot->won),
             'points' => $this->whenPivotLoaded('game_player', fn() => $this->pivot->points),
         ];

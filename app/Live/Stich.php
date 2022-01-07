@@ -22,8 +22,7 @@ class Stich
             //dd($input);
             $stich->stecher = $input->stecher;
 
-            $karten = collect($input->karten)->map(function ($item, $key)
-            {
+            $karten = collect($input->karten)->map(function ($item, $key) {
                 return Karte::create($item);
             });
             $stich->karten = $karten;
@@ -48,13 +47,21 @@ class Stich
     public function punkteZaehlen()
     {
         $punkte = 0;
-        foreach($this->karten as $karte) {
+        foreach ($this->karten as $karte)
+        {
             $punkte += $karte->punkte;
         }
+
         return $punkte;
     }
 
-    public function ersteKarte() {
+    public function ersteKarte()
+    {
         return $this->karten->first();
+    }
+
+    public function getAIString()
+    {
+        return $this->karten->map(fn($card) => $card->getAIString());
     }
 }

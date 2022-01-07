@@ -25,8 +25,8 @@
                :class="{'fa-spin tw-text-orange-500': reloadingData}"
                @click="reloadData"
                title="Daten neu laden"></i>
-            <!--            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-                           @click="$emit('neues-spiel-starten')"></i>-->
+            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+               @click="$emit('neues-spiel-starten')"></i>
 
             <!-- ******** An- und Absagen ********* -->
             <div

@@ -16,6 +16,7 @@ class Player extends Model
 
     protected $appends = [
         'avatar_path',
+        'is_ai',
     ];
 
     protected $fillable = ['surname', 'name'];
@@ -33,6 +34,11 @@ class Player extends Model
     public function getAvatarPathAttribute()
     {
         return $this->user ? $this->user->avatar_path : '';
+    }
+
+    public function getIsAiAttribute()
+    {
+        return !is_null($this->ai_path);
     }
 
     public function calculate()

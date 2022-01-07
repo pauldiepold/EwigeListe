@@ -26,19 +26,19 @@ namespace App{
  * @property-read mixed $date
  * @property-read \App\Group $group
  * @property-read \App\Player|null $player
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereGroupId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge wherePlayerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereValue($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Badge whereYear($value)
- * @mixin \Eloquent
+ * @method static \Database\Factories\BadgeFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereValue($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Badge whereYear($value)
  */
 	class Badge extends \Eloquent {}
 }
@@ -58,26 +58,24 @@ namespace App{
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $commentable
  * @property-read \App\Player|null $createdBy
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Comment[] $replies
+ * @property-read \Illuminate\Database\Eloquent\Collection|Comment[] $replies
  * @property-read int|null $replies_count
- * @method static bool|null forceDelete()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment newQuery()
- * @method static \Illuminate\Database\Query\Builder|\App\Comment onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment query()
- * @method static bool|null restore()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCommentableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereParentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Comment whereUpdatedAt($value)
- * @method static \Illuminate\Database\Query\Builder|\App\Comment withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\App\Comment withoutTrashed()
- * @mixin \Eloquent
+ * @method static \Database\Factories\CommentFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment newQuery()
+ * @method static \Illuminate\Database\Query\Builder|Comment onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCommentableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCommentableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereParentId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Comment whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Query\Builder|Comment withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Comment withoutTrashed()
  */
 	class Comment extends \Eloquent {}
 }
@@ -103,20 +101,20 @@ namespace App{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Player[] $players
  * @property-read int|null $players_count
  * @property-read \App\Round $round
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereDealerIndex($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereLiveGameId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereMisplay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game wherePoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereRoundId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereSolo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Game whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Database\Factories\GameFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Game newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Game query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereDealerIndex($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereLiveGameId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereMisplay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game wherePoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereRoundId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereSolo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Game whereUpdatedAt($value)
  */
 	class Game extends \Eloquent {}
 }
@@ -136,19 +134,18 @@ namespace App{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Game $game
  * @property-read \App\Player $player
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereGameId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereMisplayed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer wherePlayerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer wherePoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereSoloist($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GamePlayer whereWon($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer query()
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereGameId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereMisplayed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer wherePoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereSoloist($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|GamePlayer whereWon($value)
  */
 	class GamePlayer extends \Eloquent {}
 }
@@ -191,35 +188,35 @@ namespace App{
  * @property-read int|null $profiles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Round[] $rounds
  * @property-read int|null $rounds_count
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereClosed($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereGamesPerRound($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestLosestreak($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestSoloRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestSoloWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereHighestWinstreak($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestSoloRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestSoloWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereLowestWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGames($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGamesDay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereMostGamesMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group wherePointsPerGame($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereQueued($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereRecords($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereStats($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereTotalGames($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Group whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Database\Factories\GroupFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereClosed($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereGamesPerRound($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestLosestreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereHighestWinstreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereLowestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereLowestSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereLowestSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereLowestWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereMostGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereMostGamesDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereMostGamesMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group wherePointsPerGame($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereQueued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereRecords($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereStats($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereTotalGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Group whereUpdatedAt($value)
  */
 	class Group extends \Eloquent {}
 }
@@ -230,7 +227,8 @@ namespace App{
  *
  * @property int $id
  * @property int $live_round_id
- * @property Collection $spielerIDsInaktiv
+ * @property bool|null $is_with_ai
+ * @property \Illuminate\Support\Collection $spielerIDsInaktiv
  * @property object $spieler0
  * @property object $spieler1
  * @property object $spieler2
@@ -240,28 +238,33 @@ namespace App{
  * @property int $stichNr
  * @property int $vorhand
  * @property int $dran
- * @property Collection|null $augen
- * @property Collection|null $winners
- * @property bool|null $geschmissen
- * @property Collection|null $messages
- * @property bool|null $geheiratet
- * @property int|null $kontrasOffengelegt
- * @property int|null $resOffengelegt
  * @property string $spieltyp
  * @property object $letzterStich
  * @property object $aktuellerStich
+ * @property bool|null $reAnsage
+ * @property bool|null $kontraAnsage
+ * @property int|null $reAbsage
+ * @property int|null $kontraAbsage
+ * @property int|null $resOffengelegt
+ * @property int|null $kontrasOffengelegt
+ * @property int|null $schweinchen
+ * @property bool|null $geschmissen
+ * @property \Illuminate\Support\Collection|null $messages
+ * @property bool|null $geheiratet
  * @property bool|null $gewinntRe
  * @property int|null $wertungsPunkte
- * @property Collection $wertung
+ * @property \Illuminate\Support\Collection $wertung
+ * @property int|null $kontraAugen
+ * @property int|null $reAugen
+ * @property mixed|null $stiche
+ * @property \Illuminate\Support\Collection|null $winners
  * @property bool $beendet
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Game|null $game
- * @property-read mixed $absagen
  * @property-read mixed $aktueller_stich
- * @property-read mixed $ansagen
- * @property-read mixed $armut_karten
  * @property-read mixed $letzter_stich
+ * @property-read mixed $playing_with_ai
  * @property-read mixed $res
  * @property-read mixed $spieler
  * @property-read mixed $spieler_i_ds
@@ -274,7 +277,6 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame query()
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAktuellerStich($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAnzeige($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereAugen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereBeendet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereDran($value)
@@ -282,12 +284,20 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereGeschmissen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereGewinntRe($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereIsWithAi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAbsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAnsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAugen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontrasOffengelegt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereLetzterStich($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereLiveRoundId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereMessages($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame wherePhase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAbsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAnsage($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAugen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereResOffengelegt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSchweinchen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler0($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler1($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieler2($value)
@@ -295,28 +305,12 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpielerIDsInaktiv($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSpieltyp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStichNr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStiche($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereVorhand($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWertung($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWertungsPunkte($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereWinners($value)
- * @mixin \Eloquent
- * @property mixed|null $stiche
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereStiche($value)
- * @property bool|null $reAnsage
- * @property bool|null $kontraAnsage
- * @property int|null $reAbsage
- * @property int|null $kontraAbsage
- * @property int|null $kontraAugen
- * @property int|null $reAugen
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAbsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAnsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereKontraAugen($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAbsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAnsage($value)
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereReAugen($value)
- * @property int|null $schweinchen
- * @method static \Illuminate\Database\Eloquent\Builder|LiveGame whereSchweinchen($value)
  */
 	class LiveGame extends \Eloquent {}
 }
@@ -326,32 +320,31 @@ namespace App{
  * App\LiveRound
  *
  * @property int $id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Game[] $games
- * @property-read int|null $games_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\LiveGame[] $liveGames
- * @property-read int|null $live_games_count
- * @property-read \App\Round $round
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\LiveRound whereUpdatedAt($value)
- * @mixin \Eloquent
  * @property int|null $schweinchen
  * @property int|null $fuchsSticht
  * @property int|null $schweinchenTrumpfsolo
  * @property int|null $koenigsSolo
  * @property int|null $karlchen
  * @property int|null $karlchenFangen
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Game[] $games
+ * @property-read int|null $games_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\LiveGame[] $liveGames
+ * @property-read int|null $live_games_count
+ * @property-read \App\Round|null $round
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound query()
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereFuchsSticht($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKarlchen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKarlchenFangen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereKoenigsSolo($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereSchweinchen($value)
  * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereSchweinchenTrumpfsolo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|LiveRound whereUpdatedAt($value)
  */
 	class LiveRound extends \Eloquent {}
 }
@@ -363,6 +356,7 @@ namespace App{
  * @property int $id
  * @property string $surname
  * @property string $name
+ * @property string|null $ai_path
  * @property int|null $payment
  * @property int $hide
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -382,25 +376,27 @@ namespace App{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Game[] $games
  * @property-read int|null $games_count
  * @property-read mixed $avatar_path
+ * @property-read mixed $is_ai
+ * @property-read mixed $path
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Group[] $groups
  * @property-read int|null $groups_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Profile[] $profiles
  * @property-read int|null $profiles_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Round[] $rounds
  * @property-read int|null $rounds_count
- * @property-read \App\User $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereHide($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player wherePayment($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereSurname($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Player whereUpdatedAt($value)
- * @mixin \Eloquent
- * @property-read mixed $path
+ * @property-read \App\User|null $user
+ * @method static \Database\Factories\PlayerFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Player newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Player query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereAiPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereHide($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player wherePayment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereSurname($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Player whereUpdatedAt($value)
  */
 	class Player extends \Eloquent {}
 }
@@ -450,49 +446,48 @@ namespace App{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Group $group
  * @property-read \App\Player $player
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereDefault($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGames($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesLost($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesPerDay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesThisMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGamesWon($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereGroupId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereHighestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereHighestPointsDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreak($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreakEnd($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLoseStreakStart($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLowestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereLowestPointsDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesDay($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesDayDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereMostGamesMonthDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePlayerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerGame($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerLose($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerSolo($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsPerWin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile wherePointsThisMonth($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereQueued($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoli($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoliLost($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoliWon($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereSoloWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreak($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreakEnd($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinStreakStart($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Profile whereWinrate($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereDefault($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGames($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGamesLost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGamesPerDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGamesThisMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGamesWon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereGroupId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereHighestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereHighestPointsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereLoseStreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereLoseStreakEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereLoseStreakStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereLowestPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereLowestPointsDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereMostGamesDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereMostGamesDayDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereMostGamesMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereMostGamesMonthDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePointsPerGame($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePointsPerLose($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePointsPerSolo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePointsPerWin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile wherePointsThisMonth($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereQueued($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoliLost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoliWon($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoloPoints($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoloRate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereSoloWinrate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereWinStreak($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereWinStreakEnd($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereWinStreakStart($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Profile whereWinrate($value)
  */
 	class Profile extends \Eloquent {}
 }
@@ -530,6 +525,7 @@ namespace App{
  * @property-read mixed $active_players
  * @property-read mixed $dealer_index
  * @property-read mixed $inactive_players
+ * @method static \Database\Factories\RoundFactory factory(...$parameters)
  */
 	class Round extends \Eloquent {}
 }
@@ -548,19 +544,18 @@ namespace App{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\User|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereProvider($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\SocialiteUser whereUserId($value)
- * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereAvatar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereProvider($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereProviderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SocialiteUser whereUserId($value)
  */
 	class SocialiteUser extends \Eloquent {}
 }
@@ -580,18 +575,18 @@ namespace App{
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \App\Player $player
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereAvatarPath($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereEmail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePassword($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User wherePlayerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereRememberToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\User whereUpdatedAt($value)
- * @mixin \Eloquent
+ * @method static \Database\Factories\UserFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|User newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|User query()
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatarPath($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereEmail($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePlayerId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  */
 	class User extends \Eloquent {}
 }

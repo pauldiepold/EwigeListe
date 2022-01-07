@@ -23,6 +23,7 @@ class PlayerFull extends JsonResource
             'path' => $this->path,
             'avatar_path' => $this->avatar_path,
             'online' => false,
+            'is_ai' => $this->is_ai,
             'groups' => GroupResource::collection($this->groups),
             'index' => $this->whenPivotLoaded('player_round', fn() => $this->pivot->index),
         ];

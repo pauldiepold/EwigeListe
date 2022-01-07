@@ -28,18 +28,42 @@ class PlayerSeeder extends Seeder
             },
             'email' => 'test1@test.de',
             'password' => Hash::make('test')]);
+
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Monte', 'surname' => 'AI 1', 'ai_path' => 'lib_doko.so'])->id;
+            },
+            'email' => '1@ai.de',
+            'password' => Hash::make('test')]);
+
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Carlo', 'surname' => 'AI 2', 'ai_path' => 'lib_doko.so'])->id;
+            },
+            'email' => '2@ai.de',
+            'password' => Hash::make('test')]);
+
+        User::factory()->create([
+            'player_id' => function () {
+                return Player::factory()->create(['name' => 'Leclerc', 'surname' => 'AI 3', 'ai_path' => 'lib_doko.so'])->id;
+            },
+            'email' => '3@ai.de',
+            'password' => Hash::make('test')]);
+
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Haide', 'surname' => 'Isi'])->id;
             },
             'email' => 'test2@test.de',
             'password' => Hash::make('test')]);
+
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Kuhn', 'surname' => 'Lina'])->id;
             },
             'email' => 'test3@test.de',
             'password' => Hash::make('test')]);
+
         User::factory()->create([
             'player_id' => function () {
                 return Player::factory()->create(['name' => 'Klauda', 'surname' => 'Chrissi'])->id;

@@ -21,6 +21,7 @@ class Round extends JsonResource
         return [
             'id' => $this->id,
             'active_players' => PlayerFullResource::collection($this->active_players),
+            'active_players_short' => PlayerResource::collection($this->active_players),
             'inactive_players' => PlayerFullResource::collection($this->inactive_players),
             'players_string' => $this->players_string,
             'path' => $this->path,

@@ -202,7 +202,7 @@ class GameController extends Controller
 
         $liveGame->save();
 
-        return 'success';
+        return $liveGame->checkForAITurn();
     }
 
     public function ansage(LiveGame $liveGame, Request $request)
@@ -224,7 +224,8 @@ class GameController extends Controller
         if ($ansage == 'Re' || $ansage == 'Kontra')
         {
             $liveGame->ansageMachen($ansage);
-        } else {
+        } else
+        {
             $liveGame->absageMachen($ansage);
         }
 
