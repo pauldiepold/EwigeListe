@@ -43,7 +43,8 @@ class AI
         $json = '\'' . json_encode(compact('computer_player_id', 'starting_player_id', 'played_cards', 'computer_player_hand')) . '\'';
         // '\'{"computer_player_id": 0, "starting_player_id": 0, "played_cards": [], "computer_player_hand": ["cn", "cn", "ca", "sn", "st", "sq", "sj", "sj", "ht", "ht", "ha", "hn"]}\'';
 
-        $bestCard = shell_exec('python3 $PWD/ai/frontend.py -l $PWD/ai/lib_doko.so -j ' . $json);
+        $path = dirname(__FILE__);
+        $bestCard = shell_exec('python3 ' . $path . '/ai/frontend.py -l ' . $path . '/ai/lib_doko.so -j ' . $json);
         $bestCard = json_decode($bestCard)->best_card;
         $bestCardID = $spieler->hand->filter(fn($karte) => $karte->matchesAIString($bestCard))->first()->id;
         $bestCard = $liveGame->getKarteVonSpieler($bestCardID, $spieler->id);
