@@ -8,9 +8,11 @@ Benötigt: WSL2 + Docker
 2. [Composer-Dependencies installieren](https://laravel.com/docs/8.x/sail#executing-composer-commands)
 3. [Sail Bash Alias einrichten](https://laravel.com/docs/8.x/sail#configuring-a-bash-alias)
 4. ```.env``` Datei einrichten
-5. Mit ```sail up``` Docker Container starten (bzw. beim ersten Ausführen Images erstellen)
-6. Mit ```sail php artisan migrate --seed``` Datenbank migrieren und seeden
-7. App ist jetzt unter [http://localhost](http://localhost) erreichbar
+5. Mit ```sail build --no-cache``` bei der ersten Installation Docker-Images bauen
+6. Mit ```sail up -d``` Docker Container starten
+7. Mit ```sail npm install``` Node-Modules herunterladen
+8. Mit ```sail php artisan migrate --seed``` Datenbank migrieren und seeden
+9. App ist jetzt unter [http://localhost](http://localhost) erreichbar
 
 ## Hinweise und wichtige Befehle
 * Kompilieren vom Javascript mit ```sail npm run prod``` bzw. ```sail npm run watch-poll```
