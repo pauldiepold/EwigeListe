@@ -12,7 +12,8 @@ Benötigt: WSL2 + Docker
 6. Mit ```sail up -d``` Docker Container starten
 7. Mit ```sail npm install``` Node-Modules herunterladen
 8. Mit ```sail php artisan migrate --seed``` Datenbank migrieren und seeden
-9. App ist jetzt unter [http://localhost](http://localhost) erreichbar
+9. Mit ```sail php artisan storage:link``` Verbindung zum Storage herstlelen.
+10. App ist jetzt unter [http://localhost](http://localhost) erreichbar
 
 ## Hinweise und wichtige Befehle
 * Kompilieren vom Javascript mit ```sail npm run prod``` bzw. ```sail npm run watch-poll```

@@ -234,6 +234,7 @@ export default {
             .leaving(player => {
                 this.round.online_players.splice(this.round.online_players.indexOf(player), 1);
                 this.round.ready_players = [];
+                this.addAIsToOnlinePlayers();
                 this.getWatchingPlayers();
             })
             .listen('RoundUpdated', e => {
@@ -321,6 +322,7 @@ export default {
         readyCheck() {
             if ((this.round.auth_id === this.round.first_player.id) && this.allPlayersReady) {
                 this.neuesSpielStarten();
+                // ToDo: KI nicht an erster Stelle --> der erste Spieler, der keine KI ist
             }
         },
         whisperReady() {

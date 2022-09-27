@@ -2,6 +2,8 @@
 
 namespace App\Live;
 
+use Illuminate\Support\Facades\Log;
+
 class AI
 {
     public $ai_path;
@@ -39,13 +41,27 @@ class AI
         $aktuellerStichKarten = $liveGame->aktuellerStich->getAIString();
         $played_cards = $stichKarten->concat($aktuellerStichKarten);
         $computer_player_hand = $spieler->getAIString();
+        $elo = 2;
+        $abfrage = 'False';
 
-        $json = '\'' . json_encode(compact('computer_player_id', 'starting_player_id', 'played_cards', 'computer_player_hand')) . '\'';
+        $json = '\'' . json_encode(compact('abfrage', 'elo', 'computer_player_id', 'starting_player_id', 'played_cards', 'computer_player_hand')) . '\'';
         // '\'{"computer_player_id": 0, "starting_player_id": 0, "played_cards": [], "computer_player_hand": ["cn", "cn", "ca", "sn", "st", "sq", "sj", "sj", "ht", "ht", "ha", "hn"]}\'';
 
         $path = dirname(__FILE__);
-        $bestCard = shell_exec('python3 ' . $path . '/ai/frontend.py -l ' . $path . '/ai/lib_doko.so -j ' . $json);
+
+        if ($this->ai_path != 'nico')
+        {
+            $bestCard = shell_exec('python3 ' . $path . '/ai/frontend.py -l ' . $path . '/ai/lib_doko.so -j ' . $json);
+        } else
+        {
+            $bestCard = shell_exec('python3 ' . $path . '/ai/nico_ki.py -json ' . $json . ' 2>&1');
+            Log::debug($bestCard);
+        }
         $bestCard = json_decode($bestCard)->best_card;
+        Log::debug('Beste Karte: ' . $bestCard);
+        foreach($spieler->hand as $karte) {
+            Log::debug($karte->getAIString());
+        }
         $bestCardID = $spieler->hand->filter(fn($karte) => $karte->matchesAIString($bestCard))->first()->id;
         $bestCard = $liveGame->getKarteVonSpieler($bestCardID, $spieler->id);
 

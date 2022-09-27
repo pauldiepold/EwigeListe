@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function ()
         Route::get('/test', 'TestController@test');
         Route::get('/testClient', 'TestController@client');
         Route::get('/report', 'ReportController@report');
+        Route::get('/test-ai', 'TestController@testAI');
     });
 });
 

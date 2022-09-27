@@ -39,4 +39,13 @@ class TestController extends Controller
     {
         return view('test.client');
     }
+
+    public function testAI()
+    {
+        $path = dirname(__FILE__) . '/../../Live/ai/nico_ki.py';
+        $json = '{"computer_player_id":1,"starting_player_id":0,"played_cards":["ct"],"computer_player_hand":["sq","hq","dq","da","dt","dk","dn","sa","st","st","ca","ct"]}';
+        $output = shell_exec('python3 ' . $path . ' -json ' . json_encode($json) . ' 2>&1');
+
+        return $output;
+    }
 }
