@@ -145,8 +145,8 @@ class Profile extends Pivot
         {
             return collect($item)->count();
         })->sort();
-        $this->mostGamesDay = Carbon::parse($groupedByDayCounted->last());
-        $this->mostGamesDayDate = Carbon::parse($groupedByDayCounted->keys()->last());
+        $this->mostGamesDay = $groupedByDayCounted->last();
+        $this->mostGamesDayDate = $groupedByDayCounted->keys()->last();
 
         /* Meiste Spiele Monat ************************* */
         $groupedByMonth = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
