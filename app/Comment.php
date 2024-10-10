@@ -10,7 +10,9 @@ class Comment extends Model {
 
     use SoftDeletes, HasFactory;
 
-    protected $dates = ['deleted_at'];
+    protected $casts = [
+        'deleted_at' => 'datetime:Y-m-d',
+    ];
 
     protected $fillable = ['created_by', 'parent_id', 'body'];
 

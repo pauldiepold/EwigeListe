@@ -64,10 +64,6 @@ class Group extends Model
         }
     }
 
-    protected $dates = [
-
-    ];
-
     protected $casts = [
         'records' => 'collection',
         'stats' => 'collection',

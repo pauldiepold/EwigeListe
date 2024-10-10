@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 
 class UserAvatarController extends Controller
 {
@@ -23,9 +23,9 @@ class UserAvatarController extends Controller
         $path = public_path('storage/avatars/') . $filename;
         $path_full = public_path('storage/avatars/') . $filename_full;
 
-        Image::make($request->get('avatar'))->save($path_full);
+        Image::read($request->get('avatar'))->save($path_full);
 
-        Image::make($request->get('avatar'))->resize(200, null, function ($constraint)
+        Image::read($request->get('avatar'))->resize(200, null, function ($constraint)
         {
             $constraint->aspectRatio();
         })->save($path);
