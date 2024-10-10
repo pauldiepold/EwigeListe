@@ -45,17 +45,6 @@ class Profile extends Pivot
         }
     }
 
-    protected $dates = [
-        'mostGamesDayDate',
-        'mostGamesMonthDate',
-        'highestPointsDate',
-        'lowestPointsDate',
-        'winStreakStart',
-        'winStreakEnd',
-        'loseStreakStart',
-        'loseStreakEnd',
-    ];
-
     protected $casts = [
         'pointsPerGame' => 'decimal:2',
         'pointsPerWin' => 'decimal:2',
@@ -63,7 +52,15 @@ class Profile extends Pivot
         'gamesPerDay' => 'decimal:2',
         'winrate' => 'decimal:1',
         'pointsPerSolo' => 'decimal:2',
-        'soloWinrate' => 'decimal:1'
+        'soloWinrate' => 'decimal:1',
+        'mostGamesDayDate' => 'datetime:Y-m-d',
+        'mostGamesMonthDate' => 'datetime:Y-m-d',
+        'highestPointsDate' => 'datetime:Y-m-d',
+        'lowestPointsDate' => 'datetime:Y-m-d',
+        'winStreakStart' => 'datetime:Y-m-d',
+        'winStreakEnd' => 'datetime:Y-m-d',
+        'loseStreakStart' => 'datetime:Y-m-d',
+        'loseStreakEnd' => 'datetime:Y-m-d',
     ];
 
     public function player()
@@ -148,8 +145,8 @@ class Profile extends Pivot
         {
             return collect($item)->count();
         })->sort();
-        $this->mostGamesDay = $groupedByDayCounted->last();
-        $this->mostGamesDayDate = $groupedByDayCounted->keys()->last();
+        $this->mostGamesDay = Carbon::parse($groupedByDayCounted->last());
+        $this->mostGamesDayDate = Carbon::parse($groupedByDayCounted->keys()->last());
 
         /* Meiste Spiele Monat ************************* */
         $groupedByMonth = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
