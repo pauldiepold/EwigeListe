@@ -154,51 +154,36 @@ class ChartController extends Controller
         }
         
         // MySQL-kompatible Abfrage für Spiele pro Zeitraum
-        if ($bucketSize === 'month') {
-            $games = Game::select([
-                DB::raw("DATE_FORMAT(created_at, '%Y-%m-01') as date_bucket"),
-                DB::raw('count(*) as counter')
-            ])
-                ->whereHas('round.groups', function (Builder $query) use ($group) {
-                    $query->where('groups.id', '=', $group->id);
-                })
-                ->groupBy('date_bucket')
-                ->orderBy('date_bucket')
-                ->get();
-        } elseif ($bucketSize === 'week') {
-            $games = Game::select([
-                DB::raw("DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY)) as date_bucket"),
-                DB::raw('count(*) as counter')
-            ])
-                ->whereHas('round.groups', function (Builder $query) use ($group) {
-                    $query->where('groups.id', '=', $group->id);
-                })
-                ->groupBy('date_bucket')
-                ->orderBy('date_bucket')
-                ->get();
-        } else {
-            $games = Game::select([
-                DB::raw('DATE(created_at) as date_bucket'),
-                DB::raw('count(*) as counter')
-            ])
-                ->whereHas('round.groups', function (Builder $query) use ($group) {
-                    $query->where('groups.id', '=', $group->id);
-                })
-                ->groupBy('date_bucket')
-                ->orderBy('date_bucket')
-                ->get();
-        }
+        $dateFormat = match($bucketSize) {
+            'month' => "DATE_FORMAT(created_at, '%Y-%m-01')",
+            'week' => "DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY))",
+            'day' => "DATE(created_at)",
+        };
+        
+        $games = Game::select([
+            DB::raw("$dateFormat as date_bucket"),
+            DB::raw('count(*) as counter')
+        ])
+            ->whereHas('round.groups', function (Builder $query) use ($group) {
+                $query->where('groups.id', '=', $group->id);
+            })
+            ->groupBy('date_bucket')
+            ->orderBy('date_bucket')
+            ->get();
 
         // Vollständige Zeitreihe generieren
+        $firstDate = Carbon::parse($firstGame->created_at);
+        $lastDate = Carbon::parse($lastGame->created_at);
+        
         if ($bucketSize === 'month') {
-            $startDate = Carbon::parse($firstGame->created_at)->startOfMonth();
-            $endDate = Carbon::parse($lastGame->created_at)->endOfMonth();
+            $startDate = $firstDate->startOfMonth();
+            $endDate = $lastDate->endOfMonth();
         } elseif ($bucketSize === 'week') {
-            $startDate = Carbon::parse($firstGame->created_at)->startOfWeek();
-            $endDate = Carbon::parse($lastGame->created_at)->endOfWeek();
+            $startDate = $firstDate->startOfWeek();
+            $endDate = $lastDate->endOfWeek();
         } else {
-            $startDate = Carbon::parse($firstGame->created_at)->startOfDay();
-            $endDate = Carbon::parse($lastGame->created_at)->endOfDay();
+            $startDate = $firstDate->startOfDay();
+            $endDate = $lastDate->endOfDay();
         }
 
         $allDates = collect();
