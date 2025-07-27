@@ -128,6 +128,12 @@ Route::get('auth/redirect/{provider}', 'Auth\SocialiteController@redirect')->nam
 Route::get('callback/{provider}', 'Auth\SocialiteController@callback');
 Route::get('login/social/{socialiteUser}', 'Auth\SocialiteController@showView')->name('auth.registerOrAttach');
 
+/* *********** Quick Register ************** */
+Route::middleware('auth')->group(function () {
+    Route::get('/register/quick', 'Auth\QuickRegisterController@show')->name('register.quick');
+    Route::post('/register/quick', 'Auth\QuickRegisterController@store')->name('register.quick.store');
+});
+
 
 
 

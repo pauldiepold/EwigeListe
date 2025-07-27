@@ -63,6 +63,8 @@ class RegisterController extends Controller {
             'password.required' => 'Es muss ein Passwort angegeben werden!',
             'password.min' => 'Das Passwort muss mindestens 6 Zeichen haben!',
             'password.confirmed' => 'Die Passwörter stimmen nicht überein!',
+            'g-recaptcha-response.required' => 'Bitte bestätige, dass du kein Roboter bist.',
+            'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder kontaktiere den Administrator.',
         ];
 
         return Validator::make($data, [
@@ -70,7 +72,8 @@ class RegisterController extends Controller {
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required_without:socialiteUserId|string|min:6|confirmed',
-            'socialiteUserId' => 'exists:socialite_users,id'
+            'socialiteUserId' => 'exists:socialite_users,id',
+            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha'
         ], $messages);
     }
 

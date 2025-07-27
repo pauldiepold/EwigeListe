@@ -27,6 +27,13 @@
             </div>
         </div>
 
+        <div class="tw-text-center tw-mt-3">
+            <a href="/register/quick" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-user-plus tw-mr-1"></i>
+                Neuen Spieler registrieren
+            </a>
+        </div>
+
 
         <h5 class="mt-4" v-if="players.length !== 0">
             {{ players.length }} Spieler:<br>
