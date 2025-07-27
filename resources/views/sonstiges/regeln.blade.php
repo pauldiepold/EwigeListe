@@ -10,10 +10,10 @@
             <div class="text-left" id="regeln">
                 <h3>Spielfindung</h3>
                 <p>
-                    Vor dem Spiel und vor Abhandlung der Vorbehalte müssen diese angekündigt werden. Sollte ein Spieler
+                    Vor dem Spiel und vor Abhandlung der Vorbehalte müssen diese angekündigt werden. Sollte eine Person
                     einen Vorbehalt haben, hat er die Verantwortung diesen rechtzeitig zu melden. Dabei ist die
                     Reihenfolge
-                    der Spieler irrelevant. Es ist sowohl möglich, einen Vorbehalt nicht anzukündigen (wenn klar ist,
+                    der Personen irrelevant. Es ist sowohl möglich, einen Vorbehalt nicht anzukündigen (wenn klar ist,
                     dass
                     dieser nicht gespielt wird, weil z.B. mindestens zwei Personen einen Vorbehalt haben oder man selber
                     eine
@@ -21,7 +21,7 @@
                     haben.
                 </p>
                 <p>
-                    Anschließend werden folgende Vorbehalte jeweils in Sitzreihenfolge der Spieler abgefragt:
+                    Anschließend werden folgende Vorbehalte jeweils in Sitzreihenfolge der Personen abgefragt:
                 </p>
                 <ul>
                     <li>Soli (vom Geber im Uhrzeigersinn)</li>
@@ -32,12 +32,12 @@
                             <li>Kein Trumpf höher als das Karo-Ass</li>
                         </ul>
                     </li>
-                    <li>Armut: Maximal 3 Trumpf, drei Karten (alle Trumpfkarten) werden abgegeben, Mitspieler dürfen
-                        über Mitnahme im Uhrzeigersinn entscheiden (Armut + Mitspieler sind Re-Partei), es kann dabei
+                    <li>Armut: Maximal 3 Trumpf, drei Karten (alle Trumpfkarten) werden abgegeben, Mitspieler:innen dürfen
+                        über Mitnahme im Uhrzeigersinn entscheiden (Armut + Mitspieler:innen sind Re-Partei), es kann dabei
                         ein Schweinchen entstehen
                     </li>
                     <li>Hochzeit: Beide Kreuzdamen auf einer Hand, erster fremder Stich innerhalb der ersten drei Stiche
-                        entscheidet Mitspieler (Hochzeit + Mitspieler sind Re-Partei)
+                        entscheidet Mitspieler:innen (Hochzeit + Mitspieler:innen sind Re-Partei)
                     </li>
                 </ul>
                 <h3>Soli</h3>
@@ -58,17 +58,17 @@
                     <li>Schwarz mit min. 7 Karten</li>
                 </ul>
                 <p>
-                    Ansagen dürfen nur vor Beginn des Spiels getätigt werden, oder aber wenn der Spieler selbst am Zug
+                    Ansagen dürfen nur vor Beginn des Spiels getätigt werden, oder aber wenn die Person selbst am Zug
                     ist.
-                    Die Ansage muss getätigt werden, bevor der Spieler seine eigene Karte legt. Ist die entsprechende
+                    Die Ansage muss getätigt werden, bevor die Person ihre eigene Karte legt. Ist die entsprechende
                     Karte
-                    bereits gelegt, ist eine Ansage ungültig, unabhängig davon, ob der dahinter sitzende Spieler bereits
+                    bereits gelegt, ist eine Ansage ungültig, unabhängig davon, ob die dahinter sitzende Person bereits
                     gespielt hat oder nicht.
                 </p>
                 <p>
                     Ansagen sind außerdem nur möglich, wenn alle niedrigeren Ansagen bereits getätigt wurden. Bei
                     Hochzeiten
-                    wird ein Kontra zu einem Re, wenn der betreffende Spieler mit der Hochzeit spielt.
+                    wird ein Kontra zu einem Re, wenn die betreffende Person mit der Hochzeit spielt.
                 </p>
                 <p>
                     Sollte im dritten Stich, nachdem eine der beiden Partien sowohl Re/Kontra als auch "keine 90"

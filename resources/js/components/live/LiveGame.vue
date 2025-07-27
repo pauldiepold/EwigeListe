@@ -90,7 +90,7 @@
         </div>
         <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay lg:tw-px-4 lg:tw-py-3 tw-p-2 tw-pt-1">
             <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
-                Bitte warte, bis alle Spieler ihren Vorbehalt bestimmt haben.
+                Bitte warte, bis alle Personen ihren Vorbehalt bestimmt haben.
             </div>
 
             <div v-if="istPhase(2) && ich.vorbehalt == null"

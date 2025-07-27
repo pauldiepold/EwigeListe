@@ -49,7 +49,7 @@
                             <!-- Spieler Online? -->
                             <div v-if="!allPlayersOnline && (!mobile || (landscape && fullscreen))"
                                  class="center-absolute live-overlay tw-p-4">
-                                <p>Bitte warte, bis alle Spieler online sind:</p>
+                                <p>Bitte warte, bis alle Personen online sind:</p>
                                 <div class="tw-grid tw-grid-cols-2 tw-gap-2">
                                     <div v-for="player in round.active_players">
                                         <img :src="player.avatar_path"
@@ -136,10 +136,10 @@
                                     </div>
                                     <div v-if="aktiv && !allPlayersReady" class="tw-mb-2">
                                         <p v-if="round.games.length === 0">
-                                            Das erste Spiel startet, sobald alle Spieler bereit sind:
+                                            Das erste Spiel startet, sobald alle Personen bereit sind:
                                         </p>
                                         <p v-else>
-                                            Das nächste Spiel startet, sobald alle Spieler bereit sind:
+                                            Das nächste Spiel startet, sobald alle Personen bereit sind:
                                         </p>
                                     </div>
                                     <div v-if="aktiv && !allPlayersReady"
