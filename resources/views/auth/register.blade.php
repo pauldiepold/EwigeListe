@@ -112,6 +112,19 @@
                         </div>
                     </div>
 
+                    <div class="form-group row">
+                        <div class="col-sm-6 offset-sm-5">                            
+                            {!! NoCaptcha::renderJs('de') !!}
+                            {!! NoCaptcha::display() !!}
+                            
+                            @if ($errors->has('g-recaptcha-response'))
+                                <span class="invalid-feedback d-block" role="alert">
+                                    <strong>{{ $errors->first('g-recaptcha-response') }}</strong>
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="form-group row mb-0">
                         <div class="col-sm-6 offset-sm-5">
                             <button type="submit" class="btn btn-primary mt-2">
