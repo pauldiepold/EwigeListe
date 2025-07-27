@@ -21,7 +21,7 @@
                         </div>
                     @endif
                     <div class="tw-mx-2">
-                            Spieler: {{ $group->players_count }}
+                            Personen: {{ $group->players_count }}
                     </div>
                     <div class="tw-mx-2">
                             Runden: {{ $group->rounds_count }}

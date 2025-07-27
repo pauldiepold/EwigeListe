@@ -7,7 +7,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title mx-auto" id="createModalLabel">Welche Spieler haben gewonnen?</h5>
+                <h5 class="modal-title mx-auto" id="createModalLabel">Welche Personen haben gewonnen?</h5>
             </div>
             <div class="modal-body">
 

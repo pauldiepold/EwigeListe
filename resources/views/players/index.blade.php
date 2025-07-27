@@ -32,7 +32,7 @@
                 @endforeach
             </table>
             <p class="mt-4">
-                Anzahl registrierter Spieler: {{ $players->count() }}
+                Anzahl registrierter User: {{ $players->count() }}
             </p>
         </div>
     </div>

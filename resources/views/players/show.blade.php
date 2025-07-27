@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Spielerprofil')
+@section('title', 'Userprofil')
 
 @section('heading')
     Profil von <br class="d-block d-sm-none">{{ $player->surname }} {{ $player->name }}

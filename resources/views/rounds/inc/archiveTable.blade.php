@@ -15,7 +15,7 @@
                         <th>Spiele</th>
                         <th>Online</th>
                         {{-- <th>Listen</th>--}}
-                        <th>Teilnehmende Spieler</th>
+                        <th>Teilnehmende Personen</th>
                     </tr>
                 </thead>
                 <tbody>

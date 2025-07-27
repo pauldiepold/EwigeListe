@@ -22,7 +22,7 @@
                     <div>{{ player.surname.concat(' ', player.name) }}</div>
                 </div>
                 <div class="tw-px-3 tw-py-2 text-left" v-if="filteredPlayers.length===0">
-                    Spieler wurde nicht gefunden.
+                    Person wurde nicht gefunden.
                 </div>
             </div>
         </div>
@@ -30,13 +30,13 @@
         <div class="tw-text-center tw-mt-3">
             <a href="/register/quick" class="btn btn-outline-secondary btn-sm">
                 <i class="fas fa-user-plus tw-mr-1"></i>
-                Neuen Spieler registrieren
+                Neue Person registrieren
             </a>
         </div>
 
 
         <h5 class="mt-4" v-if="players.length !== 0">
-            {{ players.length }} Spieler:<br>
+            {{ players.length }} {{ players.length === 1 ? 'Person' : 'Personen'}}:<br>
             <span class="tw-text-xs">(Ändern der Reihenfolge durch Ziehen)</span>
         </h5>
 
