@@ -126,23 +126,115 @@ class ChartController extends Controller
 
     public function homeChart(Group $group)
     {
-        $games = Game::select([
-            DB::raw('Date(created_at) as date'),
-            DB::raw('count(*) as counter')
-        ])
-            ->whereHas('round.groups', function (Builder $query) use ($group) {
-                $query->where('groups.id', '=', $group->id);
-            })
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        // Zeitraum ermitteln
+        $firstGame = Game::whereHas('round.groups', function (Builder $query) use ($group) {
+            $query->where('groups.id', '=', $group->id);
+        })->oldest()->first();
 
-        $gameDates = $games->pluck('date');
-        $counter = 0;
+        $lastGame = Game::whereHas('round.groups', function (Builder $query) use ($group) {
+            $query->where('groups.id', '=', $group->id);
+        })->latest()->first();
+
+        if (!$firstGame || !$lastGame) {
+            return [
+                'gameDates' => [],
+                'gameCounter' => []
+            ];
+        }
+
+        $totalDays = $firstGame->created_at->diffInDays($lastGame->created_at);
+        
+        // Intelligente Bucket-Größe basierend auf Datenmenge
+        if ($totalDays > 2000) {
+            $bucketSize = 'month';
+        } elseif ($totalDays > 500) {
+            $bucketSize = 'week';
+        } else {
+            $bucketSize = 'day';
+        }
+        
+        // MySQL-kompatible Abfrage für Spiele pro Zeitraum
+        if ($bucketSize === 'month') {
+            $games = Game::select([
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m-01') as date_bucket"),
+                DB::raw('count(*) as counter')
+            ])
+                ->whereHas('round.groups', function (Builder $query) use ($group) {
+                    $query->where('groups.id', '=', $group->id);
+                })
+                ->groupBy('date_bucket')
+                ->orderBy('date_bucket')
+                ->get();
+        } elseif ($bucketSize === 'week') {
+            $games = Game::select([
+                DB::raw("DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY)) as date_bucket"),
+                DB::raw('count(*) as counter')
+            ])
+                ->whereHas('round.groups', function (Builder $query) use ($group) {
+                    $query->where('groups.id', '=', $group->id);
+                })
+                ->groupBy('date_bucket')
+                ->orderBy('date_bucket')
+                ->get();
+        } else {
+            $games = Game::select([
+                DB::raw('DATE(created_at) as date_bucket'),
+                DB::raw('count(*) as counter')
+            ])
+                ->whereHas('round.groups', function (Builder $query) use ($group) {
+                    $query->where('groups.id', '=', $group->id);
+                })
+                ->groupBy('date_bucket')
+                ->orderBy('date_bucket')
+                ->get();
+        }
+
+        // Vollständige Zeitreihe generieren
+        if ($bucketSize === 'month') {
+            $startDate = Carbon::parse($firstGame->created_at)->startOfMonth();
+            $endDate = Carbon::parse($lastGame->created_at)->endOfMonth();
+        } elseif ($bucketSize === 'week') {
+            $startDate = Carbon::parse($firstGame->created_at)->startOfWeek();
+            $endDate = Carbon::parse($lastGame->created_at)->endOfWeek();
+        } else {
+            $startDate = Carbon::parse($firstGame->created_at)->startOfDay();
+            $endDate = Carbon::parse($lastGame->created_at)->endOfDay();
+        }
+
+        $allDates = collect();
+        $currentDate = $startDate->copy();
+        
+        while ($currentDate <= $endDate) {
+            $allDates->push($currentDate->copy());
+            if ($bucketSize === 'month') {
+                $currentDate->addMonth();
+            } elseif ($bucketSize === 'week') {
+                $currentDate->addWeek();
+            } else {
+                $currentDate->addDay();
+            }
+        }
+
+        // Spiele-Daten in Map für schnellen Zugriff
+        $gamesMap = $games->keyBy('date_bucket');
+        
+        // Vollständige Zeitreihe mit kumulativen Werten
+        $gameDates = collect();
         $gameCounter = collect();
-        foreach ($games as $game)
-        {
-            $gameCounter->push($counter += $game->counter);
+        $cumulative = 0;
+        
+        foreach ($allDates as $date) {
+            if ($bucketSize === 'month') {
+                $dateKey = $date->format('Y-m-01');
+            } else {
+                $dateKey = $date->format('Y-m-d');
+            }
+            
+            $gamesCount = $gamesMap->get($dateKey, (object)['counter' => 0])->counter;
+            $cumulative += $gamesCount;
+            
+            $gameDates->push($date->isoFormat('D. MMM YYYY'));
+            $gameCounter->push($cumulative);
         }
 
         $data = collect([
