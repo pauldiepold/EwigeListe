@@ -88,6 +88,20 @@
                                 <td class="font-weight-bold pb-4">{{ $profile->winrate }}%</td>
                             </tr>
                             <tr>
+                                <td {!! $profile->normalGames == 0 ? 'class="pb-4"' : '' !!}>Normalspiele:</td>
+                                <td class="font-weight-bold">{{ $profile->normalGames }}</td>
+                            </tr>
+                            @if($profile->normalGames > 0)
+                                <tr>
+                                    <td>Gewonnen / Verloren:</td>
+                                    <td class="font-weight-bold">{{ $profile->normalGamesWon }} / {{ $profile->normalGamesLost }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="pb-4">Normalspiel-Gewinnrate:</td>
+                                    <td class="font-weight-bold pb-4">{{ $profile->normalGameWinrate }}%</td>
+                                </tr>
+                            @endif
+                            <tr>
                                 <td {!! $profile->soli == 0 ? 'class="pb-4"' : '' !!}>Soli:</td>
                                 <td class="font-weight-bold">{{ $profile->soli }}</td>
                             </tr>
@@ -116,7 +130,7 @@
 
                             <tr>
                                 <td class="pb-2">Meiste Spiele an einem Tag:
-                                    <span class="small-text">
+                                    <span class="tw-text-xs">
                                         <br>(am {{ date('j.n.Y', strtotime($profile->mostGamesDayDate)) }})
                                     </span>
                                 </td>
@@ -125,7 +139,7 @@
 
                             <tr>
                                 <td class="pb-4">Meiste Spiele in einem Monat:
-                                    <span class="small-text">
+                                    <span class="tw-text-xs">
                                         <br>(im {{ $profile->mostGamesMonthDate->isoFormat('MMMM YYYY') }})
                                     </span>
                                 </td>
@@ -135,7 +149,7 @@
                             <tr>
                                 <td class="pb-2">Höchste Punktzahl:
                                     @if($profile->highestPoints != 0)
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->highestPointsDate)) }})
                                         </span>
                                     @endif
@@ -146,7 +160,7 @@
                             <tr>
                                 <td class="pb-4">Niedrigste Punktzahl:
                                     @if($profile->lowestPoints != 0)
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->lowestPointsDate)) }})
                                         </span>
                                     @endif
@@ -157,12 +171,12 @@
                             <tr>
                                 <td class="pb-2">Längste Sieges-Strähne:
                                     @if( strcmp(date('j.n.Y', strtotime($profile->winStreakStart)), date('j.n.Y', strtotime($profile->winStreakEnd))) )
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>({{ date('j.n', strtotime($profile->winStreakStart)) }}
                                             - {{ date('j.n.Y', strtotime($profile->winStreakEnd)) }})
                                         </span>
                                     @else
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->winStreakStart)) }})
                                         </span>
                                     @endif
@@ -171,18 +185,31 @@
                             </tr>
 
                             <tr>
-                                <td class="">Längste Pech-Strähne:
+                                <td class="pb-4">Längste Pech-Strähne:
                                     @if( strcmp(date('j.n.Y', strtotime($profile->loseStreakStart)), date('j.n.Y', strtotime($profile->loseStreakEnd))) )
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>({{ date('j.n', strtotime($profile->loseStreakStart)) }}
                                             - {{ date('j.n.Y', strtotime($profile->loseStreakEnd)) }})
                                         </span>
                                     @else
-                                        <span class="small-text">
+                                        <span class="tw-text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->loseStreakStart)) }})
                                         </span>
                                 @endif
-                                <td class="font-weight-bold">{{ $profile->loseStreak }}</td>
+                                <td class="font-weight-bold pb-4">{{ $profile->loseStreak }}</td>
+                            </tr>
+                            
+                            <tr>
+                                <td class="pb-2">Eingetragene Spiele:</td>
+                                <td class="font-weight-bold">{{ $profile->gamesCreated }}</td>
+                            </tr>
+                            <tr>
+                                <td class="">Anteil eingetragener Spiele:
+                                    <span class="tw-text-xs">
+                                        <br>(eingetragene Spiele inklusive Mehrspielerrunden pro Anzahl eigener Spiele)
+                                    </span>
+                                </td>
+                                <td class="font-weight-bold">{{ $profile->gamesCreateRate }}%</td>
                             </tr>
                         </table>
                         @if($profile->games > 150)
