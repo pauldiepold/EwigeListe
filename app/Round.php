@@ -162,6 +162,86 @@ class Round extends Model
         return $players;
     }
 
+    /**
+     * Rotiert die aktiven Spieler so, dass der eingeloggte User an erster Stelle steht
+     * oder (wenn User nicht aktiv ist) die Person links von ihm an erster Stelle steht
+     * Diese Methode ist speziell für das Frontend gedacht
+     */
+    public function getActivePlayersRotatedForUser()
+    {
+        $activePlayers = $this->getActivePlayers(false);
+        
+        // Sonderfall: Keine aktiven Spieler
+        if ($activePlayers->isEmpty()) {
+            return $activePlayers;
+        }
+        
+        $userId = Auth::user()->player->id;
+        
+        // Prüfe ob User aktiv ist
+        $userIndex = $activePlayers->search(function($player) use ($userId) {
+            return $player->id === $userId;
+        });
+        
+        if ($userIndex !== false) {
+            // User ist aktiv: Rotiere so dass er an erster Stelle steht
+            return $this->rotatePlayersFromIndex($activePlayers, $userIndex);
+        }
+        
+        // User ist nicht aktiv: Finde die Person links von ihm
+        $referencePlayer = $this->findPlayerLeftOfUser($userId);
+        
+        if ($referencePlayer) {
+            $referenceIndex = $activePlayers->search(function($player) use ($referencePlayer) {
+                return $player->id === $referencePlayer->id;
+            });
+            
+            if ($referenceIndex !== false) {
+                return $this->rotatePlayersFromIndex($activePlayers, $referenceIndex);
+            }
+        }
+        
+        // Fallback: normale Reihenfolge
+        return $activePlayers->sortBy('pivot.index')->values();
+    }
+    
+    /**
+     * Rotiert eine Collection von Spielern ausgehend von einem bestimmten Index
+     */
+    private function rotatePlayersFromIndex($players, $startIndex)
+    {
+        $rotatedPlayers = collect();
+        $count = $players->count();
+        
+        for ($i = 0; $i < $count; $i++) {
+            $index = ($startIndex + $i) % $count;
+            $rotatedPlayers->push($players[$index]);
+        }
+        
+        return $rotatedPlayers;
+    }
+    
+    /**
+     * Findet die Person links vom User (im Uhrzeigersinn)
+     */
+    private function findPlayerLeftOfUser($userId)
+    {
+        $allPlayers = $this->players->sortBy('pivot.index');
+        $userPlayer = $allPlayers->where('id', $userId)->first();
+        
+        if (!$userPlayer) {
+            return null;
+        }
+        
+        $userPivotIndex = $userPlayer->pivot->index;
+        $countPlayers = $allPlayers->count();
+        
+        // Person links von mir (im Uhrzeigersinn)
+        $leftPlayerIndex = ($userPivotIndex - 1 + $countPlayers) % $countPlayers;
+        
+        return $allPlayers->where('pivot.index', $leftPlayerIndex)->first();
+    }
+
     public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = null)
     {
         $players = $this->getActivePlayers();
