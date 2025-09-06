@@ -20,8 +20,8 @@ class Round extends JsonResource
     {
         return [
             'id' => $this->id,
-            'active_players' => PlayerFullResource::collection($this->active_players),
-            'active_players_short' => PlayerResource::collection($this->active_players),
+            'active_players' => PlayerFullResource::collection($this->getActivePlayersRotatedForUser()),
+            'active_players_short' => PlayerResource::collection($this->getActivePlayersRotatedForUser()),
             'inactive_players' => PlayerFullResource::collection($this->inactive_players),
             'players_string' => $this->players_string,
             'path' => $this->path,
@@ -29,7 +29,7 @@ class Round extends JsonResource
             'created_at_print' => printDate($this->created_at),
             'created_at' => $this->created_at,
             'created_by' => $this->createdBy,
-            'first_player' => new PlayerResource($this->active_players->first()),
+            'first_player' => new PlayerResource($this->getActivePlayersRotatedForUser()->first()),
 
             'online_players' => [],
             'ready_players' => [],

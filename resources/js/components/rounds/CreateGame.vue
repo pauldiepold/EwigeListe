@@ -16,47 +16,65 @@
 
                         <form @submit.prevent="submit">
 
-                            <div class="tw-flex tw-justify-between tw-items-center tw-flex-col">
-                                <div :class="{'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[2].id),
-                                              'tw-border-gray-500':  !winners.includes(round.active_players[2].id)}"
+                            <!-- Einheitliches Grid-Layout für alle Spieler -->
+                            <div class="tw-grid tw-grid-cols-4 tw-gap-4 tw-max-w-2xl tw-mx-auto">
+                                <!-- Spieler 0 -->
+                                <div :class="[
+                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[0].id),
+                                     'tw-border-gray-500': !winners.includes(round.active_players[0].id)},
+                                    isActivePlayer ? 'tw-order-4 tw-col-start-2' : 'tw-order-3 tw-col-start-1'
+                                ]"
+                                     @click="toggle(round.active_players[0].id)"
+                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                    <img :src="round.active_players[0].avatar_path"
+                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold">
+                                        {{ round.active_players[0].surname }} {{ round.active_players[0].name }}
+                                    </div>
+                                </div>
+
+                                <!-- Spieler 1 -->
+                                <div :class="[
+                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[1].id),
+                                     'tw-border-gray-500': !winners.includes(round.active_players[1].id)},
+                                    isActivePlayer ? 'tw-order-2 tw-col-start-1' : 'tw-order-1 tw-col-start-1'
+                                ]"
+                                     @click="toggle(round.active_players[1].id)"
+                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                    <img :src="round.active_players[1].avatar_path"
+                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold">
+                                        {{ round.active_players[1].surname }} {{ round.active_players[1].name }}
+                                    </div>
+                                </div>
+
+                                <!-- Spieler 2 -->
+                                <div :class="[
+                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[2].id),
+                                     'tw-border-gray-500': !winners.includes(round.active_players[2].id)},
+                                    isActivePlayer ? 'tw-order-1 tw-col-start-2' : 'tw-order-2 tw-col-start-3'
+                                ]"
                                      @click="toggle(round.active_players[2].id)"
-                                     class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
                                     <img :src="round.active_players[2].avatar_path"
-                                         class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold tw-ml-1">
+                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold">
                                         {{ round.active_players[2].surname }} {{ round.active_players[2].name }}
                                     </div>
                                 </div>
-                                <div class="tw-flex tw-justify-between tw-my-8 tw-w-full">
-                                    <div :class="{'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[1].id),
-                                              'tw-border-gray-500':  !winners.includes(round.active_players[1].id)}"
-                                         @click="toggle(round.active_players[1].id)"
-                                         class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
-                                        <img :src="round.active_players[1].avatar_path"
-                                             class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                        <div class="tw-font-bold tw-ml-1">
-                                            {{ round.active_players[1].surname }} {{ round.active_players[1].name }}
-                                        </div>
-                                    </div>
-                                    <div :class="{'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[3].id),
-                                              'tw-border-gray-500':  !winners.includes(round.active_players[3].id)}"
-                                         @click="toggle(round.active_players[3].id)"
-                                         class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
-                                        <img :src="round.active_players[3].avatar_path"
-                                             class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                        <div class="tw-font-bold tw-ml-1">
-                                            {{ round.active_players[3].surname }} {{ round.active_players[3].name }}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div :class="{'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[0].id),
-                                              'tw-border-gray-500':  !winners.includes(round.active_players[0].id)}"
-                                     @click="toggle(round.active_players[0].id)"
-                                     class="tw-flex tw-w-2/5 tw-justify-around tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
-                                    <img :src="round.active_players[0].avatar_path"
-                                         class="tw-mr-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold tw-ml-1">
-                                        {{ round.active_players[0].surname }} {{ round.active_players[0].name }}
+
+                                <!-- Spieler 3 -->
+                                <div :class="[
+                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[3].id),
+                                     'tw-border-gray-500': !winners.includes(round.active_players[3].id)},
+                                    isActivePlayer ? 'tw-order-3 tw-col-start-3' : 'tw-order-4 tw-col-start-3'
+                                ]"
+                                     @click="toggle(round.active_players[3].id)"
+                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                    <img :src="round.active_players[3].avatar_path"
+                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                    <div class="tw-font-bold">
+                                        {{ round.active_players[3].surname }} {{ round.active_players[3].name }}
                                     </div>
                                 </div>
                             </div>
@@ -126,6 +144,9 @@ export default {
         }
     },
     computed: {
+        isActivePlayer() {
+            return this.round.active_players.map(o => o['id']).includes(this.round.auth_id);
+        },
         buttonDisabled() {
             return ((this.winners.length === 0 || this.winners.length === 4) && !this.misplayed
                 || (this.misplayed && this.winners.length !== 3));
