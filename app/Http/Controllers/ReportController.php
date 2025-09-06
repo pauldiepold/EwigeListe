@@ -8,6 +8,7 @@ class ReportController extends Controller {
 
     public function report()
     {
+        return view('report.index');
         // https://matomo.pauldiepold.de/?module=API&method=Live.getLastVisitsDetails&idSite=3&period=day&date=last10&format=JSON&token_auth=w0yt9murl8n1tt2d1y6x3ppat7uk4nz1
         $url = 'https://matomo.pauldiepold.de/?module=API&method=Live.getLastVisitsDetails&idSite=3&period=day&date=last10&format=JSON&token_auth=' . env('MATOMO_TOKEN');
 

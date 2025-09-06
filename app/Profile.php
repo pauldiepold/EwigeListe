@@ -51,8 +51,10 @@ class Profile extends Pivot
         'pointsPerLose' => 'decimal:2',
         'gamesPerDay' => 'decimal:2',
         'winrate' => 'decimal:1',
+        'normalGameWinrate' => 'decimal:1',
         'pointsPerSolo' => 'decimal:2',
         'soloWinrate' => 'decimal:1',
+        'gamesCreateRate' => 'decimal:1',
         'mostGamesDayDate' => 'datetime:Y-m-d',
         'mostGamesMonthDate' => 'datetime:Y-m-d',
         'highestPointsDate' => 'datetime:Y-m-d',
@@ -132,6 +134,35 @@ class Profile extends Pivot
         $this->soloWinrate = $this->soli == 0 ? null : $this->soliWon / $this->soli * 100;
         $this->soloPoints = $soli->sum('points');
         $this->pointsPerSolo = $this->soli == 0 ? null : $this->soloPoints / $this->soli;
+
+        /* Normalspiele ******************************** */
+        $normalGames = clone $games;
+        $normalGames->whereHas('game', function (Builder $query) {
+            $query->where('solo', false);
+        });
+        $normalGamesWon = clone $normalGames;
+        $normalGamesWon->where('won', 1);
+        $normalGamesLost = clone $normalGames;
+        $normalGamesLost->where('won', '0');
+        
+        $this->normalGames = $normalGames->count();
+        $this->normalGamesWon = $normalGamesWon->count();
+        $this->normalGamesLost = $normalGamesLost->count();
+        $this->normalGameWinrate = $this->normalGames == 0 ? null : $this->normalGamesWon / $this->normalGames * 100;
+
+        /* Erstellte Spiele *************************** */
+        $gamesCreated = Game::whereHas('round.groups', function (Builder $query) use ($groupID) {
+            $query->where('groups.id', '=', $groupID);
+        })->where('created_by', $playerID)->count();
+        $this->gamesCreated = $gamesCreated;
+        
+        // Für gamesCreateRate nur Spiele ab ID 7343 berücksichtigen (created_by wurde erst ab da gespeichert)
+        $gamesFromId7343 = clone $games;
+        $gamesFromId7343->whereHas('game', function (Builder $query) {
+            $query->where('id', '>=', 7343);
+        });
+        $gamesCountFromId7343 = $gamesFromId7343->count();
+        $this->gamesCreateRate = $gamesCountFromId7343 == 0 ? null : $gamesCreated / $gamesCountFromId7343 * 100;
 
         /* Meiste Spiele Tag ************************* */
         $groupedByDay = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)

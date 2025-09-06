@@ -23,7 +23,7 @@
                     <th>bis</th>
                     <th>am</th>
                 </tr>
-
+                @if(isset($reportData))
                 @foreach($reportData as $visit)
                     @if(strcmp($visit->get(0), 'Anonym'))
                         <tr>
@@ -56,6 +56,7 @@
                         </tr>
                     @endif
                 @endforeach
+                @endif
             </table>
         </div>
     </div>
