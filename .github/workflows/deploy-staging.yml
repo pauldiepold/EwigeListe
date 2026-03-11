@@ -1,0 +1,73 @@
+name: Deploy Staging
+
+on:
+  workflow_dispatch:
+    inputs:
+      sync_db:
+        description: 'DB von Prod-Dump einspielen?'
+        required: true
+        default: 'yes'
+        type: choice
+        options:
+          - 'yes'
+          - 'no'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            cd ${{ secrets.STAGING_PATH }}
+
+            echo "=== Git: Branch auschecken ==="
+            eval $(ssh-agent -s)
+            ssh-add ${{ secrets.BASE_PATH }}/.ssh/id_ed25519
+            git fetch origin
+            git checkout ${{ github.ref_name }}
+            git reset --hard origin/${{ github.ref_name }}
+
+            echo "=== Maintenance ON ==="
+            php artisan down
+
+            echo "=== Composer Install ==="
+            composer install --optimize-autoloader
+
+            echo "=== NPM Build ==="
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            npm ci
+            npm run build
+
+            if [ "${{ github.event.inputs.sync_db }}" = "yes" ]; then
+              echo "=== DB Sync: neuesten Dump suchen ==="
+              LATEST_DUMP=$(ls -t ${{ secrets.BACKUP_DUMP_PATH }}/*.sql.gz | head -1)
+              echo "Verwende Dump: $LATEST_DUMP"
+
+              echo "=== DB einspielen ==="
+              gunzip < "$LATEST_DUMP" | mysql \
+                -u ${{ secrets.STAGING_DB_USER }} \
+                -p${{ secrets.STAGING_DB_PASSWORD }} \
+                ${{ secrets.STAGING_DB_NAME }}
+            else
+              echo "=== DB Sync übersprungen ==="
+            fi
+
+            echo "=== Migrations ==="
+            php artisan migrate --force
+
+            echo "=== Cache ==="
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            echo "=== Maintenance OFF ==="
+            php artisan up
