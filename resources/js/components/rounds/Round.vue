@@ -1,4 +1,4 @@
-﻿<template>
+<template>
     <div>
         <tabs @clicked="fullscreenOnIfMobile" ref="tabs">
             <tab name="Runde" icon="fa-play-circle" :selected="true">
@@ -91,22 +91,25 @@
                                         <div>Kontra: {{ round.last_live_game.kontraAugen }}</div>
                                     </div>
                                     <table class="w-full">
-                                        <tr v-for="(item, index) in round.last_live_game.wertung"
-                                            class="border-0"
-                                            :class="{'border-b-2': index === round.last_live_game.wertung.length - 1}">
-                                            <td class="text-left">{{ item[0] }}</td>
-                                            <td>{{ item[1] }}</td>
-                                        </tr>
-                                        <tr class="border-0">
-                                            <td></td>
-                                            <td>
-                                                {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
-                                                    round.last_live_game.wertungsPunkte < 0 ? '-' : ''
-                                                }}{{
-                                                    round.last_live_game.wertungsPunkte
-                                                }}
-                                            </td>
-                                        </tr>
+                                        <tbody>
+                                            <tr v-for="(item, index) in round.last_live_game.wertung"
+                                                class="border-0"
+                                                :key="index"
+                                                :class="{'border-b-2': index === round.last_live_game.wertung.length - 1}">
+                                                <td class="text-left">{{ item[0] }}</td>
+                                                <td>{{ item[1] }}</td>
+                                            </tr>
+                                            <tr class="border-0">
+                                                <td></td>
+                                                <td>
+                                                    {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
+                                                        round.last_live_game.wertungsPunkte < 0 ? '-' : ''
+                                                    }}{{
+                                                        round.last_live_game.wertungsPunkte
+                                                    }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                     <div class="flex justify-around my-2">
                                         <template v-for="player in round.players">
