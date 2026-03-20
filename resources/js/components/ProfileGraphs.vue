@@ -13,6 +13,7 @@
 </template>
 
 <script>
+    import Chart from 'chart.js/auto';
 
     export default {
         props: ['profile_id'],
@@ -20,8 +21,8 @@
             axios.get('/charts/profile/' + this.profile_id)
                 .then(function (response) {
                     let data = response.data;
-                    Chart.defaults.global.defaultFontFamily = '"Open Sans"';
-                    Chart.defaults.global.animation.duration = 0;
+                    Chart.defaults.font.family = '"Open Sans"';
+                    Chart.defaults.animation.duration = 0;
                     //console.log(data);
 
                     var chartdataPoints = {
@@ -41,19 +42,23 @@
                         type: 'line',
                         data: chartdataPoints,
                         options: {
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false
-                            },
                             maintainAspectRatio: false,
                             scales: {
-                                xAxes: [{
-                                    distribution: 'series',
+                                x: {
                                     ticks: {
                                         maxTicksLimit: 10,
                                     },
-                                    gridLines: {}
-                                }],
+                                    grid: {}
+                                },
+                            },
+                            plugins: {
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                legend: {
+                                    display: false
+                                }
                             },
                             elements: {
                                 point: {
@@ -62,12 +67,9 @@
                                 },
                                 line: {
                                     fill: true,
-                                    lineTension: 0.2,
+                                    tension: 0.2,
                                     borderWidth: 1.1
                                 }
-                            },
-                            legend: {
-                                display: false
                             },
                         }
                     });
@@ -89,19 +91,23 @@
                         type: 'line',
                         data: chartdataGames,
                         options: {
-                            tooltips: {
-                                mode: 'index',
-                                intersect: false
-                            },
                             maintainAspectRatio: false,
                             scales: {
-                                xAxes: [{
-                                    distribution: 'series',
+                                x: {
                                     ticks: {
                                         maxTicksLimit: 10,
                                     },
-                                    gridLines: {}
-                                }],
+                                    grid: {}
+                                },
+                            },
+                            plugins: {
+                                tooltip: {
+                                    mode: 'index',
+                                    intersect: false
+                                },
+                                legend: {
+                                    display: false
+                                }
                             },
                             elements: {
                                 point: {
@@ -110,12 +116,9 @@
                                 },
                                 line: {
                                     fill: true,
-                                    lineTension: 0.2,
+                                    tension: 0.2,
                                     borderWidth: 1.1
                                 }
-                            },
-                            legend: {
-                                display: false
                             },
                         }
                     });
