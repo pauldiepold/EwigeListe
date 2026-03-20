@@ -1,13 +1,6 @@
-@push('scripts')
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
-@endpush
-@push('scriptsHead')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
-@endpush
 @if($rounds_count > 0)
-    <div class="tw--mx-3 tw-flex tw-justify-center d-none" id="archiveTable">
-        <div class="tw-max-w-5xl md:tw-max-w-7xl">
+    <div class="-mx-3 flex justify-center d-none" id="archiveTable">
+        <div class="max-w-5xl md:max-w-7xl">
             <table class="table roundsTable">
                 <thead>
                     <tr>
@@ -29,64 +22,54 @@
 
     @push('scripts')
         <script>
-            $(document).ready(function () {
-                $('.roundsTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: '/rounds/ajax/{{ $selectedGroup->id }}/{{ isset($player) ? $player->id : '' }}',
-                    columns: [
-                        {
-                            data: 'date',
-                            name: 'date',
-                            orderSequence: ["desc", "asc"]
-                        },
-                        {
-                            data: 'games_count',
-                            name: 'games_count',
-                            orderSequence: ["desc", "asc"]
-                        },
-                        {
-                            data: 'liveRound',
-                            name: 'liveRound',
-                            orderable: false,
-                        },
-                        /*{
-                            data: 'groups_count',
-                            name: 'groups_count',
-                            orderSequence: ["desc", "asc"]
-                        },*/
-                        {
-                            data: 'players',
-                            name: 'players',
-                            orderable: false,
-                        }
-                    ],
-                    deferRender: true,
-                    stateSave: false,
-                    dom: 't<"my-3 tw-flex tw-justify-center"p><"my-3"l>',
-                    info: false,
-                    searching: false,
-                    paging: {{ $rounds_count > 15 ? "true" : "false" }},
-                    pageLength: 15,
-                    lengthMenu: [[15, 30, -1], [15, 30, "Alle"]],
-                    order: [0, "desc"],
-                    language: {
-                        lengthMenu: "Zeige _MENU_ pro Seite",
-                        paginate: {
-                            next: "&rsaquo;",
-                            previous: "&lsaquo;"
-                        }
-                    },
-                    createdRow: function (row, data, index) {
-                        if (JSON.parse(data['playerIDs']).includes({{ auth()->user()->player->id }}) && {{ isset($player) && ($player->id != auth()->user()->player->id) || !isset($player) ? 'true' : 'false' }}) {
-                            $('td', row).addClass('bg-primary-light');
-                        }
-                    },
-                    drawCallback: function (settings) {
-                        $('.dataTables_paginate > .pagination').addClass('pagination-sm');
-                    }
-                });
-                $('#archiveTable').removeClass("d-none");
+            document.addEventListener('DOMContentLoaded', function () {
+                const table = document.querySelector('.roundsTable');
+                const wrapper = document.getElementById('archiveTable');
+
+                if (!table || !wrapper) {
+                    return;
+                }
+
+                const tbody = table.querySelector('tbody');
+                const ajaxUrl = '/rounds/ajax/{{ $selectedGroup->id }}/{{ isset($player) ? $player->id : '' }}';
+                const currentPlayerId = {{ auth()->user()->player->id }};
+                const shouldHighlightPlayer = {{ isset($player) && ($player->id != auth()->user()->player->id) || !isset($player) ? 'true' : 'false' }};
+
+                fetch(ajaxUrl)
+                    .then((response) => response.json())
+                    .then((payload) => {
+                        const rows = Array.isArray(payload.data) ? payload.data : [];
+
+                        rows.forEach((entry) => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${entry.date ?? ''}</td>
+                                <td>${entry.games_count ?? ''}</td>
+                                <td>${entry.liveRound ?? ''}</td>
+                                <td>${entry.players ?? ''}</td>
+                            `;
+
+                            if (shouldHighlightPlayer) {
+                                let playerIds = [];
+                                try {
+                                    playerIds = JSON.parse(entry.playerIDs || '[]');
+                                } catch (e) {
+                                    playerIds = [];
+                                }
+
+                                if (playerIds.includes(currentPlayerId)) {
+                                    row.querySelectorAll('td').forEach((cell) => cell.classList.add('bg-primary-light'));
+                                }
+                            }
+
+                            tbody.appendChild(row);
+                        });
+
+                        wrapper.classList.remove('d-none');
+                    })
+                    .catch(() => {
+                        wrapper.classList.remove('d-none');
+                    });
             });
         </script>
     @endpush

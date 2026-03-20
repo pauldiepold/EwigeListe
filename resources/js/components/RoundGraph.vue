@@ -1,5 +1,5 @@
 <template>
-    <div class="tw-mx-auto tw-max-w-xl">
+    <div class="mx-auto max-w-xl">
         <canvas id="roundChart" height="450"></canvas>
     </div>
 </template>
@@ -47,7 +47,7 @@
                     }
 
 
-                    let ctx = $('#roundChart');
+                    let ctx = document.getElementById('roundChart');
 
                     let LineGraph = new Chart(ctx, {
                         type: 'line',

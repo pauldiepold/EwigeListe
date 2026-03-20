@@ -1,4 +1,4 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', 'Kontoeinstellungen')
 
@@ -18,9 +18,9 @@
         <tab name="listen" icon="fa-list-alt">
             <template v-slot:default="props">
 
-                <h5 class="tw-mb-4 tw-font-bold">Standard-Listen auswählen</h5>
+                <h5 class="mb-4 font-bold">Standard-Listen auswählen</h5>
 
-                <p class="tw-max-w-xs tw-mx-auto">
+                <p class="max-w-xs mx-auto">
                     Jede deiner Listen kann als Standard Liste ausgewählt werden. Zukünftig wird sie beim Start einer
                     neuen Runde automatisch aktiviert.
                 </p>
@@ -34,13 +34,13 @@
 
         <tab name="name" icon="fa-user" :selected="true">
 
-            <h5 class="tw-mb-6 tw-font-bold">Namen und Profilbild ändern</h5>
+            <h5 class="mb-6 font-bold">Namen und Profilbild ändern</h5>
 
             <avatar-form :user="{{ $player->user }}"></avatar-form>
 
             <hr>
 
-            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('users.updateName', [$player]) }}">
+            <form class="max-w-xs mx-auto" method="POST" action="{{ route('users.updateName', [$player]) }}">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
@@ -71,9 +71,9 @@
 
         <tab name="email" icon="fa-at">
 
-            <h5 class="tw-mb-6 tw-font-bold">E-Mail ändern</h5>
+            <h5 class="mb-6 font-bold">E-Mail ändern</h5>
 
-            <form class="tw-max-w-xs tw-mx-auto" method="POST" action="{{ route('users.updateMail', [$player]) }}">
+            <form class="max-w-xs mx-auto" method="POST" action="{{ route('users.updateMail', [$player]) }}">
                 @csrf
                 @method('PATCH')
                 <div class="form-group">
@@ -93,9 +93,9 @@
 
         <tab name="passwort" icon="fa-key">
 
-            <h5 class="tw-mb-6 tw-font-bold">Passwort ändern</h5>
+            <h5 class="mb-6 font-bold">Passwort ändern</h5>
 
-            <form class="tw-max-w-xs tw-mx-auto" method="POST"
+            <form class="max-w-xs mx-auto" method="POST"
                   action="{{ route('users.updatePassword', [$player]) }}">
                 @csrf
                 @method('PATCH')

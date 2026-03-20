@@ -1,5 +1,5 @@
-<!doctype html>
-<html lang="de" class="tw-h-full">
+﻿<!doctype html>
+<html lang="de" class="h-full">
 <head>
 
     @include('layouts.head')
@@ -13,11 +13,11 @@
 
         @include('layouts.nav')
 
-        <div class="container tw-py-4" id="app">
-            {{--<div id="fullscreen" class="tw-bg-gray-100">--}}
+        <div class="container py-4" id="app">
+            {{--<div id="fullscreen" class="bg-gray-100">--}}
 
                 @if (trim($__env->yieldContent('heading')))
-                    <h6 class="tw-mb-4 text-uppercase font-weight-bold" style="letter-spacing: 5px;">
+                    <h6 class="mb-4 text-uppercase font-weight-bold" style="letter-spacing: 5px;">
                         @yield('heading')
                     </h6>
                 @endif
@@ -31,8 +31,6 @@
     </div>
 
     @stack('scriptsBeforeJS')
-
-    <script src="{{ mix('/js/app.js') }}"></script>
 
     @stack('scripts')
 

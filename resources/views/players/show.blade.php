@@ -1,4 +1,4 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', 'Userprofil')
 
@@ -10,12 +10,12 @@
 
     @if(substr($player->user->avatar_path, -11) != 'default.jpg')
         <img src="{{ $player->user->avatar_path }}"
-             class="tw-mx-auto tw-mb-4 tw-h-32 tw-w-32 tw-rounded-full">
+             class="mx-auto mb-4 h-32 w-32 rounded-full">
     @endif
 
     @can('update', $player->user)
-        <a href="{{ route('users.edit', [$player->user]) }}" class="btn btn-outline-primary tw-mb-3">
-            <i class="fas fa-user-cog tw-mr-2"></i>Konto-Einstellungen
+        <a href="{{ route('users.edit', [$player->user]) }}" class="btn btn-outline-primary mb-3">
+            <i class="fas fa-user-cog mr-2"></i>Konto-Einstellungen
         </a>
     @endcan
 
@@ -39,182 +39,182 @@
                                 <tr>
                                     <td class="pb-4">Monatsrekorde:</td>
                                     <td class="font-weight-bold pb-4">{{ $profile->badges()->count() }}
-                                        <i class="fas fa-crown tw-ml-1 tw-text-yellow-500 tw-text-xl"></i>
+                                        <i class="fas fa-crown ml-1 text-yellow-500 text-xl"></i>
                                     </td>
                                 </tr>
                             @endif
                             <tr>
                                 <td>Aktuelle Punktzahl:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->points }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->points }}</td>
                             </tr>
                             @if($profile->pointsThisMonth != 0)
                                 <tr>
                                     <td>Punkte in diesem Monat:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->pointsThisMonth }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->pointsThisMonth }}</td>
                                 </tr>
                             @endif
                             <tr>
                                 <td>Punkte pro Spiel:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->pointsPerGame }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->pointsPerGame }}</td>
                             </tr>
                             <tr>
                                 <td>Punkte pro gewonnenem Spiel:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->pointsPerWin }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->pointsPerWin }}</td>
                             </tr>
                             <tr>
                                 <td class="pb-4">Punkte pro verlorenem Spiel:</td>
-                                <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->pointsPerLose }}</td>
+                                <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->pointsPerLose }}</td>
                             </tr>
                             <tr>
                                 <td>Spiele:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->games }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->games }}</td>
                             </tr>
                             @if ($profile->gamesThisMonth > 0)
                                 <tr>
                                     <td>Spiele in diesem Monat:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->gamesThisMonth }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->gamesThisMonth }}</td>
                                 </tr>
                             @endif
                             <tr>
                                 <td>Spiele pro Tag:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->gamesPerDay }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->gamesPerDay }}</td>
                             </tr>
                             <tr>
                                 <td>Gewonnen / Verloren:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->gamesWon }} / {{ $profile->gamesLost }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->gamesWon }} / {{ $profile->gamesLost }}</td>
                             </tr>
                             <tr>
                                 <td class="pb-4">Gewinnrate:</td>
-                                <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->winrate }}%</td>
+                                <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->winrate }}%</td>
                             </tr>
                             <tr>
                                 <td {!! $profile->normalGames == 0 ? 'class="pb-4"' : '' !!}>Normalspiele:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->normalGames }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->normalGames }}</td>
                             </tr>
                             @if($profile->normalGames > 0)
                                 <tr>
                                     <td>Gewonnen / Verloren:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->normalGamesWon }} / {{ $profile->normalGamesLost }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->normalGamesWon }} / {{ $profile->normalGamesLost }}</td>
                                 </tr>
                                 <tr>
                                     <td class="pb-4">Normalspiel-Gewinnrate:</td>
-                                    <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->normalGameWinrate }}%</td>
+                                    <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->normalGameWinrate }}%</td>
                                 </tr>
                             @endif
                             <tr>
                                 <td {!! $profile->soli == 0 ? 'class="pb-4"' : '' !!}>Soli:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->soli }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->soli }}</td>
                             </tr>
                             @if($profile->soli > 0)
                                 <tr>
                                     <td>Gewonnen / Verloren:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->soliWon }} / {{ $profile->soliLost }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->soliWon }} / {{ $profile->soliLost }}</td>
                                 </tr>
                                 <tr>
                                     <td>Spiele bis Solo:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->soloRate }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->soloRate }}</td>
                                 </tr>
                                 <tr>
                                     <td>Solo-Gewinnrate:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->soloWinrate }}%</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->soloWinrate }}%</td>
                                 </tr>
                                 <tr>
                                     <td>Punkte durch Soli:</td>
-                                    <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->soloPoints }}</td>
+                                    <td class="font-weight-bold whitespace-nowrap">{{ $profile->soloPoints }}</td>
                                 </tr>
                                 <tr>
                                     <td class="pb-4">Punkte pro Solo:</td>
-                                    <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->pointsPerSolo }}</td>
+                                    <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->pointsPerSolo }}</td>
                                 </tr>
                             @endif
 
                             <tr>
                                 <td class="pb-2">Meiste Spiele an einem Tag:
-                                    <span class="tw-text-xs">
+                                    <span class="text-xs">
                                         <br>(am {{ date('j.n.Y', strtotime($profile->mostGamesDayDate)) }})
                                     </span>
                                 </td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->mostGamesDay }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->mostGamesDay }}</td>
                             </tr>
 
                             <tr>
                                 <td class="pb-4">Meiste Spiele in einem Monat:
-                                    <span class="tw-text-xs">
+                                    <span class="text-xs">
                                         <br>(im {{ $profile->mostGamesMonthDate->isoFormat('MMMM YYYY') }})
                                     </span>
                                 </td>
-                                <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->mostGamesMonth }}</td>
+                                <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->mostGamesMonth }}</td>
                             </tr>
 
                             <tr>
                                 <td class="pb-2">Höchste Punktzahl:
                                     @if($profile->highestPoints != 0)
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->highestPointsDate)) }})
                                         </span>
                                     @endif
                                 </td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->highestPoints }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->highestPoints }}</td>
                             </tr>
 
                             <tr>
                                 <td class="pb-4">Niedrigste Punktzahl:
                                     @if($profile->lowestPoints != 0)
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->lowestPointsDate)) }})
                                         </span>
                                     @endif
                                 </td>
-                                <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->lowestPoints }}</td>
+                                <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->lowestPoints }}</td>
                             </tr>
 
                             <tr>
                                 <td class="pb-2">Längste Sieges-Strähne:
                                     @if( strcmp(date('j.n.Y', strtotime($profile->winStreakStart)), date('j.n.Y', strtotime($profile->winStreakEnd))) )
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>({{ date('j.n', strtotime($profile->winStreakStart)) }}
                                             - {{ date('j.n.Y', strtotime($profile->winStreakEnd)) }})
                                         </span>
                                     @else
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->winStreakStart)) }})
                                         </span>
                                     @endif
                                 </td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->winStreak }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->winStreak }}</td>
                             </tr>
 
                             <tr>
                                 <td class="pb-4">Längste Pech-Strähne:
                                     @if( strcmp(date('j.n.Y', strtotime($profile->loseStreakStart)), date('j.n.Y', strtotime($profile->loseStreakEnd))) )
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>({{ date('j.n', strtotime($profile->loseStreakStart)) }}
                                             - {{ date('j.n.Y', strtotime($profile->loseStreakEnd)) }})
                                         </span>
                                     @else
-                                        <span class="tw-text-xs">
+                                        <span class="text-xs">
                                             <br>(am {{ date('j.n.Y', strtotime($profile->loseStreakStart)) }})
                                         </span>
                                 @endif
-                                <td class="font-weight-bold pb-4 tw-whitespace-nowrap">{{ $profile->loseStreak }}</td>
+                                <td class="font-weight-bold pb-4 whitespace-nowrap">{{ $profile->loseStreak }}</td>
                             </tr>
                             
                             <tr>
                                 <td class="pb-2">Eingetragene Spiele:</td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->gamesCreated }}</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->gamesCreated }}</td>
                             </tr>
                             <tr>
                                 <td class="">Anteil eingetragener Spiele:
-                                    <span class="tw-text-xs">
+                                    <span class="text-xs">
                                         <br>(eingetragene Spiele inklusive Mehrspielerrunden pro Anzahl eigener Spiele)
                                     </span>
                                 </td>
-                                <td class="font-weight-bold tw-whitespace-nowrap">{{ $profile->gamesCreateRate }}%</td>
+                                <td class="font-weight-bold whitespace-nowrap">{{ $profile->gamesCreateRate }}%</td>
                             </tr>
                         </table>
                         @if($profile->games > 150)
                             <hr>
-                            <p class="tw-font-bold">Opportunitätskosten:</p>
+                            <p class="font-bold">Opportunitätskosten:</p>
                             <table class="table table-sm table-borderless text-left">
                                 <tr>
                                     <td>Zeit:</td>
@@ -247,7 +247,7 @@
             @else
                 <h5>Statistiken werden ab dem 10. Spiel angezeigt.</h5>
             @endif
-            <p class="tw-mt-6">
+            <p class="mt-6">
                 @if($profile->group_id == 1)
                     Registriert seit dem
                 @else
@@ -286,9 +286,9 @@
                 @endforeach
             </select-liste>
 
-            <div class="sm:tw-flex tw-max-w-2xl tw-mx-auto">
+            <div class="sm:flex max-w-2xl mx-auto">
                 @forelse($badges as $type)
-                    <div class="sm:tw-flex-1 tw-mb-10">
+                    <div class="sm:flex-1 mb-10">
                         @foreach($type as $badge)
                             @isset($badge->player)
                                 <badge
@@ -301,7 +301,7 @@
                         @endforeach
                     </div>
                 @empty
-                    <h5 class="tw-mx-auto">Bisher keine Abzeichen auf dieser Liste.</h5>
+                    <h5 class="mx-auto">Bisher keine Abzeichen auf dieser Liste.</h5>
                 @endforelse
             </div>
         </tab>
@@ -324,7 +324,7 @@
         <tab name="Listen" icon="fa-list-alt">
             <h4>Listen:</h4>
             @forelse($player->groups as $group)
-                <div class="group tw-max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
+                <div class="group max-w-sm"><a href="{{ $group->path() }}">{{ $group->name }}</a></div>
 
             @empty
                 <h5>Der Spiele ist bisher in keiner Liste.</h5>

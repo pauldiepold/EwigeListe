@@ -13,8 +13,14 @@
 @if(!$comments->onFirstPage())
     @push('scripts')
         <script>
-            $(document).ready(function () {
-                $('html, body').scrollTop($('#comments').offset().top - 50);
+            document.addEventListener('DOMContentLoaded', function () {
+                const comments = document.getElementById('comments');
+                if (!comments) {
+                    return;
+                }
+
+                const targetPosition = comments.getBoundingClientRect().top + window.scrollY - 50;
+                window.scrollTo(0, targetPosition);
             });
         </script>
     @endpush

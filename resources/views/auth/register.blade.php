@@ -12,25 +12,25 @@
                     @csrf
 
                     <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
-                       class="btn btn-outline-primary mt-2 tw-w-64">
-                        <div class="tw-flex tw-items-center">
-                            <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
-                            <span class="tw-flex-1">Mit Facebook registrieren</span>
+                       class="btn btn-outline-primary mt-2 w-64">
+                        <div class="flex items-center">
+                            <i class="fab fa-facebook text-2xl mr-2" style="color: #3b5998;"></i>
+                            <span class="flex-1">Mit Facebook registrieren</span>
                         </div>
                     </a>
 
                     <br>
 
                     <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
-                       class="btn btn-outline-primary my-2 tw-w-64">
-                        <div class="tw-flex tw-items-center">
-                            <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
-                            <span class="tw-flex-1">Mit Google registrieren</span>
+                       class="btn btn-outline-primary my-2 w-64">
+                        <div class="flex items-center">
+                            <i class="fab fa-google text-2xl mr-2 text-gray-700"></i>
+                            <span class="flex-1">Mit Google registrieren</span>
                         </div>
                     </a>
 
                     <hr>
-                    <p class="tw-font-bold">Oder mit E-Mail registrieren:</p>
+                    <p class="font-bold">Oder mit E-Mail registrieren:</p>
 
                     <div class="form-group row">
                         <label for="email"
@@ -138,18 +138,3 @@
     </div>
 @endsection
 
-@push('scripts')
-    <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover();
-        });
-
-        $('body').on('click', function (e) {
-            $('[data-toggle=popover]').each(function () {
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
-    </script>
-@endpush

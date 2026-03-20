@@ -1,23 +1,18 @@
-require('./bootstrap');
-require('./scripts/custom.js');
-/*require('./scripts/cards.js');*/
+import './bootstrap';
+import './scripts/custom.js';
 
-
-import {createApp} from 'vue';
-import {plugin as Slicksort} from 'vue-slicksort';
+import { createApp } from 'vue';
+import { plugin as Slicksort } from 'vue-slicksort';
 import VueScrollTo from 'vue-scrollto';
 
 const app = createApp({})
-    .use(VueScrollTo, {offset: -70})
+    .use(VueScrollTo, { offset: -70 })
     .use(Slicksort);
 
-const files = require.context('./', true, /\.vue$/i)
-files.keys().map(key => app.component(key.split('/').pop().split('.')[0], files(key).default))
+const files = import.meta.glob('./**/*.vue', { eager: true });
+Object.entries(files).forEach(([path, module]) => {
+    const name = path.split('/').pop().replace(/\.\w+$/, '');
+    app.component(name, module.default);
+});
 
 app.mount('#app');
-/*global.vm = new Vue({
-    el: '#app',
-    components: {},
-    data: {},
-    methods: {}
-});*/

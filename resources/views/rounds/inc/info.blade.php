@@ -1,4 +1,4 @@
-<div class="text-muted tw-text-sm tw-mt-6" style="font-size:0.88rem;">
+﻿<div class="text-muted text-sm mt-6" style="font-size:0.88rem;">
     @if ($round->games->count() != 0)
         <p class="mb-2">
             Anzahl Spiele: {{ $round->games->count() }}

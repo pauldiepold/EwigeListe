@@ -1,16 +1,16 @@
-<template>
+﻿<template>
     <div v-if="round.games.length >= 1">
-        <div v-if="confirm === false" class="tw-mt-4">
+        <div v-if="confirm === false" class="mt-4">
             <button @click="confirm = true" type="button" class="btn btn-outline-primary">
                 Letztes Spiel löschen
             </button>
         </div>
-        <div v-if="confirm === true" class="tw-mt-4">
+        <div v-if="confirm === true" class="mt-4">
             <button @click="confirm = false" type="button" class="btn btn-outline-primary">
                 Abbrechen
             </button>
         </div>
-        <div v-if="confirm === true" class="tw-mt-2">
+        <div v-if="confirm === true" class="mt-2">
             <button @click="submit" type="button" class="btn btn-primary">
                 <div class="d-flex vertical-align-center">
                     <span v-if="loading">

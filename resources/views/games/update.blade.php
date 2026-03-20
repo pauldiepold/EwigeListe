@@ -1,13 +1,17 @@
-<button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#updateModal">
-    Letztes Spiel ändern
-</button>
+<div x-data="{ open: {{ count($errors->update) > 0 ? 'true' : 'false' }} }">
 
-<div class="modal" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <button type="button" class="btn btn-outline-primary" @click="open = true">
+        Letztes Spiel ändern
+    </button>
+
+    <div x-show="open"
+         x-transition.opacity
+         @keydown.escape.window="open = false"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+         style="display: none;">
+        <div class="bg-white rounded w-full max-w-lg mx-4 shadow-xl">
             <div class="modal-header">
-                <h5 class="modal-title mx-auto" id="updateModalLabel">Letztes Spiel ändern</h5>
+                <h5 class="modal-title mx-auto">Letztes Spiel ändern</h5>
             </div>
             <div class="modal-body">
 
@@ -18,55 +22,45 @@
                     @method('PATCH')
 
                     @foreach ($lastGame->players as $player)
-                        <div class="custom-control custom-checkbox my-1">
-                            <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
+                        <div class="flex items-center gap-2 my-1">
+                            <input class="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                                   type="checkbox" value="{{ $player->id }}"
                                    id="updatePlayer{{ $player->id }}" name="updateWinners[]"
                                     {{ $player->pivot->won ? 'checked' : '' }}>
-                            <label class="custom-control-label font-weight-bold"
-                                   for="updatePlayer{{ $player->id }}">
+                            <label class="cursor-pointer font-bold" for="updatePlayer{{ $player->id }}">
                                 {{ $player->surname }} {{ $player->name }}
                             </label>
                         </div>
                     @endforeach
 
-                    <div class="form-row my-4 mx-auto justify-content-center">
-                        <div class="col-xs-6 col-xs-offset-3">
-                            <input class="form-control{{ $errors->update->first('points') ? ' is-invalid' : '' }}"
-                                   type="number" min="-4" max="16" name="updatePoints"
-                                   value="{{ $lastGame->points }}">
-                            <label for="updatePoints" class="control-label font-weight-bold">Punkte</label>
-                        </div>
+                    <div class="flex justify-center my-4">
+                        <input class="form-control w-24 text-center{{ $errors->update->first('points') ? ' border-red-400' : '' }}"
+                               type="number" min="-4" max="16" name="updatePoints"
+                               value="{{ $lastGame->points }}">
+                        <label for="updatePoints" class="ml-2 self-center font-bold">Punkte</label>
                     </div>
+
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
-                    <hr>
-                    <div class="custom-control custom-checkbox my-1">
-                        <input class="custom-control-input" type="checkbox" value="1" id="updateMisplayed"
-                               name="updateMisplayed"
+                    <hr class="my-3">
+
+                    <div class="flex items-center gap-2 my-1">
+                        <input class="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                               type="checkbox" value="1" id="updateMisplayed" name="updateMisplayed"
                                 {{ $lastGame->misplay ? 'checked' : '' }}>
-                        <label class="custom-control-label font-weight-bold" for="updateMisplayed">
+                        <label class="cursor-pointer font-bold" for="updateMisplayed">
                             Falsch bedient?
                         </label>
+                        <span class="text-gray-500 text-sm ml-1"
+                              title="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet.">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
                     </div>
-                    <a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
-                       data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen.">
-                        <i class="fas fa-info-circle fa-lg"></i>
-                    </a>
                 </form>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary mx-auto" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-outline-secondary mx-auto" @click="open = false">Schließen</button>
             </div>
         </div>
     </div>
 </div>
-
-@if(count($errors->update) > 0)
-    @push('scripts')
-        <script>
-            $(function () {
-                $('#updateModal').modal({show: true});
-            });
-        </script>
-    @endpush
-@endif

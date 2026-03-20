@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-auto tw-max-w-2xl">
+    <div class="mx-auto max-w-2xl">
         <canvas id="groupChart" height="450"></canvas>
     </div>
 </template>
@@ -27,7 +27,7 @@
                         ]
                     };
 
-                    var ctx = $("#groupChart");
+                    var ctx = document.getElementById("groupChart");
 
                     var LineGraph = new Chart(ctx, {
                         type: 'line',

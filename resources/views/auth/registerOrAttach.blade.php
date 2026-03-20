@@ -1,4 +1,4 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', ucfirst($socialiteUser->provider) . ' Login')
 
@@ -24,7 +24,7 @@
                     <input type="hidden" name="email" value="{{ $socialiteUser->email }}">
                     <input type="hidden" name="socialiteUserId" value="{{ $socialiteUser->id }}">
 
-                    <div class="tw-mb-6 tw-max-w-2xs tw-mx-auto">
+                    <div class="mb-6 max-w-2xs mx-auto">
 
                         <label for="surname" class="">Vorname</label>
                         <input id="surname" type="text"
@@ -38,7 +38,7 @@
                         @endif
                     </div>
 
-                    <div class="tw-mb-6 tw-max-w-2xs tw-mx-auto">
+                    <div class="mb-6 max-w-2xs mx-auto">
 
                         <label for="name" class="">Name</label>
                         <input id="name" type="text"
@@ -55,10 +55,10 @@
 
 
                     <button type="submit" class="btn btn-outline-primary mt-2">
-                        <div class="tw-flex tw-items-center">
+                        <div class="flex items-center">
                             <div
                                 style="{{ $socialiteUser->provider == 'facebook' ? 'color: #3b5998;' : 'color: black' }}">
-                                <i class="fab fa-{{ $socialiteUser->provider }} tw-text-2xl tw-mr-2"></i>
+                                <i class="fab fa-{{ $socialiteUser->provider }} text-2xl mr-2"></i>
                             </div>
                             <div>
                                 <span>Mit {{ ucfirst($socialiteUser->provider) }} registrieren</span>
@@ -87,8 +87,8 @@
 
                 <input type="hidden" name="socialiteUserId" value="{{ $socialiteUser->id }}">
 
-                <div class="tw-mb-6 tw-max-w-2xs tw-mx-auto">
-                    <label for="email" class="tw-font-bold">E-Mail</label>
+                <div class="mb-6 max-w-2xs mx-auto">
+                    <label for="email" class="font-bold">E-Mail</label>
                     <input id="email" type="email"
                            class="form-control{{ $errors->has('email') ? ' is-invalid' : '' }} " name="email"
                            value="{{ old('email') }}" required autofocus>
@@ -100,8 +100,8 @@
                     @endif
                 </div>
 
-                <div class="tw-mb-6 tw-max-w-2xs tw-mx-auto">
-                    <label for="password" class="tw-font-bold">Passwort</label>
+                <div class="mb-6 max-w-2xs mx-auto">
+                    <label for="password" class="font-bold">Passwort</label>
                     <input id="password" type="password"
                            class="form-control{{ $errors->has('password') ? ' is-invalid' : '' }}"
                            name="password" required>
@@ -113,7 +113,7 @@
                     @endif
                 </div>
 
-                <div class="form-check tw-mb-6">
+                <div class="form-check mb-6">
                     <input class="form-check-input" type="checkbox" name="remember"
                            id="remember" checked>
 
@@ -122,10 +122,10 @@
                     </label>
                 </div>
 
-                <button type="submit" class="btn btn-outline-primary tw-mb-6">
-                    <div class="tw-flex tw-items-center">
+                <button type="submit" class="btn btn-outline-primary mb-6">
+                    <div class="flex items-center">
                         <div style="{{ $socialiteUser->provider == 'facebook' ? 'color: #3b5998;' : 'color: black' }}">
-                            <i class="fab fa-{{ $socialiteUser->provider }} tw-text-2xl tw-mr-2"></i>
+                            <i class="fab fa-{{ $socialiteUser->provider }} text-2xl mr-2"></i>
                         </div>
                         <div>
                             <span>Mit {{ ucfirst($socialiteUser->provider) }} verbinden</span>
