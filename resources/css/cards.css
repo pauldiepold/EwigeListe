@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Styles for CSS Playing Cards
  *
  * @author   Anika Henke <anika@selfthinker.org>
@@ -403,56 +403,21 @@
   */
 }
 
-.playingCards.faceImages .card-live.rank-j.diams {
-  background-image: url(faces/JD.gif);
-}
-
-.playingCards.faceImages .card-live.rank-j.hearts {
-  background-image: url(faces/JH.gif);
-}
-
-.playingCards.faceImages .card-live.rank-j.spades {
-  background-image: url(faces/JS.gif);
-}
-
-.playingCards.faceImages .card-live.rank-j.clubs {
-  background-image: url(faces/JC.gif);
-}
-
-.playingCards.faceImages .card-live.rank-q.diams {
-  background-image: url(faces/QD.gif);
-}
-
-.playingCards.faceImages .card-live.rank-q.hearts {
-  background-image: url(faces/QH.gif);
-}
-
-.playingCards.faceImages .card-live.rank-q.spades {
-  background-image: url(faces/QS.gif);
-}
-
-.playingCards.faceImages .card-live.rank-q.clubs {
-  background-image: url(faces/QC.gif);
-}
-
-.playingCards.faceImages .card-live.rank-k.diams {
-  background-image: url(faces/KD.gif);
-}
-
-.playingCards.faceImages .card-live.rank-k.hearts {
-  background-image: url(faces/KH.gif);
-}
-
-.playingCards.faceImages .card-live.rank-k.spades {
-  background-image: url(faces/KS.gif);
-}
-
-.playingCards.faceImages .card-live.rank-k.clubs {
-  background-image: url(faces/KC.gif);
-}
-
+.playingCards.faceImages .card-live.rank-j.diams,
+.playingCards.faceImages .card-live.rank-j.hearts,
+.playingCards.faceImages .card-live.rank-j.spades,
+.playingCards.faceImages .card-live.rank-j.clubs,
+.playingCards.faceImages .card-live.rank-q.diams,
+.playingCards.faceImages .card-live.rank-q.hearts,
+.playingCards.faceImages .card-live.rank-q.spades,
+.playingCards.faceImages .card-live.rank-q.clubs,
+.playingCards.faceImages .card-live.rank-k.diams,
+.playingCards.faceImages .card-live.rank-k.hearts,
+.playingCards.faceImages .card-live.rank-k.spades,
+.playingCards.faceImages .card-live.rank-k.clubs,
 .playingCards.faceImages .card-live.joker {
-  background-image: url(faces/joker.gif);
+  /* Legacy GIF face assets are not present in this repo. */
+  background-image: none;
 }
 
 .playingCards.simpleCards .card-live.rank-j,

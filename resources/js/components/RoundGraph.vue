@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    import Chart from 'chart.js'
+    import Chart from 'chart.js/auto'
 
     export default {
         props: ['round_id'],
@@ -13,8 +13,8 @@
             axios.get('/charts/round/' + this.round_id)
                 .then(function (response) {
                     let data = response.data;
-                    Chart.defaults.global.defaultFontFamily = '"Open Sans"';
-                    Chart.defaults.global.animation.duration = 0;
+                    Chart.defaults.font.family = '"Open Sans"';
+                    Chart.defaults.animation.duration = 0;
                     let counter = [];
                     const colors = [
                         '#E37222',
@@ -41,7 +41,7 @@
                                 data: data.points[i],
                                 borderColor: colors[i],
                                 backgroundColor: colors[i],
-                                lineTension: 0.1,
+                                tension: 0.1,
                             }
                         )
                     }
@@ -55,32 +55,42 @@
                         options: {
                             maintainAspectRatio: false,
                             scales: {
-                                xAxes: [{
+                                x: {
                                     ticks: {
                                         display: true
                                     },
-                                    scaleLabel: {
+                                    title: {
                                         display: true,
-                                        labelString: "Spiele",
-                                        lineHeight: 0.2
+                                        text: "Spiele"
                                     },
-                                    gridLines: {
-                                        drawBorder: false
+                                    border: {
+                                        display: false
                                     }
-                                }],
-                                yAxes: [{
-                                    scaleLabel: {
+                                },
+                                y: {
+                                    title: {
                                         display: true,
-                                        labelString: "Punkte",
-                                        lineHeight: 0.3
+                                        text: "Punkte"
                                     },
-                                    gridLines: {
-                                        drawBorder: false
+                                    border: {
+                                        display: false
                                     }
-                                }]
+                                }
                             },
-                            tooltips: {
-                                //intersect: false
+                            plugins: {
+                                tooltip: {
+                                    // intersect: false
+                                },
+                                legend: {
+                                    labels: {
+                                        boxWidth: 10,
+                                        usePointStyle: true,
+                                        font: {
+                                            size: 13
+                                        },
+                                        padding: 20
+                                    }
+                                }
                             },
                             elements: {
                                 point: {
@@ -90,14 +100,6 @@
                                 line: {
                                     borderWidth: 1.8,
                                     fill: false
-                                }
-                            },
-                            legend: {
-                                labels: {
-                                    boxWidth: 10,
-                                    usePointStyle: true,
-                                    fontSize: 13,
-                                    padding: 20
                                 }
                             },
                         }
