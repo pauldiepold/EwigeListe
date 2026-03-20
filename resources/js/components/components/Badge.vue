@@ -1,24 +1,24 @@
-<template>
+﻿<template>
     <a :href="path"
-       class="tw-m-4 tw-p-2 tw-mx-auto tw-w-64 tw-rounded-lg tw-bg-yellow-400 shadow-2 tw-cursor-pointer
-        tw-flex tw-flex tw-content-center tw-no-underline tw-text-black hover:tw-no-underline hover:tw-text-black">
-        <div class="tw-flex-1 tw-flex tw-flex-col">
+       class="m-4 p-2 mx-auto w-64 rounded-lg bg-yellow-400 shadow-2 cursor-pointer
+        flex flex content-center no-underline text-black hover:no-underline hover:text-black">
+        <div class="flex-1 flex flex-col">
             <div>
-                <i class="fas fa-crown tw-text-lg"></i>
+                <i class="fas fa-crown text-lg"></i>
             </div>
-            <div class="tw-font-bold tw-text-3xl tw--my-2 font-dancing">
+            <div class="font-bold text-3xl -my-2 font-dancing">
                 {{ value }}
             </div>
-            <div class="tw-text-xs tw-text-gray-700">
+            <div class="text-xs text-gray-700">
                 {{ this.typeDeutsch }}
             </div>
         </div>
         <div
-            class="tw-flex-2 tw-flex tw-flex-col tw-content-center tw-justify-center">
-            <div class="tw--mx-2 tw-text-3xl font-dancing">
+            class="flex-2 flex flex-col content-center justify-center">
+            <div class="-mx-2 text-3xl font-dancing">
                 {{ name }}
             </div>
-            <div class="tw-text-xs tw-text-gray-700">
+            <div class="text-xs text-gray-700">
                 {{ date }}
             </div>
         </div>

@@ -1,11 +1,11 @@
-<template>
+﻿<template>
     <div>
         <div style="position: absolute; left: 15%; bottom: 0; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-t-lg tw-text-gray-300 tw-px-3 lg:tw-py-2 tw-py-1 xl:tw-text-base tw-text-sm tw-z-50 tw-flex tw-items-center"
-             :class="{'tw-shadow-green-darker lg:tw-shadow-green-darker-lg xl:tw-shadow-green-darker-xl': liveGame.dran === round.active_players[0].id}">
-            <div class="tw-border-r-2 tw-pr-2 tw-mr-2 tw-border-gray-500 tw-hidden xl:tw-block tw-flex-shrink-0">
+             class="bg-gray-800 bg-opacity-50 rounded-t-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm z-50 flex items-center"
+             :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[0].id}">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
                 <img :src="round.active_players[0].avatar_path"
-                     class="xl:tw-h-14 xl:tw-w-14 lg:tw-h-12 lg:tw-w-12 tw-rounded-full">
+                     class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 rounded-full">
             </div>
             <div style="white-space: nowrap">
                 <span v-if="liveGame.phase === 2 && round.active_players[0].id === liveGame.vorhand">Vorhand</span>
@@ -28,11 +28,11 @@
             </div>
         </div>
         <div style="position: absolute; left: 22%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-px-3 lg:tw-py-2 tw-py-1 xl:tw-text-base tw-text-sm tw-flex tw-items-center"
-             :class="{'tw-shadow-green-darker lg:tw-shadow-green-darker-lg xl:tw-shadow-green-darker-xl': liveGame.dran === round.active_players[1].id}">
-            <div class="tw-border-r-2 tw-pr-2 tw-mr-2 tw-border-gray-500 tw-hidden xl:tw-block tw-flex-shrink-0">
+             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[1].id}">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
                 <img :src="round.active_players[1].avatar_path"
-                     class="xl:tw-h-14 xl:tw-w-14 lg:tw-h-12 lg:tw-w-12 tw-h-7 tw-w-7 tw-rounded-full">
+                     class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>
             <div style="white-space: nowrap">
                 <b>{{ round.active_players[1].surname }}</b>
@@ -55,11 +55,11 @@
             </div>
         </div>
         <div style="position: absolute; left: 50%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-px-3 lg:tw-py-2 tw-py-1 xl:tw-text-base tw-text-sm tw-flex tw-items-center"
-             :class="{'tw-shadow-green-darker lg:tw-shadow-green-darker-lg xl:tw-shadow-green-darker-xl': liveGame.dran === round.active_players[2].id}">
-            <div class="tw-border-r-2 tw-pr-2 tw-mr-2 tw-border-gray-500 tw-hidden xl:tw-block tw-flex-shrink-0">
+             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[2].id}">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
                 <img :src="round.active_players[2].avatar_path"
-                     class="xl:tw-h-14 xl:tw-w-14 lg:tw-h-12 lg:tw-w-12 tw-h-7 tw-w-7 tw-rounded-full">
+                     class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>
             <div style="white-space: nowrap">
                 <b>{{ round.active_players[2].surname }}</b>
@@ -84,11 +84,11 @@
             </div>
         </div>
         <div style="position: absolute; left: 78%; transform: translate(-50%);"
-             class="tw-bg-gray-800 tw-bg-opacity-50 tw-rounded-b-lg tw-text-gray-300 tw-px-3 lg:tw-py-2 tw-py-1 xl:tw-text-base tw-text-sm tw-flex tw-items-center"
-             :class="{'tw-shadow-green-darker lg:tw-shadow-green-darker-lg xl:tw-shadow-green-darker-xl': liveGame.dran === round.active_players[3].id}">
-            <div class="tw-border-r-2 tw-pr-2 tw-mr-2 tw-border-gray-500 tw-hidden xl:tw-block tw-flex-shrink-0">
+             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[3].id}">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
                 <img :src="round.active_players[3].avatar_path"
-                     class="xl:tw-h-14 xl:tw-w-14 lg:tw-h-12 lg:tw-w-12 tw-h-7 tw-w-7 tw-rounded-full">
+                     class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>
             <div style="white-space: nowrap">
                 <b>{{ round.active_players[3].surname }}</b>

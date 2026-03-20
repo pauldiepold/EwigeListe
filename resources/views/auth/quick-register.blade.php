@@ -1,4 +1,4 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', 'Neuen User registrieren')
 
@@ -14,7 +14,7 @@
 
                     <div class="form-group row">                        
                         <div class="col-sm-6 offset-sm-5 alert alert-info">
-                            <i class="fas fa-info-circle tw-mr-2"></i>
+                            <i class="fas fa-info-circle mr-2"></i>
                             Hier kannst du einen neuen User registrieren.
                             Wenn eine korrekte E-Mail-Adresse angegeben wird, kann das Passwort später zurückgesetzt werden.
                         </div>
@@ -76,7 +76,7 @@
                     <div class="form-group row mb-0">
                         <div class="col-sm-6 offset-sm-5">
                             <button type="submit" class="btn btn-primary mt-2">
-                                <i class="fas fa-user-plus tw-mr-1"></i>
+                                <i class="fas fa-user-plus mr-1"></i>
                                 User registrieren
                             </button>
                         </div>
@@ -85,7 +85,7 @@
                     <div class="form-group row mb-0">
                         <div class="col-sm-6 offset-sm-5">
                             <a href="{{ route('rounds.create') }}" class="btn btn-secondary mt-2 ml-2">
-                                <i class="fas fa-arrow-left tw-mr-1"></i>
+                                <i class="fas fa-arrow-left mr-1"></i>
                                 Zurück zur Runderstellung
                             </a>
                         </div>

@@ -1,11 +1,11 @@
-@extends('layouts.main')
+﻿@extends('layouts.main')
 
 @section('title', 'Login')
 
 @section('heading', 'Login')
 
 @section('content')
-    <div class="row justify-content-center tw-mt-8">
+    <div class="row justify-content-center mt-8">
         <div class="col-sm col-md-10 col-lg-8">
             <form method="POST" action="{{ route('login') }}">
                 @csrf
@@ -80,17 +80,17 @@
                         <hr>
                         <a href="{{ route('auth.socialite', ['provider' => 'google']) }}"
                            class="btn btn-outline-primary mt-2" style="width: 15rem;">
-                            <div class="tw-flex tw-items-center">
-                                <i class="fab fa-google tw-text-2xl tw-mr-2 tw-text-gray-700"></i>
-                                <span class="tw-flex-1">Mit Google anmelden</span>
+                            <div class="flex items-center">
+                                <i class="fab fa-google text-2xl mr-2 text-gray-700"></i>
+                                <span class="flex-1">Mit Google anmelden</span>
                             </div>
                         </a><br>
 
                         <a href="{{ route('auth.socialite', ['provider' => 'facebook']) }}"
                            class="btn btn-outline-primary my-2" style="width: 15rem;">
-                            <div class="tw-flex tw-items-center">
-                                <i class="fab fa-facebook tw-text-2xl tw-mr-2" style="color: #3b5998;"></i>
-                                <span class="tw-flex-1">Mit Facebook anmelden</span>
+                            <div class="flex items-center">
+                                <i class="fab fa-facebook text-2xl mr-2" style="color: #3b5998;"></i>
+                                <span class="flex-1">Mit Facebook anmelden</span>
                             </div>
                         </a>
                     </div>

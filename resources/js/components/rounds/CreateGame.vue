@@ -1,13 +1,14 @@
-<template>
+﻿<template>
     <div>
-        <button type="button" id="createGameButton" class="btn btn-primary tw-my-1" data-toggle="modal"
-                data-target="#createGame">
+        <button type="button" id="createGameButton" class="btn btn-primary my-1"
+                @click="modalOpen = true">
             Spiel eintragen
         </button>
 
-        <div class="modal" id="createGame" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+        <div v-if="modalOpen"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+             @keydown.escape.window="modalOpen = false">
+            <div class="bg-white rounded w-full max-w-lg mx-4 shadow-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title mx-auto" id="createModalLabel">Welche Personen haben gewonnen?</h5>
@@ -17,71 +18,71 @@
                         <form @submit.prevent="submit">
 
                             <!-- Einheitliches Grid-Layout für alle Spieler -->
-                            <div class="tw-grid tw-grid-cols-4 tw-gap-4 tw-max-w-2xl tw-mx-auto">
+                            <div class="grid grid-cols-4 gap-4 max-w-2xl mx-auto">
                                 <!-- Spieler 0 -->
                                 <div :class="[
-                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[0].id),
-                                     'tw-border-gray-500': !winners.includes(round.active_players[0].id)},
-                                    isActivePlayer ? 'tw-order-4 tw-col-start-2' : 'tw-order-3 tw-col-start-1'
+                                    {'shadow-green border-transparent': winners.includes(round.active_players[0].id),
+                                     'border-gray-500': !winners.includes(round.active_players[0].id)},
+                                    isActivePlayer ? 'order-4 col-start-2' : 'order-3 col-start-1'
                                 ]"
                                      @click="toggle(round.active_players[0].id)"
-                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                     class="col-span-2 flex justify-center items-center rounded-lg cursor-pointer px-2 py-1 border">
                                     <img :src="round.active_players[0].avatar_path"
-                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold">
+                                         class="mr-2 md:h-10 md:w-10 h-7 w-7 rounded-full">
+                                    <div class="font-bold">
                                         {{ round.active_players[0].surname }} {{ round.active_players[0].name }}
                                     </div>
                                 </div>
 
                                 <!-- Spieler 1 -->
                                 <div :class="[
-                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[1].id),
-                                     'tw-border-gray-500': !winners.includes(round.active_players[1].id)},
-                                    isActivePlayer ? 'tw-order-2 tw-col-start-1' : 'tw-order-1 tw-col-start-1'
+                                    {'shadow-green border-transparent': winners.includes(round.active_players[1].id),
+                                     'border-gray-500': !winners.includes(round.active_players[1].id)},
+                                    isActivePlayer ? 'order-2 col-start-1' : 'order-1 col-start-1'
                                 ]"
                                      @click="toggle(round.active_players[1].id)"
-                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                     class="col-span-2 flex justify-center items-center rounded-lg cursor-pointer px-2 py-1 border">
                                     <img :src="round.active_players[1].avatar_path"
-                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold">
+                                         class="mr-2 md:h-10 md:w-10 h-7 w-7 rounded-full">
+                                    <div class="font-bold">
                                         {{ round.active_players[1].surname }} {{ round.active_players[1].name }}
                                     </div>
                                 </div>
 
                                 <!-- Spieler 2 -->
                                 <div :class="[
-                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[2].id),
-                                     'tw-border-gray-500': !winners.includes(round.active_players[2].id)},
-                                    isActivePlayer ? 'tw-order-1 tw-col-start-2' : 'tw-order-2 tw-col-start-3'
+                                    {'shadow-green border-transparent': winners.includes(round.active_players[2].id),
+                                     'border-gray-500': !winners.includes(round.active_players[2].id)},
+                                    isActivePlayer ? 'order-1 col-start-2' : 'order-2 col-start-3'
                                 ]"
                                      @click="toggle(round.active_players[2].id)"
-                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                     class="col-span-2 flex justify-center items-center rounded-lg cursor-pointer px-2 py-1 border">
                                     <img :src="round.active_players[2].avatar_path"
-                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold">
+                                         class="mr-2 md:h-10 md:w-10 h-7 w-7 rounded-full">
+                                    <div class="font-bold">
                                         {{ round.active_players[2].surname }} {{ round.active_players[2].name }}
                                     </div>
                                 </div>
 
                                 <!-- Spieler 3 -->
                                 <div :class="[
-                                    {'tw-shadow-green tw-border-transparent': winners.includes(round.active_players[3].id),
-                                     'tw-border-gray-500': !winners.includes(round.active_players[3].id)},
-                                    isActivePlayer ? 'tw-order-3 tw-col-start-3' : 'tw-order-4 tw-col-start-3'
+                                    {'shadow-green border-transparent': winners.includes(round.active_players[3].id),
+                                     'border-gray-500': !winners.includes(round.active_players[3].id)},
+                                    isActivePlayer ? 'order-3 col-start-3' : 'order-4 col-start-3'
                                 ]"
                                      @click="toggle(round.active_players[3].id)"
-                                     class="tw-col-span-2 tw-flex tw-justify-center tw-items-center tw-rounded-lg tw-cursor-pointer tw-px-2 tw-py-1 tw-border">
+                                     class="col-span-2 flex justify-center items-center rounded-lg cursor-pointer px-2 py-1 border">
                                     <img :src="round.active_players[3].avatar_path"
-                                         class="tw-mr-2 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
-                                    <div class="tw-font-bold">
+                                         class="mr-2 md:h-10 md:w-10 h-7 w-7 rounded-full">
+                                    <div class="font-bold">
                                         {{ round.active_players[3].surname }} {{ round.active_players[3].name }}
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-row tw-mb-4 tw-mt-10 mx-auto justify-content-center tw-flex">
-                                <div class="tw-mr-3 tw-mt-1">
-                                    <i class="fas fa-minus-circle tw-text-3xl tw-text-gray-800 tw-cursor-pointer"
+                            <div class="form-row mb-4 mt-10 mx-auto justify-content-center flex">
+                                <div class="mr-3 mt-1">
+                                    <i class="fas fa-minus-circle text-3xl text-gray-800 cursor-pointer"
                                        @click="decrementPoints"></i>
                                 </div>
                                 <div class="col-xs-6 col-xs-offset-3">
@@ -89,8 +90,8 @@
                                            type="number" min="-4" max="16" v-model="points" id="points">
                                     <label for="points" class="control-label font-weight-bold">Punkte</label>
                                 </div>
-                                <div class="tw-ml-3 tw-mt-1">
-                                    <i class="fas fa-plus-circle tw-text-3xl tw-text-gray-800 tw-cursor-pointer"
+                                <div class="ml-3 mt-1">
+                                    <i class="fas fa-plus-circle text-3xl text-gray-800 cursor-pointer"
                                        @click="incrementPoints"></i>
                                 </div>
                             </div>
@@ -123,7 +124,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary mx-auto" data-dismiss="modal">Schließen
+                        <button type="button" class="btn btn-outline-secondary mx-auto" @click="modalOpen = false">Schließen
                         </button>
                     </div>
                 </div>
@@ -137,6 +138,7 @@ export default {
     props: ['round'],
     data() {
         return {
+            modalOpen: false,
             points: 0,
             winners: [],
             misplayed: false,
@@ -171,7 +173,7 @@ export default {
                     this.points = 0;
                     this.winners = [];
                     this.misplayed = false;
-                    $('#createGame').modal('hide')
+                    this.modalOpen = false;
                     this.$emit('updated');
                 })
                 .catch(error => {

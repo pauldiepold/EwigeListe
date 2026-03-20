@@ -1,12 +1,8 @@
-<div class="alert alert-success tw-mb-4 tw-max-w-md" role="alert">
-    <div class="row align-items-center no-gutters">
-        <div class="col-11">
-            {{ $slot }}
-        </div>
-        <div class="col-1">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <i class="fas fa-sm fa-times"></i>
-            </button>
-        </div>
+<div x-data="{ visible: true }" x-show="visible" class="mb-4 max-w-md mx-auto">
+    <div class="flex items-center justify-between px-4 py-3 rounded border bg-green-100 text-green-800 border-green-300">
+        <span>{{ $slot }}</span>
+        <button @click="visible = false" class="ml-4 text-green-600 hover:text-green-900" aria-label="Schließen">
+            <i class="fas fa-sm fa-times"></i>
+        </button>
     </div>
 </div>

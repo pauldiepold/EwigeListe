@@ -8,11 +8,11 @@
                             <tr class="border-bottom-thick">
                                 <!-- Spieler Kopfzeile -->
                                 <th v-for="player in round.players" :key="player.id"
-                                    class="tw-flex-col tw-items-center">
+                                    class="flex-col items-center">
                                     <a :href="player.path">
                                         <img :src="player.avatar_path"
-                                             class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
+                                             class="mx-auto my-1 md:h-10 md:w-10 h-7 w-7 rounded-full"
+                                             :class="{ 'shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
                                     </a>
 
                                     <a :class="{ 'text-dark': round.dealer_index !== player.index,
@@ -24,8 +24,8 @@
 
                                 <!-- Punkte -->
                                 <th class="text-dark">
-                                    <img src="/storage/avatars/default.jpg"
-                                         class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full tw-opacity-0">
+                                    <img :src="'/img/default.jpg'"
+                                         class="mx-auto mb-1 md:h-10 md:w-10 h-7 w-7 rounded-full opacity-0">
                                     Punkte
                                 </th>
                             </tr>

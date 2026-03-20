@@ -1,4 +1,4 @@
-<footer class="footer py-3 tw-bg-blue-darker position-absolute w-100" style="bottom: 0">
+﻿<footer class="footer py-3 bg-blue-darker position-absolute w-100" style="bottom: 0">
     <div class="container text-center text-muted">
         @auth
             Angemeldet: <a href="{{ auth()->user()->player->path() }}">{{ auth()->user()->player->surname }} {{ auth()->user()->player->name }}</a> &bull;

@@ -11,12 +11,12 @@
 <link rel="icon" href="{{ asset('img/favicon_192x192.png') }}" sizes="192x192"/>
 <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/apple-touch-icon.png') }}">
 @stack('scriptsHead')
-<link rel="stylesheet" href="{{ mix('/css/app.css') }}">
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 <link rel="manifest" href="{{ asset('manifest.json') }}">
 
 
 <script>
-    if ('serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator && location.hostname !== 'localhost' && !location.hostname.endsWith('.test')) {
         navigator.serviceWorker.register('/service-worker.js');
     }
 </script>

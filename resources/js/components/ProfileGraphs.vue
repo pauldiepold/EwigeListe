@@ -1,11 +1,11 @@
 <template>
-    <div class="tw-mx-auto tw-max-w-lg">
-        <h5 class="tw-my-4 tw-font-bold">Punkteverlauf:</h5>
+    <div class="mx-auto max-w-lg">
+        <h5 class="my-4 font-bold">Punkteverlauf:</h5>
         <div>
             <canvas id="profilePointChart" height="400"></canvas>
         </div>
 
-        <h5 class="tw-mt-6 tw-mb-4 tw-font-bold">Anzahl der Spiele</h5>
+        <h5 class="mt-6 mb-4 font-bold">Anzahl der Spiele</h5>
         <div>
             <canvas id="profileGameChart" height="400"></canvas>
         </div>
@@ -35,7 +35,7 @@
                         ]
                     };
 
-                    var ctx = $("#profilePointChart");
+                    var ctx = document.getElementById("profilePointChart");
 
                     var LineGraph = new Chart(ctx, {
                         type: 'line',
@@ -83,7 +83,7 @@
                         ]
                     };
 
-                    var ctx = $("#profileGameChart");
+                    var ctx = document.getElementById("profileGameChart");
 
                     var LineGraph = new Chart(ctx, {
                         type: 'line',

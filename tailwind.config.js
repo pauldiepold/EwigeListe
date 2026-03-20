@@ -1,7 +1,7 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
-    prefix: 'tw-',
     content: [
-        './resources/**/*.{html,js,scss,css,vue,php}'
+        './resources/**/*.{html,js,css,vue,php}'
     ],
     theme: {
         extend: {
@@ -23,13 +23,14 @@ module.exports = {
                 },
                 orange: {
                     dark: 'rgb(176, 74, 67)',
+                    DEFAULT: '#D16341',
                     500: '#D16341',
                     lighter: 'rgba(209, 99, 65, 0.18)',
                 },
                 blue: {
                     darker: '#21295C',
                     dark: 'rgb(5, 75, 109)',
-                    default: '#065A82',
+                    DEFAULT: '#065A82',
                     light: '#0692c6',
                     lighter: '#92d2ff',
                     lightest: '#cbe7f7',
@@ -63,7 +64,7 @@ module.exports = {
                 red: '0 0 6px 3px rgb(202, 114, 114)',
                 xs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
                 sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-                default: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                DEFAULT: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
                 md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                 lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
                 xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
@@ -81,11 +82,7 @@ module.exports = {
             },
             borderWidth: {
                 '3': '3px',
-            }
+            },
         },
     },
-    variants: {
-        borderStyle: ['responsive', 'focus'],
-        borderWidth: ['responsive', 'focus'],
-    },
-}
+};

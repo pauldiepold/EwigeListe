@@ -1,11 +1,11 @@
-<div class="py-2 tw-bg-blue-dark" id="site-title">
+﻿<div class="py-2 bg-blue-dark" id="site-title">
     <a href="/" class="link-unstyled">
         <h3 class="site-title text-light mb-0">Ewige Liste</h3>
     </a>
 </div>
 
-<nav class="bg-secondary tw-z-50">
-    <div class="tw-max-w-md tw-px-1 tw-flex tw-justify-around tw-mx-auto">
+<nav class="bg-secondary z-50">
+    <div class="max-w-md px-1 flex justify-around mx-auto">
         <a href="/">
             <nav-icon icon="fa-home" tooltip="Startseite"></nav-icon>
         </a>

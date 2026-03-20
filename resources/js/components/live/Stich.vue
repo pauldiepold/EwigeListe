@@ -1,17 +1,17 @@
-<template>
-    <div class="tw-max-w-xs tw-mx-auto">
-        <div class="tw-flex tw-justify-center tw--mb-12">
+﻿<template>
+    <div class="max-w-xs mx-auto">
+        <div class="flex justify-center -mb-12">
             <karte style="margin: 0 !important;" :karte="karten[2]"/>
         </div>
-        <div class="tw-flex tw-justify-between">
-            <div class="tw-mr-16">
+        <div class="flex justify-between">
+            <div class="mr-16">
                 <karte style="margin: 0 !important;" :karte="karten[1]"/>
             </div>
-            <div class="tw-ml-16">
-                <karte class="tw-rotate-90" style="margin: 0 !important;" :karte="karten[3]"/>
+            <div class="ml-16">
+                <karte class="rotate-90" style="margin: 0 !important;" :karte="karten[3]"/>
             </div>
         </div>
-        <div class="tw-flex tw-justify-center tw--mt-12">
+        <div class="flex justify-center -mt-12">
             <karte style="margin: 0 !important;" :karte="karten[0]"/>
         </div>
     </div>
