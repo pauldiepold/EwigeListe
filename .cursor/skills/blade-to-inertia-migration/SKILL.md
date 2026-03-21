@@ -9,11 +9,12 @@ Referenz: `docs/inertia-migration-plan.md`, Zielstruktur unter `resources/js/ine
 
 ## Checkliste pro Seite
 
-- [ ] Controller: `Inertia::render()` statt `view()`, Resource-Klassen übergeben
-- [ ] Resources: Mapping-Logik raus aus dem Controller
-- [ ] Page: `Pages/<Name>/Index.vue` erstellen
-- [ ] Komponenten: Seite in fokussierte Teilkomponenten schneiden
-- [ ] Typen: Zentralisiert in `types/<name>.ts`
+- [ ] **Vor dem Codieren:** echte Blade-Datei lesen (und prüfen, welche Variablen das Template wirklich nutzt). Die Routen-Matrix in `docs/inertia-migration-plan.md` ist ein Backlog — Aufwand/Hinweise können von der Realität abweichen.
+- [ ] Controller: `Inertia::render()` statt `view()`; nur Daten laden, die die Page braucht. Ungenutzte `compact()`-/Query-Daten **entfernen**, nicht „aus Gewohnheit“ als Prop weiterreichen.
+- [ ] Resources: Mapping-Logik raus aus dem Controller — **nur wo** es serverseitige Props gibt (`JsonResource` / Collections).
+- [ ] Page: `Pages/<Pfad>.vue` (nicht nur `Index.vue`; z. B. `Foo/Create.vue`).
+- [ ] Komponenten: Seite in fokussierte Teilkomponenten schneiden, sobald die Page wächst.
+- [ ] Typen: `types/<name>.ts`, sobald es Props (oder geteilte Formular-/API-Typen) gibt; **entfällt**, wenn die Page keine serverseitigen Props hat.
 - [ ] Composable: Wiederverwendbare Logik (Charts, Fetch, …) auslagern
 - [ ] Lint + Type-Check: `npm run type-check && npm run lint` muss grün sein
 - [ ] Routen: keine hardcodierten Pfade; Ziggy über Composable `useAppRoute()` und benannte Laravel-Routen
@@ -92,6 +93,8 @@ resources/js/inertia/
 
 Schlank halten: Props definieren, Komponenten montieren, kein Business-Logik.
 
+**Nur Formular, keine serverseitigen Props:** `useForm` von `@inertiajs/vue3`, Submit mit `form.post(route('…'))` / `put` / `patch` (Ziggy-URL). Validierungsfehler an `UFormField` (Nuxt UI) binden.
+
 ```vue
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
@@ -115,7 +118,7 @@ defineProps<{
 
 ## 5. Typen
 
-Eine Datei pro Seite unter `types/<name>.ts`:
+Eine Datei pro Seite unter `types/<name>.ts`, **wenn** die Seite Props oder mehrere gemeinsame Typen braucht. Bei **null Props** (reines Formular) kann die Page ohne eigene `types/*`-Datei bleiben.
 
 ```ts
 export type FooData = { id: number; label: string };
@@ -141,6 +144,8 @@ export function useFooChart(canvasRef: Ref<HTMLCanvasElement | null>, id: number
 
 | Problem | Lösung |
 |---|---|
+| Matrix/Backlog beschreibt mehr UI als die Blade | Immer Blade + Template prüfen; Matrix-Zeile nachziehen, nicht die Annahme bauen. |
+| Controller lädt Variablen, die `@section` nie nutzt | Query/`compact` beim Umstellen löschen — weniger Last, klarere API. |
 | `data`-Wrapping im Frontend | `public static $wrap = null;` in der Resource |
 | Mapping-Logik im Controller | In Resource-Klasse verschieben |
 | Monolithische Page-Komponente | In Teilkomponenten unter `Components/<Name>/` aufteilen |

@@ -1,4 +1,10 @@
-﻿@extends('layouts.main')
+{{--
+  LEGACY – nicht mehr aktiver Render-Pfad.
+  Gruppenerstellung wird über GroupController@create als Inertia::render('Groups/Create') ausgeliefert.
+  Diese Datei bleibt bis zum finalen Cleanup erhalten.
+  Neuer Code: resources/js/inertia/Pages/Groups/Create.vue
+--}}
+@extends('layouts.main')
 
 @section('title', 'Liste erstellen')
 

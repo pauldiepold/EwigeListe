@@ -131,6 +131,8 @@ Status: Punkt 1 erledigt.
 
 **Quelle:** `php artisan route:list --json` plus Controller-Scan (`view()` vs. `Inertia::render()`). Stand fuer Agent und Team als Arbeits-Backlog.
 
+**Pflicht vor Umsetzung einer Zeile:** Zugehörige **Blade-Datei** lesen und prüfen, welche Variablen das Template **tatsächlich** nutzt. Controller und Matrix beschreiben manchmal mehr (z. B. geladene Collections ohne Blade-Verwendung) oder eine veraltete UI-Idee — das ist **kein** Migrationsumfang, bis es in Blade/Verhalten existiert. Nach Klärung die Matrix-Zeile („Erwartete Probleme / Hinweise“, Aufwand) anpassen, damit der Backlog nicht irreführt. Referenz: `groups.create` (nur `name`-Formular; ungenutztes `allPlayers` im Controller entfernt).
+
 **Legende — Aufwand (grobe PT-Schätzung):**
 
 | Stufe | Bedeutung |
@@ -159,7 +161,7 @@ Status: Punkt 1 erledigt.
 | GET | `rundenarchiv/{group?}` | `rounds.index` | `RoundController@index` | todo | `Rounds/Index` | M | mittel | Gruppenwahl, Zähler; Archiv-Tabelle nutzt `rounds.archiveTable` (DataTables-JSON) — entweder Tabellen-UI in Vue neu bauen oder Übergangsphase mit fetch + eigener Tabelle. |
 | GET | `runde/{round}` | `rounds.show` | `RoundController@show` | todo | `Rounds/Show` | **L** | **hoch** | Blade ist nur Shell; Kern ist Legacy-`<round>`-Vue mit API/WebSockets. Migration = grösster Brocken: Props/Resources alignen, Live-Spiel, Kommentare, Spiele — evtl. schrittweise (Shell Inertia, Kind zuerst portieren). |
 | GET | `listen` | `groups.index` | `GroupController@index` | **done** | `Groups/Index` | M | mittel | Listen mit Counts; Navigation zu Detail. |
-| GET | `liste/erstellen` | `groups.create` | `GroupController@create` | todo | `Groups/Create` | M | mittel | Spielerliste/Mehrfachauswahl ähnlich Runden-Erstellung; Resource fuer `allPlayers`. |
+| GET | `liste/erstellen` | `groups.create` | `GroupController@create` | **done** | `Groups/Create` | — | — | Blade nur Namensfeld; ungenutztes `allPlayers`-Query entfernt. |
 | GET | `liste` | `ewigeListe` | `GroupController@show` | todo | `Groups/Show` | M | mittel | Default-Gruppe (wie `show` ohne Parameter); gleiche Page-Komponente wie `groups.show`. |
 | GET | `liste/{group}` | `groups.show` | `GroupController@show` | todo | `Groups/Show` | **L** | **hoch** | Viele Relationen, Badges, Statistiken, eingebettete Charts (`charts.home` als JSON); tech-debt `group`-JSON beachten (`docs/tech-debt/group-positional-json.md`). |
 | GET | `profil/{player}/{group?}` | — | `PlayerController@show` | todo | `Players/Show` | **L** | **hoch** | Ähnliche Datenfülle wie Gruppen-Seite; optionale Gruppe; Badges/Charts. **Route benennen** (Ziggy): empfohlen `players.show`. |
@@ -193,7 +195,7 @@ Diese Endpunkte liefern **keine** klassische Blade-Vollseite für die Migration,
 
 ### Empfohlene Migrations-Reihenfolge (Vorschlag)
 
-1. **Gruppen-Liste + -Erstellung** (`groups.index`, `groups.create`) — baut auf bestehendem Muster (Listen, Formulare), mittlerer Risiko, hoher Navigationsnutzen.
+1. **Gruppen-Liste + -Erstellung** (`groups.index`, `groups.create`) — **erledigt**; Create ist ein schlankes Namensformular (Inertia `useForm`), nicht die früher in der Matrix angenommene Spieler-Mehrfachauswahl.
 2. **Runden-Archiv** (`rounds.index`) — in einem Schwung mit Klärung Archiv-Tabelle (DataTables vs. neue Tabelle).
 3. **Nutzer bearbeiten** (`users.edit`) — isoliert, gute Übung für Multi-Form-Pages.
 4. **Statische Seiten** (Datenschutz, Impressum, Regeln) — schnelle Gewinne, wenig Logik.
@@ -206,6 +208,7 @@ Diese Endpunkte liefern **keine** klassische Blade-Vollseite für die Migration,
 
 | Risiko | Massnahme |
 |--------|-----------|
+| Matrix-Zeile / Kommentar trifft die echte Blade nicht | Vor Codieren Blade + Template prüfen; Phantom-Features nicht einbauen; Backlog-Zeile korrigieren. |
 | Doppeltes Vue (Legacy + Inertia) auf einer URL | Pro Route nur ein Render-Pfad; `rounds.show` bewusst entflechten. |
 | Unbenannte Routen (Ziggy) | `profil/{player}` und fehlende `name` bei Charts nachziehen, wo das Frontend Links braucht. |
 | DataTables mit HTML-Strings | Schrittweise durch Vue-Tabelle + Links ersetzen; bis dahin ggf. Legacy-Fragmente dokumentieren. |

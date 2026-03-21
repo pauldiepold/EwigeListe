@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Group;
 use App\Http\Resources\GroupIndexResourceCollection;
-use App\Player;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -26,14 +25,9 @@ class GroupController extends Controller
     }
 
 
-    public function create()
+    public function create(): Response
     {
-        $allPlayers = Player::where('hide', '=', '0')
-            ->withCount('gamePlayers')
-            ->orderByRaw('game_players_count desc')
-            ->get();
-
-        return view('groups.create', compact('allPlayers'));
+        return Inertia::render('Groups/Create');
     }
 
 
