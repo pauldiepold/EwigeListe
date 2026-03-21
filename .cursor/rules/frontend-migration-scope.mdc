@@ -1,0 +1,30 @@
+---
+description: Regeln fuer Blade-zu-Inertia Frontend-Migration
+globs: "{resources/js/**/*.vue,resources/js/**/*.js,resources/js/**/*.ts,resources/views/**/*.blade.php,vite.config.js,vite.config.ts,eslint.config.*,tsconfig*.json}"
+alwaysApply: false
+---
+
+# Frontend-Migrationsregeln
+
+- Bei Blade-Aenderungen immer mitdenken, wie die Seite spaeter als Inertia-Page aussieht.
+- Neue UI-Logik in Vue/Inertia platzieren; Blade nur noch als Uebergangsschicht verwenden.
+- Doppelte Implementierung vermeiden: bei Migration klar kennzeichnen, welcher Pfad der neue Standard ist.
+- Bestehende Routen/API-Vertraege beibehalten, wenn sie fuer das Frontend weiter nutzbar sind.
+- Auf konsistente Komponentenmuster achten (props, emits, Naming, Layout-Struktur).
+- Homepage und Folgeseiten in klar getrennte Vue-Teilkomponenten schneiden statt monolithischer Pages.
+- Wiederverwendbare Daten-/UI-Logik als Composables kapseln (z. B. Chart-Laden, Formatierung, Paging-Helfer).
+- Bootstrap-Altlasten bei Gelegenheit entfernen, wenn ein gleichwertiger Tailwind/Vue-Pfad existiert.
+- UI-Framework-Entscheidung (z. B. Nuxt UI) als offene Architekturentscheidung behandeln, bis final beschlossen.
+- Pilotprinzip anwenden: zuerst Homepage als Referenzseite, erst danach weitere Seiten.
+- Neuer Inertia-Code liegt unter `resources/js/inertia`; Legacy bleibt klar getrennt.
+- Linting/Type-Checking in der Einfuehrungsphase nur fuer neue Inertia-Ordner konfigurieren, Legacy explizit ausschliessen.
+- Bei neuen Frontend-Dependencies aktiv moderne, wartbare Alternativen pruefen (z. B. date-fns statt moment) und kurz begruenden.
+- Fuer einfache GET-Ladevorgaenge standardmaessig `fetch` bevorzugen; `axios` nur bei klarem Mehrwert (Interceptors, Upload, komplexe Fehlerbehandlung).
+- Bei Kontextluecken oder Architekturzweifeln Rueckfrage stellen statt Annahmen zu treffen.
+- die migration soll eine minimale aber funktionierend ui liefern, die nah am bisherigen look and feel ist. die code struktur sollte sauber sein, so dass spätere ui verbesserungen einfach und sauber durchführbar sind.
+
+# Done-Kriterien fuer einzelne Migrationsschritte
+
+- Seite/Funktion laeuft ueber den neuen Inertia/Vue-Pfad.
+- Offensichtliche visuelle Regressionen sind akzeptabel, funktionale Regressionen nicht.
+- Altes Markup ist reduziert oder fuer die naechste Migrationsetappe klar markiert.

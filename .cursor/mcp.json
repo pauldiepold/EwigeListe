@@ -1,0 +1,20 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "C:/Users/pauld/.config/herd/bin/php.bat",
+            "args": [
+                "artisan",
+                "boost:mcp"
+            ]
+        },
+        "herd": {
+            "command": "C:/Users/pauld/.config/herd/bin/php.bat",
+            "args": [
+                "C:/Users/pauld/.config/herd/bin/herd-mcp.phar"
+            ],
+            "env": {
+                "SITE_PATH": "C:\\Users\\pauld\\PhpstormProjects\\EwigeListe"
+            }
+        }
+    }
+}

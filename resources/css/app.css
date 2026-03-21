@@ -7,6 +7,7 @@ layer(base);
 @import './cards.css' layer(base);
 
 @import 'tailwindcss';
+@import '@nuxt/ui';
 
 @theme {
   --breakpoint-lg: 1124px;
@@ -105,6 +106,10 @@ body {
     font-size: 0.92rem;
     line-height: 1.6;
     background-color: #f1f1ef;
+}
+
+html.dark body {
+    background-color: rgb(15 23 42);
 }
 
 h1, h2, h3, h4, h5, h6 {

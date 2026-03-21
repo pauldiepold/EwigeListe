@@ -27,8 +27,7 @@ class ManageLiveRoundsTest extends TestCase
             'groups' => $groups->pluck('id')->toArray(),
             'liveGame' => true
         ])
-            ->assertOk()
-            ->assertSee(Round::first()->path());
+            ->assertRedirect(Round::first()->path());
 
         $this->assertDatabaseHas('live_rounds', LiveRound::first()->toArray());
     }

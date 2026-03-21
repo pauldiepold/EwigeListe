@@ -1,4 +1,5 @@
-﻿@extends('layouts.main')
+{{-- Legacy: Index unter Inertia `Groups/Index.vue`; wird nicht mehr gerendert. --}}
+@extends('layouts.main')
 
 @section('title', 'Listen')
 

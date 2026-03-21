@@ -1,0 +1,44 @@
+---
+description: Operative Regeln fuer Migrations-Tracking und Entscheidungen
+alwaysApply: true
+---
+
+# Migrations-Tracking
+
+- Fuer jede migrierte Seite den Status fuehren: `todo`, `in_progress`, `done`.
+- Pro Seite Altpfad (Blade/Legacy) und Neupfad (Inertia/Page) dokumentieren.
+- Nur als `done` markieren, wenn der neue Pfad im Alltag nutzbar ist.
+- Pilot-Reihenfolge einhalten: zuerst nur Homepage, danach Entscheidungspunkt vor weiterer Seitenmigration.
+
+# Funktionale Mindestqualitaet pro Seite
+
+- Fuer jede Seite 3-5 Kerninteraktionen benennen (z. B. Laden, Navigation, Speichern, Validierung).
+- Nach Migration pruefen, dass diese Kerninteraktionen funktionieren.
+- Visuelle Unsauberkeiten sind akzeptabel, funktionale Brueche nicht.
+
+# UI-Framework Entscheidung
+
+- UI-Framework nicht final festlegen ohne Praxisprobe.
+- Vor Entscheidung einen kleinen Spike auf 1-2 echten Seiten durchfuehren.
+- Entscheidung anhand von Integrationsaufwand, Entwicklungsgeschwindigkeit und Wartbarkeit treffen.
+
+# Kontextklarheit vor Umsetzung
+
+- Vor jedem groesseren Schritt fehlenden Kontext aktiv erfragen.
+- Bei Unsicherheit keine stillen Annahmen; stattdessen Entscheidung offen markieren.
+
+# Agent-Umgebung und Tooling
+
+- Wenn in der Agent-Shell notwendige Tools fehlen (z. B. `php`, `composer`, `artisan`, Netzwerk fuer `npm install`), keine stillen Workarounds bauen (keine Ersatz-Architektur nur weil ein Befehl hier nicht laeuft).
+- Stattdessen den Nutzer kurz informieren und um Ausfuehrung auf seiner Maschine bitten oder die Aufgabe so teilen, dass der naechste Schritt ohne das fehlende Tool verifizierbar ist.
+
+# Benannte Routen im Inertia-Frontend (Ziggy)
+
+- URLs im neuen Inertia-Bereich nicht hardcoden: `ziggy-js` + shared Inertia-Prop `ziggy` (siehe `HandleInertiaRequests` und Composable `useAppRoute`).
+- Neue oeffentliche HTTP-Routen im Backend moeglichst mit `->name(...)` versehen, damit Ziggy und Typisierung tragfaehig bleiben.
+
+# Tabellen mit serverseitiger Pagination
+
+- Sortierung/Filterung, die die **gesamte** Datenmenge betrifft, gehoert ins **Backend** (Query-Parameter + `orderBy`), nicht nur in die TanStack/Nuxt-UI-Tabelle auf der aktuellen Seite.
+- Frontend: bei Pagination/Gruppenwechsel die gleichen Query-Params mitschleifen; Nuxt UI `UTable` bei Bedarf `manualSorting: true` und Navigation per `router.visit`.
+- Backend: erlaubte Sort-Spalten whitelisten; stabilen Tie-Breaker setzen (z. B. `id`), damit die Reihenfolge bei gleichen Werten nicht springt.

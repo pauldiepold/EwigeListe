@@ -1,0 +1,32 @@
+---
+description: Projektweite Leitplanken fuer die Inertia-Migration
+alwaysApply: true
+---
+
+# Projekt-Richtung und Risiko-Policy
+
+- Primaeres Ziel ist die schrittweise Modernisierung zu einer Laravel+Inertia SPA.
+- Frontend zuerst: Fokus auf `resources/js` und Migration von Blade-Ansichten.
+- Backend nur minimal anfassen; bestehende, stabile Serverlogik nicht ohne klaren Grund veraendern.
+- Bevorzuge saubere, gleichfoermige Schnitte statt isolierter Einzeltricks.
+- Bevorzuge langfristig stabile Architektur: kleine fokussierte Komponenten, klare Verantwortlichkeiten, Composables fuer wiederkehrende UI-Logik.
+- Risiko kontrollieren: groessere Aenderungen sind okay, aber nur in gut verifizierbaren Schritten.
+- Wenn Backend-Modernisierungspotenzial sichtbar wird: als Vorschlag dokumentieren mit Grund, Aufwand und Nutzen.
+- Tests sind aktuell nicht Pflicht; stattdessen auf Build/Lint/Runtime-Checks und manuelle Verifikation achten.
+- UI darf waehrend der Migration temporaer unvollstaendig/broken sein, sofern der Migrationspfad klar ist.
+- Start der eigentlichen Migration erst nach erfolgreicher Pilotseite (Homepage) und dokumentierter UI-Framework-Entscheidung.
+- Neuer Inertia-Code wird in klar getrennten neuen Ordnern aufgebaut; Legacy bleibt bis zur Migration explizit sichtbar.
+
+# Arbeitsstil
+
+- Erklaerungen mittellang und praxisnah halten.
+- In kleine, nachvollziehbare Commits schneiden, wenn Commits gewuenscht sind.
+- Auf niedrige Komplexitaet und schnelle sichtbare Ergebnisse optimieren.
+- Bei Unsicherheit keine Annahmen treffen, sondern aktiv Rueckfragen stellen und offene Punkte dokumentieren.
+- Bei Technologieentscheidungen (Libraries, HTTP-Client, Datumslogik) moderne und gut wartbare Optionen aktiv pruefen und als Empfehlung nennen.
+
+# Feedback und kontinuierliche Schaerfung
+
+- Kritik/Feedback aus dem Chat aktiv aufnehmen und als Projektwissen behandeln.
+- Wenn Feedback dauerhaft sinnvoll ist, Regeln in `.cursor/rules/` konkret aktualisieren.
+- Vor jedem groesseren Migrationsschritt kurz pruefen, ob neue Erkenntnisse als Regel fehlen.

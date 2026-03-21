@@ -31,7 +31,6 @@ class ManageRoundTest extends TestCase
             'groups' => $groups->pluck('id')->toArray(),
             'liveGame' => false
         ])
-            ->assertOk()
-            ->assertSee(Round::first()->path());
+            ->assertRedirect(Round::first()->path());
     }
 }
