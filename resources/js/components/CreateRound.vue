@@ -1,12 +1,12 @@
-<template>
+﻿<template>
     <div class="form-autocomplete">
         <div v-if="players.length < 7"
-             class="bg-white tw-rounded-lg shadow-2 mx-auto tw-my-6 tw-p-3"
+             class="bg-white rounded-lg shadow-2 mx-auto my-6 p-3"
              style="max-width:19rem;">
 
             <input id="text-search"
                    ref="textSearch"
-                   class="tw-bg-gray-200 tw-rounded-lg tw-w-full tw-px-3 tw-py-2 tw-mb-3 tw-appearance-none focus:tw-outline-none focus:tw-shadow-outline focus:tw-border-purple-500 tw-border-1"
+                   class="bg-gray-200 rounded-lg w-full px-3 py-2 mb-3 appearance-none focus:outline-none focus:shadow-outline focus:border-purple-500 border"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
                    @focus="scrollTo('#text-search')"
@@ -14,22 +14,22 @@
                    type="text"
                    placeholder="Bitte Namen eingeben"/>
 
-            <div class="tw-h-40 tw-scrolling-touch sm:tw-scrolling-auto tw-overflow-auto tw-bg-gray-200 tw-rounded-lg">
-                <div class="tw-px-2 tw-py-1 tw-mx-1 tw-my-2 tw-cursor-pointer tw-flex tw-items-center tw-justify-start"
+            <div class="h-40 scrolling-touch sm:scrolling-auto overflow-auto bg-gray-200 rounded-lg">
+                <div class="px-2 py-1 mx-1 my-2 cursor-pointer flex items-center justify-start"
                      v-for="(player) in filteredPlayers"
                      @click="addPlayer(player)">
-                    <avatar :path="player.avatar_path" width="6" class="tw-mr-2"></avatar>
+                    <avatar :path="player.avatar_path" width="6" class="mr-2"></avatar>
                     <div>{{ player.surname.concat(' ', player.name) }}</div>
                 </div>
-                <div class="tw-px-3 tw-py-2 text-left" v-if="filteredPlayers.length===0">
+                <div class="px-3 py-2 text-left" v-if="filteredPlayers.length===0">
                     Person wurde nicht gefunden.
                 </div>
             </div>
         </div>
 
-        <div class="tw-text-center tw-mt-3">
+        <div class="text-center mt-3">
             <a href="/register/quick" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-user-plus tw-mr-1"></i>
+                <i class="fas fa-user-plus mr-1"></i>
                 Neue Person registrieren
             </a>
         </div>
@@ -37,7 +37,7 @@
 
         <h5 class="mt-4" v-if="players.length !== 0">
             {{ players.length }} {{ players.length === 1 ? 'Person' : 'Personen'}}:<br>
-            <span class="tw-text-xs">(Ändern der Reihenfolge durch Ziehen)</span>
+            <span class="text-xs">(Ändern der Reihenfolge durch Ziehen)</span>
         </h5>
 
         <sortable-players-list lockAxis="y"
@@ -51,20 +51,20 @@
                              @remove-player="removePlayer"/>
         </sortable-players-list>
 
-        <div class="d-flex justify-content-center align-items-center tw-my-6">
-            <div class="no-underline tw-font-bold tw-text-lg tw-text-gray-800 tw-cursor-pointer"
+        <div class="d-flex justify-content-center align-items-center my-6">
+            <div class="no-underline font-bold text-lg text-gray-800 cursor-pointer"
                @click="liveGame = false">
                 Offline
             </div>
             <div class="mx-2">
-                <i class="fas fa-toggle-on tw-text-gray-700 tw-text-4xl tw-cursor-pointer"
+                <i class="fas fa-toggle-on text-gray-700 text-4xl cursor-pointer"
                    v-if="liveGame"
                    @click="liveGame = !liveGame"/>
-                <i class="fas fa-toggle-on tw-text-gray-700 tw-text-4xl fa-flip-horizontal tw-cursor-pointer"
+                <i class="fas fa-toggle-on text-gray-700 text-4xl fa-flip-horizontal cursor-pointer"
                    v-if="!liveGame"
                    @click="liveGame = !liveGame"/>
             </div>
-            <div class="tw-font-bold tw-text-lg no-underline tw-text-gray-800 tw-cursor-pointer"
+            <div class="font-bold text-lg no-underline text-gray-800 cursor-pointer"
                @click="liveGame = true">
                 Online
             </div>
@@ -90,14 +90,14 @@
         <div v-for="group in filteredGroups"
              @click="inSelectedGroups(group) ? removeGroup(group) : addGroup(group)"
              class="text-left d-flex align-items-center justify-content-between group"
-             :class="{'tw-cursor-pointer': group.id !== 1}"
+             :class="{'cursor-pointer': group.id !== 1}"
              style="max-width: 24rem;"
              id="groups">
             <span class="font-weight-bold"
-                  :class="{'tw-text-gray-600': !inSelectedGroups(group)}">
+                  :class="{'text-gray-600': !inSelectedGroups(group)}">
                 {{ group.name }}
             </span>
-            <i class="fas fa-2x mx-1 tw-text-gray-700"
+            <i class="fas fa-2x mx-1 text-gray-700"
                :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}"
                v-show="group.id !== 1">
             </i>

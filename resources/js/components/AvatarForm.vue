@@ -1,14 +1,14 @@
-<template>
+﻿<template>
     <div class="">
-        <img :src="result" class="tw-mx-auto tw-mb-6 tw-h-48 tw-rounded-full">
+        <img :src="result" class="mx-auto mb-6 h-48 rounded-full">
 
         <form enctype="multipart/form-data">
-            <div class="form-group tw-max-w-sm tw-mx-auto tw-text-center">
+            <div class="form-group max-w-sm mx-auto text-center">
                 <image-upload name="avatar" @loaded="onFilePicked"></image-upload>
             </div>
         </form>
 
-        <cropper class="tw-h-64"
+        <cropper class="h-64"
                  v-if="file_picked"
                  :src="src"
                  :stencil-props="{aspectRatio: 1}"
@@ -18,7 +18,7 @@
 
         <button @click="persist"
                 v-if="file_picked"
-                class="btn btn-primary tw-mt-4 d-flex vertical-align-center mx-auto">
+                class="btn btn-primary mt-4 d-flex vertical-align-center mx-auto">
             <span>
                 <i v-if="loading"
                    class="fa fa-spinner fa-spin text-lg mr-2"

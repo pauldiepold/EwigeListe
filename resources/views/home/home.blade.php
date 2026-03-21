@@ -1,3 +1,10 @@
+{{--
+  LEGACY – nicht mehr aktiver Render-Pfad.
+  Homepage wird seit Phase B der Inertia-Migration über HomeController@index
+  als Inertia::render('Home/Index') ausgeliefert.
+  Diese Datei bleibt bis zum finalen Cleanup erhalten.
+  Neuer Code: resources/js/inertia/Pages/Home/Index.vue
+--}}
 @extends('layouts.main')
 
 @section('title', 'Ewige Liste')
@@ -33,14 +40,14 @@
         @endif
     @endauth
 
-    <h4 class="tw-my-4">Rekorde:</h4>
+    <h4 class="my-4">Rekorde:</h4>
     <div class="row justify-content-center">
         <div class="col-sm-10 col-md-9 col-lg-7 col-xl-6">
             <table class="table table-sm table-borderless text-left">
                 @foreach($group->records as $row)
                     @php $row = collect($row); @endphp
                     <tr>
-                        <td class="tw-mb-4">
+                        <td class="mb-4">
                             {!! $row->shift() !!}
                         </td>
                         <td>
@@ -55,7 +62,7 @@
         </div>
     </div>
 
-    <h4 class="tw-mt-8 tw-mb-4">Statistiken:</h4>
+    <h4 class="mt-8 mb-4">Statistiken:</h4>
     <div class="row justify-content-center">
         <div class="col-sm-8 col-md-7 col-lg-5 col-xl-4">
             <table class="table table-sm table-borderless text-left">
@@ -74,7 +81,7 @@
         </div>
     </div>
 
-    <h4 class="tw-mt-8">Anzahl der Spiele:</h4>
+    <h4 class="mt-8">Anzahl der Spiele:</h4>
     <group-graph :group_id="{{ $group->id }}"></group-graph>
 
 @endsection

@@ -1,7 +1,7 @@
-<template>
+﻿<template>
     <img :src="path"
-         :class="['tw-w-' + width, 'tw-h-' + width]"
-         class="tw-rounded-full">
+         :class="['w-' + width, 'h-' + width]"
+         class="rounded-full">
 </template>
 
 <script>

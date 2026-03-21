@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CreateRoundPlayerResource;
+use App\Http\Resources\GroupOptionResource;
+use App\Http\Resources\RoundArchiveRowResource;
 use App\Http\Resources\Round as RoundResource;
 use App\Http\Requests\UpdateRound;
 use App\Live\Deck;
@@ -16,23 +19,62 @@ use App\Http\Requests\StoreRound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
 {
 
-    public function index(Group $group = null)
+    public function index(Group $group = null): Response
     {
-        $selectedGroup = isset($group) ? $group : Group::find(1);
+        $selectedGroup = $group ?? Group::findOrFail(1);
 
-        $groups = Group::all();
+        $groups = Group::query()->orderBy('name')->get();
 
-        $rounds_count = Round::whereHas('groups', function (Builder $query) use ($selectedGroup) {
+        $request = request();
+
+        $sort = $request->query('sort');
+        $directionInput = strtolower((string) $request->query('direction', 'desc'));
+        $allowedSorts = ['date', 'games', 'online'];
+        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'date';
+        $direction = $directionInput === 'asc' ? 'asc' : 'desc';
+
+        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($selectedGroup) {
             $query->where('groups.id', '=', $selectedGroup->id);
         })
-            ->count();
+            ->with(['players', 'liveRound'])
+            ->withCount(['games', 'groups']);
 
-        return view('rounds.index', compact('rounds_count', 'groups', 'selectedGroup'));
+        match ($sort) {
+            'games' => $roundsQuery
+                ->orderBy('games_count', $direction)
+                ->orderByDesc('rounds.id'),
+            'online' => $roundsQuery
+                ->orderByRaw('(live_round_id IS NOT NULL) '.strtoupper($direction))
+                ->orderByDesc('rounds.id'),
+            default => $roundsQuery
+                ->orderBy('updated_at', $direction)
+                ->orderByDesc('rounds.id'),
+        };
+
+        $paginator = $roundsQuery->paginate(20)->withQueryString();
+        $paginator->setCollection(
+            $paginator->getCollection()->map(
+                static fn (Round $round) => (new RoundArchiveRowResource($round))->resolve($request)
+            )
+        );
+
+        return Inertia::render('Rounds/Index', [
+            'groupOptions'     => array_values(GroupOptionResource::collection($groups)->resolve($request)),
+            'selectedGroup'    => (new GroupOptionResource($selectedGroup))->resolve($request),
+            'rounds'           => $paginator,
+            'loggedInPlayerId' => auth()->user()->player->id,
+            'archiveSort'      => [
+                'column'    => $sort,
+                'direction' => $direction,
+            ],
+        ]);
     }
 
     public function show(Round $round)
@@ -59,7 +101,7 @@ class RoundController extends Controller
         }
     }
 
-    public function create()
+    public function create(): Response
     {
         $allPlayers = Player::where('hide', '=', '0')
             ->with(['groups', 'profiles:id,player_id,group_id,default', 'user'])
@@ -67,7 +109,10 @@ class RoundController extends Controller
             ->orderByRaw('game_players_count desc')
             ->get();
 
-        return view('rounds.create', compact('allPlayers'));
+        return Inertia::render('Rounds/Create', [
+            'players'          => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
+            'loggedInPlayerId' => auth()->user()->player->id,
+        ]);
     }
 
     public function store(StoreRound $request)
@@ -99,7 +144,7 @@ class RoundController extends Controller
             $round->createLiveRound();
         }
 
-        return $round->path();
+        return redirect()->to($round->path());
     }
 
     public function update(UpdateRound $request, Round $round)

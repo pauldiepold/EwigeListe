@@ -1,18 +1,18 @@
-<template>
+﻿<template>
     <div>
         <div v-for="group in filteredGroups"
              class="text-left d-flex align-items-center justify-content-between group"
              style="max-width: 24rem;"
              id="groups">
             <a :href="'/liste/' + group.id"
-               class="font-weight-bold tw-text-black"
-               :class="{'tw-text-gray-600': !inSelectedGroups(group)}">
+               class="font-weight-bold text-black"
+               :class="{'text-gray-600': !inSelectedGroups(group)}">
                 {{group.name}}
-            </a><!-- tw-block tw-flex-grow -->
-            <div class="tw--mx-4 tw-px-4 tw--my-2 tw-py-2 tw-flex tw-items-center"
+            </a><!-- block grow -->
+            <div class="-mx-4 px-4 -my-2 py-2 flex items-center"
                  @click="inSelectedGroups(group) && edit ? removeGroup(group) : addGroup(group)"
-                 :class="{'tw-cursor-pointer': group.id !== 1 && group.closed !== 1 && edit}">
-                <i class="fas fa-2x tw-text-gray-700"
+                 :class="{'cursor-pointer': group.id !== 1 && group.closed !== 1 && edit}">
+                <i class="fas fa-2x text-gray-700"
                    :class="{'fa-toggle-on': inSelectedGroups(group), 'fa-toggle-off': !inSelectedGroups(group)}"
                    v-show="group.id !== 1 && group.closed !== 1 && edit">
                 </i>
@@ -52,7 +52,7 @@
                data-placement="top"
                title="Listen hinzufügen"
                data-content="Eine Runde kann nur Listen hinzugefügt werden, in denen mindestens eine der Personen Mitglied ist. Erstelle eine neue Liste oder trete einer bestehende Liste bei, um die Runde auf die Liste zu schreiben.">
-                <i class="fas fa-info-circle fa-lg tw-mt-6"></i>
+                <i class="fas fa-info-circle fa-lg mt-6"></i>
             </a>
         </div>
     </div>

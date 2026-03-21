@@ -1,6 +1,6 @@
-<template>
+﻿<template>
     <div>
-        <div v-show="showAlert" class="alert alert-success tw-mb-4 tw-max-w-md">
+        <div v-show="showAlert" class="alert alert-success mb-4 max-w-md">
             <div class="row align-items-center no-gutters">
                 <div class="col-11">
                     Listen Einstellungen erfolgreich gespeichert!
@@ -17,14 +17,14 @@
              style="max-width: 24rem;"
              id="groups">
                 {{group.name}}
-            <div class="tw--mx-4 tw-px-4 tw--my-2 tw-py-2 tw-flex tw-items-center"
+            <div class="-mx-4 px-4 -my-2 py-2 flex items-center"
                  @click="group.default ? removeGroup(group) : addGroup(group)"
-                 :class="{'tw-cursor-pointer': group.group_id !== 1 && !group.closed}">
-                <i class="fas fa-2x tw-text-gray-700"
+                 :class="{'cursor-pointer': group.group_id !== 1 && !group.closed}">
+                <i class="fas fa-2x text-gray-700"
                    :class="{'fa-toggle-on': group.default, 'fa-toggle-off': !group.default}"
                    v-show="!group.closed && group.group_id !== 1">
                 </i>
-                <i class="fa fa-lock fa-lg tw-mr-2" v-show="group.closed"></i>
+                <i class="fa fa-lock fa-lg mr-2" v-show="group.closed"></i>
             </div>
         </div>
 

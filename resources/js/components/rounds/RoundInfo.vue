@@ -1,5 +1,5 @@
-<template>
-    <div class="text-muted tw-text-sm tw-mt-6" style="font-size:0.88rem;">
+﻿<template>
+    <div class="text-muted text-sm mt-6" style="font-size:0.88rem;">
         <div v-if="round.games.length !== 0">
             <p class="mb-2">
                 Anzahl Spiele: {{ round.games.length }}

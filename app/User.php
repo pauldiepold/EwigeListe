@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function getAvatarPathAttribute($avatar)
     {
-        return $avatar ? '/storage/avatars/' . $avatar : '/storage/avatars/default.jpg';
+        return $avatar ? '/storage/avatars/' . $avatar : '/img/default.jpg';
     }
 
     public function sendPasswordResetNotification($token)

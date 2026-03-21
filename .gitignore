@@ -13,3 +13,6 @@ npm-debug.log
 yarn-error.log
 *.sql
 *.Identifier
+public/build
+auto-imports.d.ts
+components.d.ts

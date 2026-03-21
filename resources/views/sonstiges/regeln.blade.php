@@ -1,3 +1,4 @@
+{{-- Legacy: Produktiv ist Inertia `Static/Regeln`; diese Blade-Datei wird nicht mehr geroutet. --}}
 @extends('layouts.main')
 
 @section('title', 'Regeln')

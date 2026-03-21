@@ -1,11 +1,15 @@
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createModal">
-    Spiel eintragen
-</button>
+<div x-data="{ open: {{ count($errors->create) > 0 ? 'true' : 'false' }} }">
 
-<div class="modal" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+    <button type="button" class="btn btn-primary" @click="open = true">
+        Spiel eintragen
+    </button>
+
+    <div x-show="open"
+         x-transition.opacity
+         @keydown.escape.window="open = false"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+         style="display: none;">
+        <div class="bg-white rounded w-full max-w-lg mx-4 shadow-xl">
             <div class="modal-header">
                 <h5 class="modal-title mx-auto" id="createModalLabel">Welche Personen haben gewonnen?</h5>
             </div>
@@ -17,84 +21,44 @@
                     @csrf
 
                     @foreach ($activePlayers as $player)
-                        <div class="custom-control custom-checkbox my-1">
-                            <input class="custom-control-input" type="checkbox" value="{{ $player->id }}"
+                        <div class="flex items-center gap-2 my-1">
+                            <input class="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                                   type="checkbox" value="{{ $player->id }}"
                                    id="player{{ $player->id }}" name="winners[]"
                                     {{ collect(old('winners'))->contains($player->id) ? 'checked' : '' }}>
-                            <label class="custom-control-label font-weight-bold" for="player{{ $player->id }}">
+                            <label class="cursor-pointer font-bold" for="player{{ $player->id }}">
                                 {{ $player->surname }} {{ $player->name }}
                             </label>
                         </div>
                     @endforeach
 
-                    <div class="form-row my-4 mx-auto justify-content-center">
-                        <div class="col-xs-6 col-xs-offset-3">
-                            <input class="form-control{{ $errors->create->first('points') ? ' is-invalid' : '' }}"
-                                   type="number" min="-4" max="16" name="points" value="{{ old('points') }}">
-                            <label for="points" class="control-label font-weight-bold">Punkte</label>
-                        </div>
+                    <div class="flex justify-center my-4">
+                        <input class="form-control w-24 text-center{{ $errors->create->first('points') ? ' border-red-400' : '' }}"
+                               type="number" min="-4" max="16" name="points" value="{{ old('points') }}">
+                        <label for="points" class="ml-2 self-center font-bold">Punkte</label>
                     </div>
+
                     <button type="submit" class="btn btn-primary">Bestätigen</button>
-{{--
-                    <button type="submit" class="btn btn-primary">
-                        <div class="d-flex vertical-align-center">
-                            <span>
-                                <i class="fa fa-spinner fa-spin text-lg mr-2" style="font-size:1.2rem; vertical-align: -0.1rem;"></i>
-                            </span>
-                            <span>
-                                Speichern
-                            </span>
-                        </div>
-                    </button>--}}
-                    <hr>
-                    <div class="custom-control custom-checkbox my-1">
-                        <input class="custom-control-input" type="checkbox" value="1" id="misplayed" name="misplayed"
+                    <hr class="my-3">
+
+                    <div class="flex items-center gap-2 my-1">
+                        <input class="w-4 h-4 rounded border-gray-300 cursor-pointer"
+                               type="checkbox" value="1" id="misplayed" name="misplayed"
                                 {{ old('misplayed') ? 'checked' : '' }}>
-                        <label class="custom-control-label font-weight-bold" for="misplayed">
+                        <label class="cursor-pointer font-bold" for="misplayed">
                             Falsch bedient?
                         </label>
+                        <span class="text-gray-500 text-sm ml-1"
+                              title="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet.">
+                            <i class="fas fa-info-circle"></i>
+                        </span>
                     </div>
-                    <a data-container="body" data-toggle="popover" data-placement="top" title="Falsch bedient?"
-                       data-content="Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die getätigten Ansagen gewertet. Dieses Ergebnis wird oben eintragen.">
-                        <i class="fas fa-info-circle fa-lg"></i>
-                    </a>
                 </form>
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary mx-auto" data-dismiss="modal">Schließen</button>
+                <button type="button" class="btn btn-outline-secondary mx-auto" @click="open = false">Schließen</button>
             </div>
         </div>
     </div>
 </div>
-
-@if(count($errors->create) > 0)
-    @push('scripts')
-        <script>
-            $(function () {
-                $('#createModal').modal({show: true});
-            });
-        </script>
-    @endpush
-@endif
-
-@push('scripts')
-    <script>
-        $(function () {
-            $('[data-toggle="popover"]').popover();
-        });
-    </script>
-@endpush
-
-@push('scripts')
-    <script>
-        $('body').on('click', function (e) {
-            $('[data-toggle=popover]').each(function () {
-                // hide any open popovers when the anywhere else in the body is clicked
-                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                    $(this).popover('hide');
-                }
-            });
-        });
-    </script>
-@endpush

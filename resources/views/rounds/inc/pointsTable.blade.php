@@ -1,4 +1,4 @@
-{{-- Input: collection $colRound --}}
+﻿{{-- Input: collection $colRound --}}
 <div class="row justify-content-center mt-4">
     <div class="col col-xl-6 col-lg-8 col-md-10 col-sm-12">
         <div class="table-responsive">
@@ -7,10 +7,10 @@
                 @php $header = $colRound->shift(); @endphp
                 <tr class="border-bottom-thick">
                     @foreach ($header as $item)
-                        <th class="tw-flex-col tw-items-center">
-                            <div class="tw--mb-6 tw-text-transparent">asdf</div>
+                        <th class="flex-col items-center">
+                            <div class="-mb-6 text-transparent">asdf</div>
                             <img src="{{ $item->get(1) }}"
-                                 class="tw-mx-auto tw-mb-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full">
+                                 class="mx-auto mb-1 md:h-10 md:w-10 h-7 w-7 rounded-full">
                             <a class="{{ !$item->contains('dealer') ? 'text-dark ' : '' }}{{ $item->contains('active') ? 'active-player' : '' }}"
                                href="{{ $item->get(2) }}">{{$item->get(0)}}</a>
                         </th>

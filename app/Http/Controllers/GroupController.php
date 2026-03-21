@@ -3,33 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Group;
-use App\Player;
+use App\Http\Resources\GroupIndexResourceCollection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class GroupController extends Controller
 {
 
-    public function index()
+    public function index(): Response
     {
         $groups = Group::withCount('rounds')
             ->withCount('players')
             ->orderByRaw('rounds_count desc')
             ->get();
 
-        return view('groups.index', compact('groups'));
+        return Inertia::render('Groups/Index', [
+            'groups' => new GroupIndexResourceCollection($groups),
+        ]);
     }
 
 
-    public function create()
+    public function create(): Response
     {
-        $allPlayers = Player::where('hide', '=', '0')
-            ->withCount('gamePlayers')
-            ->orderByRaw('game_players_count desc')
-            ->get();
-
-        return view('groups.create', compact('allPlayers'));
+        return Inertia::render('Groups/Create');
     }
 
 

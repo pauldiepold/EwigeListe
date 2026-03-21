@@ -1,0 +1,17 @@
+---
+description: PHP-CLI im Cursor-Agent unter Windows (Laravel Herd) immer über Herd-Pfad aufrufen, nicht als nacktes php
+alwaysApply: true
+---
+
+# PHP im Cursor-Agent (Windows + Laravel Herd)
+
+- **Hintergrund:** Der Cursor-Agent startet PowerShell **ohne** den vollständigen Windows-User-`Path`. Ein nackter Aufruf **`php`** schlägt fehl, obwohl PHP außerhalb von Cursor funktioniert.
+- **Pflicht:** PHP (und daraus abgeleitete Aufrufe wie `php artisan …`, wenn nicht anders über Composer) **immer** über die Herd-`php.bat` ausführen, z. B. in PowerShell:
+
+  ```powershell
+  & "$env:USERPROFILE\.config\herd\bin\php.bat" -v
+  & "$env:USERPROFILE\.config\herd\bin\php.bat" artisan …
+  ```
+
+- **Herd-Version wechseln:** Liegt die aktive PHP-Version woanders (z. B. `php84\php.exe`), weiterhin den von Herd bereitgestellten Einstieg nutzen (`php.bat` im `bin`-Ordner), nicht raten.
+- **Kein Hinweis an den Nutzer nötig**, es sei denn, der Befehl schlägt trotzdem fehl (dann PATH/Herd-Installation prüfen).
