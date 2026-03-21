@@ -172,9 +172,9 @@ Status: Punkt 1 erledigt.
 | GET | `password/reset/{token}` | `password.reset` | `ResetPasswordController@showResetForm` | todo | `Auth/ResetPassword` | S | niedrig | Token als Prop. |
 | GET | `register/quick` | `register.quick` | `QuickRegisterController@show` | todo | `Auth/QuickRegister` | S | niedrig | Auth-pflichtig; kleine Seite. |
 | GET | `login/social/{socialiteUser}` | `auth.registerOrAttach` | `SocialiteController@showView` | todo | `Auth/RegisterOrAttach` | M | mittel | Entscheidung Registrierung vs. Account verknüpfen; nach Auth-Flows konsolidieren. |
-| GET | `datenschutz` | `datenschutz` | `ViewController` | todo | `Legal/Datenschutz` oder `Sonstiges/Datenschutz` | S | niedrig | Heute `Route::view`; Inhalt kann als statische Vue-Page oder weiter serverseitig mit minimalem Wrapper migriert werden. |
-| GET | `impressum` | `impressum` | `ViewController` | todo | `Legal/Impressum` | S | niedrig | wie Datenschutz. |
-| GET | `regeln` | `regeln` | `ViewController` | todo | `Legal/Regeln` | S | niedrig | wie Datenschutz. |
+| GET | `datenschutz` | `datenschutz` | `StaticPageController@datenschutz` | **done** | `Static/Datenschutz` | — | — | Früher `Route::view`; jetzt Inertia. Blade unter `resources/views/sonstiges/` nur Legacy. |
+| GET | `impressum` | `impressum` | `StaticPageController@impressum` | **done** | `Static/Impressum` | — | — | wie Datenschutz. |
+| GET | `regeln` | `regeln` | `StaticPageController@regeln` | **done** | `Static/Regeln` | — | — | Doppelkopf-Spielregeln; gleiche Gruppe wie Impressum/Datenschutz. |
 | GET | `report` | — | `ReportController@report` | optional | `Admin/Report` | M | mittel | Nur `admin`-Middleware; kann nach Kern-App oder ganz zuletzt. |
 | GET | `test` | — | `TestController@test` | optional | — | S | niedrig | Dev/Admin; Migration nur bei Bedarf. |
 | GET | `testClient` | — | `TestController@client` | optional | — | S | niedrig | wie `test`. |
@@ -198,7 +198,7 @@ Diese Endpunkte liefern **keine** klassische Blade-Vollseite für die Migration,
 1. **Gruppen-Liste + -Erstellung** (`groups.index`, `groups.create`) — **erledigt**; Create ist ein schlankes Namensformular (Inertia `useForm`), nicht die früher in der Matrix angenommene Spieler-Mehrfachauswahl.
 2. **Runden-Archiv** (`rounds.index`) — **erledigt**: Inertia-Page + Vue-Tabelle (Nuxt UI), serverseitige Sortierung; DataTables-JSON nur noch für Legacy-Archiv-Tabs (`rounds.archiveTable`).
 3. **Nutzer bearbeiten** (`users.edit`) — isoliert, gute Übung für Multi-Form-Pages.
-4. **Statische Seiten** (Datenschutz, Impressum, Regeln) — schnelle Gewinne, wenig Logik.
+4. **Statische Seiten** (`Pages/Static/*`: Datenschutz, Impressum, Doppelkopf-Regeln) — **erledigt** (`StaticPageController`).
 5. **Auth-Bundle** (Login, Register, Passwort, Quick Register, Socialite-Attach) — gemeinsam planen wegen Layout/Guest-Wrapper, Redirects, Validierung.
 6. **Profil- und Gruppen-Detail** (`Players/Show`, `Groups/Show`) — hohe Komplexität; Gruppen-Detail vor oder nach Profil je nach Abhängigkeit der wiederverwendbaren Komponenten (Badges, Chart-Blöcke).
 7. **Runden-Detail** (`rounds.show`) — zuletzt oder in dedizierter Teilprojekt-Phase wegen Legacy-Vue und Live-Runde.

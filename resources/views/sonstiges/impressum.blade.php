@@ -1,3 +1,4 @@
+{{-- Legacy: Produktiv ist Inertia `Static/Impressum`; diese Blade-Datei wird nicht mehr geroutet. --}}
 @extends('layouts.main')
 
 @section('title', 'Impressum')
@@ -9,8 +10,8 @@
         <div class="col-12 col-xl-8 col-lg-9 col-md-10">
             <p>
                 Paul Diepold<br>
-                Hohenzollernstraße 7<br>
-                76135 Karlsruhe</p>
+                Wexstr. 28<br>
+                10715 Berlin</p>
             <p>
                 <strong>Kontakt:</strong><br>
                 Telefon: 01522-6573779<br>

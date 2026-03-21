@@ -1,0 +1,10 @@
+---
+description: Laravel Pint wird in diesem Projekt nicht verwendet; keine Pint-Aufrufe durch den Agenten
+alwaysApply: true
+---
+
+# Kein Laravel Pint
+
+- In diesem Projekt wird **Laravel Pint nicht genutzt** (nicht installiert bzw. kein verbindlicher Workflow).
+- Der Agent soll **`pint` / `vendor/bin/pint` nicht ausführen** und Formatierungs- oder Review-Schritte nicht darauf stützen.
+- Stattdessen: bestehende Projekt-Konventionen und ggf. IDE-Formatierung; bei PHP-Änderungen reichen sinnvolle manuelle Einrückung und bestehende Checks (Tests, `php -l`, Artisan), sofern vorhanden.

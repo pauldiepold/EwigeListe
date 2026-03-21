@@ -139,15 +139,32 @@ onMounted(() => {
     </UPage>
 
     <footer class="shrink-0 border-t border-default bg-elevated">
-      <UContainer class="flex w-full max-w-4xl items-center justify-between py-3 text-sm">
-        <span class="text-muted">&copy; {{ new Date().getFullYear() }} Ewige Liste</span>
-        <UButton
-          color="neutral"
-          variant="ghost"
-          :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
-          :label="isDark ? 'Hell' : 'Dunkel'"
-          @click="toggleColorMode"
-        />
+      <UContainer
+        class="flex w-full max-w-4xl flex-col gap-3 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
+          <Link :href="route('regeln')" class="text-muted no-underline hover:text-highlighted hover:underline">
+            Regeln
+          </Link>
+          <span class="text-muted" aria-hidden="true">&bull;</span>
+          <Link :href="route('impressum')" class="text-muted no-underline hover:text-highlighted hover:underline">
+            Impressum
+          </Link>
+          <span class="text-muted" aria-hidden="true">&bull;</span>
+          <Link :href="route('datenschutz')" class="text-muted no-underline hover:text-highlighted hover:underline">
+            Datenschutz
+          </Link>
+        </div>
+        <div class="flex items-center justify-center gap-4 sm:justify-end">
+          <span class="text-muted">&copy; {{ new Date().getFullYear() }} Ewige Liste</span>
+          <UButton
+            color="neutral"
+            variant="ghost"
+            :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+            :label="isDark ? 'Hell' : 'Dunkel'"
+            @click="toggleColorMode"
+          />
+        </div>
       </UContainer>
     </footer>
   </div>

@@ -118,10 +118,10 @@ Route::middleware('auth')->group(function ()
 /* *********** Charts ************** */
 Route::get('/charts/home/{group}', 'ChartController@homeChart')->name('charts.home');
 
-/* *********** Sonstiges ************** */
-Route::view('/datenschutz/', 'sonstiges.datenschutz')->name('datenschutz');
-Route::view('/impressum/', 'sonstiges.impressum')->name('impressum');
-Route::view('/regeln/', 'sonstiges.regeln')->name('regeln');
+/* *********** Statische Seiten (Inertia) ************** */
+Route::get('/datenschutz/', 'StaticPageController@datenschutz')->name('datenschutz');
+Route::get('/impressum/', 'StaticPageController@impressum')->name('impressum');
+Route::get('/regeln/', 'StaticPageController@regeln')->name('regeln');
 
 
 /* *********** AUTH ************** */
