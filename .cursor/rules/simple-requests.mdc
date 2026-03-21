@@ -1,0 +1,11 @@
+---
+description: Einfache Nutzeranfragen nicht überkomplizieren; bei Disproportion lieber abbrechen oder minimal lösen
+alwaysApply: true
+---
+
+# Einfache Anfragen, einfache Antworten
+
+- **Maßstab**: Wenn die Nutzeranfrage klar klein ist (z. B. eine Komponente tauschen, eine Zeile Layout, kosmetisch), reicht eine **direkte, kurze Umsetzung**. Kein Eintauchen in Randfälle, keine langen Analysen von Framework-Interna (`node_modules`), CSS-Variablen-Ketten oder fünf alternative Architekturen, sofern der Nutzer das nicht ausdrücklich will.
+- **Komplexität**: Steigt der „richtige“ Weg deutlich über den Nutzen hinaus (z. B. Mess-APIs, globale Theme-Overrides, spezielle Voraussetzungen anderer Komponenten), dann **nicht** nachziehen: **Status quo beibehalten** oder die **einfachste Variante**, die die Anfrage erfüllt, wählen — und das in **wenigen Sätzen** erklären.
+- **Signal „zu viel“**: Sagt der Nutzer (oder es wird implizit klar), dass es **zu kompliziert** für die Bitte ist, **sofort stoppen** — keine weiteren Refactor-Schritte, keine zusätzlichen Dateien „für Vollständigkeit“.
+- **Regeln/Docs**: Der Nutzer wünscht Verhaltensänderungen am Agenten → **in `.cursor/rules/` festhalten**, nicht nur in der Chat-Antwort versprechen.

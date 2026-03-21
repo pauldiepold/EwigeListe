@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -30,13 +31,36 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
+            'ziggy' => fn () => array_merge((new Ziggy)->toArray(), [
+                'location' => $request->url(),
+            ]),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $this->authUserPayload($request),
+            ],
+            'navigation' => [
+                'showCurrentRound' => fn (): bool => (bool) $request->user()?->player?->rounds()->exists(),
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
         ]);
+    }
+
+    /**
+     * @return array{id: int, player_id: int|null}|null
+     */
+    private function authUserPayload(Request $request): ?array
+    {
+        $user = $request->user();
+
+        if ($user === null) {
+            return null;
+        }
+
+        return [
+            'id' => (int) $user->id,
+            'player_id' => $user->player_id !== null ? (int) $user->player_id : null,
+        ];
     }
 }

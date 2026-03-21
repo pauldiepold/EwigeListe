@@ -1,5 +1,6 @@
 import { onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import Chart from 'chart.js/auto';
+import { useAppRoute } from '@/composables/useAppRoute';
 
 type HomeChartResponse = {
   gameDates: string[];
@@ -10,6 +11,7 @@ export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: 
   isLoading: Ref<boolean>;
   error: Ref<string | null>;
 } {
+  const { route } = useAppRoute();
   const isLoading = ref(false);
   const error = ref<string | null>(null);
   let chart: Chart | null = null;
@@ -31,7 +33,7 @@ export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: 
     destroyChart();
 
     try {
-      const response = await fetch(`/charts/home/${groupId}`, {
+      const response = await fetch(route('charts.home', { group: groupId }), {
         headers: {
           Accept: 'application/json',
         },

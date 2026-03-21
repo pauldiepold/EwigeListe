@@ -16,8 +16,15 @@ Referenz: `docs/inertia-migration-plan.md`, Zielstruktur unter `resources/js/ine
 - [ ] Typen: Zentralisiert in `types/<name>.ts`
 - [ ] Composable: Wiederverwendbare Logik (Charts, Fetch, …) auslagern
 - [ ] Lint + Type-Check: `npm run type-check && npm run lint` muss grün sein
+- [ ] Routen: keine hardcodierten Pfade; Ziggy über Composable `useAppRoute()` und benannte Laravel-Routen
 
 ---
+
+## Routen (Ziggy)
+
+- Backend: Routen mit `->name('…')` benennen; Ziggy wird per Inertia in `HandleInertiaRequests` als `ziggy` geteilt.
+- Frontend: `import { useAppRoute } from '@/composables/useAppRoute'` → `const { route } = useAppRoute()` → z. B. `route('rounds.create')`, `route('charts.home', { group: id })`.
+- Abhängigkeit: `tightenco/ziggy` (Composer) + `ziggy-js` (npm).
 
 ## 1. Controller
 

@@ -40,6 +40,7 @@ Bestehender Altcode bleibt zunaechst unangetastet und klar erkennbar ausserhalb 
 - Linting/Type-Checking wird in der Einfuehrungsphase nur auf neue Inertia-Ordner angewendet.
 - Alter Legacy-Code wird explizit vom Linting ausgeschlossen, bis dessen Migration startet.
 - Build muss fuer das Gesamtprojekt weiter funktionieren; Qualitaets-Gates sind fuer neue Ordner verpflichtend.
+- Benannte Laravel-Routen im neuen Frontend ueber **Ziggy**: Composer-Paket `tightenco/ziggy`, npm `ziggy-js`, Inertia-Shared-Prop `ziggy` in `HandleInertiaRequests`, Aufrufe ueber Composable `resources/js/inertia/composables/useAppRoute.ts`.
 
 ## Abhakbarer Task-Plan
 
@@ -100,11 +101,16 @@ Status: done (Spike: `RoundController@create` → `Pages/Rounds/Create.vue` mit 
 
 ### Phase D - Go/No-Go fuer eigentliche Seitenmigration
 
-- [ ] Pilot-Review: Muster, Folder-Struktur, Tooling-Scope und UI-Entscheidung final bestaetigen.
+- [x] Pilot-Review: Muster, Folder-Struktur, Tooling-Scope und UI-Entscheidung final bestaetigen.
 - [ ] Erst danach Start der eigentlichen Route-fuer-Route-Migration.
 - [ ] Migration weiterhin in kleinen, verifizierbaren Schritten mit Status `todo`, `in_progress`, `done`.
 
 Ergebnis: Skalierbarer, risikoarmer Startpunkt fuer die komplette Migration.
+
+Status: Punkt 1 erledigt.
+- Layout-Basis fuer Inertia vereinheitlicht (`Layouts/AppLayout.vue`) mit bestehender Top-Leiste + Icon-Navigation als Uebergangsstandard.
+- Dark-Mode-Schalter in Footer verschoben, um Header/Navi auf Navigation zu fokussieren.
+- Struktur-Review: Zielstruktur und Trennung (Legacy vs. `resources/js/inertia/*`) sind fuer den Migrationsstart tragfaehig.
 
 ## Definition of Done fuer die Pilotphase
 
@@ -118,3 +124,94 @@ Ergebnis: Skalierbarer, risikoarmer Startpunkt fuer die komplette Migration.
 - Welche Homepage-Daten sind zwingend initial serverseitig zu liefern und welche duerfen spaeter lazy geladen werden?
 - Welche Shared-Data-Felder sind global erforderlich (auth, locale, flash, feature flags)?
 - Welche Legacy-Bereiche muessen waehrend der Pilotphase garantiert unveraendert bleiben?
+
+---
+
+## Routen-Matrix (Vollseiten-Migration Blade → Inertia)
+
+**Quelle:** `php artisan route:list --json` plus Controller-Scan (`view()` vs. `Inertia::render()`). Stand fuer Agent und Team als Arbeits-Backlog.
+
+**Legende — Aufwand (grobe PT-Schätzung):**
+
+| Stufe | Bedeutung |
+|-------|-----------|
+| S | ca. 0,5–1 PT: wenige Props, wenig Interaktion, Muster wie Pilot |
+| M | ca. 1–3 PT: Formulare, Tabellen, mehrere Resources |
+| L | ca. 3–7 PT: viel UI-Logik, Legacy-Vue-Einbindung, Live-Runde, viele Teilkomponenten |
+
+**Legende — Komplexitaet:**
+
+| Stufe | Bedeutung |
+|-------|-----------|
+| niedrig | klar abgegrenzte Daten, wenig JS-Legacy |
+| mittel | Policies, mehrere Modelle, Charts/Fetch daneben |
+| hoch | eingebettetes altes Vue (SPA-artig), DataTables, Echtzeit, grosse Zustandsflächen |
+
+**Leitregel:** Pro **GET-Route, die eine HTML-Vollseite** ausliefert, gilt genau ein Render-Pfad (`Inertia::render` **oder** Blade), siehe Plan oben. **POST/PATCH/DELETE** und JSON-Endpunkte bleiben typischerweise Controller-Logik mit Redirect/JSON; sie werden indirekt migriert, wenn die zugehörige Inertia-Seite Formulare/Aufrufe umstellt.
+
+### Tabelle: Routen mit Controller-Umstellung auf `Inertia::render` (Backlog)
+
+| Methode | URI | Route-Name | Action | Status | Ziel-Page (Vorschlag) | Aufwand | Komplexitaet | Erwartete Probleme / Hinweise |
+|---------|-----|------------|--------|--------|------------------------|---------|--------------|------------------------------|
+| GET | `/` | `index` | `HomeController@index` | **done** | `Home/Index` | — | — | Referenzimplementierung. |
+| GET | `home` | `home` | `HomeController@index` | **done** | `Home/Index` | — | — | Alias derselben Page. |
+| GET | `runde/erstellen` | `rounds.create` | `RoundController@create` | **done** | `Rounds/Create` | — | — | Nuxt UI, Spike-Seite. |
+| GET | `rundenarchiv/{group?}` | `rounds.index` | `RoundController@index` | todo | `Rounds/Index` | M | mittel | Gruppenwahl, Zähler; Archiv-Tabelle nutzt `rounds.archiveTable` (DataTables-JSON) — entweder Tabellen-UI in Vue neu bauen oder Übergangsphase mit fetch + eigener Tabelle. |
+| GET | `runde/{round}` | `rounds.show` | `RoundController@show` | todo | `Rounds/Show` | **L** | **hoch** | Blade ist nur Shell; Kern ist Legacy-`<round>`-Vue mit API/WebSockets. Migration = grösster Brocken: Props/Resources alignen, Live-Spiel, Kommentare, Spiele — evtl. schrittweise (Shell Inertia, Kind zuerst portieren). |
+| GET | `listen` | `groups.index` | `GroupController@index` | **done** | `Groups/Index` | M | mittel | Listen mit Counts; Navigation zu Detail. |
+| GET | `liste/erstellen` | `groups.create` | `GroupController@create` | todo | `Groups/Create` | M | mittel | Spielerliste/Mehrfachauswahl ähnlich Runden-Erstellung; Resource fuer `allPlayers`. |
+| GET | `liste` | `ewigeListe` | `GroupController@show` | todo | `Groups/Show` | M | mittel | Default-Gruppe (wie `show` ohne Parameter); gleiche Page-Komponente wie `groups.show`. |
+| GET | `liste/{group}` | `groups.show` | `GroupController@show` | todo | `Groups/Show` | **L** | **hoch** | Viele Relationen, Badges, Statistiken, eingebettete Charts (`charts.home` als JSON); tech-debt `group`-JSON beachten (`docs/tech-debt/group-positional-json.md`). |
+| GET | `profil/{player}/{group?}` | — | `PlayerController@show` | todo | `Players/Show` | **L** | **hoch** | Ähnliche Datenfülle wie Gruppen-Seite; optionale Gruppe; Badges/Charts. **Route benennen** (Ziggy): empfohlen `players.show`. |
+| GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | todo | `Users/Edit` | M | mittel | Mehrere Formularbereiche (Name, Mail, Passwort, Listen); PATCH-Routen bleiben, Inertia `useForm` / Nuxt UI Forms. |
+| GET | `login` | `login` | `LoginController@showLoginForm` | todo | `Auth/Login` | M | mittel | Laravel-Trait liefert aktuell Blade; auf `Inertia::render` umstellen (eigene `showLoginForm`-Methode), Socialite-Flow (`socialiteUserId`) erhalten. |
+| GET | `register` | `register` | `RegisterController@showRegistrationForm` | todo | `Auth/Register` | M | mittel | reCAPTCHA-Regeln aus `RegisterController@validator` in Page/Request spiegeln; Validierungs-Messages. |
+| GET | `password/reset` | `password.request` | `ForgotPasswordController@showLinkRequestForm` | todo | `Auth/ForgotPassword` | S | niedrig | Standard-Flow. |
+| GET | `password/reset/{token}` | `password.reset` | `ResetPasswordController@showResetForm` | todo | `Auth/ResetPassword` | S | niedrig | Token als Prop. |
+| GET | `register/quick` | `register.quick` | `QuickRegisterController@show` | todo | `Auth/QuickRegister` | S | niedrig | Auth-pflichtig; kleine Seite. |
+| GET | `login/social/{socialiteUser}` | `auth.registerOrAttach` | `SocialiteController@showView` | todo | `Auth/RegisterOrAttach` | M | mittel | Entscheidung Registrierung vs. Account verknüpfen; nach Auth-Flows konsolidieren. |
+| GET | `datenschutz` | `datenschutz` | `ViewController` | todo | `Legal/Datenschutz` oder `Sonstiges/Datenschutz` | S | niedrig | Heute `Route::view`; Inhalt kann als statische Vue-Page oder weiter serverseitig mit minimalem Wrapper migriert werden. |
+| GET | `impressum` | `impressum` | `ViewController` | todo | `Legal/Impressum` | S | niedrig | wie Datenschutz. |
+| GET | `regeln` | `regeln` | `ViewController` | todo | `Legal/Regeln` | S | niedrig | wie Datenschutz. |
+| GET | `report` | — | `ReportController@report` | optional | `Admin/Report` | M | mittel | Nur `admin`-Middleware; kann nach Kern-App oder ganz zuletzt. |
+| GET | `test` | — | `TestController@test` | optional | — | S | niedrig | Dev/Admin; Migration nur bei Bedarf. |
+| GET | `testClient` | — | `TestController@client` | optional | — | S | niedrig | wie `test`. |
+
+### Routen ohne Vollseiten-`Inertia::render` (typisch unverändert oder nur angepasst)
+
+Diese Endpunkte liefern **keine** klassische Blade-Vollseite für die Migration, bleiben aber relevant für Inertia-Seiten (Form-Targets, `fetch`, DataTables, Redirects):
+
+| Kategorie | Beispiele (URI) | Hinweis |
+|-----------|-----------------|--------|
+| JSON / Array | `charts/home/{group}`, `charts/round/{round}`, `charts/profile/{profile}` | Daten für Charts; von Inertia per `fetch` nutzbar (wie Homepage). |
+| JSON | `api/rounds/{round}/fetchData` | Bereits Resource-JSON; `Rounds/Show` kann das nutzen. |
+| DataTables JSON | `rounds/ajax/{group}/{player?}` | HTML in Spalten (`players`-Column); Refactor wenn Archiv-UI Vue-native wird. |
+| Nur Redirect | `rounds/current`, `liste/{group}/beitreten`, `verlassen`, `schließen/{close}`, `listen/calculate`, `liste/calculate/*`, `players/calculate*` | Kein `Inertia::render`; ggf. später GET→POST für Mutations. |
+| Form POST/PATCH/DELETE | `login` POST, `logout`, `register` POST, `password/*`, `rounds` store/update/destroy, `comments`, `api/*` … | Antwort meist Redirect oder JSON; an Inertia `router.post` / normale Laravel-Responses anbinden. |
+| Sonstiges | `auth/redirect/{provider}`, `callback/{provider}` | OAuth-Flow; kein eigenes Inertia-Layout nötig. |
+| Framework | `_debugbar/*`, `_ignition/*`, `telescope/*`, `broadcasting/auth` | Nicht Teil der App-Migration. |
+
+### Empfohlene Migrations-Reihenfolge (Vorschlag)
+
+1. **Gruppen-Liste + -Erstellung** (`groups.index`, `groups.create`) — baut auf bestehendem Muster (Listen, Formulare), mittlerer Risiko, hoher Navigationsnutzen.
+2. **Runden-Archiv** (`rounds.index`) — in einem Schwung mit Klärung Archiv-Tabelle (DataTables vs. neue Tabelle).
+3. **Nutzer bearbeiten** (`users.edit`) — isoliert, gute Übung für Multi-Form-Pages.
+4. **Statische Seiten** (Datenschutz, Impressum, Regeln) — schnelle Gewinne, wenig Logik.
+5. **Auth-Bundle** (Login, Register, Passwort, Quick Register, Socialite-Attach) — gemeinsam planen wegen Layout/Guest-Wrapper, Redirects, Validierung.
+6. **Profil- und Gruppen-Detail** (`Players/Show`, `Groups/Show`) — hohe Komplexität; Gruppen-Detail vor oder nach Profil je nach Abhängigkeit der wiederverwendbaren Komponenten (Badges, Chart-Blöcke).
+7. **Runden-Detail** (`rounds.show`) — zuletzt oder in dedizierter Teilprojekt-Phase wegen Legacy-Vue und Live-Runde.
+8. **Admin/Test** — nach Bedarf.
+
+### Risiko-Übersicht (querschnittlich)
+
+| Risiko | Massnahme |
+|--------|-----------|
+| Doppeltes Vue (Legacy + Inertia) auf einer URL | Pro Route nur ein Render-Pfad; `rounds.show` bewusst entflechten. |
+| Unbenannte Routen (Ziggy) | `profil/{player}` und fehlende `name` bei Charts nachziehen, wo das Frontend Links braucht. |
+| DataTables mit HTML-Strings | Schrittweise durch Vue-Tabelle + Links ersetzen; bis dahin ggf. Legacy-Fragmente dokumentieren. |
+| Auth-Traits erwarten Blade | `showLoginForm` / `showRegistrationForm` überschreiben, Tests/Redirects prüfen. |
+| `Group`-JSON / Resources | Mit `Http/Resources` und Typen konsolidieren (siehe Tech-Debt-Dokument). |
+
+### Phase D — Backlog-Dokumentation
+
+- [x] Routen-Matrix und Migrations-Reihenfolge in diesem Dokument (Arbeitsreferenz fuer Agent/Team).

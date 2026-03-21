@@ -26,3 +26,13 @@ alwaysApply: true
 
 - Vor jedem groesseren Schritt fehlenden Kontext aktiv erfragen.
 - Bei Unsicherheit keine stillen Annahmen; stattdessen Entscheidung offen markieren.
+
+# Agent-Umgebung und Tooling
+
+- Wenn in der Agent-Shell notwendige Tools fehlen (z. B. `php`, `composer`, `artisan`, Netzwerk fuer `npm install`), keine stillen Workarounds bauen (keine Ersatz-Architektur nur weil ein Befehl hier nicht laeuft).
+- Stattdessen den Nutzer kurz informieren und um Ausfuehrung auf seiner Maschine bitten oder die Aufgabe so teilen, dass der naechste Schritt ohne das fehlende Tool verifizierbar ist.
+
+# Benannte Routen im Inertia-Frontend (Ziggy)
+
+- URLs im neuen Inertia-Bereich nicht hardcoden: `ziggy-js` + shared Inertia-Prop `ziggy` (siehe `HandleInertiaRequests` und Composable `useAppRoute`).
+- Neue oeffentliche HTTP-Routen im Backend moeglichst mit `->name(...)` versehen, damit Ziggy und Typisierung tragfaehig bleiben.

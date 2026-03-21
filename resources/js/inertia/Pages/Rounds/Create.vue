@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { useAppRoute } from '@/composables/useAppRoute';
 import type { CreateRoundPlayer } from '@/types/round-create';
 
 const props = defineProps<{
@@ -10,6 +11,7 @@ const props = defineProps<{
 }>();
 
 const page = usePage<{ flash?: { success?: string } }>();
+const { route } = useAppRoute();
 
 const searchTerm = ref('');
 const isSubmitting = ref(false);
@@ -176,7 +178,7 @@ if (initialPlayer) {
           </div>
 
           <UButton
-            to="/register/quick"
+            :to="route('register.quick')"
             color="secondary"
             variant="outline"
             icon="i-lucide-user-plus"

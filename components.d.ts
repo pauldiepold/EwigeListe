@@ -15,8 +15,13 @@ declare module 'vue' {
     UAvatar: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Avatar.vue')['default']
     UButton: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Button.vue')['default']
     UCard: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Card.vue')['default']
+    UContainer: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Container.vue')['default']
     UFormField: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/FormField.vue')['default']
+    UIcon: typeof import('./node_modules/@nuxt/ui/dist/runtime/vue/components/Icon.vue')['default']
     UInput: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Input.vue')['default']
+    UPage: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Page.vue')['default']
+    UPageBody: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/PageBody.vue')['default']
+    UPageHeader: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/PageHeader.vue')['default']
     USwitch: typeof import('./node_modules/@nuxt/ui/dist/runtime/components/Switch.vue')['default']
   }
 }

@@ -43,6 +43,7 @@
   "dependencies": {
     "@inertiajs/progress": "^0.2.7",
     "@inertiajs/vue3": "^2.3.18",
-    "@nuxt/ui": "^4.5.1"
+    "@nuxt/ui": "^4.5.1",
+    "ziggy-js": "^2.6.2"
   }
 }
