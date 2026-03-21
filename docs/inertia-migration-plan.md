@@ -74,11 +74,29 @@ Status: done.
 
 ### Phase C - UI-Framework-Entscheidung (nach funktionierender Homepage)
 
-- [ ] Kleinen Spike auf 1-2 realen UI-Ausschnitten durchfuehren (z. B. Formular + Tabelle/Overlay).
-- [ ] Bewertung nach festen Kriterien: Integrationsaufwand, Entwicklungsgeschwindigkeit, Wartbarkeit.
-- [ ] Entscheidung dokumentieren (Nuxt UI oder kein neues Framework) und als Standard festhalten.
+- [x] Kleinen Spike auf 1-2 realen UI-Ausschnitten durchfuehren (z. B. Formular + Tabelle/Overlay).
+- [x] Bewertung nach festen Kriterien: Integrationsaufwand, Entwicklungsgeschwindigkeit, Wartbarkeit.
+- [x] Entscheidung dokumentieren (Nuxt UI oder kein neues Framework) und als Standard festhalten.
 
 Ergebnis: Technologiewahl ist validiert, bevor weitere Seiten migriert werden.
+
+Status: done (Spike: `RoundController@create` → `Pages/Rounds/Create.vue` mit Nuxt UI; Theme primary/secondary auf App-Palette gemappt; Dark-Mode-Basis im Layout).
+
+**Entscheidung:** Nuxt UI bleibt **Standard fuer migrierte Inertia-Seiten** in der Migrationsphase.
+
+**Bewertung (kurz):**
+
+| Kriterium | Einschaetzung |
+|-----------|----------------|
+| Integrationsaufwand | Akzeptabel; einmal Vite/Inertia korrekt verdrahten (ESM, `router: 'inertia'`), danach reproduzierbar. |
+| Entwicklungsgeschwindigkeit | **Hoch** fuer Formulare, Feedback, Overlays, konsistente Patterns — weniger Custom-CSS/JS pro Seite. |
+| Wartbarkeit | **Gut**, solange man sich an Konventionen haelt (Theme, `U*`-Komponenten); weniger eigene UI-Hilfsschicht als bei reinem Tailwind-Basteln. |
+| Optik „out of the box“ | Geschmackssache; **bewusst nicht** Ziel der Migrationsphase (Leitplanke: funktional, spaeter Design-Pass). |
+| Anpassbarkeit | **Stark** ueber Theme/Variants; spaeterer Feinschliff (Typo, Abstaende, Custom-Slots) ohne Framework-Wechsel moeglich. |
+
+**Risiko / Mitigation:** Optik und „Generic-UI“-Gefuehl — nach Migration gezielter **UI-/Design-Skill-Pass** (Theme verfeinern, ggf. wenige eigene Wrapper-Komponenten), nicht waehrend jeder Seitenmigration.
+
+**Nicht-Ziele in Phase C:** Pixel-perfektes Branding; vollstaendiger Abbau von `bootstrap-compat.css` (folgt schrittweise mit Blade-Migration).
 
 ### Phase D - Go/No-Go fuer eigentliche Seitenmigration
 

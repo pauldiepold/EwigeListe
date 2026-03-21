@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CreateRoundPlayerResource;
 use App\Http\Resources\Round as RoundResource;
 use App\Http\Requests\UpdateRound;
 use App\Live\Deck;
@@ -16,6 +17,8 @@ use App\Http\Requests\StoreRound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
@@ -59,7 +62,7 @@ class RoundController extends Controller
         }
     }
 
-    public function create()
+    public function create(): Response
     {
         $allPlayers = Player::where('hide', '=', '0')
             ->with(['groups', 'profiles:id,player_id,group_id,default', 'user'])
@@ -67,7 +70,10 @@ class RoundController extends Controller
             ->orderByRaw('game_players_count desc')
             ->get();
 
-        return view('rounds.create', compact('allPlayers'));
+        return Inertia::render('Rounds/Create', [
+            'players'          => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
+            'loggedInPlayerId' => auth()->user()->player->id,
+        ]);
     }
 
     public function store(StoreRound $request)
@@ -99,7 +105,7 @@ class RoundController extends Controller
             $round->createLiveRound();
         }
 
-        return $round->path();
+        return redirect()->to($round->path());
     }
 
     public function update(UpdateRound $request, Round $round)
