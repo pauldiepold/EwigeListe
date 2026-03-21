@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
@@ -14,4 +15,13 @@ class GroupIndexResourceCollection extends ResourceCollection
     public static $wrap = null;
 
     public $collects = GroupIndexResource::class;
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    #[\Override]
+    public function toArray(Request $request): array
+    {
+        return array_values(parent::toArray($request));
+    }
 }

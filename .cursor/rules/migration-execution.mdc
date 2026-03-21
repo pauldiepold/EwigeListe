@@ -36,3 +36,9 @@ alwaysApply: true
 
 - URLs im neuen Inertia-Bereich nicht hardcoden: `ziggy-js` + shared Inertia-Prop `ziggy` (siehe `HandleInertiaRequests` und Composable `useAppRoute`).
 - Neue oeffentliche HTTP-Routen im Backend moeglichst mit `->name(...)` versehen, damit Ziggy und Typisierung tragfaehig bleiben.
+
+# Tabellen mit serverseitiger Pagination
+
+- Sortierung/Filterung, die die **gesamte** Datenmenge betrifft, gehoert ins **Backend** (Query-Parameter + `orderBy`), nicht nur in die TanStack/Nuxt-UI-Tabelle auf der aktuellen Seite.
+- Frontend: bei Pagination/Gruppenwechsel die gleichen Query-Params mitschleifen; Nuxt UI `UTable` bei Bedarf `manualSorting: true` und Navigation per `router.visit`.
+- Backend: erlaubte Sort-Spalten whitelisten; stabilen Tie-Breaker setzen (z. B. `id`), damit die Reihenfolge bei gleichen Werten nicht springt.

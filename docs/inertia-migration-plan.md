@@ -158,7 +158,7 @@ Status: Punkt 1 erledigt.
 | GET | `/` | `index` | `HomeController@index` | **done** | `Home/Index` | — | — | Referenzimplementierung. |
 | GET | `home` | `home` | `HomeController@index` | **done** | `Home/Index` | — | — | Alias derselben Page. |
 | GET | `runde/erstellen` | `rounds.create` | `RoundController@create` | **done** | `Rounds/Create` | — | — | Nuxt UI, Spike-Seite. |
-| GET | `rundenarchiv/{group?}` | `rounds.index` | `RoundController@index` | todo | `Rounds/Index` | M | mittel | Gruppenwahl, Zähler; Archiv-Tabelle nutzt `rounds.archiveTable` (DataTables-JSON) — entweder Tabellen-UI in Vue neu bauen oder Übergangsphase mit fetch + eigener Tabelle. |
+| GET | `rundenarchiv/{group?}` | `rounds.index` | `RoundController@index` | **done** | `Rounds/Index` | — | — | Gruppe optional, Default ID 1 (Ewige Liste); Laravel-Pagination (`?page=`); **Sortierung serverseitig** (`?sort=date|games|online`, `?direction=asc|desc`), Nuxt UI `UTable` mit `manualSorting`; Prop `archiveSort`. `rounds.archiveTable` bleibt für Blade-Tabs Gruppe/Profil. |
 | GET | `runde/{round}` | `rounds.show` | `RoundController@show` | todo | `Rounds/Show` | **L** | **hoch** | Blade ist nur Shell; Kern ist Legacy-`<round>`-Vue mit API/WebSockets. Migration = grösster Brocken: Props/Resources alignen, Live-Spiel, Kommentare, Spiele — evtl. schrittweise (Shell Inertia, Kind zuerst portieren). |
 | GET | `listen` | `groups.index` | `GroupController@index` | **done** | `Groups/Index` | M | mittel | Listen mit Counts; Navigation zu Detail. |
 | GET | `liste/erstellen` | `groups.create` | `GroupController@create` | **done** | `Groups/Create` | — | — | Blade nur Namensfeld; ungenutztes `allPlayers`-Query entfernt. |
@@ -196,7 +196,7 @@ Diese Endpunkte liefern **keine** klassische Blade-Vollseite für die Migration,
 ### Empfohlene Migrations-Reihenfolge (Vorschlag)
 
 1. **Gruppen-Liste + -Erstellung** (`groups.index`, `groups.create`) — **erledigt**; Create ist ein schlankes Namensformular (Inertia `useForm`), nicht die früher in der Matrix angenommene Spieler-Mehrfachauswahl.
-2. **Runden-Archiv** (`rounds.index`) — in einem Schwung mit Klärung Archiv-Tabelle (DataTables vs. neue Tabelle).
+2. **Runden-Archiv** (`rounds.index`) — **erledigt**: Inertia-Page + Vue-Tabelle (Nuxt UI), serverseitige Sortierung; DataTables-JSON nur noch für Legacy-Archiv-Tabs (`rounds.archiveTable`).
 3. **Nutzer bearbeiten** (`users.edit`) — isoliert, gute Übung für Multi-Form-Pages.
 4. **Statische Seiten** (Datenschutz, Impressum, Regeln) — schnelle Gewinne, wenig Logik.
 5. **Auth-Bundle** (Login, Register, Passwort, Quick Register, Socialite-Attach) — gemeinsam planen wegen Layout/Guest-Wrapper, Redirects, Validierung.

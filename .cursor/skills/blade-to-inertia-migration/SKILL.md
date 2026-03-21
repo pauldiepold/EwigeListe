@@ -152,6 +152,7 @@ export function useFooChart(canvasRef: Ref<HTMLCanvasElement | null>, id: number
 | Typen dupliziert | Zentralisiert in `types/<name>.ts`, per `import type` einbinden |
 | Chart-Animation-Fehler | `animation: false` statt `animation.duration = 0` (TS-safe) |
 | Features die halbfertig sind | Nicht in Migration einschließen, separat dokumentieren |
+| **Nuxt UI `UTable` + Laravel `paginate()`** | Nur die **aktuelle Seite** liegt im Browser — **keine** reine Client-Sortierung über die Gesamtheit. Sort/Filter serverseitig (Query-Strings), im Frontend `sorting-options: { manualSorting: true }`, State aus Inertia-Props; bei Seitenwechsel/Filter **dieselben** `sort`/`direction`-Parameter per Ziggy-Route mitschicken. Backend: Sort-Keys whitelisten, `orderBy` + Tie-Breaker (z. B. `orderByDesc('id')`). Referenz: `RoundController@index`, `Pages/Rounds/Index.vue`, `Components/Rounds/ArchiveRoundsTable.vue`. |
 
 ## 8. Validierung
 
