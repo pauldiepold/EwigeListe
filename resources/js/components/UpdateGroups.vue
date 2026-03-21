@@ -8,7 +8,7 @@
                class="font-weight-bold text-black"
                :class="{'text-gray-600': !inSelectedGroups(group)}">
                 {{group.name}}
-            </a><!-- block flex-grow -->
+            </a><!-- block grow -->
             <div class="-mx-4 px-4 -my-2 py-2 flex items-center"
                  @click="inSelectedGroups(group) && edit ? removeGroup(group) : addGroup(group)"
                  :class="{'cursor-pointer': group.id !== 1 && group.closed !== 1 && edit}">

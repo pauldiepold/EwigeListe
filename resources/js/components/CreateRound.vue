@@ -6,7 +6,7 @@
 
             <input id="text-search"
                    ref="textSearch"
-                   class="bg-gray-200 rounded-lg w-full px-3 py-2 mb-3 appearance-none focus:outline-none focus:shadow-outline focus:border-purple-500 border-1"
+                   class="bg-gray-200 rounded-lg w-full px-3 py-2 mb-3 appearance-none focus:outline-none focus:shadow-outline focus:border-purple-500 border"
                    :value="textSearch"
                    @input="textSearch = $event.target.value"
                    @focus="scrollTo('#text-search')"
