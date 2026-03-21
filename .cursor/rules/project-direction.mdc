@@ -9,6 +9,7 @@ alwaysApply: true
 - Frontend zuerst: Fokus auf `resources/js` und Migration von Blade-Ansichten.
 - Backend nur minimal anfassen; bestehende, stabile Serverlogik nicht ohne klaren Grund veraendern.
 - Bevorzuge saubere, gleichfoermige Schnitte statt isolierter Einzeltricks.
+- Bevorzuge langfristig stabile Architektur: kleine fokussierte Komponenten, klare Verantwortlichkeiten, Composables fuer wiederkehrende UI-Logik.
 - Risiko kontrollieren: groessere Aenderungen sind okay, aber nur in gut verifizierbaren Schritten.
 - Wenn Backend-Modernisierungspotenzial sichtbar wird: als Vorschlag dokumentieren mit Grund, Aufwand und Nutzen.
 - Tests sind aktuell nicht Pflicht; stattdessen auf Build/Lint/Runtime-Checks und manuelle Verifikation achten.
@@ -22,6 +23,7 @@ alwaysApply: true
 - In kleine, nachvollziehbare Commits schneiden, wenn Commits gewuenscht sind.
 - Auf niedrige Komplexitaet und schnelle sichtbare Ergebnisse optimieren.
 - Bei Unsicherheit keine Annahmen treffen, sondern aktiv Rueckfragen stellen und offene Punkte dokumentieren.
+- Bei Technologieentscheidungen (Libraries, HTTP-Client, Datumslogik) moderne und gut wartbare Optionen aktiv pruefen und als Empfehlung nennen.
 
 # Feedback und kontinuierliche Schaerfung
 

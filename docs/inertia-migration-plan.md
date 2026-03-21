@@ -58,13 +58,19 @@ Tooling-Entscheidung fuer Pilotphase: ESLint + Prettier + vue-tsc (ohne oxlint/o
 
 ### Phase B - Homepage als Pilotmigration
 
-- [ ] Homepage-Route auf Inertia umstellen (Controller mit `Inertia::render()`).
-- [ ] Bestehende Homepage-Daten in sinnvolle Inertia-Props ueberfuehren und typisieren.
-- [ ] Homepage als `Pages/Home/Index.vue` in neuer Struktur implementieren.
-- [ ] Homepage gegen Kerninteraktionen pruefen (Laden, Navigation, Datenanzeige, Flash/Auth falls relevant).
-- [ ] Altpfad der Homepage klar markieren (entfernt oder als Legacy-Rest dokumentiert).
+- [x] Homepage-Route auf Inertia umstellen (Controller mit `Inertia::render()`).
+- [x] Bestehende Homepage-Daten in sinnvolle Inertia-Props ueberfuehren und typisieren.
+- [x] Homepage als `Pages/Home/Index.vue` in neuer Struktur implementieren.
+- [x] Homepage gegen Kerninteraktionen pruefen (Laden, Navigation, Datenanzeige, Flash/Auth falls relevant).
+- [x] Altpfad der Homepage klar markieren (entfernt oder als Legacy-Rest dokumentiert).
 
 Ergebnis: Eine reale Seite laeuft stabil im neuen Muster und dient als Referenz fuer alle Folgeschritte.
+
+Status: done.
+- Neuer Pfad: `HomeController@index` → `Inertia::render('Home/Index')` → `Pages/Home/Index.vue`
+- Legacy: `resources/views/home/home.blade.php` als Legacy markiert, wird nicht mehr gerendert.
+- Architektur: Controller minimal, Mapping in `Http/Resources/`, Typen in `types/home.ts`, Chart als Composable mit `fetch`.
+- Build, Lint und Type-Check laufen sauber.
 
 ### Phase C - UI-Framework-Entscheidung (nach funktionierender Homepage)
 

@@ -1,18 +1,36 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import CurrentRoundsSection from '@/Components/Home/CurrentRoundsSection.vue';
+import HomeDataTable from '@/Components/Home/HomeDataTable.vue';
+import HomeGamesChart from '@/Components/Home/HomeGamesChart.vue';
+import type { HomeGroup, HomeRound } from '@/types/home';
 
 defineProps<{
-  message: string;
-  timestamp: string;
+  group: HomeGroup;
+  currentRounds: HomeRound[];
 }>();
 </script>
 
 <template>
-  <Head title="Inertia Smoke Test" />
+  <Head title="Startseite" />
 
-  <AppLayout title="Inertia Smoke Test">
-    <p class="mb-2">{{ message }}</p>
-    <p class="text-sm text-slate-600">Serverzeit: {{ timestamp }}</p>
+  <AppLayout title="Startseite">
+    <CurrentRoundsSection :rounds="currentRounds" />
+
+    <section class="mb-8">
+      <h2 class="mb-4 text-xl font-semibold">Rekorde</h2>
+      <HomeDataTable :rows="group.records" />
+    </section>
+
+    <section class="mb-8">
+      <h2 class="mb-4 text-xl font-semibold">Statistiken</h2>
+      <HomeDataTable :rows="group.stats" />
+    </section>
+
+    <section>
+      <h2 class="mb-4 text-xl font-semibold">Anzahl der Spiele</h2>
+      <HomeGamesChart :group-id="group.id" />
+    </section>
   </AppLayout>
 </template>

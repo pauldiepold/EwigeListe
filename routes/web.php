@@ -21,12 +21,6 @@ Auth::routes();
 /* *********** Home ************** */
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/inertia-smoke', function () {
-    return Inertia::render('Home/Index', [
-        'message' => 'Inertia Basis erfolgreich initialisiert.',
-        'timestamp' => now()->toDateTimeString(),
-    ]);
-})->name('inertia.smoke');
 
 Route::middleware('auth')->group(function ()
 {

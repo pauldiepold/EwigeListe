@@ -1,4 +1,11 @@
-﻿@extends('layouts.main')
+{{--
+  LEGACY – nicht mehr aktiver Render-Pfad.
+  Homepage wird seit Phase B der Inertia-Migration über HomeController@index
+  als Inertia::render('Home/Index') ausgeliefert.
+  Diese Datei bleibt bis zum finalen Cleanup erhalten.
+  Neuer Code: resources/js/inertia/Pages/Home/Index.vue
+--}}
+@extends('layouts.main')
 
 @section('title', 'Ewige Liste')
 
