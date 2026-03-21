@@ -1,13 +1,100 @@
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Raleway&family=Dancing+Script:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Raleway&family=Dancing+Script:wght@700&display=swap')
+layer(base);
 
-@import '@fortawesome/fontawesome-free/css/all.css';
+@import '@fortawesome/fontawesome-free/css/all.css' layer(base);
 @import './bootstrap-compat.css';
-@import './cards.css';
+@import './cards.css' layer(base);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-lg: 1124px;
+  --breakpoint-xl: 1480px;
+
+  --color-gray-100: #f1f1ef;
+  --color-gray-200: #f3f3f3;
+  --color-gray-300: #e4e4e4;
+  --color-gray-400: #d1d1d1;
+  --color-gray-500: #afafaf;
+  --color-gray-600: #919191;
+  --color-gray-700: #6b6b6b;
+  --color-gray-800: #424242;
+  --color-gray-900: #2b2b2b;
+
+  --color-orange-500: #d16341;
+  --color-orange-dark: rgb(176, 74, 67);
+  --color-orange: #d16341;
+  --color-orange-lighter: rgba(209, 99, 65, 0.18);
+
+  --color-blue-darker: #21295c;
+  --color-blue-dark: rgb(5, 75, 109);
+  --color-blue: #065a82;
+  --color-blue-light: #0692c6;
+  --color-blue-lighter: #92d2ff;
+  --color-blue-lightest: #cbe7f7;
+
+  --padding-50p: 50%;
+
+  --container-6xs: 4rem;
+  --container-5xs: 6rem;
+  --container-4xs: 8rem;
+  --container-3xs: 12rem;
+  --container-2xs: 16rem;
+
+  --min-width-5xs: 6rem;
+  --min-width-6xs: 4rem;
+  --min-width-7xs: 3rem;
+  --min-width-8xs: 2rem;
+
+  --shadow-green: 0 0 6px 2px rgb(88, 169, 117);
+  --shadow-green-darker: 0 0 6px 3px rgb(41, 177, 89);
+  --shadow-green-darker-lg: 0 0 20px 5px rgb(41, 177, 89);
+  --shadow-green-darker-xl: 0 0 25px 7px rgb(41, 177, 89);
+  --shadow-red: 0 0 6px 3px rgb(202, 114, 114);
+  --shadow-xs: 0 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  --shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  --shadow-none: none;
+
+  --grid-template-columns-livegame: minmax(max-content, max-content)
+    minmax(0, 1fr) minmax(max-content, max-content);
+
+  --grid-template-rows-livegame: minmax(max-content, max-content) minmax(0, 1fr)
+    minmax(max-content, max-content);
+  --grid-template-rows-livegame_lg: minmax(max-content, max-content)
+    minmax(20em, 1fr) minmax(max-content, max-content)
+    minmax(max-content, max-content);
+
+  --border-width-3: 3px;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 /* =============================================
    Base Styles
@@ -106,7 +193,7 @@ h1, h2, h3, h4, h5, h6 {
    ============================================= */
 
 .live-overlay {
-    @apply text-gray-200 bg-gray-800 bg-opacity-50 rounded-xl;
+    @apply text-gray-200 bg-gray-800/50 rounded-xl;
 }
 
 /* =============================================
@@ -126,7 +213,7 @@ nav a:hover {
    ============================================= */
 
 .group-card {
-    @apply rounded bg-white px-3 py-2 my-3 mx-auto;
+    @apply rounded-sm bg-white px-3 py-2 my-3 mx-auto;
     box-shadow: 0 3px 6px hsla(0, 0%, 0%, .15), 0 2px 4px hsla(0, 0%, 0%, .24);
 }
 

@@ -7,7 +7,7 @@
     <div x-show="open"
          x-transition.opacity
          @keydown.escape.window="open = false"
-         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
          style="display: none;">
         <div class="bg-white rounded w-full max-w-sm mx-4 shadow-xl">
             <div class="modal-header py-2">
