@@ -45,13 +45,16 @@ Bestehender Altcode bleibt zunaechst unangetastet und klar erkennbar ausserhalb 
 
 ### Phase A - Grundlagen fuer Pilotseite
 
-- [ ] Inertia-Basis fuer Frontend finalisieren (Entry, Root-Template, Middleware, Shared Data als Minimalset).
-- [ ] Zielstruktur `resources/js/inertia/*` anlegen und als einziger neuer Frontend-Bereich festlegen.
-- [ ] Tooling aus modernem Vue-Referenzprojekt uebernehmen (TS, ESLint, Prettier, vue-tsc).
-- [ ] Lint-/Type-Check-Skripte auf neue Inertia-Ordner begrenzen; Legacy explizit ausnehmen.
-- [ ] Smoke-Test-Route/Page bereitstellen, damit Setup vor Start der Pilotmigration validiert ist.
+- [x] Inertia-Basis fuer Frontend finalisieren (Entry, Root-Template, Middleware, Shared Data als Minimalset).
+- [x] Zielstruktur `resources/js/inertia/*` anlegen und als einziger neuer Frontend-Bereich festlegen.
+- [x] Tooling aus modernem Vue-Referenzprojekt uebernehmen (TS, ESLint, Prettier, vue-tsc).
+- [x] Lint-/Type-Check-Skripte auf neue Inertia-Ordner begrenzen; Legacy explizit ausnehmen.
+- [x] Smoke-Test-Route/Page bereitstellen, damit Setup vor Start der Pilotmigration validiert ist.
 
 Ergebnis: Technische Basis steht, ohne das Legacy-Frontend global zu refactoren.
+
+Status: Abgeschlossen und validiert (`npm run type-check`, `npm run lint:fix`).
+Tooling-Entscheidung fuer Pilotphase: ESLint + Prettier + vue-tsc (ohne oxlint/oxfmt).
 
 ### Phase B - Homepage als Pilotmigration
 
