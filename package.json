@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prod": "vite build",
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit -p tsconfig.inertia.json",
     "lint": "eslint resources/js/inertia --ext .ts,.vue",

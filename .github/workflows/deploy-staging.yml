@@ -45,7 +45,7 @@ jobs:
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             npm ci
-            npm run build
+            npm run prod
 
             if [ "${{ github.event.inputs.sync_db }}" = "yes" ]; then
               echo "=== DB Sync: neuesten Dump suchen ==="
