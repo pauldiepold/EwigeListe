@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, provide, ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useAppRoute } from '@/composables/useAppRoute';
+import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inertiaColorMode';
 
 defineProps<{
   title?: string;
 }>();
 
-type ColorMode = 'light' | 'dark';
+const colorMode = ref<InertiaColorMode>('light');
 
-const colorMode = ref<ColorMode>('light');
+provide(inertiaColorModeKey, colorMode);
 const page = usePage<{
   auth?: { user?: { id: number; player_id: number | null } | null };
   navigation?: { showCurrentRound?: boolean };
@@ -21,7 +22,7 @@ const isDark = computed(() => colorMode.value === 'dark');
 const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
 const canOpenCurrentRound = computed(() => Boolean(page.props.navigation?.showCurrentRound));
 
-function applyColorMode(mode: ColorMode): void {
+function applyColorMode(mode: InertiaColorMode): void {
   colorMode.value = mode;
   const root = document.documentElement;
   root.classList.toggle('dark', mode === 'dark');

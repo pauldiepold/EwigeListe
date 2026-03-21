@@ -1,20 +1,48 @@
-import { onBeforeUnmount, ref, watch, type Ref } from 'vue';
+import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import Chart from 'chart.js/auto';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { inertiaColorModeKey } from '@/composables/inertiaColorMode';
+import type { HomeGamesChartPayload } from '@/types/home';
 
-type HomeChartResponse = {
-  gameDates: string[];
-  gameCounter: number[];
-};
+function chartPalette(isDark: boolean): {
+  borderColor: string;
+  fillColor: string;
+  tickColor: string;
+  gridColor: string;
+} {
+  if (isDark) {
+    return {
+      borderColor: '#f4a574',
+      fillColor: 'rgba(227, 114, 34, 0.22)',
+      tickColor: '#94a3b8',
+      gridColor: 'rgba(148, 163, 184, 0.18)',
+    };
+  }
 
-export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: number): {
-  isLoading: Ref<boolean>;
+  return {
+    borderColor: '#E37222',
+    fillColor: 'rgba(244, 158, 98, 0.35)',
+    tickColor: '#475569',
+    gridColor: 'rgba(100, 116, 139, 0.2)',
+  };
+}
+
+/**
+ * Rendert das Spiele-Zeitreihen-Chart aus servergelieferten Daten (Inertia-Prop).
+ */
+export function useHomeChart(
+  canvasRef: Ref<HTMLCanvasElement | null>,
+  chartData: Ref<HomeGamesChartPayload | null | undefined>,
+): {
   error: Ref<string | null>;
 } {
-  const { route } = useAppRoute();
-  const isLoading = ref(false);
+  const colorMode = inject(inertiaColorModeKey);
+  if (colorMode === undefined) {
+    throw new Error('useHomeChart: Farbmodus fehlt — Seite muss in AppLayout liegen.');
+  }
+  const isDark = computed(() => colorMode.value === 'dark');
   const error = ref<string | null>(null);
   let chart: Chart | null = null;
+  let lastPayload: HomeGamesChartPayload | null = null;
 
   const destroyChart = (): void => {
     if (chart) {
@@ -23,27 +51,17 @@ export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: 
     }
   };
 
-  const loadChart = async (): Promise<void> => {
+  const renderFromPayload = (data: HomeGamesChartPayload, animate: boolean): void => {
+    error.value = null;
+
     if (!canvasRef.value) {
       return;
     }
 
-    isLoading.value = true;
-    error.value = null;
-    destroyChart();
-
     try {
-      const response = await fetch(route('charts.home', { group: groupId }), {
-        headers: {
-          Accept: 'application/json',
-        },
-      });
+      const palette = chartPalette(isDark.value);
 
-      if (!response.ok) {
-        throw new Error('Chart-Daten konnten nicht geladen werden.');
-      }
-
-      const data = (await response.json()) as HomeChartResponse;
+      destroyChart();
 
       Chart.defaults.font.family = '"Open Sans"';
 
@@ -53,19 +71,42 @@ export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: 
           labels: data.gameDates,
           datasets: [
             {
-              borderColor: '#E37222',
-              backgroundColor: 'rgba(244,158,98,0.3)',
+              borderColor: palette.borderColor,
+              backgroundColor: palette.fillColor,
               data: data.gameCounter,
             },
           ],
         },
         options: {
-          animation: false,
+          animation: animate
+            ? {
+                duration: 900,
+                easing: 'easeOutQuart',
+              }
+            : false,
           maintainAspectRatio: false,
           scales: {
             x: {
               ticks: {
                 maxTicksLimit: 10,
+                color: palette.tickColor,
+              },
+              grid: {
+                color: palette.gridColor,
+              },
+              border: {
+                color: palette.gridColor,
+              },
+            },
+            y: {
+              ticks: {
+                color: palette.tickColor,
+              },
+              grid: {
+                color: palette.gridColor,
+              },
+              border: {
+                color: palette.gridColor,
               },
             },
           },
@@ -91,29 +132,38 @@ export function useHomeChart(canvasRef: Ref<HTMLCanvasElement | null>, groupId: 
           },
         },
       });
+
+      lastPayload = data;
     } catch {
-      error.value = 'Das Chart konnte nicht geladen werden.';
-    } finally {
-      isLoading.value = false;
+      error.value = 'Das Chart konnte nicht dargestellt werden.';
+      lastPayload = null;
+      destroyChart();
     }
   };
 
   watch(
-    () => canvasRef.value,
-    (canvas) => {
-      if (canvas) {
-        void loadChart();
+    [canvasRef, chartData],
+    ([canvas, data]) => {
+      if (!canvas || data == null) {
+        return;
       }
+
+      renderFromPayload(data, true);
     },
-    { immediate: true },
+    { immediate: true, deep: true },
   );
+
+  watch(isDark, () => {
+    if (lastPayload) {
+      renderFromPayload(lastPayload, false);
+    }
+  });
 
   onBeforeUnmount(() => {
     destroyChart();
   });
 
   return {
-    isLoading,
     error,
   };
 }

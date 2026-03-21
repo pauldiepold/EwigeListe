@@ -9,6 +9,11 @@ export type StatRow = {
   value: string;
 };
 
+export type HomeGamesChartPayload = {
+  gameDates: string[];
+  gameCounter: number[];
+};
+
 export type HomeGroup = {
   id: number;
   records: RecordRow[];

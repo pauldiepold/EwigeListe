@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import type { Component } from 'vue';
+import { computed, h, resolveComponent } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import type { Column, ColumnDef, Row, SortingState } from '@tanstack/vue-table';
 import type { ArchiveSortColumn, RoundArchiveRow } from '@/types/rounds-index';
@@ -55,6 +56,22 @@ const columns: ColumnDef<RoundArchiveRow>[] = [
     id: 'online',
     accessorKey: 'has_live_round',
     header: 'Online',
+    meta: {
+      class: {
+        td: 'text-center align-middle',
+      },
+    },
+    cell: ({ row }) => {
+      if (!row.original.has_live_round) {
+        return null;
+      }
+      const UIcon = resolveComponent('UIcon') as Component;
+      return h(UIcon, {
+        name: 'i-lucide-dice-5',
+        class: 'size-6 shrink-0 align-middle text-primary',
+        'aria-hidden': true,
+      });
+    },
   },
   {
     id: 'players',
@@ -113,14 +130,6 @@ const tableMeta = computed(() => ({
           label="Online"
           :trailing-icon="sortIcon(column)"
           @click="onSortHeaderClick('online')"
-        />
-      </template>
-
-      <template #online-cell="{ row }">
-        <UIcon
-          v-if="row.original.has_live_round"
-          name="i-lucide-dice-5"
-          class="size-4 text-slate-700 dark:text-slate-300"
         />
       </template>
 
