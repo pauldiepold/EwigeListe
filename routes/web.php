@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 /*
 Verb          Path                        Action  Route Name
@@ -20,6 +21,12 @@ Auth::routes();
 /* *********** Home ************** */
 Route::get('/', 'HomeController@index');
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/inertia-smoke', function () {
+    return Inertia::render('Home/Index', [
+        'message' => 'Inertia Basis erfolgreich initialisiert.',
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+})->name('inertia.smoke');
 
 Route::middleware('auth')->group(function ()
 {
