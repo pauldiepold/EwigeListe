@@ -1,0 +1,28 @@
+---
+description: Operative Regeln fuer Migrations-Tracking und Entscheidungen
+alwaysApply: true
+---
+
+# Migrations-Tracking
+
+- Fuer jede migrierte Seite den Status fuehren: `todo`, `in_progress`, `done`.
+- Pro Seite Altpfad (Blade/Legacy) und Neupfad (Inertia/Page) dokumentieren.
+- Nur als `done` markieren, wenn der neue Pfad im Alltag nutzbar ist.
+- Pilot-Reihenfolge einhalten: zuerst nur Homepage, danach Entscheidungspunkt vor weiterer Seitenmigration.
+
+# Funktionale Mindestqualitaet pro Seite
+
+- Fuer jede Seite 3-5 Kerninteraktionen benennen (z. B. Laden, Navigation, Speichern, Validierung).
+- Nach Migration pruefen, dass diese Kerninteraktionen funktionieren.
+- Visuelle Unsauberkeiten sind akzeptabel, funktionale Brueche nicht.
+
+# UI-Framework Entscheidung
+
+- UI-Framework nicht final festlegen ohne Praxisprobe.
+- Vor Entscheidung einen kleinen Spike auf 1-2 echten Seiten durchfuehren.
+- Entscheidung anhand von Integrationsaufwand, Entwicklungsgeschwindigkeit und Wartbarkeit treffen.
+
+# Kontextklarheit vor Umsetzung
+
+- Vor jedem groesseren Schritt fehlenden Kontext aktiv erfragen.
+- Bei Unsicherheit keine stillen Annahmen; stattdessen Entscheidung offen markieren.
