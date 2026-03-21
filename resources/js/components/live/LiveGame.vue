@@ -81,7 +81,7 @@
             </div>
         </div>
 
-        <!--<div v-if="error !== ''" v-text="error" class="center-absolute text-gray-200 bg-white bg-opacity-50 rounded-xl p-6 z-50"/>-->
+        <!--<div v-if="error !== ''" v-text="error" class="center-absolute text-gray-200 bg-white/50 rounded-xl p-6 z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
         <div v-if="round.inactive_players.map(v => v.id).includes(round.auth_id) && istPhase(2)"

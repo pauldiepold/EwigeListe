@@ -1,9 +1,9 @@
 ﻿<template>
     <div>
         <div style="position: absolute; left: 15%; bottom: 0; transform: translate(-50%);"
-             class="bg-gray-800 bg-opacity-50 rounded-t-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm z-50 flex items-center"
+             class="bg-gray-800/50 rounded-t-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm z-50 flex items-center"
              :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[0].id}">
-            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block shrink-0">
                 <img :src="round.active_players[0].avatar_path"
                      class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 rounded-full">
             </div>
@@ -28,9 +28,9 @@
             </div>
         </div>
         <div style="position: absolute; left: 22%; transform: translate(-50%);"
-             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             class="bg-gray-800/50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
              :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[1].id}">
-            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block shrink-0">
                 <img :src="round.active_players[1].avatar_path"
                      class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>
@@ -55,9 +55,9 @@
             </div>
         </div>
         <div style="position: absolute; left: 50%; transform: translate(-50%);"
-             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             class="bg-gray-800/50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
              :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[2].id}">
-            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block shrink-0">
                 <img :src="round.active_players[2].avatar_path"
                      class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>
@@ -84,9 +84,9 @@
             </div>
         </div>
         <div style="position: absolute; left: 78%; transform: translate(-50%);"
-             class="bg-gray-800 bg-opacity-50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
+             class="bg-gray-800/50 rounded-b-lg text-gray-300 px-3 lg:py-2 py-1 xl:text-base text-sm flex items-center"
              :class="{'shadow-green-darker lg:shadow-green-darker-lg xl:shadow-green-darker-xl': liveGame.dran === round.active_players[3].id}">
-            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block flex-shrink-0">
+            <div class="border-r-2 pr-2 mr-2 border-gray-500 hidden xl:block shrink-0">
                 <img :src="round.active_players[3].avatar_path"
                      class="xl:h-14 xl:w-14 lg:h-12 lg:w-12 h-7 w-7 rounded-full">
             </div>

@@ -41,7 +41,7 @@
                         </tr>
                         <tr x-data="{ visible: false }"
                             x-show="visible"
-                            @toggle-report-row.window="if ($event.detail.index === {{ $loop->index }}) visible = !visible"
+                            @toggle-report-row.window="if ($event.detail.index === {{ $loop->index }}) visible = visible!"
                             style="display: none;">
                             <td colspan="5">
                                 <table class="table-borderless">

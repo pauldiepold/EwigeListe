@@ -1,3 +1,876 @@
+@utility btn {
+  /* =============================================
+       Buttons
+       ============================================= */
+  @apply inline-flex items-center justify-center px-4 py-2 rounded-sm text-sm font-medium transition-colors cursor-pointer border border-transparent;
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  &[disabled] {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+@utility btn-primary {
+  @apply bg-orange-500 text-white border-orange-500;
+
+  &:hover:not(:disabled) {
+    @apply bg-orange-dark border-orange-dark;
+  }
+}
+
+@utility btn-outline-primary {
+  @apply bg-transparent text-orange-dark border-orange-500;
+
+  &:hover:not(:disabled) {
+    @apply bg-orange-500 text-white;
+  }
+}
+
+@utility btn-outline-secondary {
+  @apply bg-transparent text-blue border-blue;
+
+  &:hover:not(:disabled) {
+    @apply bg-blue text-white;
+  }
+}
+
+@utility btn-sm {
+  @apply px-2 py-1 text-xs;
+}
+
+@utility alert {
+  /* =============================================
+       Alerts
+       ============================================= */
+  @apply inline-block px-4 py-3 rounded-sm border;
+}
+
+@utility alert-success {
+  @apply bg-green-100 text-green-800 border-green-300;
+}
+
+@utility alert-danger {
+  @apply bg-red-100 text-red-800 border-red-300;
+}
+
+@utility alert-warning {
+  @apply bg-yellow-100 text-yellow-800 border-yellow-300;
+}
+
+@utility alert-info {
+  @apply bg-blue-100 text-blue-800 border-blue-300;
+}
+
+@utility modal-overlay {
+  /* =============================================
+       Modal
+       ============================================= */
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-black/50;
+}
+
+@utility modal-dialog {
+  @apply bg-white rounded-sm w-full max-w-lg mx-4;
+  box-shadow: 0px 4px 6px 2px rgba(0, 0, 0, 0.3);
+}
+
+@utility modal-dialog-sm {
+  @apply max-w-sm;
+}
+
+@utility modal-content {
+  @apply rounded-sm border-0;
+}
+
+@utility modal-header {
+  @apply px-4 py-3 border-0 flex items-center justify-between;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+@utility modal-title {
+  @apply text-lg font-medium;
+}
+
+@utility modal-body {
+  @apply px-4 py-4;
+}
+
+@utility modal-footer {
+  @apply px-4 py-3 border-0 flex items-center justify-center gap-2;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+@utility form-group {
+  /* =============================================
+       Forms
+       ============================================= */
+  @apply mb-4;
+}
+
+@utility form-control {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-sm text-sm focus:outline-hidden focus:ring-2 focus:border-transparent;
+
+  &.is-invalid {
+    @apply border-red-400 focus:ring-red-300;
+  }
+}
+
+@utility form-control-sm {
+  @apply px-2 py-1 text-xs;
+}
+
+@utility is-invalid {
+  &.form-control {
+    @apply border-red-400 focus:ring-red-300;
+  }
+}
+
+@utility form-text {
+  @apply block text-sm mt-1;
+}
+
+@utility control-label {
+  @apply block text-sm font-medium text-gray-700 mt-1;
+}
+
+@utility custom-control {
+  /* Custom checkboxes (Bootstrap 4 custom-control pattern) */
+  @apply flex items-center gap-2;
+}
+
+@utility custom-control-input {
+  @apply w-4 h-4 rounded-sm border-gray-300 text-orange-500 cursor-pointer;
+}
+
+@utility custom-control-label {
+  @apply cursor-pointer;
+}
+
+@utility card {
+  /* =============================================
+       Card
+       ============================================= */
+  @apply bg-white rounded-sm border border-gray-200;
+}
+
+@utility card-body {
+  @apply p-4;
+}
+
+@utility card-header {
+  @apply px-4 py-3 border-0;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+@utility card-footer {
+  @apply px-4 py-3 border-0;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+@utility table {
+  /* =============================================
+       Table
+       ============================================= */
+  @apply w-full text-sm;
+}
+
+@utility table-sm {
+  & td {
+    @apply py-1 px-2;
+  }
+
+  & th {
+    @apply py-1 px-2;
+  }
+}
+
+@utility table-responsive {
+  @apply overflow-x-auto;
+}
+
+@utility d-flex {
+  /* =============================================
+       Bootstrap Utility Aliases
+       (für Schritt-2-Migration – werden danach entfernt)
+       Hinweis: Klassen mit identischem Tailwind-Namen brauchen keinen Eintrag hier,
+       da Tailwind diese bereits generiert (text-center, mx-auto, m-0 usw.)
+       ============================================= */
+  @apply flex;
+}
+
+@utility d-inline-flex {
+  @apply inline-flex;
+}
+
+@utility d-block {
+  @apply block;
+}
+
+@utility d-none {
+  @apply hidden;
+}
+
+@utility align-items-center {
+  @apply items-center;
+}
+
+@utility align-items-start {
+  @apply items-start;
+}
+
+@utility align-items-end {
+  @apply items-end;
+}
+
+@utility justify-content-center {
+  @apply justify-center;
+}
+
+@utility justify-content-between {
+  @apply justify-between;
+}
+
+@utility justify-content-end {
+  @apply justify-end;
+}
+
+@utility justify-content-start {
+  @apply justify-start;
+}
+
+@utility text-muted {
+  @apply text-gray-500;
+}
+
+@utility text-dark {
+  @apply text-gray-900;
+}
+
+@utility text-light {
+  @apply text-blue-lightest;
+}
+
+@utility text-uppercase {
+  @apply uppercase;
+}
+
+@utility font-weight-bold {
+  @apply font-bold;
+}
+
+@utility font-weight-normal {
+  @apply font-normal;
+}
+
+@utility w-100 {
+  @apply w-full;
+}
+
+@utility h-100 {
+  @apply h-full;
+}
+
+@utility position-relative {
+  @apply relative;
+}
+
+@utility position-absolute {
+  @apply absolute;
+}
+
+@utility bg-secondary {
+  background-color: #065a82;
+}
+
+@utility m-1 {
+  /* Bootstrap Spacing (0-5: 0, 0.25rem, 0.5rem, 1rem, 1.5rem, 3rem)
+       Nur die Klassen die sich vom Tailwind-Standard unterscheiden. */
+  margin: 0.25rem;
+}
+
+@utility m-2 {
+  margin: 0.5rem;
+}
+
+@utility m-3 {
+  margin: 1rem;
+}
+
+@utility m-4 {
+  margin: 1.5rem;
+}
+
+@utility m-5 {
+  margin: 3rem;
+}
+
+@utility mt-1 {
+  margin-top: 0.25rem;
+}
+
+@utility mt-2 {
+  margin-top: 0.5rem;
+}
+
+@utility mt-3 {
+  margin-top: 1rem;
+}
+
+@utility mt-4 {
+  margin-top: 1.5rem;
+}
+
+@utility mt-5 {
+  margin-top: 3rem;
+}
+
+@utility mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+@utility mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+@utility mb-3 {
+  margin-bottom: 1rem;
+}
+
+@utility mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+@utility mb-5 {
+  margin-bottom: 3rem;
+}
+
+@utility ml-1 {
+  margin-left: 0.25rem;
+}
+
+@utility ml-2 {
+  margin-left: 0.5rem;
+}
+
+@utility ml-3 {
+  margin-left: 1rem;
+}
+
+@utility mr-1 {
+  margin-right: 0.25rem;
+}
+
+@utility mr-2 {
+  margin-right: 0.5rem;
+}
+
+@utility mr-3 {
+  margin-right: 1rem;
+}
+
+@utility mx-1 {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+}
+
+@utility mx-2 {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+@utility mx-3 {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+@utility my-1 {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+@utility my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+@utility my-3 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+@utility my-4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@utility p-1 {
+  padding: 0.25rem;
+}
+
+@utility p-2 {
+  padding: 0.5rem;
+}
+
+@utility p-3 {
+  padding: 1rem;
+}
+
+@utility p-4 {
+  padding: 1.5rem;
+}
+
+@utility pt-1 {
+  padding-top: 0.25rem;
+}
+
+@utility pt-2 {
+  padding-top: 0.5rem;
+}
+
+@utility pt-3 {
+  padding-top: 1rem;
+}
+
+@utility pb-1 {
+  padding-bottom: 0.25rem;
+}
+
+@utility pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+@utility pb-3 {
+  padding-bottom: 1rem;
+}
+
+@utility py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+@utility py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+@utility py-3 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+@utility px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+@utility px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+@utility px-3 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@utility container {
+  /* =============================================
+       Bootstrap Grid (minimal – nur für bestehende row/col)
+       Benutze Tailwind-Grid direkt für neue Strukturen.
+       ============================================= */
+  @apply w-full mx-auto px-4;
+  max-width: 1080px;
+
+  @media (min-width: 640px) {
+    max-width: 610px;
+  }
+  @media (min-width: 768px) {
+    max-width: 720px;
+  }
+  @media (min-width: 1124px) {
+    max-width: 1080px;
+  }
+  @media (min-width: 1480px) {
+    max-width: 1420px;
+  }
+}
+
+@utility row {
+  @apply flex flex-wrap -mx-2;
+}
+
+@utility no-gutters {
+  @apply mx-0;
+
+  & > [class*='col'] {
+    @apply px-0;
+  }
+}
+
+@utility col {
+  @apply flex-1 min-w-0 px-2;
+}
+
+@utility col-1 {
+  width: 8.333333%;
+  @apply px-2;
+}
+
+@utility col-2 {
+  width: 16.666667%;
+  @apply px-2;
+}
+
+@utility col-3 {
+  width: 25%;
+  @apply px-2;
+}
+
+@utility col-4 {
+  width: 33.333333%;
+  @apply px-2;
+}
+
+@utility col-5 {
+  width: 41.666667%;
+  @apply px-2;
+}
+
+@utility col-6 {
+  width: 50%;
+  @apply px-2;
+}
+
+@utility col-7 {
+  width: 58.333333%;
+  @apply px-2;
+}
+
+@utility col-8 {
+  width: 66.666667%;
+  @apply px-2;
+}
+
+@utility col-9 {
+  width: 75%;
+  @apply px-2;
+}
+
+@utility col-10 {
+  width: 83.333333%;
+  @apply px-2;
+}
+
+@utility col-11 {
+  width: 91.666667%;
+  @apply px-2;
+}
+
+@utility col-12 {
+  width: 100%;
+  @apply px-2;
+}
+
+@utility col-sm-1 {
+  @media (min-width: 640px) {
+    width: 8.333333%;
+  }
+}
+
+@utility col-sm-2 {
+  @media (min-width: 640px) {
+    width: 16.666667%;
+  }
+}
+
+@utility col-sm-3 {
+  @media (min-width: 640px) {
+    width: 25%;
+  }
+}
+
+@utility col-sm-4 {
+  @media (min-width: 640px) {
+    width: 33.333333%;
+  }
+}
+
+@utility col-sm-5 {
+  @media (min-width: 640px) {
+    width: 41.666667%;
+  }
+}
+
+@utility col-sm-6 {
+  @media (min-width: 640px) {
+    width: 50%;
+  }
+}
+
+@utility col-sm-7 {
+  @media (min-width: 640px) {
+    width: 58.333333%;
+  }
+}
+
+@utility col-sm-8 {
+  @media (min-width: 640px) {
+    width: 66.666667%;
+  }
+}
+
+@utility col-sm-9 {
+  @media (min-width: 640px) {
+    width: 75%;
+  }
+}
+
+@utility col-sm-10 {
+  @media (min-width: 640px) {
+    width: 83.333333%;
+  }
+}
+
+@utility col-sm-11 {
+  @media (min-width: 640px) {
+    width: 91.666667%;
+  }
+}
+
+@utility col-sm-12 {
+  @media (min-width: 640px) {
+    width: 100%;
+  }
+}
+
+@utility col-md-1 {
+  @media (min-width: 768px) {
+    width: 8.333333%;
+  }
+}
+
+@utility col-md-2 {
+  @media (min-width: 768px) {
+    width: 16.666667%;
+  }
+}
+
+@utility col-md-3 {
+  @media (min-width: 768px) {
+    width: 25%;
+  }
+}
+
+@utility col-md-4 {
+  @media (min-width: 768px) {
+    width: 33.333333%;
+  }
+}
+
+@utility col-md-5 {
+  @media (min-width: 768px) {
+    width: 41.666667%;
+  }
+}
+
+@utility col-md-6 {
+  @media (min-width: 768px) {
+    width: 50%;
+  }
+}
+
+@utility col-md-7 {
+  @media (min-width: 768px) {
+    width: 58.333333%;
+  }
+}
+
+@utility col-md-8 {
+  @media (min-width: 768px) {
+    width: 66.666667%;
+  }
+}
+
+@utility col-md-9 {
+  @media (min-width: 768px) {
+    width: 75%;
+  }
+}
+
+@utility col-md-10 {
+  @media (min-width: 768px) {
+    width: 83.333333%;
+  }
+}
+
+@utility col-md-11 {
+  @media (min-width: 768px) {
+    width: 91.666667%;
+  }
+}
+
+@utility col-md-12 {
+  @media (min-width: 768px) {
+    width: 100%;
+  }
+}
+
+@utility col-lg-1 {
+  @media (min-width: 1124px) {
+    width: 8.333333%;
+  }
+}
+
+@utility col-lg-2 {
+  @media (min-width: 1124px) {
+    width: 16.666667%;
+  }
+}
+
+@utility col-lg-3 {
+  @media (min-width: 1124px) {
+    width: 25%;
+  }
+}
+
+@utility col-lg-4 {
+  @media (min-width: 1124px) {
+    width: 33.333333%;
+  }
+}
+
+@utility col-lg-5 {
+  @media (min-width: 1124px) {
+    width: 41.666667%;
+  }
+}
+
+@utility col-lg-6 {
+  @media (min-width: 1124px) {
+    width: 50%;
+  }
+}
+
+@utility col-lg-7 {
+  @media (min-width: 1124px) {
+    width: 58.333333%;
+  }
+}
+
+@utility col-lg-8 {
+  @media (min-width: 1124px) {
+    width: 66.666667%;
+  }
+}
+
+@utility col-lg-9 {
+  @media (min-width: 1124px) {
+    width: 75%;
+  }
+}
+
+@utility col-lg-10 {
+  @media (min-width: 1124px) {
+    width: 83.333333%;
+  }
+}
+
+@utility col-lg-11 {
+  @media (min-width: 1124px) {
+    width: 91.666667%;
+  }
+}
+
+@utility col-lg-12 {
+  @media (min-width: 1124px) {
+    width: 100%;
+  }
+}
+
+@utility col-xl-1 {
+  @media (min-width: 1480px) {
+    width: 8.333333%;
+  }
+}
+
+@utility col-xl-2 {
+  @media (min-width: 1480px) {
+    width: 16.666667%;
+  }
+}
+
+@utility col-xl-3 {
+  @media (min-width: 1480px) {
+    width: 25%;
+  }
+}
+
+@utility col-xl-4 {
+  @media (min-width: 1480px) {
+    width: 33.333333%;
+  }
+}
+
+@utility col-xl-5 {
+  @media (min-width: 1480px) {
+    width: 41.666667%;
+  }
+}
+
+@utility col-xl-6 {
+  @media (min-width: 1480px) {
+    width: 50%;
+  }
+}
+
+@utility col-xl-7 {
+  @media (min-width: 1480px) {
+    width: 58.333333%;
+  }
+}
+
+@utility col-xl-8 {
+  @media (min-width: 1480px) {
+    width: 66.666667%;
+  }
+}
+
+@utility col-xl-9 {
+  @media (min-width: 1480px) {
+    width: 75%;
+  }
+}
+
+@utility col-xl-10 {
+  @media (min-width: 1480px) {
+    width: 83.333333%;
+  }
+}
+
+@utility col-xl-11 {
+  @media (min-width: 1480px) {
+    width: 91.666667%;
+  }
+}
+
+@utility col-xl-12 {
+  @media (min-width: 1480px) {
+    width: 100%;
+  }
+}
+
+@utility col-xs-6 {
+  /* xs cols (Bootstrap 3 compat) */
+  width: 50%;
+  @apply px-2;
+}
+
+@utility col-xs-offset-3 {
+  margin-left: 25%;
+}
+
 /*
  * Bootstrap Compatibility Layer
  *
@@ -8,344 +881,7 @@
 
 @layer components {
 
-    /* =============================================
-       Buttons
-       ============================================= */
-
-    .btn {
-        @apply inline-flex items-center justify-center px-4 py-2 rounded text-sm font-medium transition-colors cursor-pointer border border-transparent;
-    }
-
-    .btn:disabled,
-    .btn[disabled] {
-        @apply opacity-50 cursor-not-allowed;
-    }
-
-    .btn-primary {
-        @apply bg-orange-500 text-white border-orange-500;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-        @apply bg-orange-dark border-orange-dark;
-    }
-
-    .btn-outline-primary {
-        @apply bg-transparent text-orange-dark border-orange-500;
-    }
-
-    .btn-outline-primary:hover:not(:disabled) {
-        @apply bg-orange-500 text-white;
-    }
-
-    .btn-outline-secondary {
-        @apply bg-transparent text-blue border-blue;
-    }
-
-    .btn-outline-secondary:hover:not(:disabled) {
-        @apply bg-blue text-white;
-    }
-
-    .btn-sm {
-        @apply px-2 py-1 text-xs;
-    }
-
-    /* =============================================
-       Alerts
-       ============================================= */
-
-    .alert {
-        @apply inline-block px-4 py-3 rounded border;
-    }
-
-    .alert-success {
-        @apply bg-green-100 text-green-800 border-green-300;
-    }
-
-    .alert-danger {
-        @apply bg-red-100 text-red-800 border-red-300;
-    }
-
-    .alert-warning {
-        @apply bg-yellow-100 text-yellow-800 border-yellow-300;
-    }
-
-    .alert-info {
-        @apply bg-blue-100 text-blue-800 border-blue-300;
-    }
-
-    /* =============================================
-       Modal
-       ============================================= */
-
-    .modal-overlay {
-        @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50;
-    }
-
-    .modal-dialog {
-        @apply bg-white rounded w-full max-w-lg mx-4;
-        box-shadow: 0px 4px 6px 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .modal-dialog-sm {
-        @apply max-w-sm;
-    }
-
-    .modal-content {
-        @apply rounded border-0;
-    }
-
-    .modal-header {
-        @apply px-4 py-3 border-0 flex items-center justify-between;
-        background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    .modal-title {
-        @apply text-lg font-medium;
-    }
-
-    .modal-body {
-        @apply px-4 py-4;
-    }
-
-    .modal-footer {
-        @apply px-4 py-3 border-0 flex items-center justify-center gap-2;
-        background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    /* =============================================
-       Forms
-       ============================================= */
-
-    .form-group {
-        @apply mb-4;
-    }
-
-    .form-control {
-        @apply block w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:border-transparent;
-    }
-
-    .form-control-sm {
-        @apply px-2 py-1 text-xs;
-    }
-
-    .form-control.is-invalid {
-        @apply border-red-400 focus:ring-red-300;
-    }
-
-    .form-text {
-        @apply block text-sm mt-1;
-    }
-
-    .control-label {
-        @apply block text-sm font-medium text-gray-700 mt-1;
-    }
-
-    /* Custom checkboxes (Bootstrap 4 custom-control pattern) */
-    .custom-control {
-        @apply flex items-center gap-2;
-    }
-
-    .custom-control-input {
-        @apply w-4 h-4 rounded border-gray-300 text-orange-500 cursor-pointer;
-    }
-
-    .custom-control-label {
-        @apply cursor-pointer;
-    }
-
-    /* =============================================
-       Card
-       ============================================= */
-
-    .card {
-        @apply bg-white rounded border border-gray-200;
-    }
-
-    .card-body {
-        @apply p-4;
-    }
-
-    .card-header {
-        @apply px-4 py-3 border-0;
-        background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    .card-footer {
-        @apply px-4 py-3 border-0;
-        background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    /* =============================================
-       Table
-       ============================================= */
-
-    .table {
-        @apply w-full text-sm;
-    }
-
-    .table-sm td,
-    .table-sm th {
-        @apply py-1 px-2;
-    }
-
-    .table-responsive {
-        @apply overflow-x-auto;
-    }
-
-    /* =============================================
-       Bootstrap Utility Aliases
-       (für Schritt-2-Migration – werden danach entfernt)
-       Hinweis: Klassen mit identischem Tailwind-Namen brauchen keinen Eintrag hier,
-       da Tailwind diese bereits generiert (text-center, mx-auto, m-0 usw.)
-       ============================================= */
-
-    .d-flex          { @apply flex; }
-    .d-inline-flex   { @apply inline-flex; }
-    .d-block         { @apply block; }
-    .d-none          { @apply hidden; }
-
-    .align-items-center      { @apply items-center; }
-    .align-items-start       { @apply items-start; }
-    .align-items-end         { @apply items-end; }
-    .justify-content-center  { @apply justify-center; }
-    .justify-content-between { @apply justify-between; }
-    .justify-content-end     { @apply justify-end; }
-    .justify-content-start   { @apply justify-start; }
-
-    .text-muted     { @apply text-gray-500; }
-    .text-dark      { @apply text-gray-900; }
-    .text-light     { @apply text-blue-lightest; }
-    .text-uppercase { @apply uppercase; }
-    .font-weight-bold   { @apply font-bold; }
-    .font-weight-normal { @apply font-normal; }
-
-    .w-100 { @apply w-full; }
-    .h-100 { @apply h-full; }
-
-    .position-relative { @apply relative; }
-    .position-absolute { @apply absolute; }
-
-    .bg-secondary { background-color: #065A82; }
-
-    /* Bootstrap Spacing (0-5: 0, 0.25rem, 0.5rem, 1rem, 1.5rem, 3rem)
-       Nur die Klassen die sich vom Tailwind-Standard unterscheiden. */
-    .m-1  { margin: 0.25rem; }          .m-2  { margin: 0.5rem; }
-    .m-3  { margin: 1rem; }             .m-4  { margin: 1.5rem; }          .m-5  { margin: 3rem; }
-
-    .mt-1 { margin-top: 0.25rem; }      .mt-2 { margin-top: 0.5rem; }
-    .mt-3 { margin-top: 1rem; }         .mt-4 { margin-top: 1.5rem; }      .mt-5 { margin-top: 3rem; }
-
-    .mb-1 { margin-bottom: 0.25rem; }   .mb-2 { margin-bottom: 0.5rem; }
-    .mb-3 { margin-bottom: 1rem; }      .mb-4 { margin-bottom: 1.5rem; }   .mb-5 { margin-bottom: 3rem; }
-
-    .ml-1 { margin-left: 0.25rem; }     .ml-2 { margin-left: 0.5rem; }     .ml-3 { margin-left: 1rem; }
-    .mr-1 { margin-right: 0.25rem; }    .mr-2 { margin-right: 0.5rem; }    .mr-3 { margin-right: 1rem; }
-
-    .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
-    .mx-2 { margin-left: 0.5rem;  margin-right: 0.5rem; }
-    .mx-3 { margin-left: 1rem;    margin-right: 1rem; }
-
-    .my-1 { margin-top: 0.25rem; margin-bottom: 0.25rem; }
-    .my-2 { margin-top: 0.5rem;  margin-bottom: 0.5rem; }
-    .my-3 { margin-top: 1rem;    margin-bottom: 1rem; }
-    .my-4 { margin-top: 1.5rem;  margin-bottom: 1.5rem; }
-
-    .p-1  { padding: 0.25rem; }         .p-2  { padding: 0.5rem; }
-    .p-3  { padding: 1rem; }            .p-4  { padding: 1.5rem; }
-
-    .pt-1 { padding-top: 0.25rem; }     .pt-2 { padding-top: 0.5rem; }     .pt-3 { padding-top: 1rem; }
-    .pb-1 { padding-bottom: 0.25rem; }  .pb-2 { padding-bottom: 0.5rem; }  .pb-3 { padding-bottom: 1rem; }
-
-    .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-    .py-2 { padding-top: 0.5rem;  padding-bottom: 0.5rem; }
-    .py-3 { padding-top: 1rem;    padding-bottom: 1rem; }
-
-    .px-1 { padding-left: 0.25rem; padding-right: 0.25rem; }
-    .px-2 { padding-left: 0.5rem;  padding-right: 0.5rem; }
-    .px-3 { padding-left: 1rem;    padding-right: 1rem; }
-
-    /* =============================================
-       Bootstrap Grid (minimal – nur für bestehende row/col)
-       Benutze Tailwind-Grid direkt für neue Strukturen.
-       ============================================= */
-
-    .container {
-        @apply w-full mx-auto px-4;
-        max-width: 1080px;
-    }
-
-    @media (min-width: 640px)  { .container { max-width: 610px; } }
-    @media (min-width: 768px)  { .container { max-width: 720px; } }
-    @media (min-width: 1124px) { .container { max-width: 1080px; } }
-    @media (min-width: 1480px) { .container { max-width: 1420px; } }
-
-    .row {
-        @apply flex flex-wrap -mx-2;
-    }
-
-    .no-gutters {
-        @apply mx-0;
-    }
-
-    .no-gutters > [class*="col"] {
-        @apply px-0;
-    }
-
     [class*="col-"] {
         @apply px-2;
     }
-
-    .col    { @apply flex-1 min-w-0 px-2; }
-    .col-1  { width: 8.333333%; @apply px-2; }
-    .col-2  { width: 16.666667%; @apply px-2; }
-    .col-3  { width: 25%; @apply px-2; }
-    .col-4  { width: 33.333333%; @apply px-2; }
-    .col-5  { width: 41.666667%; @apply px-2; }
-    .col-6  { width: 50%; @apply px-2; }
-    .col-7  { width: 58.333333%; @apply px-2; }
-    .col-8  { width: 66.666667%; @apply px-2; }
-    .col-9  { width: 75%; @apply px-2; }
-    .col-10 { width: 83.333333%; @apply px-2; }
-    .col-11 { width: 91.666667%; @apply px-2; }
-    .col-12 { width: 100%; @apply px-2; }
-
-    @media (min-width: 640px) {
-        .col-sm-1  { width: 8.333333%; }  .col-sm-2  { width: 16.666667%; }
-        .col-sm-3  { width: 25%; }        .col-sm-4  { width: 33.333333%; }
-        .col-sm-5  { width: 41.666667%; } .col-sm-6  { width: 50%; }
-        .col-sm-7  { width: 58.333333%; } .col-sm-8  { width: 66.666667%; }
-        .col-sm-9  { width: 75%; }        .col-sm-10 { width: 83.333333%; }
-        .col-sm-11 { width: 91.666667%; } .col-sm-12 { width: 100%; }
-    }
-
-    @media (min-width: 768px) {
-        .col-md-1  { width: 8.333333%; }  .col-md-2  { width: 16.666667%; }
-        .col-md-3  { width: 25%; }        .col-md-4  { width: 33.333333%; }
-        .col-md-5  { width: 41.666667%; } .col-md-6  { width: 50%; }
-        .col-md-7  { width: 58.333333%; } .col-md-8  { width: 66.666667%; }
-        .col-md-9  { width: 75%; }        .col-md-10 { width: 83.333333%; }
-        .col-md-11 { width: 91.666667%; } .col-md-12 { width: 100%; }
-    }
-
-    @media (min-width: 1124px) {
-        .col-lg-1  { width: 8.333333%; }  .col-lg-2  { width: 16.666667%; }
-        .col-lg-3  { width: 25%; }        .col-lg-4  { width: 33.333333%; }
-        .col-lg-5  { width: 41.666667%; } .col-lg-6  { width: 50%; }
-        .col-lg-7  { width: 58.333333%; } .col-lg-8  { width: 66.666667%; }
-        .col-lg-9  { width: 75%; }        .col-lg-10 { width: 83.333333%; }
-        .col-lg-11 { width: 91.666667%; } .col-lg-12 { width: 100%; }
-    }
-
-    @media (min-width: 1480px) {
-        .col-xl-1  { width: 8.333333%; }  .col-xl-2  { width: 16.666667%; }
-        .col-xl-3  { width: 25%; }        .col-xl-4  { width: 33.333333%; }
-        .col-xl-5  { width: 41.666667%; } .col-xl-6  { width: 50%; }
-        .col-xl-7  { width: 58.333333%; } .col-xl-8  { width: 66.666667%; }
-        .col-xl-9  { width: 75%; }        .col-xl-10 { width: 83.333333%; }
-        .col-xl-11 { width: 91.666667%; } .col-xl-12 { width: 100%; }
-    }
-
-    /* xs cols (Bootstrap 3 compat) */
-    .col-xs-6 { width: 50%; @apply px-2; }
-    .col-xs-offset-3 { margin-left: 25%; }
 }
