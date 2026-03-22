@@ -22,6 +22,7 @@ alwaysApply: false
 - Fuer einfache GET-Ladevorgaenge standardmaessig `fetch` bevorzugen; `axios` nur bei klarem Mehrwert (Interceptors, Upload, komplexe Fehlerbehandlung).
 - Bei Kontextluecken oder Architekturzweifeln Rueckfrage stellen statt Annahmen zu treffen.
 - die migration soll eine minimale aber funktionierend ui liefern, die nah am bisherigen look and feel ist. die code struktur sollte sauber sein, so dass spätere ui verbesserungen einfach und sauber durchführbar sind.
+- **Icons:** Im Inertia-Bereich ausschließlich Lucide-Icons (`i-lucide-*`) verwenden. Kein FontAwesome (`fab fa-*`, `fas fa-*`) im neuen Inertia-Code — das ist Legacy-Blade. Für OAuth-Provider-Buttons (Google, Facebook) generische Lucide-Icons oder nur Labels, da keine Marken-Icons in der Lucide-Collection existieren.
 
 # Done-Kriterien fuer einzelne Migrationsschritte
 

@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class QuickRegisterController extends Controller
 {
@@ -23,14 +25,9 @@ class QuickRegisterController extends Controller
         $this->middleware('auth');
     }
 
-    /**
-     * Show the quick registration form.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show()
+    public function show(): Response
     {
-        return view('auth.quick-register');
+        return Inertia::render('Auth/QuickRegister');
     }
 
     /**

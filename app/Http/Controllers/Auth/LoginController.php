@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\SocialiteUser;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class LoginController extends Controller
 {
@@ -29,6 +31,11 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = '/';
+
+    public function showLoginForm(): Response
+    {
+        return Inertia::render('Auth/Login');
+    }
 
     /**
      * Create a new controller instance.
@@ -55,12 +62,12 @@ class LoginController extends Controller
         }
     }
 
-    protected function validateLogin(Request $request)
+    protected function validateLogin(Request $request): void
     {
         $request->validate([
             $this->username() => 'required|string',
             'password' => 'required|string',
-            'socialiteUserId' => 'exists:socialite_users,id'
+            'socialiteUserId' => ['nullable', 'exists:socialite_users,id'],
         ]);
     }
 }

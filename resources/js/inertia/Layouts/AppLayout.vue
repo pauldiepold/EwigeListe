@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref } from 'vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, router, usePage } from '@inertiajs/vue3';
 import { useAppRoute } from '@/composables/useAppRoute';
 import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inertiaColorMode';
 
@@ -31,6 +31,10 @@ function applyColorMode(mode: InertiaColorMode): void {
 
 function toggleColorMode(): void {
   applyColorMode(colorMode.value === 'dark' ? 'light' : 'dark');
+}
+
+function logout(): void {
+  router.post(route('logout'));
 }
 
 onMounted(() => {
@@ -155,9 +159,26 @@ onMounted(() => {
           <Link :href="route('datenschutz')" class="text-muted no-underline hover:text-highlighted hover:underline">
             Datenschutz
           </Link>
+          <template v-if="isAuthenticated">
+            <span class="text-muted" aria-hidden="true">&bull;</span>
+            <button
+              type="button"
+              class="text-muted hover:text-highlighted hover:underline"
+              @click="logout"
+            >
+              Logout
+            </button>
+          </template>
+          <template v-else>
+            <span class="text-muted" aria-hidden="true">&bull;</span>
+            <Link :href="route('login')" class="text-muted no-underline hover:text-highlighted hover:underline">
+              Login
+            </Link>
+          </template>
         </div>
         <div class="flex items-center justify-center gap-4 sm:justify-end">
-          <span class="text-muted">&copy; {{ new Date().getFullYear() }} Ewige Liste</span>
+          <span class="text-muted">&copy; Paul Diepold
+            <span class="text-muted" aria-hidden="true">&bull;</span> {{ new Date().getFullYear() }}</span>
           <UButton
             color="neutral"
             variant="ghost"
