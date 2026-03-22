@@ -18,7 +18,9 @@ defineProps<{
       >
         <h3 class="mb-2 font-semibold text-highlighted">{{ round.players }}</h3>
         <p class="mb-2 text-sm text-muted">Letztes Spiel: {{ round.lastGameAt ?? '-' }}</p>
-        <a :href="round.path" class="text-sm font-medium text-primary hover:underline">Runde ansehen</a>
+        <a :href="round.path" class="text-sm font-medium text-primary hover:underline"
+          >Runde ansehen</a
+        >
       </article>
     </div>
   </section>

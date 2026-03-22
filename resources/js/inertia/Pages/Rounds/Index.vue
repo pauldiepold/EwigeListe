@@ -3,7 +3,12 @@ import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ArchiveRoundsTable from '@/Components/Rounds/ArchiveRoundsTable.vue';
 import { useAppRoute } from '@/composables/useAppRoute';
-import type { ArchiveSort, ArchiveSortColumn, GroupOption, PaginatedRoundArchiveRows } from '@/types/rounds-index';
+import type {
+  ArchiveSort,
+  ArchiveSortColumn,
+  GroupOption,
+  PaginatedRoundArchiveRows,
+} from '@/types/rounds-index';
 
 const props = defineProps<{
   groupOptions: GroupOption[];
@@ -15,7 +20,9 @@ const props = defineProps<{
 
 const { route } = useAppRoute();
 
-function roundsIndexParams(overrides: Record<string, string | number> = {}): Record<string, string | number> {
+function roundsIndexParams(
+  overrides: Record<string, string | number> = {},
+): Record<string, string | number> {
   return {
     group: props.selectedGroup.id,
     sort: props.archiveSort.column,
@@ -92,7 +99,9 @@ function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc
         />
       </template>
 
-      <p v-else class="text-lg text-slate-700 dark:text-slate-300">Bisher wurden keine Runden gespielt.</p>
+      <p v-else class="text-lg text-slate-700 dark:text-slate-300">
+        Bisher wurden keine Runden gespielt.
+      </p>
     </div>
   </AppLayout>
 </template>

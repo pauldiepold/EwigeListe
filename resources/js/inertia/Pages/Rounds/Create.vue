@@ -47,7 +47,9 @@ const selectableGroups = computed(() => {
 });
 
 const selectedGroupIds = computed(() => {
-  return selectedGroups.value.filter((groupId) => selectableGroups.value.some((group) => group.id === groupId));
+  return selectedGroups.value.filter((groupId) =>
+    selectableGroups.value.some((group) => group.id === groupId),
+  );
 });
 
 const groupText = computed(() => {
@@ -110,7 +112,8 @@ function submitRound(): void {
       preserveScroll: true,
       onError: (errors) => {
         const first = Object.values(errors)[0];
-        backendError.value = typeof first === 'string' ? first : 'Die Runde konnte nicht erstellt werden.';
+        backendError.value =
+          typeof first === 'string' ? first : 'Die Runde konnte nicht erstellt werden.';
       },
       onFinish: () => {
         isSubmitting.value = false;
@@ -119,7 +122,8 @@ function submitRound(): void {
   );
 }
 
-const initialPlayer = props.players.find((player) => player.id === props.loggedInPlayerId) ?? props.players[0];
+const initialPlayer =
+  props.players.find((player) => player.id === props.loggedInPlayerId) ?? props.players[0];
 if (initialPlayer) {
   addPlayer(initialPlayer);
 }
@@ -152,7 +156,10 @@ if (initialPlayer) {
         </template>
 
         <div class="space-y-4">
-          <UFormField label="Suche nach Name" help="Mit Enter hinzufügen, wenn nur ein Treffer bleibt.">
+          <UFormField
+            label="Suche nach Name"
+            help="Mit Enter hinzufügen, wenn nur ein Treffer bleibt."
+          >
             <UInput
               v-model="searchTerm"
               icon="i-lucide-search"
@@ -169,7 +176,11 @@ if (initialPlayer) {
               class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition hover:bg-muted"
               @click="addPlayer(player)"
             >
-              <UAvatar :src="player.avatar_path" :alt="`${player.surname} ${player.name}`" size="sm" />
+              <UAvatar
+                :src="player.avatar_path"
+                :alt="`${player.surname} ${player.name}`"
+                size="sm"
+              />
               <span>{{ player.surname }} {{ player.name }}</span>
             </button>
             <p v-if="filteredPlayers.length === 0" class="px-2 py-1 text-sm text-muted">
@@ -201,7 +212,11 @@ if (initialPlayer) {
             class="flex items-center justify-between rounded-md border border-default px-3 py-2"
           >
             <div class="flex items-center gap-3">
-              <UAvatar :src="player.avatar_path" :alt="`${player.surname} ${player.name}`" size="sm" />
+              <UAvatar
+                :src="player.avatar_path"
+                :alt="`${player.surname} ${player.name}`"
+                size="sm"
+              />
               <span class="font-medium">{{ player.surname }} {{ player.name }}</span>
             </div>
 
@@ -249,7 +264,9 @@ if (initialPlayer) {
       </UCard>
 
       <div class="space-y-3 text-center">
-        <p v-if="selectedPlayers.length" class="text-sm text-muted">Runde wird {{ groupText }} hinzugefügt.</p>
+        <p v-if="selectedPlayers.length" class="text-sm text-muted">
+          Runde wird {{ groupText }} hinzugefügt.
+        </p>
         <UButton
           :loading="isSubmitting"
           :disabled="selectedPlayers.length < 4"

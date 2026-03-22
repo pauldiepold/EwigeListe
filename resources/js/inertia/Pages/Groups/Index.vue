@@ -19,7 +19,13 @@ const { route } = useAppRoute();
     <div class="mx-auto w-full max-w-md space-y-6">
       <GroupList :groups="groups" />
 
-      <UButton :to="route('groups.create')" color="primary" icon="i-lucide-plus" label="Neue Liste erstellen" block />
+      <UButton
+        :to="route('groups.create')"
+        color="primary"
+        icon="i-lucide-plus"
+        label="Neue Liste erstellen"
+        block
+      />
     </div>
   </AppLayout>
 </template>

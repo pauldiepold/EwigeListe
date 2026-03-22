@@ -25,9 +25,7 @@ onMounted(() => {
     <p v-if="error" class="mb-3 text-sm text-error">{{ error }}</p>
     <div
       class="h-[360px] transition-[opacity,transform] duration-700 ease-out motion-reduce:transition-none"
-      :class="
-        surfaceEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
-      "
+      :class="surfaceEntered ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'"
     >
       <canvas ref="canvasRef" />
     </div>

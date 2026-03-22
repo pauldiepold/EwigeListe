@@ -12,7 +12,8 @@ const { route } = useAppRoute();
 type Step = 'choose' | 'register' | 'login';
 const step = ref<Step>(props.existingUserEmail ? 'login' : 'choose');
 
-const providerLabel = props.socialiteUser.provider.charAt(0).toUpperCase() + props.socialiteUser.provider.slice(1);
+const providerLabel =
+  props.socialiteUser.provider.charAt(0).toUpperCase() + props.socialiteUser.provider.slice(1);
 
 const registerForm = useForm({
   email: props.socialiteUser.email,
@@ -44,14 +45,16 @@ function submitLogin(): void {
 
   <AppLayout :title="`${providerLabel} Login`">
     <div class="mx-auto w-full max-w-md space-y-6">
-
       <div v-if="step === 'choose'">
         <UCard>
           <template #header>
             <h2 class="text-lg font-semibold">Mit {{ providerLabel }} verknüpfen</h2>
           </template>
 
-          <p class="mb-6 text-muted">Möchtest du einen neuen Account erstellen oder deinen bestehenden Account mit {{ providerLabel }} verknüpfen?</p>
+          <p class="mb-6 text-muted">
+            Möchtest du einen neuen Account erstellen oder deinen bestehenden Account mit
+            {{ providerLabel }} verknüpfen?
+          </p>
 
           <div class="flex flex-col gap-3">
             <UButton
@@ -77,7 +80,13 @@ function submitLogin(): void {
         <UCard>
           <template #header>
             <div class="flex items-center gap-3">
-              <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="xs" @click="step = 'choose'" />
+              <UButton
+                icon="i-lucide-arrow-left"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                @click="step = 'choose'"
+              />
               <h2 class="text-lg font-semibold">Neuen Account mit {{ providerLabel }} erstellen</h2>
             </div>
           </template>
@@ -103,12 +112,7 @@ function submitLogin(): void {
             </UFormField>
 
             <UFormField label="E-Mail" :error="registerForm.errors.email">
-              <UInput
-                v-model="registerForm.email"
-                type="email"
-                name="email"
-                disabled
-              />
+              <UInput v-model="registerForm.email" type="email" name="email" disabled />
             </UFormField>
 
             <UButton
@@ -149,7 +153,8 @@ function submitLogin(): void {
             />
 
             <p class="text-sm text-muted">
-              Gib deine Anmeldedaten ein, um deinen Account mit {{ providerLabel }} zu verknüpfen. In Zukunft kannst du dich mit einem Klick einloggen!
+              Gib deine Anmeldedaten ein, um deinen Account mit {{ providerLabel }} zu verknüpfen.
+              In Zukunft kannst du dich mit einem Klick einloggen!
             </p>
 
             <form class="space-y-4" @submit.prevent="submitLogin">
@@ -184,13 +189,14 @@ function submitLogin(): void {
                   :label="`Mit ${providerLabel} verknüpfen`"
                   :loading="loginForm.processing"
                 />
-                <ULink :to="route('password.request')" class="text-sm text-primary">Passwort vergessen?</ULink>
+                <ULink :to="route('password.request')" class="text-sm text-primary"
+                  >Passwort vergessen?</ULink
+                >
               </div>
             </form>
           </div>
         </UCard>
       </div>
-
     </div>
   </AppLayout>
 </template>

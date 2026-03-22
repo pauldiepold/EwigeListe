@@ -53,7 +53,9 @@ onMounted(() => {
   <div class="flex min-h-screen flex-col bg-default text-highlighted">
     <header class="z-50 shrink-0">
       <div class="bg-blue-dark py-2 text-center">
-        <Link :href="route('index')" class="text-lg font-semibold text-white no-underline">Ewige Liste</Link>
+        <Link :href="route('index')" class="text-lg font-semibold text-white no-underline"
+          >Ewige Liste</Link
+        >
       </div>
 
       <nav class="bg-blue">
@@ -148,15 +150,24 @@ onMounted(() => {
         class="flex w-full max-w-4xl flex-col gap-3 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
-          <Link :href="route('regeln')" class="text-muted no-underline hover:text-highlighted hover:underline">
+          <Link
+            :href="route('regeln')"
+            class="text-muted no-underline hover:text-highlighted hover:underline"
+          >
             Regeln
           </Link>
           <span class="text-muted" aria-hidden="true">&bull;</span>
-          <Link :href="route('impressum')" class="text-muted no-underline hover:text-highlighted hover:underline">
+          <Link
+            :href="route('impressum')"
+            class="text-muted no-underline hover:text-highlighted hover:underline"
+          >
             Impressum
           </Link>
           <span class="text-muted" aria-hidden="true">&bull;</span>
-          <Link :href="route('datenschutz')" class="text-muted no-underline hover:text-highlighted hover:underline">
+          <Link
+            :href="route('datenschutz')"
+            class="text-muted no-underline hover:text-highlighted hover:underline"
+          >
             Datenschutz
           </Link>
           <template v-if="isAuthenticated">
@@ -171,14 +182,19 @@ onMounted(() => {
           </template>
           <template v-else>
             <span class="text-muted" aria-hidden="true">&bull;</span>
-            <Link :href="route('login')" class="text-muted no-underline hover:text-highlighted hover:underline">
+            <Link
+              :href="route('login')"
+              class="text-muted no-underline hover:text-highlighted hover:underline"
+            >
               Login
             </Link>
           </template>
         </div>
         <div class="flex items-center justify-center gap-4 sm:justify-end">
-          <span class="text-muted">&copy; Paul Diepold
-            <span class="text-muted" aria-hidden="true">&bull;</span> {{ new Date().getFullYear() }}</span>
+          <span class="text-muted"
+            >&copy; Paul Diepold <span class="text-muted" aria-hidden="true">&bull;</span>
+            {{ new Date().getFullYear() }}</span
+          >
           <UButton
             color="neutral"
             variant="ghost"
