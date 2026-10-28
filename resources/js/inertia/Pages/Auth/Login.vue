@@ -3,9 +3,9 @@ import { computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
-
-const { route } = useAppRoute();
+import { login, register } from '@/routes';
+import { socialite } from '@/routes/auth';
+import { request as passwordRequest } from '@/routes/password';
 
 type LoginData = {
   email: string;
@@ -51,7 +51,7 @@ const providers = computed(() => [
     color: 'neutral' as const,
     variant: 'outline' as const,
     onClick: () => {
-      window.location.href = route('auth.socialite', { provider: 'google' });
+      window.location.href = socialite.url('google');
     },
   },
   {
@@ -60,7 +60,7 @@ const providers = computed(() => [
     color: 'neutral' as const,
     variant: 'outline' as const,
     onClick: () => {
-      window.location.href = route('auth.socialite', { provider: 'facebook' });
+      window.location.href = socialite.url('facebook');
     },
   },
 ]);
@@ -69,7 +69,7 @@ function onSubmit(event: FormSubmitEvent<LoginData>): void {
   form.email = event.data.email;
   form.password = event.data.password;
   form.remember = event.data.remember;
-  form.post(route('login'), {
+  form.post(login.url(), {
     onFinish: () => form.reset('password'),
   });
 }
@@ -90,14 +90,14 @@ function onSubmit(event: FormSubmitEvent<LoginData>): void {
           @submit="onSubmit"
         >
           <template #password-hint>
-            <ULink :to="route('password.request')" class="text-primary font-medium" tabindex="-1">
+            <ULink :to="passwordRequest.url()" class="text-primary font-medium" tabindex="-1">
               Passwort vergessen?
             </ULink>
           </template>
 
           <template #footer>
             Noch kein Konto?
-            <ULink :to="route('register')" class="text-primary font-medium">Registrieren</ULink>
+            <ULink :to="register.url()" class="text-primary font-medium">Registrieren</ULink>
           </template>
         </UAuthForm>
       </UPageCard>

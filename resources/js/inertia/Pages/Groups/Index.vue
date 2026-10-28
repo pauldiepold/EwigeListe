@@ -2,14 +2,12 @@
 import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GroupList from '@/Components/Groups/GroupList.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { create as createGroup } from '@/routes/groups';
 import type { GroupIndexRow } from '@/types/groups-index';
 
 defineProps<{
   groups: GroupIndexRow[];
 }>();
-
-const { route } = useAppRoute();
 </script>
 
 <template>
@@ -20,7 +18,7 @@ const { route } = useAppRoute();
       <GroupList :groups="groups" />
 
       <UButton
-        :to="route('groups.create')"
+        :to="createGroup.url()"
         color="primary"
         icon="i-lucide-plus"
         label="Neue Liste erstellen"

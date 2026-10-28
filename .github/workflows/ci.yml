@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend:
-    name: Tests
+  ci:
+    name: Tests, Build, Type-Check, Lint, Format
     runs-on: ubuntu-latest
 
     steps:
@@ -42,13 +42,6 @@ jobs:
 
       - run: php artisan test --compact
 
-  frontend:
-    name: Build, Type-Check, Lint, Format
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
@@ -56,7 +49,7 @@ jobs:
 
       - run: npm ci
 
-      - name: Build (erzeugt auch auto-imports.d.ts und components.d.ts)
+      - name: Build (erzeugt Wayfinder-Routen sowie auto-imports.d.ts und components.d.ts)
         run: npm run build
 
       - run: npm run type-check

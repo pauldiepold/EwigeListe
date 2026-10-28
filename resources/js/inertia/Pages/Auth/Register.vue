@@ -2,12 +2,11 @@
 import { ref, onMounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { login, register } from '@/routes';
+import { socialite } from '@/routes/auth';
 import type { RegisterProps } from '@/types/auth';
 
 const props = defineProps<RegisterProps>();
-
-const { route } = useAppRoute();
 
 const captchaWidgetId = ref<number | null>(null);
 const captchaContainer = ref<HTMLDivElement | null>(null);
@@ -29,11 +28,11 @@ function resetCaptcha(): void {
 }
 
 function navigateToProvider(provider: string): void {
-  window.location.href = route('auth.socialite', { provider });
+  window.location.href = socialite.url(provider);
 }
 
 function submit(): void {
-  form.post(route('register'), {
+  form.post(register.url(), {
     onError: resetCaptcha,
     onFinish: () => form.reset('password', 'password_confirmation'),
   });
@@ -168,7 +167,7 @@ function renderCaptcha(): void {
 
           <p class="text-center text-sm text-muted">
             Bereits registriert?
-            <ULink :to="route('login')" class="text-primary font-medium">Anmelden</ULink>
+            <ULink :to="login.url()" class="text-primary font-medium">Anmelden</ULink>
           </p>
         </div>
       </UCard>

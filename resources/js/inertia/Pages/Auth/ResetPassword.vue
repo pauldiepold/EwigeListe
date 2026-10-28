@@ -3,12 +3,10 @@ import { computed } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { update as passwordUpdate } from '@/routes/password';
 import type { ResetPasswordProps } from '@/types/auth';
 
 const props = defineProps<ResetPasswordProps>();
-
-const { route } = useAppRoute();
 
 type ResetData = {
   token: string;
@@ -55,7 +53,7 @@ function onSubmit(event: FormSubmitEvent<ResetData>): void {
   form.email = event.data.email;
   form.password = event.data.password;
   form.password_confirmation = event.data.password_confirmation;
-  form.post(route('password.update'), {
+  form.post(passwordUpdate.url(), {
     onFinish: () => {
       form.reset('password', 'password_confirmation');
     },

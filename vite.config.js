@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from "@tailwindcss/vite";
+import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import { fileURLToPath, URL } from 'node:url';
 
 const herdDevHost = 'ewigeliste.test';
@@ -24,6 +25,10 @@ export default defineConfig(async () => {
                 },
             }),
             tailwindcss(),
+            wayfinder({
+                path: 'resources/js/inertia',
+                formVariants: true,
+            }),
             ui({
                 router: 'inertia',
                 ui: {

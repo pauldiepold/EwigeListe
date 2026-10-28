@@ -1,7 +1,21 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
-import { useAppRoute } from '@/composables/useAppRoute';
+import {
+  datenschutz,
+  impressum,
+  index as home,
+  login,
+  logout as logoutRoute,
+  regeln,
+  register,
+} from '@/routes';
+import { index as groupsIndex } from '@/routes/groups';
+import {
+  create as createRound,
+  current as currentRound,
+  index as roundsIndex,
+} from '@/routes/rounds';
 import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inertiaColorMode';
 
 defineProps<{
@@ -15,8 +29,6 @@ const page = usePage<{
   auth?: { user?: { id: number; player_id: number | null } | null };
   navigation?: { showCurrentRound?: boolean };
 }>();
-
-const { route } = useAppRoute();
 
 const isDark = computed(() => colorMode.value === 'dark');
 const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
@@ -34,7 +46,7 @@ function toggleColorMode(): void {
 }
 
 function logout(): void {
-  router.post(route('logout'));
+  router.post(logoutRoute.url());
 }
 
 onMounted(() => {
@@ -53,7 +65,7 @@ onMounted(() => {
   <div class="flex min-h-screen flex-col bg-default text-highlighted">
     <header class="z-50 shrink-0">
       <div class="bg-blue-dark py-2 text-center">
-        <Link :href="route('index')" class="text-lg font-semibold text-white no-underline"
+        <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
           >Ewige Liste</Link
         >
       </div>
@@ -62,7 +74,7 @@ onMounted(() => {
         <UContainer class="max-w-md px-1 py-2">
           <div class="flex items-center justify-around">
             <UButton
-              :to="route('index')"
+              :to="home.url()"
               color="neutral"
               variant="ghost"
               class="text-white hover:bg-white/15"
@@ -73,7 +85,7 @@ onMounted(() => {
             <template v-if="isAuthenticated">
               <UButton
                 v-if="canOpenCurrentRound"
-                :to="route('rounds.current')"
+                :to="currentRound.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -81,7 +93,7 @@ onMounted(() => {
                 aria-label="Aktuelle Runde"
               />
               <UButton
-                :to="route('rounds.create')"
+                :to="createRound.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -89,7 +101,7 @@ onMounted(() => {
                 aria-label="Neue Runde"
               />
               <UButton
-                :to="route('groups.index')"
+                :to="groupsIndex.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -97,7 +109,7 @@ onMounted(() => {
                 aria-label="Listen"
               />
               <UButton
-                :to="route('rounds.index')"
+                :to="roundsIndex.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -108,7 +120,7 @@ onMounted(() => {
 
             <template v-else>
               <UButton
-                :to="route('login')"
+                :to="login.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -116,7 +128,7 @@ onMounted(() => {
                 aria-label="Login"
               />
               <UButton
-                :to="route('register')"
+                :to="register.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
@@ -151,21 +163,21 @@ onMounted(() => {
       >
         <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
           <Link
-            :href="route('regeln')"
+            :href="regeln.url()"
             class="text-muted no-underline hover:text-highlighted hover:underline"
           >
             Regeln
           </Link>
           <span class="text-muted" aria-hidden="true">&bull;</span>
           <Link
-            :href="route('impressum')"
+            :href="impressum.url()"
             class="text-muted no-underline hover:text-highlighted hover:underline"
           >
             Impressum
           </Link>
           <span class="text-muted" aria-hidden="true">&bull;</span>
           <Link
-            :href="route('datenschutz')"
+            :href="datenschutz.url()"
             class="text-muted no-underline hover:text-highlighted hover:underline"
           >
             Datenschutz
@@ -183,7 +195,7 @@ onMounted(() => {
           <template v-else>
             <span class="text-muted" aria-hidden="true">&bull;</span>
             <Link
-              :href="route('login')"
+              :href="login.url()"
               class="text-muted no-underline hover:text-highlighted hover:underline"
             >
               Login

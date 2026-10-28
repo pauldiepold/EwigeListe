@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 erledigt, Phase 1 läuft (#27 erledigt, #48 offen) · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 und 1 erledigt, Phase 2 offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -23,7 +23,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 1. Issue wählen (Reihenfolge siehe Roadmap), Branch `mig/<nr>-kurzname` von `inertia-migration`.
 2. TDD: zuerst ein Test, der fehlschlägt, dann die Umsetzung.
-3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format:fix`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
+3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
 4. PR nach `inertia-migration` mit `Closes #nr`, `/code-review`, Paul merged per Squash.
 5. **Im selben PR** wird der Status in diesem Dokument aktualisiert (Roadmap und Routen-Matrix).
 6. Staging-Deploy bei Bedarf über den Workflow „Deploy Staging“ auf `inertia-migration` (optional mit Prod-Dump).
@@ -33,7 +33,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | Phase | Inhalt | Issues | Status |
 |---|---|---|---|
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
-| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27 ✅, #48 | in_progress |
+| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | ✅ |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten | #28 | todo |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
@@ -86,7 +86,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 |---|---|---|
 | 2026-03 | Nuxt UI als UI-Framework für alle Inertia-Seiten | Spike an `rounds.create`: hohe Entwicklungsgeschwindigkeit für Formulare, Tabellen und Overlays; über das Theme anpassbar |
 | 2026-03 | ESLint + Prettier + vue-tsc (ohne oxlint/oxfmt) | Pilotphase, etablierte Tools |
-| 2026-03 | Ziggy für benannte Routen im Frontend (`useAppRoute()`) | keine hart codierten URLs |
+| 2026-03 | ~~Ziggy für benannte Routen im Frontend (`useAppRoute()`)~~ abgelöst durch Wayfinder (2026-10-28) | keine hart codierten URLs |
 | 2026-03 | `fetch` statt axios für einfache GETs | weniger Abhängigkeiten; axios nur bei klarem Mehrwert |
 | 2026-03 | Lucide-Icons (`i-lucide-*`) statt FontAwesome | in Nuxt UI integriert |
 | 2026-10-28 | Big Bang statt Parallelbetrieb | kein Zeitdruck; gemischter Stand auf Prod unerwünscht; Test auf Staging mit dem Freundeskreis |
@@ -97,6 +97,11 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Claude Code als einziges Agent-Tooling; `.cursor/` wird aufgelöst | eine Quelle für Regeln und Skills |
 | 2026-10-28 | Test-/Report-Routen streichen, Neuberechnung als Artisan-Befehl | Testseiten ungenutzt; ein Befehl wird ohnehin für den Rollback gebraucht |
 | 2026-10-28 | „Profil“ bleibt als Begriff (Spieler in einer Liste) | passt zur Seite für die Benutzer; Umbenennung im Code zu teuer |
+| 2026-10-28 | Laravel 13, Inertia v3, alle Abhängigkeiten auf aktuellem Stand | jede Seite nur einmal auf den finalen Stack bringen; Upgrade-Guides ohne relevante Brüche |
+| 2026-10-28 | Wayfinder statt Ziggy | im Laravel-Ökosystem bleiben, typisierte Routen; siehe `docs/adr/0001-wayfinder-statt-ziggy.md` |
+| 2026-10-28 | Kein Larastan | Tests und Type-Check reichen als Netz für die Migration |
+| 2026-10-28 | TypeScript 6.0 statt 7 | `typescript-eslint` unterstützt TS 7 noch nicht |
+| 2026-10-28 | Claude-Code-Hook: Prettier und `php -l` nach jedem Edit | Formatierung und Syntax deterministisch statt per Regel in `CLAUDE.md` |
 
 ## Offene Fragen
 
@@ -115,3 +120,5 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - PHPUnit 12 erkennt `/** @test */` nicht mehr; ohne `#[Test]` laufen solche Tests stillschweigend nicht. Die alte Suite lief deshalb mit 5 statt 30 Tests.
 - `assertSee` ohne `assertOk()` ist trügerisch: Eine 500er-Seite enthält den gesuchten Text oft im Stacktrace. Mehrere Blade-Tests waren so nur scheinbar grün.
 - Factories speichern Namen roh wie die App selbst. Ein `e()` in der Factory erzeugt doppelt escapte Daten und flaky Tests bei Namen mit Apostroph.
+- Unter Windows verschluckt der `composer`-Wrapper `^` in Argumenten (cmd-Escape): Versionen in `composer.json` direkt setzen statt `composer require "pkg:^1.0"`.
+- Die Ewige Liste (ID 1) legt `Tests\TestCase` in jedem Test mit `RefreshDatabase` an. Der erste per Factory angelegte Benutzer hat ID 1 und ist damit Admin (`Gate::before`); Berechtigungstests brauchen einen zweiten Benutzer.
