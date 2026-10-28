@@ -25,24 +25,43 @@ Links auf noch nicht migrierte Seiten dürfen scheitern (Big Bang); dafür werde
 
 ## Tests
 
+Referenzen: `tests/Feature/StaticPagesTest.php` (mehrere Routen per Data Provider), `tests/Feature/ManageGroupsTest.php` (Props, Mutation, Validierung).
+
 ```php
 use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
 
-public function test_guest_sees_group_list(): void
+#[Test]
+public function a_user_sees_the_group_list(): void
 {
+    $this->actingAs(User::factory()->create());
     $group = Group::factory()->create();
 
     $this->get(route('groups.index'))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Groups/Index')
-            ->has('groups.data', 1)
-            ->where('groups.data.0.name', $group->name)
+            ->has('groups', 1)
+            ->where('groups.0.name', $group->name)
         );
+}
+
+#[Test]
+public function a_group_requires_a_name(): void
+{
+    $this->actingAs(User::factory()->create());
+
+    $this->post(route('groups.store'), ['name' => ''])->assertSessionHasErrors('name');
 }
 ```
 
-`assertInertia` prüft außerdem, dass die Page-Datei existiert. Sobald #27 ein Testmuster etabliert hat, gilt dieses.
+- PHPUnit 12: `#[Test]`-Attribut und snake_case-Namen; `/** @test */` wird nicht mehr erkannt.
+- Factories über `Model::factory()`. Die Ewige Liste (`Group::EWIGE_LISTE_ID`) legt `Tests\TestCase` in jedem Test mit `RefreshDatabase` an; eigene Listen bekommen also IDs ab 2. Echte Spieler sind immer Mitglied der Ewigen Liste (`Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player)`).
+- Immer `assertOk()` vor `assertSee`, sonst besteht der Test auch mit einer Fehlerseite, in deren Stacktrace der Text steht.
+- `assertInertia` prüft, dass die Page-Datei unter `resources/js/inertia/Pages` existiert (`config/inertia.php`).
+- Props mit Resource-Collection ohne Wrapper (`$wrap = null`) liegen direkt unter dem Prop-Namen (`groups.0`), nicht unter `groups.data`.
+- reCAPTCHA: `NoCaptcha::shouldReceive('verifyResponse')->andReturn(true)`.
+- Vite ist in `Tests\TestCase` abgeschaltet; Tests brauchen kein `npm run build`.
 
 ## Backend
 

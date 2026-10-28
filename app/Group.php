@@ -14,6 +14,8 @@ class Group extends Model
 {
     use HasFactory;
 
+    public const EWIGE_LISTE_ID = 1;
+
     protected $fillable = [
         'name',
         'created_by'

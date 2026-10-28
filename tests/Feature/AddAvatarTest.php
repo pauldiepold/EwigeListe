@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -13,7 +14,7 @@ class AddAvatarTest extends TestCase
 
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function only_members_can_add_avatars()
     {
         //$this->withoutExceptionHandling();
@@ -22,12 +23,12 @@ class AddAvatarTest extends TestCase
             ->assertStatus(302)->assertRedirect('/login');
     }
 
-    /** @test */
+    #[Test]
     public function a_valid_avatar_must_be_provided()
     {
         //$this->withoutExceptionHandling();
 
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(\App\User::factory()->create());
 
         $this->json('POST', 'api/users/' . auth()->id() . '/avatar', [
             'avatar' => 'not-an-image'
@@ -35,10 +36,10 @@ class AddAvatarTest extends TestCase
             ->assertStatus(500);
     }
 
-    /** @test */
+    #[Test]
     public function a_user_may_add_an_avatar_to_their_profile()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(\App\User::factory()->create());
 
         Storage::fake('public');
 

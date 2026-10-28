@@ -25,6 +25,7 @@ class GameFactory extends Factory
     {
         return [
             'points' => $this->faker->randomDigitNotNull,
+            'solo' => false,
             'round_id' => function ()
             {
                 return Round::factory()->create()->id;

@@ -23,8 +23,8 @@ class PlayerFactory extends Factory
     public function definition()
     {
         return [
-            'surname' => e($this->faker->firstName),
-            'name' => e($this->faker->lastName),
+            'surname' => $this->faker->firstName,
+            'name' => $this->faker->lastName,
         ];
     }
 }

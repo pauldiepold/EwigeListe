@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -12,10 +13,10 @@ class PlayerTest extends TestCase
 
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function a_user_has_groups()
     {
-        $user = factory('App\User')->create();
+        $user = \App\User::factory()->create();
 
         $this->assertInstanceOf(Collection::class, $user->player->createdGroups);
     }

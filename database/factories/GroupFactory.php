@@ -24,13 +24,24 @@ class GroupFactory extends Factory
     public function definition()
     {
         return [
-            'name' => e($this->faker->lastName),
+            'name' => $this->faker->lastName,
             'created_by' => function ()
 
             {
                 return Player::factory()->create()->id;
             }
         ];
+    }
+
+    /**
+     * Die Ewige Liste: hat immer die ID 1 und existiert in jeder Installation.
+     */
+    public function ewigeListe(): static
+    {
+        return $this->state([
+            'id' => Group::EWIGE_LISTE_ID,
+            'name' => 'Ewige Liste',
+        ]);
     }
 }
 
