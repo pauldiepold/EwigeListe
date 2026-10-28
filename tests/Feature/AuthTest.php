@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Player;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -11,33 +13,52 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function a_new_user_can_register()
     {
         $this->get('/register')->assertStatus(200);
 
-        $group = factory('App\Group')->create();
+        $ewigeListe = \App\Group::factory()->create();
+        NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);
 
-        $password = $this->faker->password;
-        $attributes = [
-            'surname' => $this->faker->firstName,
-            'name' => $this->faker->lastName,
-            'email' => $this->faker->email,
-            'password' => $password,
-            'password_confirmation' => $password
-        ];
+        $this->post('register', $this->registrationAttributes())->assertRedirect('/');
 
-        $this->post('register', $attributes)->assertRedirect('/');
-
+        $this->assertTrue($ewigeListe->players->contains(auth()->user()->player));
         $this->assertInstanceOf('App\Player', auth()->user()->player);
         $this->assertInstanceOf('App\User', auth()->user());
     }
 
-    /** @test */
+    #[Test]
+    public function registration_requires_a_captcha()
+    {
+        $attributes = $this->registrationAttributes();
+        unset($attributes['g-recaptcha-response']);
+
+        $this->post('register', $attributes)->assertSessionHasErrors('g-recaptcha-response');
+
+        $this->assertGuest();
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function registrationAttributes(): array
+    {
+        return [
+            'surname' => $this->faker->firstName,
+            'name' => $this->faker->lastName,
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => 'geheim123',
+            'password_confirmation' => 'geheim123',
+            'g-recaptcha-response' => 'token',
+        ];
+    }
+
+    #[Test]
     public function test_seeding()
     {
         //$this->seed('PlayerSeeder');
-        factory('App\Player')->create();
+        \App\Player::factory()->create();
 
         $this->assertTrue(Player::all()->count() > 0);
     }

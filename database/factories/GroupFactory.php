@@ -24,7 +24,7 @@ class GroupFactory extends Factory
     public function definition()
     {
         return [
-            'name' => e($this->faker->lastName),
+            'name' => $this->faker->lastName,
             'created_by' => function ()
 
             {

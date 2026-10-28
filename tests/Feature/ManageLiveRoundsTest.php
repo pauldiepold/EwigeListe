@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\LiveRound;
 use App\Round;
 use Tests\TestCase;
@@ -12,13 +13,13 @@ class ManageLiveRoundsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function a_user_can_create_a_live_round()
     {
         //$this->withoutExceptionHandling();
 
-        $users = factory('App\User', 5)->create();
-        $groups = factory('App\Group', 2)->create();
+        $users = \App\User::factory()->count(5)->create();
+        $groups = \App\Group::factory()->count(2)->create();
 
         $this->actingAs($users->get(0));
 

@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 erledigt, Phase 1 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 erledigt, Phase 1 läuft (#27 erledigt, #48 offen) · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -23,7 +23,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 1. Issue wählen (Reihenfolge siehe Roadmap), Branch `mig/<nr>-kurzname` von `inertia-migration`.
 2. TDD: zuerst ein Test, der fehlschlägt, dann die Umsetzung.
-3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format:fix`.
+3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format:fix`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
 4. PR nach `inertia-migration` mit `Closes #nr`, `/code-review`, Paul merged per Squash.
 5. **Im selben PR** wird der Status in diesem Dokument aktualisiert (Roadmap und Routen-Matrix).
 6. Staging-Deploy bei Bedarf über den Workflow „Deploy Staging“ auf `inertia-migration` (optional mit Prod-Dump).
@@ -33,7 +33,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | Phase | Inhalt | Issues | Status |
 |---|---|---|---|
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
-| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | todo |
+| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27 ✅, #48 | in_progress |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten | #28 | todo |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
@@ -112,3 +112,6 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Inertia-Links auf Seiten, die noch Blade sind, liefern eine HTML-Antwort statt einer Inertia-Antwort. Wegen des Big Bangs nehmen wir das bewusst in Kauf.
 - Legacy-Vue-Komponenten werden in `resources/js/app.js` per Glob global registriert. Ob eine Komponente noch genutzt wird, zeigt nur ein Grep nach ihrem Tag (PascalCase und kebab-case) in Blade und anderen Legacy-Komponenten, kein Import.
 - Boost-Guidelines und -Skills nach Paket-Updates mit `php artisan boost:update` neu erzeugen, nicht von Hand pflegen. Die Guidelines landen über `config/boost.php` in `AGENTS.md` (von `CLAUDE.md` importiert), die Skills in `.claude/skills/`.
+- PHPUnit 12 erkennt `/** @test */` nicht mehr; ohne `#[Test]` laufen solche Tests stillschweigend nicht. Die alte Suite lief deshalb mit 5 statt 30 Tests.
+- `assertSee` ohne `assertOk()` ist trügerisch: Eine 500er-Seite enthält den gesuchten Text oft im Stacktrace. Mehrere Blade-Tests waren so nur scheinbar grün.
+- Factories speichern Namen roh wie die App selbst. Ein `e()` in der Factory erzeugt doppelt escapte Daten und flaky Tests bei Namen mit Apostroph.

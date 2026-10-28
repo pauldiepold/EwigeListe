@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use App\Player;
 use App\Round;
 use Tests\TestCase;
@@ -13,7 +14,7 @@ class ManageRoundTest extends TestCase
 
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function a_user_can_create_a_round()
     {
         $this->withoutExceptionHandling();
@@ -21,8 +22,8 @@ class ManageRoundTest extends TestCase
         //$this->seed('PlayerSeeder');
         //$players = Player::all()->random(rand(4,7));
 
-        $users = factory('App\User', rand(4, 7))->create();
-        $groups = factory('App\Group', rand(2, 4))->create();
+        $users = \App\User::factory()->count(rand(4, 7))->create();
+        $groups = \App\Group::factory()->count(rand(2, 4))->create();
 
         $this->actingAs($users->first());
 
