@@ -16,3 +16,4 @@ yarn-error.log
 public/build
 auto-imports.d.ts
 components.d.ts
+.claude/settings.local.json

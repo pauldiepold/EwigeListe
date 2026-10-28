@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 erledigt, Phase 1 offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -32,14 +32,16 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 | Phase | Inhalt | Issues | Status |
 |---|---|---|---|
-| 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | todo |
-| 1 | Testsuite reparieren, Inertia-Testmuster, CI | #27 | todo |
+| 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
+| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | todo |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten | #28 | todo |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
+
+#48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
 
 Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #31 Profil → #32 Runde → #33 Rest. Die Listen-Seite kommt vor dem Profil, weil dort die wiederverwendbaren Komponenten entstehen (Badges, Charts, Statistik-Tabellen, Archiv).
 
@@ -73,8 +75,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | todo → gestrichen | dito |
 | — | Fehlerseiten 401–503 | — | Exception-Handler | `Error` | #33 | todo | |
 | — | Kommentare | — | `CommentController` | ? | #33 | todo | nur noch in der alten Home-Blade eingebunden; Nutzung prüfen, sonst streichen |
-| GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | todo → gestrichen | Testseiten; `mail` ist für jeden eingeloggten Benutzer aufrufbar |
-| — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | todo → gestrichen | Routen nicht registriert, toter Code |
+| GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | gestrichen | Routen, Controller und Views entfernt |
+| — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | gestrichen | Controller und `auth/verify.blade.php` entfernt |
 
 **Keine Vollseiten, bleiben als Endpunkte:** `charts/*` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, `api/users/{user}/avatar`, `rounds/ajax/*` (DataTables, entfällt mit #45), Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
 
@@ -108,3 +110,5 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Mit `UTable` und `paginate()` liegt nur die aktuelle Seite im Browser: Sortieren und Filtern gehört ins Backend (Sortierspalten auf eine Whitelist, stabiler Tie-Breaker), im Frontend `manualSorting`.
 - Positionsbasiertes JSON mit HTML-Links (`Group::records`/`stats`) erzwingt `v-html` und Übersetzungsschritte in den Resources, siehe `docs/tech-debt/group-positional-json.md` und #39.
 - Inertia-Links auf Seiten, die noch Blade sind, liefern eine HTML-Antwort statt einer Inertia-Antwort. Wegen des Big Bangs nehmen wir das bewusst in Kauf.
+- Legacy-Vue-Komponenten werden in `resources/js/app.js` per Glob global registriert. Ob eine Komponente noch genutzt wird, zeigt nur ein Grep nach ihrem Tag (PascalCase und kebab-case) in Blade und anderen Legacy-Komponenten, kein Import.
+- Boost-Guidelines und -Skills nach Paket-Updates mit `php artisan boost:update` neu erzeugen, nicht von Hand pflegen. Die Guidelines landen über `config/boost.php` in `AGENTS.md` (von `CLAUDE.md` importiert), die Skills in `.claude/skills/`.
