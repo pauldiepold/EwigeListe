@@ -1,9 +1,16 @@
 {
     "agents": [
-        "cursor"
+        "claude_code"
     ],
+    "guidelines": true,
     "herd_mcp": true,
     "mcp": true,
     "nightwatch_mcp": false,
-    "sail": false
+    "sail": false,
+    "skills": [
+        "socialite-development",
+        "inertia-vue-development",
+        "echo-development",
+        "tailwindcss-development"
+    ]
 }
