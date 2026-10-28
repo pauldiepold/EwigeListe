@@ -33,13 +33,15 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | Phase | Inhalt | Issues | Status |
 |---|---|---|---|
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
-| 1 | Testsuite reparieren, Inertia-Testmuster, CI | #27 | todo |
+| 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | todo |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten | #28 | todo |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
+
+#48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
 
 Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #31 Profil → #32 Runde → #33 Rest. Die Listen-Seite kommt vor dem Profil, weil dort die wiederverwendbaren Komponenten entstehen (Badges, Charts, Statistik-Tabellen, Archiv).
 
