@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
-
-const { route } = useAppRoute();
+import { store as storeQuickRegister } from '@/routes/register/quick';
+import { create as createRound } from '@/routes/rounds';
 
 const form = useForm({
   surname: '',
@@ -12,7 +11,7 @@ const form = useForm({
 });
 
 function submit(): void {
-  form.post(route('register.quick.store'));
+  form.post(storeQuickRegister.url());
 }
 </script>
 
@@ -69,7 +68,7 @@ function submit(): void {
               :loading="form.processing"
             />
             <UButton
-              :to="route('rounds.create')"
+              :to="createRound.url()"
               color="neutral"
               variant="outline"
               icon="i-lucide-arrow-left"

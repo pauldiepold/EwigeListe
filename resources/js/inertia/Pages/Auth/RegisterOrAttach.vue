@@ -2,12 +2,11 @@
 import { ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { login, register } from '@/routes';
+import { request as passwordRequest } from '@/routes/password';
 import type { RegisterOrAttachProps } from '@/types/auth';
 
 const props = defineProps<RegisterOrAttachProps>();
-
-const { route } = useAppRoute();
 
 type Step = 'choose' | 'register' | 'login';
 const step = ref<Step>(props.existingUserEmail ? 'login' : 'choose');
@@ -30,11 +29,11 @@ const loginForm = useForm({
 });
 
 function submitRegister(): void {
-  registerForm.post(route('register'));
+  registerForm.post(register.url());
 }
 
 function submitLogin(): void {
-  loginForm.post(route('login'), {
+  loginForm.post(login.url(), {
     onFinish: () => loginForm.reset('password'),
   });
 }
@@ -189,7 +188,7 @@ function submitLogin(): void {
                   :label="`Mit ${providerLabel} verknüpfen`"
                   :loading="loginForm.processing"
                 />
-                <ULink :to="route('password.request')" class="text-sm text-primary"
+                <ULink :to="passwordRequest.url()" class="text-sm text-primary"
                   >Passwort vergessen?</ULink
                 >
               </div>

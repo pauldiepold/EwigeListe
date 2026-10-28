@@ -60,6 +60,13 @@ return [
     |
     */
 
+    'skills' => [
+        'exclude' => [
+            'socialite-development',
+            'deploying-to-cloud',
+        ],
+    ],
+
     'agents' => [
         'claude_code' => [
             'guidelines_path' => 'AGENTS.md',

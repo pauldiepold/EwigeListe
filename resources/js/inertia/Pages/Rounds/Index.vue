@@ -2,7 +2,7 @@
 import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ArchiveRoundsTable from '@/Components/Rounds/ArchiveRoundsTable.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
+import { index as roundsIndex } from '@/routes/rounds';
 import type {
   ArchiveSort,
   ArchiveSortColumn,
@@ -18,17 +18,20 @@ const props = defineProps<{
   archiveSort: ArchiveSort;
 }>();
 
-const { route } = useAppRoute();
+type RoundsIndexQuery = {
+  sort?: ArchiveSortColumn;
+  direction?: 'asc' | 'desc';
+  page?: number;
+};
 
-function roundsIndexParams(
-  overrides: Record<string, string | number> = {},
-): Record<string, string | number> {
-  return {
-    group: props.selectedGroup.id,
-    sort: props.archiveSort.column,
-    direction: props.archiveSort.direction,
-    ...overrides,
-  };
+function roundsIndexUrl(groupId: number, query: RoundsIndexQuery = {}): string {
+  return roundsIndex.url(groupId, {
+    query: {
+      sort: props.archiveSort.column,
+      direction: props.archiveSort.direction,
+      ...query,
+    },
+  });
 }
 
 function onGroupChange(groupId: string): void {
@@ -36,7 +39,7 @@ function onGroupChange(groupId: string): void {
   if (!id || id === props.selectedGroup.id) {
     return;
   }
-  router.visit(route('rounds.index', roundsIndexParams({ group: id })), {
+  router.visit(roundsIndexUrl(id), {
     preserveScroll: true,
     preserveState: false,
   });
@@ -46,14 +49,14 @@ function goToPage(page: number): void {
   if (page === props.rounds.current_page || page < 1 || page > props.rounds.last_page) {
     return;
   }
-  router.visit(route('rounds.index', roundsIndexParams({ page })), {
+  router.visit(roundsIndexUrl(props.selectedGroup.id, { page }), {
     preserveScroll: true,
     preserveState: false,
   });
 }
 
 function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc'): void {
-  router.visit(route('rounds.index', roundsIndexParams({ sort: column, direction, page: 1 })), {
+  router.visit(roundsIndexUrl(props.selectedGroup.id, { sort: column, direction, page: 1 }), {
     preserveScroll: true,
     preserveState: false,
   });

@@ -7,11 +7,18 @@
     "jsx": "preserve",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
-    "baseUrl": ".",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "vite/client"
+    ],
     "paths": {
-      "@/*": ["resources/js/inertia/*"]
+      "@/*": [
+        "./resources/js/inertia/*"
+      ]
     },
     "skipLibCheck": true,
     "noEmit": true

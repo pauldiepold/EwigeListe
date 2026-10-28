@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
-
-const { route } = useAppRoute();
+import { index as groupsIndex, store as storeGroup } from '@/routes/groups';
 
 const form = useForm({
   name: '',
 });
 
 function submit(): void {
-  form.post(route('groups.store'));
+  form.post(storeGroup.url());
 }
 </script>
 
@@ -20,7 +18,7 @@ function submit(): void {
   <AppLayout title="Liste erstellen">
     <div class="mx-auto w-full max-w-md space-y-6">
       <UButton
-        :to="route('groups.index')"
+        :to="groupsIndex.url()"
         color="neutral"
         variant="ghost"
         icon="i-lucide-arrow-left"

@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { useAppRoute } from '@/composables/useAppRoute';
+import { show as showGroup } from '@/routes/groups';
 import type { GroupIndexRow } from '@/types/groups-index';
 
 defineProps<{
   groups: GroupIndexRow[];
 }>();
-
-const { route } = useAppRoute();
 </script>
 
 <template>
@@ -14,7 +12,7 @@ const { route } = useAppRoute();
     <UButton
       v-for="group in groups"
       :key="group.id"
-      :to="route('groups.show', { group: group.id })"
+      :to="showGroup.url(group.id)"
       color="neutral"
       variant="ghost"
       block

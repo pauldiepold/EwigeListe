@@ -3,9 +3,8 @@ import { computed } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useAppRoute } from '@/composables/useAppRoute';
-
-const { route } = useAppRoute();
+import { login } from '@/routes';
+import { email as passwordEmail } from '@/routes/password';
 
 const page = usePage<{ flash?: { status?: string } }>();
 const statusMessage = computed(() => page.props.flash?.status ?? null);
@@ -28,7 +27,7 @@ const fields = computed(() => [
 
 function onSubmit(event: FormSubmitEvent<ForgotData>): void {
   form.email = event.data.email;
-  form.post(route('password.email'));
+  form.post(passwordEmail.url());
 }
 </script>
 
@@ -57,7 +56,7 @@ function onSubmit(event: FormSubmitEvent<ForgotData>): void {
           </template>
 
           <template #footer>
-            <ULink :to="route('login')" class="text-primary font-medium">Zurück zum Login</ULink>
+            <ULink :to="login.url()" class="text-primary font-medium">Zurück zum Login</ULink>
           </template>
         </UAuthForm>
       </UPageCard>

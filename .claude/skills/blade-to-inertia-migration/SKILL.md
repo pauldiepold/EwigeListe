@@ -18,7 +18,7 @@ Plan, Leitplanken und Routen-Matrix: `docs/migration.md`. Begriffe: `GLOSSARY.md
 7. **Grün.** Fertig ist die Seite, wenn alles grün ist:
    ```bash
    php artisan test --compact
-   npm run type-check && npm run lint && npm run format:fix
+   npm run type-check && npm run lint && npm run format
    ```
 
 Links auf noch nicht migrierte Seiten dürfen scheitern (Big Bang); dafür werden keine Brücken gebaut. Backend-Modernisierung, die die Seite nicht braucht, landet als Kommentar in #38 statt im PR.
@@ -92,7 +92,7 @@ class FooItemResource extends JsonResource
 }
 ```
 
-Helfer wie `printDate()` sind global und dürfen in Resources genutzt werden. Neue Routen bekommen einen Namen (`->name(...)`), damit Ziggy sie kennt.
+Helfer wie `printDate()` sind global und dürfen in Resources genutzt werden. Neue Routen bekommen einen Namen (`->name(...)`), damit Wayfinder sie unter `@/routes/...` erzeugt.
 
 ## Frontend
 
@@ -106,8 +106,8 @@ resources/js/inertia/
 
 - Page schlank halten; sobald sie wächst, in Komponenten unter `Components/<Bereich>/` schneiden.
 - `types/<name>.ts` nur, wenn die Page Props oder geteilte Typen hat; Typen nie inline in `defineProps`.
-- Formulare: `useForm` aus `@inertiajs/vue3`, Submit mit `form.post(route('…'))`, Fehler an `UFormField` binden.
-- URLs über `const { route } = useAppRoute()`, z. B. `route('charts.home', { group: id })`.
+- Formulare: `useForm` aus `@inertiajs/vue3`, Submit mit `form.post(store.url())`, Fehler an `UFormField` binden. Das HTTP-Verb bleibt explizit, weil sich GET- und POST-Route oft eine URL teilen (`login`).
+- URLs über Wayfinder mit benannten Imports, z. B. `import { show as showGroup } from '@/routes/groups'` und `showGroup.url(group.id)`; Query-Parameter per `index.url(id, { query: { page } })`. Bei Namenskonflikten mit lokalen Funktionen per `as` umbenennen (`logout as logoutRoute`).
 - `fetch` für einfache GETs; axios nur für Interceptors, Uploads oder komplexe Fehlerbehandlung.
 - Icons ausschließlich `i-lucide-*`. Für OAuth-Buttons (Google, Facebook) generische Icons wie `i-lucide-globe` oder nur Text.
 - Look nah am Bestand halten, Struktur sauber: das Design kommt gebündelt in Phase 4.
