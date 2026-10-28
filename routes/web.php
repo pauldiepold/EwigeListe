@@ -31,8 +31,6 @@ Route::middleware('auth')->group(function ()
     Route::patch('users/{user}/password', 'UserController@updatePassword')->name('users.updatePassword');
     Route::patch('users/{user}/listen', 'UserController@updateListen')->name('users.updateListen');
 
-    Route::get('mail', 'TestController@mail');
-
     /* *********** Players *********** */
     Route::get('profil/{player}/{group?}', 'PlayerController@show');
     Route::get('/players/calculate', 'PlayerController@calculateAll');
@@ -108,8 +106,6 @@ Route::middleware('auth')->group(function ()
     /* *********** Admin ************** */
     Route::middleware('admin')->group(function ()
     {
-        Route::get('/test', 'TestController@test');
-        Route::get('/testClient', 'TestController@client');
         Route::get('/report', 'ReportController@report');
     });
 });
