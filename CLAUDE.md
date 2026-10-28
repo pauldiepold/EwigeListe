@@ -18,7 +18,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 
 - `php artisan test --compact` (Tests), `npm run build`
 - Nach Frontend-Änderungen: `npm run type-check && npm run lint` (Prettier und `php -l` laufen per Hook nach jedem Edit, `.claude/hooks/post-edit.mjs`)
-- Kein Laravel Pint.
+- Laravel Pint noch nicht ausführen: kommt nach #28 als einmaliger Formatierungs-Commit, danach im Hook.
 
 ## Struktur-Hinweise
 

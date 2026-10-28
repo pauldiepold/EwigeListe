@@ -100,6 +100,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Laravel 13, Inertia v3, alle Abhängigkeiten auf aktuellem Stand | jede Seite nur einmal auf den finalen Stack bringen; Upgrade-Guides ohne relevante Brüche |
 | 2026-10-28 | Wayfinder statt Ziggy | im Laravel-Ökosystem bleiben, typisierte Routen; siehe `docs/adr/0001-wayfinder-statt-ziggy.md` |
 | 2026-10-28 | Kein Larastan | Tests und Type-Check reichen als Netz für die Migration |
+| 2026-10-28 | Laravel Pint nach #28: einmaliger Formatierungs-Commit über alles, danach Pint im Hook | im Laravel-Ökosystem bleiben; erst nach #28, damit dessen Review-Diffs lesbar bleiben |
 | 2026-10-28 | TypeScript 6.0 statt 7 | `typescript-eslint` unterstützt TS 7 noch nicht |
 | 2026-10-28 | Claude-Code-Hook: Prettier und `php -l` nach jedem Edit | Formatierung und Syntax deterministisch statt per Regel in `CLAUDE.md` |
 
