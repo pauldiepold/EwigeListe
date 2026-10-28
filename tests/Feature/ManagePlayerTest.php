@@ -21,6 +21,7 @@ class ManagePlayerTest extends TestCase
 
         $player = \App\User::factory()->create()->player;
 
+        \App\Group::find(\App\Group::EWIGE_LISTE_ID)->addPlayer($player);
         $group = \App\Group::factory()->create();
 
         $player->groups()->save($group);

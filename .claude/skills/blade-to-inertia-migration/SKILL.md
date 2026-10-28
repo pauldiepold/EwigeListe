@@ -56,7 +56,7 @@ public function a_group_requires_a_name(): void
 ```
 
 - PHPUnit 12: `#[Test]`-Attribut und snake_case-Namen; `/** @test */` wird nicht mehr erkannt.
-- Factories über `Model::factory()`; Liste 1 ist die Ewige Liste und muss für Registrierung u. ä. existieren.
+- Factories über `Model::factory()`. Die Ewige Liste (`Group::EWIGE_LISTE_ID`) legt `Tests\TestCase` in jedem Test mit `RefreshDatabase` an; eigene Listen bekommen also IDs ab 2. Echte Spieler sind immer Mitglied der Ewigen Liste (`Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player)`).
 - Immer `assertOk()` vor `assertSee`, sonst besteht der Test auch mit einer Fehlerseite, in deren Stacktrace der Text steht.
 - `assertInertia` prüft, dass die Page-Datei unter `resources/js/inertia/Pages` existiert (`config/inertia.php`).
 - Props mit Resource-Collection ohne Wrapper (`$wrap = null`) liegen direkt unter dem Prop-Namen (`groups.0`), nicht unter `groups.data`.

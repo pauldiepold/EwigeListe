@@ -33,7 +33,9 @@ class ManageGroupsTest extends TestCase {
 
         $attributes = \App\Group::factory()->raw(['created_by' => auth()->user()->player->id]);
 
-        $this->post('groups', $attributes)->assertRedirect('/liste/1');
+        $response = $this->post('groups', $attributes);
+
+        $response->assertRedirect(\App\Group::where('name', $attributes['name'])->sole()->path());
 
         $this->assertDatabaseHas('groups', $attributes);
 
@@ -41,8 +43,8 @@ class ManageGroupsTest extends TestCase {
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Groups/Index')
-                ->has('groups', 1)
-                ->where('groups.0.name', $attributes['name'])
+                ->has('groups', 2)
+                ->where('groups', fn ($groups) => collect($groups)->contains('name', $attributes['name']))
             );
     }
 

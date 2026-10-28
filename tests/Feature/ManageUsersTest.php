@@ -26,22 +26,6 @@ class ManageUsersTest extends TestCase
     }
 
     #[Test]
-    public function a_user_can_change_his_name()
-    {
-        \App\User::factory()->create();
-        $user = \App\User::factory()->create();
-        $this->actingAs($user);
-
-        $attributes = [
-            'name' => $this->faker->lastName,
-            'surname' => $this->faker->firstName];
-
-        $this->assertTrue(true);
-        //$this->patch(route('users.updateName', ['user' => auth()->id()]), $attributes)
-        //    ->assertRedirect(route('users.edit', ['user' => auth()->id()]));
-    }
-
-    #[Test]
     public function a_user_can_determine_their_avatar_path()
     {
         $user = \App\User::factory()->create();

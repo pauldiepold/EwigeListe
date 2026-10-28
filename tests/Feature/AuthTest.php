@@ -18,11 +18,11 @@ class AuthTest extends TestCase
     {
         $this->get('/register')->assertStatus(200);
 
-        $ewigeListe = \App\Group::factory()->create();
         NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);
 
         $this->post('register', $this->registrationAttributes())->assertRedirect('/');
 
+        $ewigeListe = \App\Group::find(\App\Group::EWIGE_LISTE_ID);
         $this->assertTrue($ewigeListe->players->contains(auth()->user()->player));
         $this->assertInstanceOf('App\Player', auth()->user()->player);
         $this->assertInstanceOf('App\User', auth()->user());
