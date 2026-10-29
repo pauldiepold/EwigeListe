@@ -19,13 +19,12 @@ class ManageLiveRoundsTest extends TestCase
         //$this->withoutExceptionHandling();
 
         $users = \App\User::factory()->count(5)->create();
-        $groups = \App\Group::factory()->count(2)->create();
 
         $this->actingAs($users->get(0));
 
         $this->post('/rounds', [
-            'players' => $users->pluck('id')->toArray(),
-            'groups' => $groups->pluck('id')->toArray(),
+            'players' => $users->pluck('player_id')->toArray(),
+            'groups' => [\App\Group::EWIGE_LISTE_ID],
             'liveGame' => true
         ])
             ->assertRedirect(Round::first()->path());
