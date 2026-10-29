@@ -38,6 +38,10 @@ _Avoid_: Gruppe, Group, Tabelle
 Die besondere Liste der App, für die jede Runde automatisch zählt. Wird gezeigt, wenn keine andere Liste gewählt ist.
 _Avoid_: Hauptliste, Default-Gruppe
 
+**Standardliste**:
+Eine Liste, die ein Spieler für sich markiert hat. Sie wird automatisch ausgewählt, sobald er einer neuen Runde hinzugefügt wird.
+_Avoid_: Default-Liste, Lieblingsliste
+
 **Geschlossene Liste**:
 Eine Liste, der keine neuen Runden mehr hinzugefügt werden können. Ihre bisherigen Runden und Statistiken bleiben erhalten.
 _Avoid_: Archivierte Liste, gesperrte Liste
