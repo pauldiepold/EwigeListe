@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Group;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreRound extends FormRequest {
 
@@ -45,7 +47,34 @@ class StoreRound extends FormRequest {
             {
                 $validator->errors()->add('players', 'Du selbst musst Teil der Runde sein!');
             }
+
+            $this->validateGroups($validator);
         });
+    }
+
+    /**
+     * Eine Runde darf nur offenen Listen hinzugefügt werden, in denen mindestens einer ihrer Spieler Mitglied ist.
+     * Die Ewige Liste ist davon ausgenommen, sie wird immer angehängt.
+     */
+    private function validateGroups(Validator $validator): void
+    {
+        $playerIds = collect($this->input('players'));
+
+        $groups = Group::with('players:players.id')
+            ->whereIn('id', collect($this->input('groups')))
+            ->whereKeyNot(Group::EWIGE_LISTE_ID)
+            ->get();
+
+        foreach ($groups as $group)
+        {
+            if ($group->closed)
+            {
+                $validator->errors()->add('groups', "Die Liste {$group->name} ist geschlossen.");
+            } elseif ($group->players->pluck('id')->intersect($playerIds)->isEmpty())
+            {
+                $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
+            }
+        }
     }
 
     public function messages()
