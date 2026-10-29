@@ -24,6 +24,10 @@ _Avoid_: Mitspieler, Teilnehmer, User
 Das Login-Konto einer echten Person; gehört genau einem Spieler.
 _Avoid_: Account, User, Spieler
 
+**Versteckter Spieler**:
+Ein Spieler, der nicht mehr für neue Runden ausgewählt werden kann (z. B. ehemalige Mitspieler oder Testkonten). Wird nur direkt in der Datenbank gesetzt.
+_Avoid_: Inaktiver Spieler, gelöschter Spieler
+
 ### Auswertung
 
 **Liste**:
@@ -31,8 +35,12 @@ Eine benannte Sammlung von Spielern, deren gemeinsame Runden zusammen ausgewerte
 _Avoid_: Gruppe, Group, Tabelle
 
 **Ewige Liste**:
-Die besondere Standard-Liste der App, die gezeigt wird, wenn keine andere Liste gewählt ist.
+Die besondere Liste der App, für die jede Runde automatisch zählt. Wird gezeigt, wenn keine andere Liste gewählt ist.
 _Avoid_: Hauptliste, Default-Gruppe
+
+**Geschlossene Liste**:
+Eine Liste, der keine neuen Runden mehr hinzugefügt werden können. Ihre bisherigen Runden und Statistiken bleiben erhalten.
+_Avoid_: Archivierte Liste, gesperrte Liste
 
 **Profil**:
 Ein Spieler in genau einer Liste, samt seiner Statistik in dieser Liste. Nicht das Benutzerkonto.
