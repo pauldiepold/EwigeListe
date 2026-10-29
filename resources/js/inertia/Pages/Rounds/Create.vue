@@ -2,8 +2,12 @@
 import { computed, ref } from 'vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { EWIGE_LISTE_ID, useRoundListSelection } from '@/composables/useRoundListSelection';
 import { quick as quickRegister } from '@/routes/register';
+import { store as storeRound } from '@/routes/rounds';
 import type { CreateRoundPlayer } from '@/types/round-create';
+
+const MAX_PLAYERS = 7;
 
 const props = defineProps<{
   players: CreateRoundPlayer[];
@@ -16,8 +20,12 @@ const searchTerm = ref('');
 const isSubmitting = ref(false);
 const isLiveGame = ref(false);
 const selectedPlayers = ref<CreateRoundPlayer[]>([]);
-const selectedGroups = ref<number[]>([1]);
 const backendError = ref<string | null>(null);
+
+const { selectableGroups, selectedGroupIds, isSelected, setSelected, resetStandardGroupsOf } =
+  useRoundListSelection(selectedPlayers);
+
+const canAddPlayers = computed(() => selectedPlayers.value.length < MAX_PLAYERS);
 
 const flashSuccess = computed(() => page.props.flash?.success as string | undefined);
 
@@ -30,27 +38,6 @@ const filteredPlayers = computed(() => {
   });
 });
 
-const selectableGroups = computed(() => {
-  const groups: Array<{ id: number; name: string }> = [];
-  for (const player of selectedPlayers.value) {
-    for (const group of player.groups) {
-      if (group.closed === 1) {
-        continue;
-      }
-      if (!groups.some((entry) => entry.id === group.id)) {
-        groups.push({ id: group.id, name: group.name });
-      }
-    }
-  }
-  return groups;
-});
-
-const selectedGroupIds = computed(() => {
-  return selectedGroups.value.filter((groupId) =>
-    selectableGroups.value.some((group) => group.id === groupId),
-  );
-});
-
 const groupText = computed(() => {
   if (selectedGroupIds.value.length === 0) {
     return 'keiner Liste';
@@ -61,20 +48,12 @@ const groupText = computed(() => {
   return `${selectedGroupIds.value.length} Listen`;
 });
 
-function ensureDefaultGroups(player: CreateRoundPlayer): void {
-  for (const profile of player.profiles) {
-    if (profile.default && !selectedGroups.value.includes(profile.group_id)) {
-      selectedGroups.value.push(profile.group_id);
-    }
-  }
-}
-
 function addPlayer(player: CreateRoundPlayer): void {
-  if (selectedPlayers.value.some((entry) => entry.id === player.id)) {
+  if (!canAddPlayers.value || selectedPlayers.value.some((entry) => entry.id === player.id)) {
     return;
   }
   selectedPlayers.value.push(player);
-  ensureDefaultGroups(player);
+  resetStandardGroupsOf(player);
   searchTerm.value = '';
 }
 
@@ -101,7 +80,7 @@ function submitRound(): void {
   isSubmitting.value = true;
 
   router.post(
-    '/rounds',
+    storeRound.url(),
     {
       players: selectedPlayers.value.map((player) => player.id),
       groups: selectedGroupIds.value,
@@ -121,8 +100,7 @@ function submitRound(): void {
   );
 }
 
-const initialPlayer =
-  props.players.find((player) => player.id === props.loggedInPlayerId) ?? props.players[0];
+const initialPlayer = props.players.find((player) => player.id === props.loggedInPlayerId);
 if (initialPlayer) {
   addPlayer(initialPlayer);
 }
@@ -155,7 +133,16 @@ if (initialPlayer) {
         </template>
 
         <div class="space-y-4">
+          <UAlert
+            v-if="!canAddPlayers"
+            color="neutral"
+            variant="soft"
+            icon="i-lucide-users"
+            :title="`Maximal ${MAX_PLAYERS} Spieler pro Runde.`"
+          />
+
           <UFormField
+            v-if="canAddPlayers"
             label="Suche nach Name"
             help="Mit Enter hinzufügen, wenn nur ein Treffer bleibt."
           >
@@ -167,7 +154,10 @@ if (initialPlayer) {
             />
           </UFormField>
 
-          <div class="max-h-56 space-y-2 overflow-auto rounded-md border border-default p-2">
+          <div
+            v-if="canAddPlayers"
+            class="max-h-56 space-y-2 overflow-auto rounded-md border border-default p-2"
+          >
             <button
               v-for="player in filteredPlayers"
               :key="player.id"
@@ -262,10 +252,26 @@ if (initialPlayer) {
         />
       </UCard>
 
+      <UCard v-if="selectableGroups.length">
+        <template #header>
+          <h2 class="text-lg font-semibold">Listen</h2>
+          <p class="text-sm text-muted">Runde wird {{ groupText }} hinzugefügt.</p>
+        </template>
+
+        <div class="space-y-3">
+          <USwitch
+            v-for="group in selectableGroups"
+            :key="group.id"
+            :model-value="isSelected(group.id)"
+            :disabled="group.id === EWIGE_LISTE_ID"
+            :label="group.name"
+            color="primary"
+            @update:model-value="(value: boolean) => setSelected(group.id, value)"
+          />
+        </div>
+      </UCard>
+
       <div class="space-y-3 text-center">
-        <p v-if="selectedPlayers.length" class="text-sm text-muted">
-          Runde wird {{ groupText }} hinzugefügt.
-        </p>
         <UButton
           :loading="isSubmitting"
           :disabled="selectedPlayers.length < 4"
