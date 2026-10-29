@@ -1,7 +1,11 @@
 import { computed, ref, type Ref } from 'vue';
-import type { CreateRoundGroup, CreateRoundPlayer } from '@/types/round-create';
+import type { CreateRoundList, CreateRoundPlayer } from '@/types/round-create';
 
-export const EWIGE_LISTE_ID = 1;
+export const EWIGE_LISTE: CreateRoundList = { id: 1, name: 'Ewige Liste', closed: false };
+
+function standardListIdsOf(player: CreateRoundPlayer): number[] {
+  return player.profiles.filter((profile) => profile.default).map((profile) => profile.group_id);
+}
 
 /**
  * Listenauswahl beim Erstellen einer Runde.
@@ -14,58 +18,57 @@ export function useRoundListSelection(selectedPlayers: Ref<CreateRoundPlayer[]>)
   const manuallySelected = ref<number[]>([]);
   const manuallyDeselected = ref<number[]>([]);
 
-  const selectableGroups = computed<CreateRoundGroup[]>(() => {
-    const groups: CreateRoundGroup[] = [];
+  function isLocked(listId: number): boolean {
+    return listId === EWIGE_LISTE.id;
+  }
+
+  const selectableLists = computed<CreateRoundList[]>(() => {
+    const lists: CreateRoundList[] = [EWIGE_LISTE];
     for (const player of selectedPlayers.value) {
-      for (const group of player.groups) {
-        if (group.closed !== 1 && !groups.some((entry) => entry.id === group.id)) {
-          groups.push(group);
+      for (const list of player.groups) {
+        if (!list.closed && !lists.some((entry) => entry.id === list.id)) {
+          lists.push(list);
         }
       }
     }
-    return groups.sort((a, b) => Number(b.id === EWIGE_LISTE_ID) - Number(a.id === EWIGE_LISTE_ID));
+    return lists;
   });
 
-  const standardGroupIds = computed(() => {
-    return new Set(
-      selectedPlayers.value.flatMap((player) =>
-        player.profiles.filter((profile) => profile.default).map((profile) => profile.group_id),
-      ),
-    );
-  });
-
-  function isSelected(groupId: number): boolean {
-    if (groupId === EWIGE_LISTE_ID || manuallySelected.value.includes(groupId)) {
-      return true;
-    }
-    return !manuallyDeselected.value.includes(groupId) && standardGroupIds.value.has(groupId);
-  }
-
-  const selectedGroupIds = computed(() =>
-    selectableGroups.value.filter((group) => isSelected(group.id)).map((group) => group.id),
+  const standardListIds = computed(
+    () => new Set(selectedPlayers.value.flatMap((player) => standardListIdsOf(player))),
   );
 
-  function setSelected(groupId: number, selected: boolean): void {
-    if (groupId === EWIGE_LISTE_ID) {
+  function isSelected(listId: number): boolean {
+    if (isLocked(listId) || manuallySelected.value.includes(listId)) {
+      return true;
+    }
+    return !manuallyDeselected.value.includes(listId) && standardListIds.value.has(listId);
+  }
+
+  const selectedListIds = computed(() =>
+    selectableLists.value.filter((list) => isSelected(list.id)).map((list) => list.id),
+  );
+
+  function setSelected(listId: number, selected: boolean): void {
+    if (isLocked(listId)) {
       return;
     }
-    manuallySelected.value = manuallySelected.value.filter((id) => id !== groupId);
-    manuallyDeselected.value = manuallyDeselected.value.filter((id) => id !== groupId);
-    if (selected) {
-      manuallySelected.value.push(groupId);
-    } else {
-      manuallyDeselected.value.push(groupId);
-    }
+    manuallySelected.value = manuallySelected.value.filter((id) => id !== listId);
+    manuallyDeselected.value = manuallyDeselected.value.filter((id) => id !== listId);
+    (selected ? manuallySelected : manuallyDeselected).value.push(listId);
   }
 
-  function resetStandardGroupsOf(player: CreateRoundPlayer): void {
-    const playerStandardIds = player.profiles
-      .filter((profile) => profile.default)
-      .map((profile) => profile.group_id);
-    manuallyDeselected.value = manuallyDeselected.value.filter(
-      (id) => !playerStandardIds.includes(id),
-    );
+  function reselectStandardListsOf(player: CreateRoundPlayer): void {
+    const ids = standardListIdsOf(player);
+    manuallyDeselected.value = manuallyDeselected.value.filter((id) => !ids.includes(id));
   }
 
-  return { selectableGroups, selectedGroupIds, isSelected, setSelected, resetStandardGroupsOf };
+  return {
+    selectableLists,
+    selectedListIds,
+    isSelected,
+    isLocked,
+    setSelected,
+    reselectStandardListsOf,
+  };
 }

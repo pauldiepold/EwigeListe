@@ -43,5 +43,13 @@ class GroupFactory extends Factory
             'name' => 'Ewige Liste',
         ]);
     }
+
+    /**
+     * Geschlossene Liste: nimmt keine neuen Runden mehr an.
+     */
+    public function closed(): static
+    {
+        return $this->state(['closed' => true]);
+    }
 }
 

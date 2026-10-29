@@ -251,6 +251,14 @@ class Group extends Model
         $this->players()->save($player);
     }
 
+    /**
+     * @param  Collection<int, int>  $playerIds
+     */
+    public function hasAnyPlayer(Collection $playerIds): bool
+    {
+        return $this->players()->whereIn('players.id', $playerIds->all())->exists();
+    }
+
     public function addPlayers(Collection $players)
     {
         $this->players()->saveMany($players->diff($this->players));

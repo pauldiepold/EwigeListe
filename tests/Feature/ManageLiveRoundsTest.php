@@ -3,8 +3,9 @@
 namespace Tests\Feature;
 
 use PHPUnit\Framework\Attributes\Test;
-use App\LiveRound;
+use App\Group;
 use App\Round;
+use App\User;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,20 +17,19 @@ class ManageLiveRoundsTest extends TestCase
     #[Test]
     public function a_user_can_create_a_live_round()
     {
-        //$this->withoutExceptionHandling();
-
-        $users = \App\User::factory()->count(5)->create();
+        $users = User::factory()->count(5)->create();
 
         $this->actingAs($users->get(0));
 
-        $this->post('/rounds', [
+        $response = $this->post(route('rounds.store'), [
             'players' => $users->pluck('player_id')->toArray(),
-            'groups' => [\App\Group::EWIGE_LISTE_ID],
+            'groups' => [Group::EWIGE_LISTE_ID],
             'liveGame' => true
-        ])
-            ->assertRedirect(Round::first()->path());
+        ]);
 
-        $this->assertDatabaseHas('live_rounds', LiveRound::first()->toArray());
+        $round = Round::sole();
+        $response->assertRedirect($round->path());
+        $this->assertNotNull($round->liveRound);
     }
 
 }

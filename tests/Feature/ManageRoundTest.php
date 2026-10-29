@@ -18,17 +18,24 @@ class ManageRoundTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function guests_cannot_create_a_round(): void
+    public function guests_cannot_see_the_create_round_page(): void
     {
         $this->get(route('rounds.create'))->assertRedirect('/login');
+    }
+
+    #[Test]
+    public function guests_cannot_store_a_round(): void
+    {
         $this->post(route('rounds.store'), [])->assertRedirect('/login');
+
+        $this->assertDatabaseCount('rounds', 0);
     }
 
     #[Test]
     public function a_user_sees_all_visible_players_with_their_lists(): void
     {
         $players = $this->actingAsRoundPlayers(2);
-        $hiddenPlayer = Player::factory()->create(['hide' => true]);
+        $hiddenPlayer = Player::factory()->hidden()->create();
 
         $list = Group::factory()->create();
         $list->addPlayer($players[0]);
@@ -98,16 +105,16 @@ class ManageRoundTest extends TestCase
     public function a_round_cannot_be_added_to_a_closed_list(): void
     {
         $players = $this->actingAsRoundPlayers(4);
-        $closedList = Group::factory()->create(['closed' => true]);
+        $closedList = Group::factory()->closed()->create();
         $closedList->addPlayer($players[0]);
 
         $this->post(route('rounds.store'), [
             'players' => $players->pluck('id')->all(),
             'groups' => [Group::EWIGE_LISTE_ID, $closedList->id],
             'liveGame' => false,
-        ])->assertSessionHasErrors('groups');
+        ])->assertSessionHasErrors(['groups' => "Die Liste {$closedList->name} ist geschlossen."]);
 
-        $this->assertSame(0, Round::count());
+        $this->assertDatabaseCount('rounds', 0);
     }
 
     #[Test]
@@ -120,9 +127,9 @@ class ManageRoundTest extends TestCase
             'players' => $players->pluck('id')->all(),
             'groups' => [Group::EWIGE_LISTE_ID, $foreignList->id],
             'liveGame' => false,
-        ])->assertSessionHasErrors('groups');
+        ])->assertSessionHasErrors(['groups' => "Keiner der Spieler ist Mitglied der Liste {$foreignList->name}."]);
 
-        $this->assertSame(0, Round::count());
+        $this->assertDatabaseCount('rounds', 0);
     }
 
     #[Test]
@@ -135,9 +142,9 @@ class ManageRoundTest extends TestCase
             'players' => $players->pluck('id')->all(),
             'groups' => [Group::EWIGE_LISTE_ID],
             'liveGame' => false,
-        ])->assertSessionHasErrors('players');
+        ])->assertSessionHasErrors(['players' => 'Eine Runde braucht 4 bis 7 Spieler.']);
 
-        $this->assertSame(0, Round::count());
+        $this->assertDatabaseCount('rounds', 0);
     }
 
     /**

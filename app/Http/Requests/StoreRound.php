@@ -60,7 +60,7 @@ class StoreRound extends FormRequest {
     {
         $playerIds = collect($this->input('players'));
 
-        $groups = Group::with('players:players.id')
+        $groups = Group::query()
             ->whereIn('id', collect($this->input('groups')))
             ->whereKeyNot(Group::EWIGE_LISTE_ID)
             ->get();
@@ -70,7 +70,7 @@ class StoreRound extends FormRequest {
             if ($group->closed)
             {
                 $validator->errors()->add('groups', "Die Liste {$group->name} ist geschlossen.");
-            } elseif ($group->players->pluck('id')->intersect($playerIds)->isEmpty())
+            } elseif (!$group->hasAnyPlayer($playerIds))
             {
                 $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
             }
@@ -80,7 +80,7 @@ class StoreRound extends FormRequest {
     public function messages()
     {
         return [
-            //'groups.required' => 'Es muss mindestens eine Gruppe ausgewählt werden!'
+            'players.between' => 'Eine Runde braucht 4 bis 7 Spieler.',
         ];
     }
 }

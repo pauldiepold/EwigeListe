@@ -27,7 +27,7 @@ class CreateRoundPlayerResource extends JsonResource
                     return [
                         'id'     => $group->id,
                         'name'   => $group->name,
-                        'closed' => (int) $group->closed,
+                        'closed' => (bool) $group->closed,
                     ];
                 })->values();
             }),

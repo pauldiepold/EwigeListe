@@ -27,4 +27,12 @@ class PlayerFactory extends Factory
             'name' => $this->faker->lastName,
         ];
     }
+
+    /**
+     * Versteckter Spieler: bei der Rundenerstellung nicht auswählbar.
+     */
+    public function hidden(): static
+    {
+        return $this->state(['hide' => true]);
+    }
 }
