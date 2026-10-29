@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head, router, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { useRoundListSelection } from '@/composables/useRoundListSelection';
 import { quick as quickRegister } from '@/routes/register';
+import { store as storeRound } from '@/routes/rounds';
 import type { CreateRoundPlayer } from '@/types/round-create';
+
+const MIN_PLAYERS = 4;
+const MAX_PLAYERS = 7;
 
 const props = defineProps<{
   players: CreateRoundPlayer[];
@@ -13,13 +19,28 @@ const props = defineProps<{
 const page = usePage<{ flash?: { success?: string } }>();
 
 const searchTerm = ref('');
-const isSubmitting = ref(false);
-const isLiveGame = ref(false);
 const selectedPlayers = ref<CreateRoundPlayer[]>([]);
-const selectedGroups = ref<number[]>([1]);
-const backendError = ref<string | null>(null);
+
+const form = useForm({
+  players: [] as number[],
+  groups: [] as number[],
+  liveGame: false,
+});
+
+const {
+  selectableLists,
+  selectedListIds,
+  isSelected,
+  isLocked,
+  setSelected,
+  reselectStandardListsOf,
+} = useRoundListSelection(selectedPlayers);
+
+const canAddPlayers = computed(() => selectedPlayers.value.length < MAX_PLAYERS);
+const canStart = computed(() => selectedPlayers.value.length >= MIN_PLAYERS);
 
 const flashSuccess = computed(() => page.props.flash?.success as string | undefined);
+const backendError = computed(() => Object.values(form.errors)[0]);
 
 const filteredPlayers = computed(() => {
   const query = searchTerm.value.trim().toLowerCase();
@@ -30,51 +51,12 @@ const filteredPlayers = computed(() => {
   });
 });
 
-const selectableGroups = computed(() => {
-  const groups: Array<{ id: number; name: string }> = [];
-  for (const player of selectedPlayers.value) {
-    for (const group of player.groups) {
-      if (group.closed === 1) {
-        continue;
-      }
-      if (!groups.some((entry) => entry.id === group.id)) {
-        groups.push({ id: group.id, name: group.name });
-      }
-    }
-  }
-  return groups;
-});
-
-const selectedGroupIds = computed(() => {
-  return selectedGroups.value.filter((groupId) =>
-    selectableGroups.value.some((group) => group.id === groupId),
-  );
-});
-
-const groupText = computed(() => {
-  if (selectedGroupIds.value.length === 0) {
-    return 'keiner Liste';
-  }
-  if (selectedGroupIds.value.length === 1) {
-    return 'einer Liste';
-  }
-  return `${selectedGroupIds.value.length} Listen`;
-});
-
-function ensureDefaultGroups(player: CreateRoundPlayer): void {
-  for (const profile of player.profiles) {
-    if (profile.default && !selectedGroups.value.includes(profile.group_id)) {
-      selectedGroups.value.push(profile.group_id);
-    }
-  }
-}
-
 function addPlayer(player: CreateRoundPlayer): void {
-  if (selectedPlayers.value.some((entry) => entry.id === player.id)) {
+  if (!canAddPlayers.value || selectedPlayers.value.some((entry) => entry.id === player.id)) {
     return;
   }
   selectedPlayers.value.push(player);
-  ensureDefaultGroups(player);
+  reselectStandardListsOf(player);
   searchTerm.value = '';
 }
 
@@ -93,36 +75,16 @@ function movePlayer(fromIndex: number, toIndex: number): void {
 }
 
 function submitRound(): void {
-  if (selectedPlayers.value.length < 4 || isSubmitting.value) {
+  if (!canStart.value || form.processing) {
     return;
   }
 
-  backendError.value = null;
-  isSubmitting.value = true;
-
-  router.post(
-    '/rounds',
-    {
-      players: selectedPlayers.value.map((player) => player.id),
-      groups: selectedGroupIds.value,
-      liveGame: isLiveGame.value,
-    },
-    {
-      preserveScroll: true,
-      onError: (errors) => {
-        const first = Object.values(errors)[0];
-        backendError.value =
-          typeof first === 'string' ? first : 'Die Runde konnte nicht erstellt werden.';
-      },
-      onFinish: () => {
-        isSubmitting.value = false;
-      },
-    },
-  );
+  form.players = selectedPlayers.value.map((player) => player.id);
+  form.groups = selectedListIds.value;
+  form.post(storeRound.url(), { preserveScroll: true });
 }
 
-const initialPlayer =
-  props.players.find((player) => player.id === props.loggedInPlayerId) ?? props.players[0];
+const initialPlayer = props.players.find((player) => player.id === props.loggedInPlayerId);
 if (initialPlayer) {
   addPlayer(initialPlayer);
 }
@@ -155,7 +117,16 @@ if (initialPlayer) {
         </template>
 
         <div class="space-y-4">
+          <UAlert
+            v-if="!canAddPlayers"
+            color="neutral"
+            variant="soft"
+            icon="i-lucide-users"
+            :title="`Maximal ${MAX_PLAYERS} Spieler pro Runde.`"
+          />
+
           <UFormField
+            v-if="canAddPlayers"
             label="Suche nach Name"
             help="Mit Enter hinzufügen, wenn nur ein Treffer bleibt."
           >
@@ -167,7 +138,10 @@ if (initialPlayer) {
             />
           </UFormField>
 
-          <div class="max-h-56 space-y-2 overflow-auto rounded-md border border-default p-2">
+          <div
+            v-if="canAddPlayers"
+            class="max-h-56 space-y-2 overflow-auto rounded-md border border-default p-2"
+          >
             <button
               v-for="player in filteredPlayers"
               :key="player.id"
@@ -255,20 +229,26 @@ if (initialPlayer) {
         </template>
 
         <USwitch
-          v-model="isLiveGame"
+          v-model="form.liveGame"
           color="primary"
           label="Online-Runde"
           description="Aktiviert die Live-Runden-Funktionen direkt nach dem Start."
         />
       </UCard>
 
+      <RoundListSelection
+        v-if="selectedPlayers.length"
+        :lists="selectableLists"
+        :is-selected="isSelected"
+        :is-locked="isLocked"
+        :selected-count="selectedListIds.length"
+        @toggle="setSelected"
+      />
+
       <div class="space-y-3 text-center">
-        <p v-if="selectedPlayers.length" class="text-sm text-muted">
-          Runde wird {{ groupText }} hinzugefügt.
-        </p>
         <UButton
-          :loading="isSubmitting"
-          :disabled="selectedPlayers.length < 4"
+          :loading="form.processing"
+          :disabled="!canStart"
           size="lg"
           color="primary"
           type="button"

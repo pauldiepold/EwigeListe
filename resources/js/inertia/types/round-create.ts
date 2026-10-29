@@ -1,7 +1,7 @@
-export type CreateRoundGroup = {
+export type CreateRoundList = {
   id: number;
   name: string;
-  closed: number;
+  closed: boolean;
 };
 
 export type CreateRoundProfile = {
@@ -14,6 +14,6 @@ export type CreateRoundPlayer = {
   surname: string;
   name: string;
   avatar_path: string;
-  groups: CreateRoundGroup[];
+  groups: CreateRoundList[];
   profiles: CreateRoundProfile[];
 };

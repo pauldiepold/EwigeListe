@@ -120,7 +120,7 @@ class RoundController extends Controller
         $validated = collect($request->validated());
 
         $groups = Group::find(
-            $validated->get('groups')
+            collect($validated->get('groups', []))->push(Group::EWIGE_LISTE_ID)->unique()
         );
 
         $round = Round::create();

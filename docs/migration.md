@@ -123,3 +123,5 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Factories speichern Namen roh wie die App selbst. Ein `e()` in der Factory erzeugt doppelt escapte Daten und flaky Tests bei Namen mit Apostroph.
 - Unter Windows verschluckt der `composer`-Wrapper `^` in Argumenten (cmd-Escape): Versionen in `composer.json` direkt setzen statt `composer require "pkg:^1.0"`.
 - Die Ewige Liste (ID 1) legt `Tests\TestCase` in jedem Test mit `RefreshDatabase` an. Der erste per Factory angelegte Benutzer hat ID 1 und ist damit Admin (`Gate::before`); Berechtigungstests brauchen einen zweiten Benutzer.
+- Benutzer- und Spieler-IDs nie gleichsetzen: Jede `GroupFactory` legt einen eigenen Spieler (`created_by`) an, die IDs laufen also auseinander. Ältere Tests schickten Benutzer-IDs als `players` und waren nur zufällig grün (#51).
+- Eine Migration kann Funktionen still verlieren, die berechnet, aber nie gerendert werden (Listenauswahl in `rounds.create`, #51). Beim Review die Legacy-Kerninteraktionen einzeln gegen die neue Page abhaken.
