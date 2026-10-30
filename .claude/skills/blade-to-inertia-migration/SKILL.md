@@ -94,6 +94,24 @@ class FooItemResource extends JsonResource
 
 Helfer wie `printDate()` sind global und dürfen in Resources genutzt werden. Neue Routen bekommen einen Namen (`->name(...)`), damit Wayfinder sie unter `@/routes/...` erzeugt.
 
+## Meldungen nach Aktionen (Toast)
+
+Erfolgs- und Fehlermeldungen nach einem Redirect laufen als Inertia-Flash und erscheinen zentral als Toast (`Components/Ui/FlashToasts.vue` in `AppRoot.vue`). Pages zeigen sie **nicht** selbst an.
+
+```php
+Toast::success('Name wurde erfolgreich gespeichert!'); // App\Http\Toast
+return redirect()->route('users.edit', $player);
+
+Toast::error('Du kannst nur das letzte Spiel einer Runde löschen!');
+return back();
+```
+
+- Nur `success` und `error`. Kein `->with('success'|'status'|'message', …)` mehr, kein `usePage().props.flash`.
+- Abgelehnte Aktionen (keine Berechtigung, unzulässiger Zustand) sind `Toast::error()`, nicht `withErrors([...])` ohne Feld.
+- Validierungsfehler bleiben `errors` und werden in der Page angezeigt: am `UFormField` oder, ohne passendes Eingabefeld, als `UAlert` (Beispiel `Rounds/Create`).
+- Test: `->assertInertiaFlash('toast', ['type' => 'success', 'message' => '…'])` auf der Redirect-Antwort, siehe `tests/Feature/FlashToastTest.php`.
+- Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt. Bekannt: `UserController` (`message`, → `users.edit`, #29), `GameController@destroy`, `CommentController@destroy`, `RoundController@destroy` (`deleteError`) (→ `rounds.show`, #32).
+
 ## Frontend
 
 ```

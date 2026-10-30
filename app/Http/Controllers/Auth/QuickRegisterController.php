@@ -6,6 +6,7 @@ use App\Group;
 use App\User;
 use App\Player;
 use App\Http\Controllers\Controller;
+use App\Http\Toast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -59,8 +60,9 @@ class QuickRegisterController extends Controller
         // Berechne das erste Profil
         $player->profiles->first()->calculate();
 
-        return redirect()->route('rounds.create')
-            ->with('success', 'Spieler ' . $player->surname . ' ' . $player->name . ' wurde erfolgreich erstellt!');
+        Toast::success('Spieler ' . $player->surname . ' ' . $player->name . ' wurde erfolgreich erstellt!');
+
+        return redirect()->route('rounds.create');
     }
 
     /**

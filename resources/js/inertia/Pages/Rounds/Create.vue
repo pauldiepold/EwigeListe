@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useRoundListSelection } from '@/composables/useRoundListSelection';
@@ -15,8 +15,6 @@ const props = defineProps<{
   players: CreateRoundPlayer[];
   loggedInPlayerId: number;
 }>();
-
-const page = usePage<{ flash?: { success?: string } }>();
 
 const searchTerm = ref('');
 const selectedPlayers = ref<CreateRoundPlayer[]>([]);
@@ -39,8 +37,11 @@ const {
 const canAddPlayers = computed(() => selectedPlayers.value.length < MAX_PLAYERS);
 const canStart = computed(() => selectedPlayers.value.length >= MIN_PLAYERS);
 
-const flashSuccess = computed(() => page.props.flash?.success as string | undefined);
-const backendError = computed(() => Object.values(form.errors)[0]);
+/**
+ * Validierungsfehler der Seite. Kein Feld des Formulars hat ein eigenes Eingabefeld
+ * (Spieler und Listen werden per Auswahl gesetzt), daher ein Alert für den ersten Fehler.
+ */
+const validationError = computed(() => Object.values(form.errors)[0]);
 
 const filteredPlayers = computed(() => {
   const query = searchTerm.value.trim().toLowerCase();
@@ -101,19 +102,11 @@ if (initialPlayer) {
   <AppLayout title="Neue Runde starten">
     <div class="mx-auto w-full max-w-2xl space-y-6">
       <UAlert
-        v-if="flashSuccess"
-        color="success"
-        variant="soft"
-        icon="i-lucide-check-circle"
-        :title="flashSuccess"
-      />
-
-      <UAlert
-        v-if="backendError"
+        v-if="validationError"
         color="error"
         variant="soft"
         icon="i-lucide-circle-alert"
-        :title="backendError"
+        :title="validationError"
       />
 
       <UCard>
