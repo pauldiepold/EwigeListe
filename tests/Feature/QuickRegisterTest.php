@@ -7,6 +7,7 @@ use App\Player;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 /**
@@ -80,6 +81,30 @@ class QuickRegisterTest extends TestCase
             ]);
 
         $this->assertSame($playerCount, Player::count());
+    }
+
+    #[Test]
+    public function a_failed_user_creation_leaves_no_player_behind(): void
+    {
+        $this->actingAs(User::factory()->create());
+        User::creating(fn () => throw new RuntimeException('Benutzer konnte nicht angelegt werden'));
+
+        $this->post(route('register.quick.store'), $this->attributes())->assertServerError();
+
+        $this->assertDatabaseMissing('players', $this->attributes());
+    }
+
+    #[Test]
+    public function a_failed_list_membership_leaves_neither_player_nor_user_behind(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $userCount = User::count();
+        Group::destroy(Group::EWIGE_LISTE_ID);
+
+        $this->post(route('register.quick.store'), $this->attributes())->assertServerError();
+
+        $this->assertDatabaseMissing('players', $this->attributes());
+        $this->assertSame($userCount, User::count());
     }
 
     /**

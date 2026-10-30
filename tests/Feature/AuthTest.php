@@ -5,9 +5,11 @@ namespace Tests\Feature;
 use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
 use App\Group;
 use App\Player;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
@@ -37,6 +39,29 @@ class AuthTest extends TestCase
 
         $this->post('register', $attributes)->assertSessionHasErrors('g-recaptcha-response');
 
+        $this->assertGuest();
+    }
+
+    #[Test]
+    public function registration_names_the_missing_surname_and_name(): void
+    {
+        $this->post('register', [...$this->registrationAttributes(), 'surname' => '', 'name' => ''])
+            ->assertSessionHasErrors([
+                'surname' => 'Es muss ein Vorname angegeben werden!',
+                'name' => 'Es muss ein Nachname angegeben werden!',
+            ]);
+    }
+
+    #[Test]
+    public function a_failed_user_creation_during_registration_leaves_no_player_behind(): void
+    {
+        NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);
+        User::creating(fn () => throw new RuntimeException('Benutzer konnte nicht angelegt werden'));
+        $attributes = $this->registrationAttributes();
+
+        $this->post('register', $attributes)->assertServerError();
+
+        $this->assertDatabaseMissing('players', ['surname' => $attributes['surname'], 'name' => $attributes['name']]);
         $this->assertGuest();
     }
 

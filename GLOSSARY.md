@@ -17,11 +17,11 @@ _Avoid_: Partie, Hand
 ### Personen
 
 **Spieler**:
-Eine Person (oder KI), die in Runden mitspielt und Punkte sammelt. Ein Spieler kann ohne Benutzer existieren.
+Eine Person (oder KI), die in Runden mitspielt und Punkte sammelt. Jeder Spieler gehört zu genau einem Benutzer.
 _Avoid_: Mitspieler, Teilnehmer, User
 
 **Benutzer**:
-Das Login-Konto einer echten Person; gehört genau einem Spieler.
+Das Konto eines Spielers; bei KI und Schnellregistrierung ohne vorgesehenen Login.
 _Avoid_: Account, User, Spieler
 
 **Avatar**:
@@ -33,7 +33,7 @@ Ein angemeldeter Benutzer legt beim Erstellen einer Runde für eine andere Perso
 _Avoid_: Quick-Register, Gastspieler
 
 **Versteckter Spieler**:
-Ein Spieler, der nicht mehr für neue Runden ausgewählt werden kann (z. B. ehemalige Mitspieler oder Testkonten). Wird nur direkt in der Datenbank gesetzt.
+Ein Spieler, der nicht mehr für neue Runden ausgewählt werden kann (z. B. ehemalige Mitspieler oder Testkonten). Er kann sich nicht einloggen, sein Profil ist nur für den Admin sichtbar. Wird nur direkt in der Datenbank gesetzt.
 _Avoid_: Inaktiver Spieler, gelöschter Spieler
 
 ### Auswertung
