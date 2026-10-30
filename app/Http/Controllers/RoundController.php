@@ -109,8 +109,7 @@ class RoundController extends Controller
             ->get();
 
         return Inertia::render('Rounds/Create', [
-            'players'          => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
-            'loggedInPlayerId' => auth()->user()->player->id,
+            'players' => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
         ]);
     }
 

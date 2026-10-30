@@ -18,7 +18,7 @@ const props = defineProps<{
   archiveSort: ArchiveSort;
 }>();
 
-const page = usePage<{ auth: { player: { id: number } | null } }>();
+const page = usePage();
 const authPlayerId = computed(() => page.props.auth.player?.id ?? null);
 
 type RoundsIndexQuery = {

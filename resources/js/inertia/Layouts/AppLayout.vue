@@ -26,18 +26,12 @@ defineProps<{
 const colorMode = ref<InertiaColorMode>('light');
 
 provide(inertiaColorModeKey, colorMode);
-const page = usePage<{
-  auth: {
-    user: { id: number } | null;
-    player: { id: number; surname: string; name: string } | null;
-  };
-  navigation?: { showCurrentRound?: boolean };
-}>();
+const page = usePage();
 
 const isDark = computed(() => colorMode.value === 'dark');
 const isAuthenticated = computed(() => page.props.auth.user !== null);
 const authPlayer = computed(() => page.props.auth.player);
-const canOpenCurrentRound = computed(() => Boolean(page.props.navigation?.showCurrentRound));
+const canOpenCurrentRound = computed(() => page.props.navigation.showCurrentRound);
 
 function applyColorMode(mode: InertiaColorMode): void {
   colorMode.value = mode;

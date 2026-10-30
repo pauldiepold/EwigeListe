@@ -27,6 +27,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 
 ## Arbeitsweise
 
+- Kleine Aufräumarbeiten im Umfeld des Tickets (Review-Funde, Inkonsistenzen in angefassten Dateien) gleich mit erledigen, statt sie als „offen“ zu melden. Nur Größeres oder Seiten eines anderen Tickets abgrenzen.
 - Kleine Anfragen klein lösen. Übersteigt der „richtige“ Weg den Nutzen deutlich, die einfachste Variante wählen und in wenigen Sätzen begründen.
 - Fehlt in der Shell ein Tool (`php`, `composer`, Netzwerk), Paul um die Ausführung bitten statt einen Workaround zu bauen.
 - Dauerhaftes Feedback zum Vorgehen in `CLAUDE.md` bzw. im passenden Skill festhalten.
