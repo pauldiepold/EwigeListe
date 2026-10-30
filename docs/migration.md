@@ -12,6 +12,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 - **Big Bang:** Alles wird auf `inertia-migration` fertig migriert und auf Staging mit dem Freundeskreis getestet. Erst der Merge nach `master` ist der Go-Live. Auf Prod gibt es nie einen gemischten Stand.
 - **Zwischendurch darf etwas kaputt sein.** Keine Brücken zwischen Inertia und Blade bauen; ein Link auf eine noch nicht migrierte Seite darf scheitern.
+- **Links und Redirects gleich im Zielbild:** `<Link>` bzw. `UButton :to` mit Wayfinder, Redirects per `redirect()->route()`, auch wenn das Ziel noch Blade ist. Kein `<a>`, kein `Inertia::location()` als Übergang; das Ziel funktioniert, sobald seine Seite migriert ist.
 - **Legacy wird pro Seite gelöscht:** im selben PR, der die Seite migriert. Bis dahin ist die Blade-Datei die Spezifikation und muss vor der Migration gelesen werden. Bereits toter Code wird sofort entfernt.
 - **Pro GET-Route genau ein Render-Pfad:** `Inertia::render()`. Blade bleibt nur für E-Mails.
 - **TDD:** Jede migrierte Route bekommt Feature-Tests (`assertInertia`), jede angefasste Mutation Tests für Redirect und Validierung. Frontend: Type-Check und Lint; manuelle Prüfung auf Staging.
@@ -69,7 +70,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | todo | 4 PATCH-Formulare, Avatar-Upload mit Cropper |
 | GET | `liste`, `liste/{group}` | `ewigeListe`, `groups.show` | `GroupController@show` | `Groups/Show` | #30 | todo | mit `records`/`stats` (#39) und POST für beitreten/verlassen/schließen (#40) |
 | GET | `profil/{player}/{group?}` | — → `players.show` | `PlayerController@show` | `Players/Show` | #31 | todo | Route benennen |
-| GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline (#32), Live-Tab in Phase 5 (#36) |
+| GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline inkl. Echtzeit per `RoundUpdated` (#32), Live-Tab in Phase 5 (#36) |
 | GET | `rounds/current` | `rounds.current` | `RoundController@current` | Redirect | #32 | todo | |
 | GET | `report` | — | `ReportController@report` | — | #33 | todo → gestrichen | wird durch einen Artisan-Befehl zum Neuberechnen ersetzt |
 | GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | todo → gestrichen | dito |
@@ -103,11 +104,12 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Laravel Pint nach #28: einmaliger Formatierungs-Commit über alles, danach Pint im Hook | im Laravel-Ökosystem bleiben; erst nach #28, damit dessen Review-Diffs lesbar bleiben |
 | 2026-10-28 | TypeScript 6.0 statt 7 | `typescript-eslint` unterstützt TS 7 noch nicht |
 | 2026-10-28 | Claude-Code-Hook: Prettier und `php -l` nach jedem Edit | Formatierung und Syntax deterministisch statt per Regel in `CLAUDE.md` |
+| 2026-10-30 | Links/Redirects auf noch nicht migrierte Seiten sofort als Inertia-Link bzw. `redirect()->route()` | kein Übergangscode, der später wieder angefasst werden muss; Kaputt-Sein bis zur Migration der Zielseite ist durch den Big Bang gedeckt (#52) |
+| 2026-10-30 | Echtzeit-Aktualisierung der Offline-Runde (`RoundUpdated`) kommt mit #32, nicht erst in Phase 5; Echo verbindet sich nur auf Seiten, die lauschen | Bei jedem Spieleabend schauen mehrere Handys auf die Punkte; ohne Push wäre Staging zwischen #32 und #36 schlechter als Prod. Pusher vs. Reverb bleibt bei #36 (nur Transport) |
 
 ## Offene Fragen
 
 - **Pusher vs. Laravel Reverb** für das Live-Spiel; zusammen mit `@laravel/echo-vue`. Entscheidung zu Beginn von Phase 5 (#36), ADR-Kandidat.
-- **Echtzeit-Aktualisierung der Offline-Runde** (`RoundUpdated`): schon in #32 oder erst in Phase 5?
 - **Kommentare:** werden sie in Prod noch genutzt? (#33)
 
 ## Learnings
@@ -116,6 +118,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Mit `UTable` und `paginate()` liegt nur die aktuelle Seite im Browser: Sortieren und Filtern gehört ins Backend (Sortierspalten auf eine Whitelist, stabiler Tie-Breaker), im Frontend `manualSorting`.
 - Positionsbasiertes JSON mit HTML-Links (`Group::records`/`stats`) erzwingt `v-html` und Übersetzungsschritte in den Resources, siehe `docs/tech-debt/group-positional-json.md` und #39.
 - Inertia-Links auf Seiten, die noch Blade sind, liefern eine HTML-Antwort statt einer Inertia-Antwort. Wegen des Big Bangs nehmen wir das bewusst in Kauf.
+- Referenz für „Wird das noch genutzt?“ ist `master`, nicht der Branch: In der Cursor-Phase wurden Legacy-Komponenten auf dem Branch bereits umgebaut oder gelöscht. Beispiel: `vue-slicksort` und `vue-scrollto` sind auf dem Branch ungenutzt, auf `master` hingen daran Drag-and-drop der Spieler und das Scrollen zum Suchfeld in `CreateRound.vue` (#52).
 - Legacy-Vue-Komponenten werden in `resources/js/app.js` per Glob global registriert. Ob eine Komponente noch genutzt wird, zeigt nur ein Grep nach ihrem Tag (PascalCase und kebab-case) in Blade und anderen Legacy-Komponenten, kein Import.
 - Boost-Guidelines und -Skills nach Paket-Updates mit `php artisan boost:update` neu erzeugen, nicht von Hand pflegen. Die Guidelines landen über `config/boost.php` in `AGENTS.md` (von `CLAUDE.md` importiert), die Skills in `.claude/skills/`.
 - PHPUnit 12 erkennt `/** @test */` nicht mehr; ohne `#[Test]` laufen solche Tests stillschweigend nicht. Die alte Suite lief deshalb mit 5 statt 30 Tests.

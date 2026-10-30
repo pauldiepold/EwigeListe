@@ -60,6 +60,11 @@ function addPlayer(player: CreateRoundPlayer): void {
   searchTerm.value = '';
 }
 
+/** Auf dem Handy bleibt so die Trefferliste über der Bildschirmtastatur sichtbar. */
+function scrollSearchIntoView(event: FocusEvent): void {
+  (event.target as HTMLElement | null)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function removePlayer(playerId: number): void {
   selectedPlayers.value = selectedPlayers.value.filter((player) => player.id !== playerId);
 }
@@ -134,6 +139,8 @@ if (initialPlayer) {
               v-model="searchTerm"
               icon="i-lucide-search"
               placeholder="Bitte Namen eingeben"
+              :ui="{ base: 'scroll-mt-16' }"
+              @focus="scrollSearchIntoView"
               @keyup.enter="filteredPlayers.length === 1 ? addPlayer(filteredPlayers[0]) : null"
             />
           </UFormField>

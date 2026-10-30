@@ -10,6 +10,7 @@ import {
   regeln,
   register,
 } from '@/routes';
+import { show as showPlayer } from '@/actions/App/Http/Controllers/PlayerController';
 import { index as groupsIndex } from '@/routes/groups';
 import {
   create as createRound,
@@ -26,12 +27,16 @@ const colorMode = ref<InertiaColorMode>('light');
 
 provide(inertiaColorModeKey, colorMode);
 const page = usePage<{
-  auth?: { user?: { id: number; player_id: number | null } | null };
+  auth: {
+    user: { id: number } | null;
+    player: { id: number; surname: string; name: string } | null;
+  };
   navigation?: { showCurrentRound?: boolean };
 }>();
 
 const isDark = computed(() => colorMode.value === 'dark');
-const isAuthenticated = computed(() => Boolean(page.props.auth?.user));
+const isAuthenticated = computed(() => page.props.auth.user !== null);
+const authPlayer = computed(() => page.props.auth.player);
 const canOpenCurrentRound = computed(() => Boolean(page.props.navigation?.showCurrentRound));
 
 function applyColorMode(mode: InertiaColorMode): void {
@@ -162,6 +167,17 @@ onMounted(() => {
         class="flex w-full max-w-4xl flex-col gap-3 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
       >
         <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
+          <template v-if="authPlayer">
+            <span class="text-muted">
+              Angemeldet:
+              <Link
+                :href="showPlayer.url({ player: authPlayer.id })"
+                class="text-muted no-underline hover:text-highlighted hover:underline"
+                >{{ authPlayer.surname }} {{ authPlayer.name }}</Link
+              >
+            </span>
+            <span class="text-muted" aria-hidden="true">&bull;</span>
+          </template>
           <Link
             :href="regeln.url()"
             class="text-muted no-underline hover:text-highlighted hover:underline"
