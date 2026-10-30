@@ -30,7 +30,7 @@ class UpdatePassword extends FormRequest
                 'required',
                 'min:6',
                 function ($attribute, $value, $fail) {
-                    if (! Hash::check($value, Auth::user()->password) && Auth::id() != 1) {
+                    if (! Hash::check($value, Auth::user()->password) && ! Auth::user()->isAdmin()) {
                         $fail('Das alte Passwort stimmt nicht!');
                     }
                 },

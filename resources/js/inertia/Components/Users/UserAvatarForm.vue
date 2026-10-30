@@ -26,6 +26,7 @@ const form = useForm({
 watch(file, (selectedFile) => {
   releaseImageUrl();
   form.avatar = '';
+  form.clearErrors('avatar');
   imageUrl.value = selectedFile ? URL.createObjectURL(selectedFile) : null;
 });
 
