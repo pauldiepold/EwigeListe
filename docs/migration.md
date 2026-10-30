@@ -130,6 +130,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Mitgliedertabelle nur noch mit Sortierung; Suche, Blättern und gemerkter Sortierzustand von `master` entfallen | einfachste Variante; die Seite wird nach der Migration ohnehin weiter ausgebaut (#30) |
 | 2026-10-30 | Das Listen-Icon der Navigation führt auf die Ewige Liste, alle Listen sind von dort verlinkt | meist wird nur die Ewige Liste aufgerufen (#19) |
 | 2026-10-30 | Tabs der Listen-Seite stehen im URL-Hash, aber ohne eigenen History-Eintrag; das Chart lädt erst, wenn der Tab offen ist (`Inertia::optional` + `WhenVisible`) | Der Zurück-Button verlässt die Seite, statt durch die Tabs zu springen (Abweichung von `master`); die Chart-Abfrage läuft auf Prod über rund 30.000 Spiele und soll nicht bei jedem Aufruf anfallen (#30) |
+| 2026-10-30 | `groups.pointsPerGame` und `gamesPerRound` werden vor dem Befüllen auf `decimal(6,1)` erweitert | Auf Prod noch `float(3,1)` (maximal 99,9), Liste 9 hat 200 Spiele pro Runde. Lokal und in der CI nicht sichtbar: Laravel 13 ignoriert die Nachkommastellen in `float()`, SQLite kennt keinen Wertebereich |
 
 ## Offene Fragen
 
