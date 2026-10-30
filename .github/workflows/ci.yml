@@ -35,6 +35,8 @@ jobs:
 
       - run: composer install --no-interaction --no-progress --prefer-dist
 
+      - run: vendor/bin/pint --test
+
       - name: Umgebung vorbereiten
         run: |
           cp .env.example .env
