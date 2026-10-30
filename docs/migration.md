@@ -115,6 +115,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Rundenarchiv fest mit 20 Runden pro Seite; die Auswahl „15 / 30 / Alle“ von `master` entfällt | bewusste Vereinfachung; Abweichung von `master`, kein vergessener Punkt (#55) |
 | 2026-10-30 | „Letzte Runden“ auf Home: Runden mit einem Spiel aus den letzten 24 h, sortiert nach dem neuesten Spiel (vorher `updated_at` der Runde) | Das Bearbeiten einer alten Runde (Spieler, Listen) holte sie sonst wieder auf die Startseite (#55) |
 | 2026-10-30 | `HomeGamesChartSeries` bleibt MySQL-spezifisch (`DATE_FORMAT`, `WEEKDAY`); getestet werden nur Leerfall und Deferred-Prop | Die Logik ändert sich praktisch nicht mehr; ein datenbankneutraler Umbau lohnt den Aufwand nicht (#55) |
+| 2026-10-30 | Seitenwechsel vorerst ohne Instant Visits, Skeletons, Prefetch und persistentes Layout; nur die Fortschrittsleiste ist orange; Deferred nur für langsame, in der ersten Ansicht entbehrliche Daten | Am Handy fühlt es sich schnell genug an, der Aufwand lohnt nicht. Bedarf wird nach dem Spieleabend auf Staging geprüft (#37), Erkenntnisse stehen in #57 |
 
 ## Offene Fragen
 

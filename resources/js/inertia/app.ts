@@ -10,6 +10,7 @@ const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue');
 createInertiaApp({
   title: (title) => (title ? `${title} - Ewige Liste` : 'Ewige Liste'),
   resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, pages),
+  progress: { color: '#d16341' },
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h(AppRoot, () => h(App, props)) })
       .use(plugin)

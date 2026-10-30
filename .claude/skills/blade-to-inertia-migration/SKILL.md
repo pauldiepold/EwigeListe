@@ -112,6 +112,11 @@ return back();
 - Test: `->assertInertiaFlash('toast', ['type' => 'success', 'message' => '…'])` auf der Redirect-Antwort, siehe `tests/Feature/FlashToastTest.php`.
 - Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt. Bekannt: `UserController` (`message`, → `users.edit`, #29), `GameController@destroy`, `CommentController@destroy`, `RoundController@destroy` (`deleteError`) (→ `rounds.show`, #32).
 
+## Laden und Seitenwechsel
+
+- Keine Skeletons, Instant Visits oder Prefetch-Konfiguration vorab; als Rückmeldung reicht die Fortschrittsleiste (Entscheidung in `docs/migration.md`, #57).
+- Ein Prop wird nur deferred, wenn er spürbar langsamer ist als der Rest **und** für die erste Ansicht entbehrlich (Charts, Statistiken). Daten, mit denen die Seite arbeitet, nie deferren, sondern die Query schneller machen. Beispiel: `homeGamesChart` auf Home.
+
 ## Frontend
 
 ```
