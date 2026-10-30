@@ -70,7 +70,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | todo | 4 PATCH-Formulare, Avatar-Upload mit Cropper |
 | GET | `liste`, `liste/{group}` | `ewigeListe`, `groups.show` | `GroupController@show` | `Groups/Show` | #30 | todo | mit `records`/`stats` (#39) und POST für beitreten/verlassen/schließen (#40) |
 | GET | `profil/{player}/{group?}` | — → `players.show` | `PlayerController@show` | `Players/Show` | #31 | todo | Route benennen |
-| GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline (#32), Live-Tab in Phase 5 (#36) |
+| GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline inkl. Echtzeit per `RoundUpdated` (#32), Live-Tab in Phase 5 (#36) |
 | GET | `rounds/current` | `rounds.current` | `RoundController@current` | Redirect | #32 | todo | |
 | GET | `report` | — | `ReportController@report` | — | #33 | todo → gestrichen | wird durch einen Artisan-Befehl zum Neuberechnen ersetzt |
 | GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | todo → gestrichen | dito |
@@ -105,11 +105,11 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | TypeScript 6.0 statt 7 | `typescript-eslint` unterstützt TS 7 noch nicht |
 | 2026-10-28 | Claude-Code-Hook: Prettier und `php -l` nach jedem Edit | Formatierung und Syntax deterministisch statt per Regel in `CLAUDE.md` |
 | 2026-10-30 | Links/Redirects auf noch nicht migrierte Seiten sofort als Inertia-Link bzw. `redirect()->route()` | kein Übergangscode, der später wieder angefasst werden muss; Kaputt-Sein bis zur Migration der Zielseite ist durch den Big Bang gedeckt (#52) |
+| 2026-10-30 | Echtzeit-Aktualisierung der Offline-Runde (`RoundUpdated`) kommt mit #32, nicht erst in Phase 5; Echo verbindet sich nur auf Seiten, die lauschen | Bei jedem Spieleabend schauen mehrere Handys auf die Punkte; ohne Push wäre Staging zwischen #32 und #36 schlechter als Prod. Pusher vs. Reverb bleibt bei #36 (nur Transport) |
 
 ## Offene Fragen
 
 - **Pusher vs. Laravel Reverb** für das Live-Spiel; zusammen mit `@laravel/echo-vue`. Entscheidung zu Beginn von Phase 5 (#36), ADR-Kandidat.
-- **Echtzeit-Aktualisierung der Offline-Runde** (`RoundUpdated`): schon in #32 oder erst in Phase 5?
 - **Kommentare:** werden sie in Prod noch genutzt? (#33)
 
 ## Learnings
