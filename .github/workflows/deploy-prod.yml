@@ -5,6 +5,12 @@ on:
     branches:
       - master
 
+# Nie zwei Deploys gleichzeitig: ein neuer wartet, bis der laufende fertig ist.
+# Laufende Deploys werden nicht abgebrochen (sonst bleibt Prod im Wartungsmodus).
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
