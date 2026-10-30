@@ -59,9 +59,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/liste/calculate/{group}', 'GroupController@calculate');
     Route::get('/liste/calculateBadges/{group}', 'GroupController@calculateBadges');
 
-    Route::get('/liste/{group}/beitreten', 'GroupController@update')->name('groups.addPlayer');
-    Route::get('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
-    Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->name('groups.close');
+    Route::post('/liste/{group}/beitreten', 'GroupController@join')->name('groups.join');
+    Route::post('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
+    Route::patch('/liste/{group}/schließen', 'GroupController@close')->name('groups.close');
 
     /* *********** Charts ************** */
     Route::get('/charts/round/{round}/', 'ChartController@roundChart');
@@ -98,9 +98,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/report', 'ReportController@report');
     });
 });
-
-/* *********** Charts ************** */
-Route::get('/charts/home/{group}', 'ChartController@homeChart')->name('charts.home');
 
 /* *********** Statische Seiten (Inertia) ************** */
 Route::get('/datenschutz/', 'StaticPageController@datenschutz')->name('datenschutz');

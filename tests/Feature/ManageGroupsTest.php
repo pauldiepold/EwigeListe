@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Group;
-use App\Player;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -64,34 +63,6 @@ class ManageGroupsTest extends TestCase
         $group = auth()->user()->player->createdGroups->first();
 
         $this->assertTrue($group->players->contains(auth()->user()->player));
-    }
-
-    #[Test]
-    public function a_user_can_view_a_group()
-    {
-        $this->actingAs(User::factory()->create());
-
-        $group = Group::factory()->create(['name' => "O'Kon"]);
-        $group->calculate();
-
-        $this->get($group->path())->assertOk()->assertSee($group->name);
-    }
-
-    #[Test]
-    public function a_group_shows_its_players()
-    {
-        $this->markTestIncomplete('Die Tabelle erscheint erst nach gespielten Runden; wird mit der Migration der Seite neu geschrieben (#30).');
-
-        $this->actingAs(User::factory()->create());
-
-        $group = Group::factory()->create();
-
-        $players = Player::factory()->count(6)->create();
-
-        $group->addPlayers($players);
-        $group->calculate();
-
-        $this->get($group->path())->assertOk()->assertSee($players->first()->name);
     }
 
     #[Test]

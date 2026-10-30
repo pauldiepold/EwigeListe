@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
-use App\Http\Resources\GroupHomeResource;
+use App\Http\Resources\GroupStatisticsResource;
 use App\Http\Resources\HomeRoundResource;
 use App\Round;
 use App\Services\HomeGamesChartSeries;
@@ -15,7 +15,7 @@ class HomeController extends Controller
 {
     public function index(HomeGamesChartSeries $homeGamesChartSeries): Response
     {
-        $group = Group::findOrFail(Group::EWIGE_LISTE_ID);
+        $group = Group::with('profiles.player')->findOrFail(Group::EWIGE_LISTE_ID);
 
         $currentRounds = auth()->check()
             ? Round::with('players')
@@ -26,7 +26,7 @@ class HomeController extends Controller
             : collect();
 
         return Inertia::render('Home/Index', [
-            'group' => new GroupHomeResource($group),
+            'group' => new GroupStatisticsResource($group),
             'currentRounds' => HomeRoundResource::collection($currentRounds)->toArray(request()),
             'homeGamesChart' => Inertia::defer(
                 fn (): array => $homeGamesChartSeries->forGroup($group),

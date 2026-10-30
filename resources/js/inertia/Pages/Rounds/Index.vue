@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Head, router, usePage } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import ArchiveRoundsTable from '@/Components/Rounds/ArchiveRoundsTable.vue';
+import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
 import { index as roundsIndex } from '@/routes/rounds';
 import type {
   ArchiveSort,
@@ -17,9 +16,6 @@ const props = defineProps<{
   rounds: PaginatedRoundArchiveRows;
   archiveSort: ArchiveSort;
 }>();
-
-const page = usePage();
-const authPlayerId = computed(() => page.props.auth.player?.id ?? null);
 
 type RoundsIndexQuery = {
   sort?: ArchiveSortColumn;
@@ -48,9 +44,6 @@ function onGroupChange(groupId: number): void {
 }
 
 function goToPage(page: number): void {
-  if (page === props.rounds.current_page || page < 1 || page > props.rounds.last_page) {
-    return;
-  }
   router.visit(roundsIndexUrl(props.selectedGroup.id, { page }), {
     preserveScroll: true,
     preserveState: false,
@@ -81,29 +74,12 @@ function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc
         />
       </UFormField>
 
-      <template v-if="rounds.total > 0">
-        <ArchiveRoundsTable
-          :rows="rounds.data"
-          :highlight-player-id="authPlayerId"
-          :sort-column="archiveSort.column"
-          :sort-direction="archiveSort.direction"
-          @update:sort="onArchiveSortChange"
-        />
-
-        <p class="text-muted">{{ rounds.total }} Runden</p>
-
-        <UPagination
-          v-if="rounds.last_page > 1"
-          :page="rounds.current_page"
-          :total="rounds.total"
-          :items-per-page="rounds.per_page"
-          show-edges
-          class="flex justify-center"
-          @update:page="goToPage"
-        />
-      </template>
-
-      <p v-else class="text-lg text-toned">Bisher wurden keine Runden gespielt.</p>
+      <RoundArchive
+        :rounds="rounds"
+        :archive-sort="archiveSort"
+        @update:page="goToPage"
+        @update:sort="onArchiveSortChange"
+      />
     </div>
   </AppLayout>
 </template>

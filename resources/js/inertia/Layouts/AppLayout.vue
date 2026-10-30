@@ -3,6 +3,7 @@ import { computed, onMounted, provide, ref } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
   datenschutz,
+  ewigeListe,
   impressum,
   index as home,
   login,
@@ -11,7 +12,6 @@ import {
   register,
 } from '@/routes';
 import { show as showPlayer } from '@/actions/App/Http/Controllers/PlayerController';
-import { index as groupsIndex } from '@/routes/groups';
 import {
   create as createRound,
   current as currentRound,
@@ -100,12 +100,12 @@ onMounted(() => {
                 aria-label="Neue Runde"
               />
               <UButton
-                :to="groupsIndex.url()"
+                :to="ewigeListe.url()"
                 color="neutral"
                 variant="ghost"
                 class="text-white hover:bg-white/15"
                 icon="i-lucide-list"
-                aria-label="Listen"
+                aria-label="Ewige Liste"
               />
               <UButton
                 :to="roundsIndex.url()"

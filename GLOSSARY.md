@@ -43,7 +43,7 @@ Eine benannte Sammlung von Spielern, deren gemeinsame Runden zusammen ausgewerte
 _Avoid_: Gruppe, Group, Tabelle
 
 **Ewige Liste**:
-Die besondere Liste der App, für die jede Runde automatisch zählt. Wird gezeigt, wenn keine andere Liste gewählt ist.
+Die besondere Liste der App, für die jede Runde automatisch zählt. Wird gezeigt, wenn keine andere Liste gewählt ist. Sie kann weder geschlossen noch verlassen werden.
 _Avoid_: Hauptliste, Default-Gruppe
 
 **Standardliste**:
@@ -51,9 +51,23 @@ Eine Liste, die ein Spieler für sich markiert hat. Sie wird automatisch ausgew�
 _Avoid_: Default-Liste, Lieblingsliste
 
 **Geschlossene Liste**:
-Eine Liste, der keine neuen Runden mehr hinzugefügt werden können. Ihre bisherigen Runden und Statistiken bleiben erhalten.
+Eine Liste, der keine neuen Runden mehr hinzugefügt werden können und deren Mitglieder feststehen. Ihre bisherigen Runden und Statistiken bleiben erhalten.
 _Avoid_: Archivierte Liste, gesperrte Liste
+
+**Mitglied**:
+Ein Spieler, der zu einer Liste gehört. Sein Profil ist seine Auswertung in dieser Liste.
+_Avoid_: Teilnehmer
 
 **Profil**:
 Ein Spieler in genau einer Liste, samt seiner Statistik in dieser Liste. Nicht das Benutzerkonto.
 _Avoid_: Benutzerprofil, Account
+
+**Rekord**:
+Der Bestwert unter den Profilen einer Liste, samt der Spieler, die ihn halten.
+
+**Listenstatistik**:
+Eine Kennzahl über alle Spiele einer Liste, zum Beispiel die Anzahl der Spiele insgesamt.
+
+**Abzeichen**:
+Auszeichnung für den Spieler mit den meisten Punkten bzw. Spielen einer Liste in einem Kalendermonat. Bei Gleichstand bekommt es nur ein Spieler.
+_Avoid_: Badge

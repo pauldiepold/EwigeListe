@@ -1,7 +1,7 @@
 import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import Chart from 'chart.js/auto';
 import { inertiaColorModeKey } from '@/composables/inertiaColorMode';
-import type { HomeGamesChartPayload } from '@/types/home';
+import type { GamesChartPayload } from '@/types/groups-show';
 
 function chartPalette(isDark: boolean): {
   borderColor: string;
@@ -29,20 +29,20 @@ function chartPalette(isDark: boolean): {
 /**
  * Rendert das Spiele-Zeitreihen-Chart aus servergelieferten Daten (Inertia-Prop).
  */
-export function useHomeChart(
+export function useGamesChart(
   canvasRef: Ref<HTMLCanvasElement | null>,
-  chartData: Ref<HomeGamesChartPayload | null | undefined>,
+  chartData: Ref<GamesChartPayload | null | undefined>,
 ): {
   error: Ref<string | null>;
 } {
   const colorMode = inject(inertiaColorModeKey);
   if (colorMode === undefined) {
-    throw new Error('useHomeChart: Farbmodus fehlt — Seite muss in AppLayout liegen.');
+    throw new Error('useGamesChart: Farbmodus fehlt — Seite muss in AppLayout liegen.');
   }
   const isDark = computed(() => colorMode.value === 'dark');
   const error = ref<string | null>(null);
   let chart: Chart | null = null;
-  let lastPayload: HomeGamesChartPayload | null = null;
+  let lastPayload: GamesChartPayload | null = null;
 
   const destroyChart = (): void => {
     if (chart) {
@@ -51,7 +51,7 @@ export function useHomeChart(
     }
   };
 
-  const renderFromPayload = (data: HomeGamesChartPayload, animate: boolean): void => {
+  const renderFromPayload = (data: GamesChartPayload, animate: boolean): void => {
     error.value = null;
 
     if (!canvasRef.value) {

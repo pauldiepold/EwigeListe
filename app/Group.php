@@ -15,6 +15,28 @@ class Group extends Model
 
     public const EWIGE_LISTE_ID = 1;
 
+    /**
+     * Rekorde werden aus den Profilen abgeleitet: Bestwert unter allen Profilen, die den
+     * Mindestwert überschreiten.
+     *
+     * @var list<array{label: string, column: string, function: 'max'|'min', minimumColumn: string, minimum: int, unit: string}>
+     */
+    private const RECORD_DEFINITIONS = [
+        ['label' => 'Meiste Spiele:', 'column' => 'games', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Höchste Punktzahl:', 'column' => 'highestPoints', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Niedrigste Punktzahl:', 'column' => 'lowestPoints', 'function' => 'min', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Höchste Gewinnrate:', 'column' => 'winrate', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 50, 'unit' => '%'],
+        ['label' => 'Niedrigste Gewinnrate:', 'column' => 'winrate', 'function' => 'min', 'minimumColumn' => 'games', 'minimum' => 50, 'unit' => '%'],
+        ['label' => 'Höchste Solo-Gewinnrate:', 'column' => 'soloWinrate', 'function' => 'max', 'minimumColumn' => 'soli', 'minimum' => 10, 'unit' => '%'],
+        ['label' => 'Niedrigste Solo-Gewinnrate:', 'column' => 'soloWinrate', 'function' => 'min', 'minimumColumn' => 'soli', 'minimum' => 10, 'unit' => '%'],
+        ['label' => 'Wenigste Spiele bis Solo:', 'column' => 'soloRate', 'function' => 'min', 'minimumColumn' => 'soli', 'minimum' => 10, 'unit' => ''],
+        ['label' => 'Meiste Spiele bis Solo:', 'column' => 'soloRate', 'function' => 'max', 'minimumColumn' => 'soli', 'minimum' => 10, 'unit' => ''],
+        ['label' => 'Längste Sieges-Strähne:', 'column' => 'winStreak', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Längste Pech-Strähne:', 'column' => 'loseStreak', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Meiste Spiele an einem Tag:', 'column' => 'mostGamesDay', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+        ['label' => 'Meiste Spiele in einem Monat:', 'column' => 'mostGamesMonth', 'function' => 'max', 'minimumColumn' => 'games', 'minimum' => 0, 'unit' => ''],
+    ];
+
     protected $fillable = [
         'name',
         'created_by',
@@ -63,21 +85,6 @@ class Group extends Model
     }
 
     protected $casts = [
-        'records' => 'collection',
-        'stats' => 'collection',
-        'mostGames' => 'collection',
-        'highestPoints' => 'collection',
-        'lowestPoints' => 'collection',
-        'highestWinrate' => 'collection',
-        'lowestWinrate' => 'collection',
-        'highestSoloWinrate' => 'collection',
-        'lowestSoloWinrate' => 'collection',
-        'highestSoloRate' => 'collection',
-        'lowestSoloRate' => 'collection',
-        'highestWinstreak' => 'collection',
-        'highestLosestreak' => 'collection',
-        'mostGamesDay' => 'collection',
-        'mostGamesMonth' => 'collection',
         'pointsPerGame' => 'decimal:1',
         'gamesPerRound' => 'decimal:1',
     ];
@@ -123,117 +130,63 @@ class Group extends Model
     {
         $date = isset($date) ? $date : Carbon::now();
         $this->calculateBadgesByMonth($date);
-
-        $columns = collect([
-            collect(['mostGames', 'games', 'max', 'Meiste Spiele:', 'games', 0, '']),
-            collect(['highestPoints', 'highestPoints', 'max', 'Höchste Punktzahl:', 'games', 0, '']),
-            collect(['lowestPoints', 'lowestPoints', 'min', 'Niedrigste Punktzahl:', 'games', 0, '']),
-            collect(['highestWinrate', 'winrate', 'max', 'Höchste Gewinnrate:', 'games', 50, '%']),
-            collect(['lowestWinrate', 'winrate', 'min', 'Niedrigste Gewinnrate:', 'games', 50, '%']),
-            collect(['highestSoloWinrate', 'soloWinrate', 'max', 'Höchste Solo-Gewinnrate:', 'soli', 10, '%']),
-            collect(['lowestSoloWinrate', 'soloWinrate', 'min', 'Niedrigste Solo-Gewinnrate:', 'soli', 10, '%']),
-            collect(['lowestSoloRate', 'soloRate', 'min', 'Wenigste Spiele bis Solo:', 'soli', 10, '']),
-            collect(['highestSoloRate', 'soloRate', 'max', 'Meiste Spiele bis Solo:', 'soli', 10, '']),
-            collect(['highestWinstreak', 'winStreak', 'max', 'Längste Sieges-Strähne:', 'games', 0, '']),
-            collect(['highestLosestreak', 'loseStreak', 'max', 'Längste Pech-Strähne:', 'games', 0, '']),
-            collect(['mostGamesDay', 'mostGamesDay', 'max', 'Meiste Spiele an einem Tag:', 'games', 0, '']),
-            collect(['mostGamesMonth', 'mostGamesMonth', 'max', 'Meiste Spiele in einem Monat:', 'games', 0, '']),
-        ]);
-
-        $col = collect();
-
-        foreach ($columns as $column) {
-            $columnName = $column->get(0);
-            $highscoresCollection = $this->getHighscoreCollection($column);
-            $this->$columnName = $highscoresCollection;
-            if ($highscoresCollection->get(2) != '') {
-                $col->push($highscoresCollection);
-            }
-        }
-
-        $this->records = $col;
-        $this->stats = $this->calcStats();
+        $this->calculateStatistics();
 
         $this->save();
     }
 
-    private function getHighscoreCollection($column)
+    private function calculateStatistics(): void
     {
-        $minmax = $column->get(2);
-        $value = $this->profiles()
-            ->where('profiles.'.$column->get(4), '>', $column->get(5))
-            ->$minmax($column->get(1));
+        $games = Game::whereHas('round.groups', function (Builder $query) {
+            $query->where('groups.id', '=', $this->id);
+        });
 
-        $profiles = $this->profiles()
-            ->where('profiles.'.$column->get(4), '>', $column->get(5))
-            ->where('profiles.'.$column->get(1), $value)
-            ->with('player')
-            ->get();
+        $this->totalGames = $games->count();
+        $this->pointsPerGame = round($games->avg('points') ?? 0, 1);
 
-        $col = collect();
-        $col->push($column->get(3));
-        $col->push($value.$column->get(6));
-        $col->push($this->getPlayerLink($profiles));
-
-        return $col;
+        $roundsCount = $this->rounds()->count();
+        $this->gamesPerRound = $roundsCount === 0 ? 0 : round($this->totalGames / $roundsCount, 1);
     }
 
-    private function getPlayerLink($profiles)
+    /**
+     * @return Collection<int, array{label: string, value: string, profiles: Collection<int, Profile>}>
+     */
+    public function recordRows(): Collection
     {
-        $links = collect();
+        return collect(self::RECORD_DEFINITIONS)
+            ->map(function (array $definition): ?array {
+                $candidates = $this->profiles
+                    ->where($definition['minimumColumn'], '>', $definition['minimum'])
+                    ->whereNotNull($definition['column']);
 
-        foreach ($profiles as $profile) {
-            $links->push('<a href="'.$profile->path().'">'.$profile->player->surname.'</a>');
-        }
+                if ($candidates->isEmpty()) {
+                    return null;
+                }
 
-        return niceCount($links);
+                $value = (float) $candidates->{$definition['function']}($definition['column']);
+
+                return [
+                    'label' => $definition['label'],
+                    'value' => $value.$definition['unit'],
+                    'profiles' => $candidates
+                        ->filter(fn (Profile $profile): bool => (float) $profile->{$definition['column']} === $value)
+                        ->values(),
+                ];
+            })
+            ->filter()
+            ->values();
     }
 
-    private function calcStats()
+    /**
+     * @return list<array{label: string, value: string}>
+     */
+    public function statisticRows(): array
     {
-
-        $colStats = collect();
-        $groupID = $this->id;
-
-        /* ***** Spiele insgesamt **** */
-        $gamesAll = Game::whereHas('round.groups', function (Builder $query) use ($groupID) {
-            $query->where('groups.id', '=', $groupID);
-        })
-            ->count();
-
-        $colRow = collect();
-        $colRow->push('Spiele insgesamt:');
-        $colRow->push($gamesAll);
-        $colStats->push($colRow);
-
-        /* ***** Punkte Durchschnitt **** */
-
-        $pointsAvg = Game::whereHas('round.groups', function (Builder $query) use ($groupID) {
-            $query->where('groups.id', '=', $groupID);
-        })
-            ->avg('points');
-
-        $colRow = collect();
-        $colRow->push('∅ Punktzahl pro Spiel:');
-        $colRow->push(round($pointsAvg, 1));
-        $colStats->push($colRow);
-
-        /* ***** Spiele Schnitt pro Runde **** */
-
-        $gamesAvg = Round::whereHas('groups', function (Builder $query) use ($groupID) {
-            $query->where('groups.id', '=', $groupID);
-        })
-            ->withCount('games')
-            ->get()
-            ->avg('games_count');
-
-        $colRow = collect();
-        $colRow->push('∅ Anzahl Spiele pro Runde:');
-        $colRow->push(round($gamesAvg, 1));
-        $colStats->push($colRow);
-
-        return $colStats;
-
+        return [
+            ['label' => 'Spiele insgesamt:', 'value' => (string) (int) $this->totalGames],
+            ['label' => '∅ Punktzahl pro Spiel:', 'value' => (string) (float) $this->pointsPerGame],
+            ['label' => '∅ Anzahl Spiele pro Runde:', 'value' => (string) (float) $this->gamesPerRound],
+        ];
     }
 
     public function addPlayer($player)
@@ -252,6 +205,31 @@ class Group extends Model
     public function addPlayers(Collection $players)
     {
         $this->players()->saveMany($players->diff($this->players));
+    }
+
+    public function hasMember(Player $player): bool
+    {
+        return $this->players()->whereKey($player->id)->exists();
+    }
+
+    public function canBeJoinedBy(Player $player): bool
+    {
+        return ! $this->closed && ! $this->hasMember($player);
+    }
+
+    public function canBeLeftBy(Player $player): bool
+    {
+        return $this->id !== self::EWIGE_LISTE_ID
+            && ! $this->closed
+            && $this->hasMember($player)
+            && $this->players()->count() > 1
+            && ! $this->rounds()->whereHas('players', fn (Builder $query) => $query->whereKey($player->id))->exists();
+    }
+
+    public function canBeClosedBy(User $user): bool
+    {
+        return $this->id !== self::EWIGE_LISTE_ID
+            && ($this->creator->is($user->player) || $user->isAdmin());
     }
 
     public function path()

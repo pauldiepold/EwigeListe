@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { Deferred, Head } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
+import DeferredGamesChart from '@/Components/Groups/DeferredGamesChart.vue';
+import GroupStatisticsTable from '@/Components/Groups/GroupStatisticsTable.vue';
 import CurrentRoundsSection from '@/Components/Home/CurrentRoundsSection.vue';
-import HomeDataTable from '@/Components/Home/HomeDataTable.vue';
-import HomeGamesChart from '@/Components/Home/HomeGamesChart.vue';
-import AppLoadingIndicator from '@/Components/Ui/AppLoadingIndicator.vue';
-import type { HomeGamesChartPayload, HomeGroup, HomeRound } from '@/types/home';
+import type { GamesChartPayload, GroupStatistics } from '@/types/groups-show';
+import type { HomeRound } from '@/types/home';
 
 defineProps<{
-  group: HomeGroup;
+  group: GroupStatistics;
   currentRounds: HomeRound[];
-  homeGamesChart?: HomeGamesChartPayload;
+  homeGamesChart?: GamesChartPayload;
 }>();
 </script>
 
@@ -22,33 +22,17 @@ defineProps<{
 
     <section class="mb-8">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Rekorde</h2>
-      <HomeDataTable :rows="group.records" />
+      <GroupStatisticsTable :rows="group.records" />
     </section>
 
     <section class="mb-8">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Statistiken</h2>
-      <HomeDataTable :rows="group.stats" />
+      <GroupStatisticsTable :rows="group.stats" />
     </section>
 
     <section>
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Anzahl der Spiele</h2>
-
-      <Deferred data="homeGamesChart">
-        <template #fallback>
-          <div
-            class="mx-auto max-w-3xl rounded border border-default bg-elevated p-4"
-            aria-busy="true"
-          >
-            <div
-              class="flex min-h-[360px] flex-col items-center justify-center gap-2 rounded bg-muted/10"
-            >
-              <AppLoadingIndicator label="Chart wird geladen…" size="md" />
-            </div>
-          </div>
-        </template>
-
-        <HomeGamesChart v-if="homeGamesChart" :chart-data="homeGamesChart" />
-      </Deferred>
+      <DeferredGamesChart prop="homeGamesChart" :chart-data="homeGamesChart" />
     </section>
   </AppLayout>
 </template>
