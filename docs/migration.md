@@ -108,6 +108,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Links/Redirects auf noch nicht migrierte Seiten sofort als Inertia-Link bzw. `redirect()->route()` | kein Übergangscode, der später wieder angefasst werden muss; Kaputt-Sein bis zur Migration der Zielseite ist durch den Big Bang gedeckt (#52) |
 | 2026-10-30 | Echtzeit-Aktualisierung der Offline-Runde (`RoundUpdated`) kommt mit #32, nicht erst in Phase 5; Echo verbindet sich nur auf Seiten, die lauschen | Bei jedem Spieleabend schauen mehrere Handys auf die Punkte; ohne Push wäre Staging zwischen #32 und #36 schlechter als Prod. Pusher vs. Reverb bleibt bei #36 (nur Transport) |
 | 2026-10-30 | Meldungen nach Aktionen als Inertia-v3-Flash `toast` (`App\Http\Toast::success/error`), zentral als Toast an der App-Wurzel (`AppRoot.vue`); nur `success` und `error`; Validierungsfehler bleiben `errors` der Page | eine Stelle statt Anzeige pro Page; Inertia-Flash landet nicht im History-State, kommt also beim Zurück-Button nicht wieder; weitere Typen erst bei Bedarf (Live-Spiel) (#53) |
+| 2026-10-30 | CI/Deploy-Runner fest auf `ubuntu-26.04`, Actions auf Node-24-Majors (`checkout@v7`, `setup-node@v7`, `cache@v6`), Node-Version aus `.nvmrc` (24) | `ubuntu-latest` wechselt ohnehin bis 19.11.2026 auf 26.04, fest gepinnt wechselt nichts unbemerkt; Node 26 ist erst seit 28.10.2026 LTS, der Server baut mit Node 24, CI soll dieselbe Version nutzen – Umstieg auf 26 zusammen mit dem Server |
 
 ## Offene Fragen
 
