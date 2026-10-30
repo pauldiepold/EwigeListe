@@ -6,25 +6,31 @@ use App\Http\Requests\UpdateEmail;
 use App\Http\Requests\UpdateListen;
 use App\Http\Requests\UpdateName;
 use App\Http\Requests\UpdatePassword;
+use App\Http\Resources\EditUserProfileResource;
+use App\Http\Resources\EditUserResource;
+use App\Http\Toast;
 use App\Profile;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
-    public function edit(User $user)
+    public function edit(User $user): Response
     {
-        $player = $user->player;
         $this->authorize('update', $user);
 
-        $player->load('user', 'groups', 'profiles.group');
+        $user->load('player.profiles.group');
 
-        $profiles = $player->profiles;
-
-        return view('users.edit', compact('player', 'profiles'));
+        return Inertia::render('Users/Edit', [
+            'user' => (new EditUserResource($user))->resolve(request()),
+            'profiles' => EditUserProfileResource::collection($user->player->profiles)->resolve(request()),
+        ]);
     }
 
-    public function updateName(User $user, UpdateName $request)
+    public function updateName(User $user, UpdateName $request): RedirectResponse
     {
         $this->authorize('update', $user);
 
@@ -35,11 +41,12 @@ class UserController extends Controller
         $player->name = $validatedData['nachname'];
         $player->save();
 
-        return redirect(route('users.edit', [$player]).'#name')
-            ->with('message', 'Name wurde erfolgreich gespeichert!');
+        Toast::success('Name wurde erfolgreich gespeichert!');
+
+        return redirect()->route('users.edit', $user);
     }
 
-    public function updateMail(User $user, UpdateEmail $request)
+    public function updateMail(User $user, UpdateEmail $request): RedirectResponse
     {
         $this->authorize('update', $user);
 
@@ -48,11 +55,12 @@ class UserController extends Controller
         $user->email = $validatedData['email'];
         $user->save();
 
-        return redirect(route('users.edit', [$user->player]).'#email')
-            ->with('message', 'E-Mail wurde erfolgreich geändert!');
+        Toast::success('E-Mail wurde erfolgreich geändert!');
+
+        return redirect()->route('users.edit', $user);
     }
 
-    public function updatePassword(User $user, UpdatePassword $request)
+    public function updatePassword(User $user, UpdatePassword $request): RedirectResponse
     {
         $this->authorize('update', $user);
 
@@ -61,27 +69,26 @@ class UserController extends Controller
         $user->password = Hash::make($validatedData['password']);
         $user->save();
 
-        return redirect(route('users.edit', [$user->player]).'#passwort')
-            ->with('message', 'Passwort wurde erfolgreich geändert!');
+        Toast::success('Passwort wurde erfolgreich geändert!');
+
+        return redirect()->route('users.edit', $user);
     }
 
-    public function updateListen(User $user, UpdateListen $request)
+    public function updateListen(User $user, UpdateListen $request): RedirectResponse
     {
         $this->authorize('update', $user);
 
-        $validatedData = collect($request->validated()['groups'])
-            ->filter(function ($value, $key) {
-                return $value['group_id'] != 1 && ! $value['closed'];
+        $defaultProfileIds = $request->validated()['default_profiles'];
+
+        $user->player->profiles()->with('group')->get()
+            ->filter(fn (Profile $profile): bool => $profile->canBeDefault())
+            ->each(function (Profile $profile) use ($defaultProfileIds): void {
+                $profile->default = in_array($profile->id, $defaultProfileIds);
+                $profile->save();
             });
 
-        $profiles = Profile::find($validatedData->pluck('profile_id'));
+        Toast::success('Standardlisten wurden gespeichert!');
 
-        foreach ($profiles as $profile) {
-            $profile->default = $validatedData->where('profile_id', $profile->id)
-                ->first()['default'];
-            $profile->save();
-        }
-
-        return 'success';
+        return redirect()->route('users.edit', $user);
     }
 }

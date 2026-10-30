@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Player;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -17,7 +18,7 @@ class AddAvatarTest extends TestCase
     #[Test]
     public function only_members_can_add_avatars()
     {
-        $this->post('api/users/1/avatar')
+        $this->post(route('users.updateAvatar', 1))
             ->assertStatus(302)->assertRedirect('/login');
     }
 
@@ -28,7 +29,7 @@ class AddAvatarTest extends TestCase
         $this->actingAs(User::factory()->create());
         $this->assertFalse(auth()->user()->isAdmin());
 
-        $this->postJson('api/users/'.$otherUser->id.'/avatar', ['avatar' => $this->avatarDataUri()])
+        $this->post(route('users.updateAvatar', $otherUser), ['avatar' => $this->avatarDataUri()])
             ->assertForbidden();
     }
 
@@ -37,11 +38,10 @@ class AddAvatarTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->postJson('api/users/'.auth()->id().'/avatar', [
+        $this->post(route('users.updateAvatar', auth()->id()), [
             'avatar' => 'not-an-image',
         ])
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors('avatar');
+            ->assertSessionHasErrors('avatar');
     }
 
     #[Test]
@@ -51,8 +51,9 @@ class AddAvatarTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        $this->postJson('api/users/'.$user->id.'/avatar', ['avatar' => $this->avatarDataUri()])
-            ->assertSuccessful();
+        $this->post(route('users.updateAvatar', $user), ['avatar' => $this->avatarDataUri()])
+            ->assertRedirect(route('users.edit', $user))
+            ->assertInertiaFlash('toast', ['type' => 'success', 'message' => 'Avatar wurde erfolgreich gespeichert!']);
 
         $filename = $user->fresh()->getRawOriginal('avatar_path');
         $this->assertNotNull($filename);
@@ -61,6 +62,26 @@ class AddAvatarTest extends TestCase
 
         [$width] = getimagesizefromstring(Storage::disk('public')->get('avatars/'.$filename));
         $this->assertSame(200, $width);
+
+        [$fullWidth] = getimagesizefromstring(Storage::disk('public')->get('avatars/'.str_replace('.jpg', '_full.jpg', $filename)));
+        $this->assertSame(400, $fullWidth);
+    }
+
+    #[Test]
+    public function the_avatar_filename_does_not_depend_on_the_name_of_the_player()
+    {
+        Storage::fake('public');
+        $user = User::factory()->create([
+            'player_id' => Player::factory()->create(['surname' => 'Anna/Maria', 'name' => "O'Neil"])->id,
+        ]);
+        $this->actingAs($user);
+
+        $this->post(route('users.updateAvatar', $user), ['avatar' => $this->avatarDataUri()])
+            ->assertRedirect(route('users.edit', $user));
+
+        $filename = $user->fresh()->getRawOriginal('avatar_path');
+        $this->assertMatchesRegularExpression('/^[\w-]+\.jpg$/', $filename);
+        Storage::disk('public')->assertExists('avatars/'.$filename);
     }
 
     /**

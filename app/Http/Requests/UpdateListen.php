@@ -24,11 +24,8 @@ class UpdateListen extends FormRequest
     public function rules()
     {
         return [
-            'groups' => 'array|min:1',
-            'groups.*.profile_id' => 'exists:profiles,id',
-            'groups.*.group_id' => 'exists:groups,id',
-            'groups.*.closed' => 'nullable|boolean',
-            'groups.*.default' => 'nullable|boolean',
+            'default_profiles' => 'present|array',
+            'default_profiles.*' => 'integer',
         ];
     }
 }

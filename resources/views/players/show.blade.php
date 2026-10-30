@@ -8,7 +8,7 @@
 
 @section('content')
 
-    @if(substr($player->user->avatar_path, -11) != 'default.jpg')
+    @if($player->user->avatar_path)
         <img src="{{ $player->user->avatar_path }}"
              class="mx-auto mb-4 h-32 w-32 rounded-full">
     @endif

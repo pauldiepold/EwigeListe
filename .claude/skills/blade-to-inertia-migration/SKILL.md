@@ -59,7 +59,7 @@ public function a_group_requires_a_name(): void
 - Factories über `Model::factory()`. Die Ewige Liste (`Group::EWIGE_LISTE_ID`) legt `Tests\TestCase` in jedem Test mit `RefreshDatabase` an; eigene Listen bekommen also IDs ab 2. Echte Spieler sind immer Mitglied der Ewigen Liste (`Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player)`).
 - Immer `assertOk()` vor `assertSee`, sonst besteht der Test auch mit einer Fehlerseite, in deren Stacktrace der Text steht.
 - `assertInertia` prüft, dass die Page-Datei unter `resources/js/inertia/Pages` existiert (`config/inertia.php`).
-- Props mit Resource-Collection ohne Wrapper (`$wrap = null`) liegen direkt unter dem Prop-Namen (`groups.0`), nicht unter `groups.data`.
+- Props aus einer Resource-Collection mit `->resolve(request())` liegen direkt unter dem Prop-Namen (`groups.0`), nicht unter `groups.data`.
 - reCAPTCHA: `NoCaptcha::shouldReceive('verifyResponse')->andReturn(true)`.
 - Vite ist in `Tests\TestCase` abgeschaltet; Tests brauchen kein `npm run build`.
 
@@ -71,7 +71,7 @@ public function index(): Response
     $items = auth()->check() ? Item::with('relation')->get() : collect();
 
     return Inertia::render('Foo/Index', [
-        'items' => FooItemResource::collection($items),
+        'items' => FooItemResource::collection($items)->resolve(request()),
     ]);
 }
 ```
@@ -100,7 +100,7 @@ Erfolgs- und Fehlermeldungen nach einem Redirect laufen als Inertia-Flash und er
 
 ```php
 Toast::success('Name wurde erfolgreich gespeichert!'); // App\Http\Toast
-return redirect()->route('users.edit', $player);
+return redirect()->route('users.edit', $user);
 
 Toast::error('Du kannst nur das letzte Spiel einer Runde löschen!');
 return back();
@@ -110,7 +110,7 @@ return back();
 - Abgelehnte Aktionen (keine Berechtigung, unzulässiger Zustand) sind `Toast::error()`, nicht `withErrors([...])` ohne Feld.
 - Validierungsfehler bleiben `errors` und werden in der Page angezeigt: am `UFormField` oder, ohne passendes Eingabefeld, als `UAlert` (Beispiel `Rounds/Create`).
 - Test: `->assertInertiaFlash('toast', ['type' => 'success', 'message' => '…'])` auf der Redirect-Antwort, siehe `tests/Feature/FlashToastTest.php`.
-- Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt. Bekannt: `UserController` (`message`, → `users.edit`, #29), `GameController@destroy`, `CommentController@destroy`, `RoundController@destroy` (`deleteError`) (→ `rounds.show`, #32).
+- Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt. Bekannt: `GameController@destroy`, `CommentController@destroy`, `RoundController@destroy` (`deleteError`) (→ `rounds.show`, #32).
 
 ## Laden und Seitenwechsel
 

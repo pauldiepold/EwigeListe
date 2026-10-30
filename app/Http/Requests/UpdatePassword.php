@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UpdatePassword extends FormRequest
 {
-    protected function getRedirectUrl()
-    {
-        return parent::getRedirectUrl().'#passwort';
-    }
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -35,7 +30,7 @@ class UpdatePassword extends FormRequest
                 'required',
                 'min:6',
                 function ($attribute, $value, $fail) {
-                    if (! Hash::check($value, Auth::user()->password) && Auth::id() != 1) {
+                    if (! Hash::check($value, Auth::user()->password) && ! Auth::user()->isAdmin()) {
                         $fail('Das alte Passwort stimmt nicht!');
                     }
                 },
