@@ -110,6 +110,7 @@ class RoundController extends Controller
 
         return Inertia::render('Rounds/Create', [
             'players'          => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
+            'loggedInPlayerId' => auth()->user()->player->id,
         ]);
     }
 
@@ -232,7 +233,7 @@ class RoundController extends Controller
 
         $rounds = $roundsQuery
             ->with('players', 'liveRound')
-            ->withCount('games');
+            ->withCount(['games', 'groups']);
 
         return Datatables::of($rounds)
             ->addColumn('players', function ($round) {
