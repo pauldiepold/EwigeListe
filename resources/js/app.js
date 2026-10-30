@@ -2,12 +2,8 @@ import './bootstrap';
 import './scripts/custom.js';
 
 import { createApp } from 'vue';
-import { plugin as Slicksort } from 'vue-slicksort';
-import VueScrollTo from 'vue-scrollto';
 
-const app = createApp({})
-    .use(VueScrollTo, { offset: -70 })
-    .use(Slicksort);
+const app = createApp({});
 
 const files = import.meta.glob('./**/*.vue', { eager: true });
 Object.entries(files).forEach(([path, module]) => {

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use LogicException;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -32,6 +33,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'auth' => [
                 'user' => $this->authUserPayload($request),
+                'player' => $this->authPlayerPayload($request),
             ],
             'navigation' => [
                 'showCurrentRound' => fn (): bool => (bool) $request->user()?->player?->rounds()->exists(),
@@ -45,7 +47,7 @@ class HandleInertiaRequests extends Middleware
     }
 
     /**
-     * @return array{id: int, player_id: int|null}|null
+     * @return array{id: int}|null
      */
     private function authUserPayload(Request $request): ?array
     {
@@ -57,7 +59,28 @@ class HandleInertiaRequests extends Middleware
 
         return [
             'id' => (int) $user->id,
-            'player_id' => $user->player_id !== null ? (int) $user->player_id : null,
+        ];
+    }
+
+    /**
+     * Jeder Benutzer gehört genau einem Spieler; fehlt er, ist das ein Datenfehler.
+     *
+     * @return array{id: int, surname: string, name: string}|null
+     */
+    private function authPlayerPayload(Request $request): ?array
+    {
+        $user = $request->user();
+
+        if ($user === null) {
+            return null;
+        }
+
+        $player = $user->player ?? throw new LogicException("Benutzer {$user->id} hat keinen Spieler.");
+
+        return [
+            'id' => (int) $player->id,
+            'surname' => $player->surname,
+            'name' => $player->name,
         ];
     }
 }
