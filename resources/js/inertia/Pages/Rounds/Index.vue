@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import ArchiveRoundsTable from '@/Components/Rounds/ArchiveRoundsTable.vue';
 import { index as roundsIndex } from '@/routes/rounds';
@@ -14,9 +15,11 @@ const props = defineProps<{
   groupOptions: GroupOption[];
   selectedGroup: GroupOption;
   rounds: PaginatedRoundArchiveRows;
-  loggedInPlayerId: number;
   archiveSort: ArchiveSort;
 }>();
+
+const page = usePage<{ auth: { player: { id: number } | null } }>();
+const authPlayerId = computed(() => page.props.auth.player?.id ?? null);
 
 type RoundsIndexQuery = {
   sort?: ArchiveSortColumn;
@@ -34,12 +37,11 @@ function roundsIndexUrl(groupId: number, query: RoundsIndexQuery = {}): string {
   });
 }
 
-function onGroupChange(groupId: string): void {
-  const id = Number(groupId);
-  if (!id || id === props.selectedGroup.id) {
+function onGroupChange(groupId: number): void {
+  if (groupId === props.selectedGroup.id) {
     return;
   }
-  router.visit(roundsIndexUrl(id), {
+  router.visit(roundsIndexUrl(groupId), {
     preserveScroll: true,
     preserveState: false,
   });
@@ -69,27 +71,26 @@ function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc
   <AppLayout title="Rundenarchiv">
     <div class="mx-auto w-full max-w-5xl space-y-6 md:max-w-7xl">
       <UFormField label="Liste">
-        <select
-          class="focus:ring-primary w-full max-w-md rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-primary focus:outline-none focus:ring-1 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          :value="selectedGroup.id"
-          @change="onGroupChange(($event.target as HTMLSelectElement).value)"
-        >
-          <option v-for="group in groupOptions" :key="group.id" :value="group.id">
-            {{ group.name }}
-          </option>
-        </select>
+        <USelect
+          :model-value="selectedGroup.id"
+          :items="groupOptions"
+          value-key="id"
+          label-key="name"
+          class="w-full max-w-md"
+          @update:model-value="onGroupChange"
+        />
       </UFormField>
 
       <template v-if="rounds.total > 0">
         <ArchiveRoundsTable
           :rows="rounds.data"
-          :highlight-player-id="loggedInPlayerId"
+          :highlight-player-id="authPlayerId"
           :sort-column="archiveSort.column"
           :sort-direction="archiveSort.direction"
           @update:sort="onArchiveSortChange"
         />
 
-        <p class="text-slate-600 dark:text-slate-400">{{ rounds.total }} Runden</p>
+        <p class="text-muted">{{ rounds.total }} Runden</p>
 
         <UPagination
           v-if="rounds.last_page > 1"
@@ -102,9 +103,7 @@ function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc
         />
       </template>
 
-      <p v-else class="text-lg text-slate-700 dark:text-slate-300">
-        Bisher wurden keine Runden gespielt.
-      </p>
+      <p v-else class="text-lg text-toned">Bisher wurden keine Runden gespielt.</p>
     </div>
   </AppLayout>
 </template>

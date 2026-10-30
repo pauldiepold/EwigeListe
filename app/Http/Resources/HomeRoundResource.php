@@ -14,7 +14,6 @@ class HomeRoundResource extends JsonResource
 
         return [
             'id'         => $this->id,
-            'path'       => $this->path(),
             'players'    => $this->players->pluck('surname')->implode(' - '),
             'lastGameAt' => $lastGame ? printDate($lastGame->created_at) : null,
         ];

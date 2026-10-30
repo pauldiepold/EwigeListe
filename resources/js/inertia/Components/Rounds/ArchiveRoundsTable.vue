@@ -7,7 +7,7 @@ import type { ArchiveSortColumn, RoundArchiveRow } from '@/types/rounds-index';
 
 const props = defineProps<{
   rows: RoundArchiveRow[];
-  highlightPlayerId: number;
+  highlightPlayerId: number | null;
   sortColumn: ArchiveSortColumn;
   sortDirection: 'asc' | 'desc';
 }>();
@@ -84,7 +84,9 @@ const columns: ColumnDef<RoundArchiveRow>[] = [
 const tableMeta = computed(() => ({
   class: {
     tr: (row: Row<RoundArchiveRow>) =>
-      row.original.player_ids.includes(props.highlightPlayerId) ? 'bg-primary-light' : '',
+      props.highlightPlayerId !== null && row.original.player_ids.includes(props.highlightPlayerId)
+        ? 'bg-primary-light'
+        : '',
   },
 }));
 </script>

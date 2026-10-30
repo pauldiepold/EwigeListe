@@ -28,7 +28,7 @@ class RoundController extends Controller
 
     public function index(Group $group = null): Response
     {
-        $selectedGroup = $group ?? Group::findOrFail(1);
+        $selectedGroup = $group ?? Group::findOrFail(Group::EWIGE_LISTE_ID);
 
         $groups = Group::query()->orderBy('name')->get();
 
@@ -44,7 +44,7 @@ class RoundController extends Controller
             $query->where('groups.id', '=', $selectedGroup->id);
         })
             ->with(['players', 'liveRound'])
-            ->withCount(['games', 'groups']);
+            ->withCount('games');
 
         match ($sort) {
             'games' => $roundsQuery
@@ -69,7 +69,6 @@ class RoundController extends Controller
             'groupOptions'     => array_values(GroupOptionResource::collection($groups)->resolve($request)),
             'selectedGroup'    => (new GroupOptionResource($selectedGroup))->resolve($request),
             'rounds'           => $paginator,
-            'loggedInPlayerId' => auth()->user()->player->id,
             'archiveSort'      => [
                 'column'    => $sort,
                 'direction' => $direction,
@@ -111,7 +110,6 @@ class RoundController extends Controller
 
         return Inertia::render('Rounds/Create', [
             'players'          => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
-            'loggedInPlayerId' => auth()->user()->player->id,
         ]);
     }
 
@@ -234,7 +232,7 @@ class RoundController extends Controller
 
         $rounds = $roundsQuery
             ->with('players', 'liveRound')
-            ->withCount(['games', 'groups']);
+            ->withCount('games');
 
         return Datatables::of($rounds)
             ->addColumn('players', function ($round) {

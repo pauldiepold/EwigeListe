@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { show as showRound } from '@/routes/rounds';
 import type { HomeRound } from '@/types/home';
 
 defineProps<{
@@ -18,8 +20,10 @@ defineProps<{
       >
         <h3 class="mb-2 font-semibold text-highlighted">{{ round.players }}</h3>
         <p class="mb-2 text-sm text-muted">Letztes Spiel: {{ round.lastGameAt ?? '-' }}</p>
-        <a :href="round.path" class="text-sm font-medium text-primary hover:underline"
-          >Runde ansehen</a
+        <Link
+          :href="showRound.url({ round: round.id })"
+          class="text-sm font-medium text-primary hover:underline"
+          >Runde ansehen</Link
         >
       </article>
     </div>
