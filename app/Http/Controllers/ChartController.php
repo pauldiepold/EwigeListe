@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Profile;
 use App\Round;
-use App\Services\HomeGamesChartSeries;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -104,10 +102,5 @@ class ChartController extends Controller
         $data->put('gameCounter', $gameCounter->nth($n));
 
         return $data->toArray();
-    }
-
-    public function homeChart(Group $group, HomeGamesChartSeries $homeGamesChartSeries)
-    {
-        return $homeGamesChartSeries->forGroup($group);
     }
 }

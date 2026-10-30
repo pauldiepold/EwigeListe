@@ -141,6 +141,5 @@ resources/js/inertia/
 |---|---|
 | `data`-Verschachtelung im Frontend | `public static $wrap = null;` in der Resource |
 | `UTable` + `paginate()` | Nur die aktuelle Seite liegt im Browser. Sortieren/Filtern serverseitig (Query-Params, Sort-Spalten auf Whitelist, Tie-Breaker wie `orderByDesc('id')`), im Frontend `sorting-options: { manualSorting: true }`, bei Seitenwechsel dieselben `sort`/`direction`-Params mitschicken. Referenz: `RoundController@index`, `Pages/Rounds/Index.vue`, `Components/Rounds/ArchiveRoundsTable.vue` |
-| Positionsbasiertes JSON mit HTML (`Group::records`/`stats`) | Siehe `docs/tech-debt/group-positional-json.md` und #39 |
 | Chart.js-Animation in TS | `animation: false` statt `animation.duration = 0` |
 | Halbfertige Legacy-Features | Nicht mitmigrieren; als Issue mit Label `nach-migration` festhalten |

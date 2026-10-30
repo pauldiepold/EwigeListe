@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { onMounted, ref, toRef } from 'vue';
-import { useHomeChart } from '@/composables/useHomeChart';
-import type { HomeGamesChartPayload } from '@/types/home';
+import { useGamesChart } from '@/composables/useGamesChart';
+import type { GamesChartPayload } from '@/types/groups-show';
 
 const props = defineProps<{
-  chartData: HomeGamesChartPayload;
+  chartData: GamesChartPayload;
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-const { error } = useHomeChart(canvasRef, toRef(props, 'chartData'));
+const { error } = useGamesChart(canvasRef, toRef(props, 'chartData'));
 
 /** Sanftes Einblenden nach dem Deferred-Load (unabhängig von Chart.js). */
 const surfaceEntered = ref(false);

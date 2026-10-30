@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Game;
-use App\Group;
 use App\Player;
 use App\Round;
 use App\User;
@@ -27,7 +26,6 @@ class HomeControllerTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Home/Index')
-                ->where('group.id', Group::EWIGE_LISTE_ID)
                 ->where('currentRounds', [])
             );
     }
@@ -87,30 +85,6 @@ class HomeControllerTest extends TestCase
                     ->where('players', 'Anna - Ben')
                     ->where('lastGameAt', 'heute  um 13:00 Uhr')
                 )
-            );
-    }
-
-    #[Test]
-    public function the_home_page_shows_records_and_stats_of_the_ewige_liste(): void
-    {
-        $group = Group::findOrFail(Group::EWIGE_LISTE_ID);
-        $group->records = collect([['Höchste Punktzahl', '42', 'Anna']]);
-        $group->stats = collect([['Spiele', '7']]);
-        $group->save();
-
-        $this->get(route('index'))
-            ->assertInertia(fn (Assert $page) => $page
-                ->has('group.records', 1)
-                ->where('group.records.0', [
-                    'labelHtml' => 'Höchste Punktzahl',
-                    'value' => '42',
-                    'detailHtml' => 'Anna',
-                ])
-                ->has('group.stats', 1)
-                ->where('group.stats.0', [
-                    'labelHtml' => 'Spiele',
-                    'value' => '7',
-                ])
             );
     }
 

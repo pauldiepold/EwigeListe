@@ -8,10 +8,10 @@ use App\Http\Requests\UpdateRound;
 use App\Http\Resources\CreateRoundPlayerResource;
 use App\Http\Resources\GroupOptionResource;
 use App\Http\Resources\Round as RoundResource;
-use App\Http\Resources\RoundArchiveRowResource;
 use App\Player;
 use App\Profile;
 use App\Round;
+use App\Services\RoundArchive;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -22,53 +22,16 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
 {
-    public function index(?Group $group = null): Response
+    public function index(Request $request, RoundArchive $roundArchive, ?Group $group = null): Response
     {
         $selectedGroup = $group ?? Group::findOrFail(Group::EWIGE_LISTE_ID);
 
         $groups = Group::query()->orderBy('name')->get();
 
-        $request = request();
-
-        $sort = $request->query('sort');
-        $directionInput = strtolower((string) $request->query('direction', 'desc'));
-        $allowedSorts = ['date', 'games', 'online'];
-        $sort = in_array($sort, $allowedSorts, true) ? $sort : 'date';
-        $direction = $directionInput === 'asc' ? 'asc' : 'desc';
-
-        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($selectedGroup) {
-            $query->where('groups.id', '=', $selectedGroup->id);
-        })
-            ->with(['players', 'liveRound'])
-            ->withCount('games');
-
-        match ($sort) {
-            'games' => $roundsQuery
-                ->orderBy('games_count', $direction)
-                ->orderByDesc('rounds.id'),
-            'online' => $roundsQuery
-                ->orderByRaw('(live_round_id IS NOT NULL) '.strtoupper($direction))
-                ->orderByDesc('rounds.id'),
-            default => $roundsQuery
-                ->orderBy('updated_at', $direction)
-                ->orderByDesc('rounds.id'),
-        };
-
-        $paginator = $roundsQuery->paginate(20)->withQueryString();
-        $paginator->setCollection(
-            $paginator->getCollection()->map(
-                static fn (Round $round) => (new RoundArchiveRowResource($round))->resolve($request)
-            )
-        );
-
         return Inertia::render('Rounds/Index', [
             'groupOptions' => array_values(GroupOptionResource::collection($groups)->resolve($request)),
             'selectedGroup' => (new GroupOptionResource($selectedGroup))->resolve($request),
-            'rounds' => $paginator,
-            'archiveSort' => [
-                'column' => $sort,
-                'direction' => $direction,
-            ],
+            ...$roundArchive->forGroup($selectedGroup, $request),
         ]);
     }
 

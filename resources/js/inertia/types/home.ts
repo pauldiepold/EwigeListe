@@ -1,27 +1,13 @@
-export type RecordRow = {
-  labelHtml: string;
-  value: string;
-  detailHtml: string;
-};
-
-export type StatRow = {
-  labelHtml: string;
-  value: string;
-};
-
-export type HomeGamesChartPayload = {
-  gameDates: string[];
-  gameCounter: number[];
-};
-
-export type HomeGroup = {
-  id: number;
-  records: RecordRow[];
-  stats: StatRow[];
-};
+import type { GamesChartPayload, GroupStatistics } from '@/types/groups-show';
 
 export type HomeRound = {
   id: number;
   players: string;
   lastGameAt: string | null;
+};
+
+export type HomeProps = {
+  group: GroupStatistics;
+  currentRounds: HomeRound[];
+  homeGamesChart?: GamesChartPayload;
 };

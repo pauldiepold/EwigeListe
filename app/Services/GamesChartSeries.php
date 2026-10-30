@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Kumulierte Spielanzahl pro Gruppe für das Startseiten-Chart (Zeitreihe).
+ * Kumulierte Spielanzahl pro Liste für das Spiele-Chart (Zeitreihe).
  *
  * @return array{gameDates: list<string>, gameCounter: list<int>}
  */
-class HomeGamesChartSeries
+class GamesChartSeries
 {
     public function forGroup(Group $group): array
     {
