@@ -36,7 +36,7 @@ class HandleInertiaRequests extends Middleware
                 'player' => $this->authPlayerPayload($request),
             ],
             'navigation' => [
-                'showCurrentRound' => fn (): bool => (bool) $request->user()?->player?->rounds()->exists(),
+                'showCurrentRound' => fn (): bool => (bool) $request->user()?->player->rounds()->exists(),
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

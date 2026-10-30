@@ -20,8 +20,7 @@ class InertiaShellTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->where('auth.user', null)
-                ->where('auth.player', null)
-                ->where('navigation.showCurrentRound', false));
+                ->where('auth.player', null));
     }
 
     #[Test]
@@ -43,18 +42,23 @@ class InertiaShellTest extends TestCase
     }
 
     #[Test]
+    public function the_current_round_is_hidden_while_the_player_has_no_round(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('navigation.showCurrentRound', false));
+    }
+
+    #[Test]
     public function the_current_round_is_offered_once_the_player_has_a_round(): void
     {
         $user = User::factory()->create();
-
-        $this->actingAs($user)
-            ->get(route('index'))
-            ->assertInertia(fn (Assert $page) => $page->where('navigation.showCurrentRound', false));
-
         Round::factory()->create()->players()->attach($user->player, ['index' => 0]);
 
         $this->actingAs($user)
             ->get(route('index'))
+            ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->where('navigation.showCurrentRound', true));
     }
 
@@ -63,8 +67,8 @@ class InertiaShellTest extends TestCase
     {
         $this->get(route('index'))
             ->assertOk()
-            ->assertSee('rel="manifest"', false)
-            ->assertSee('name="theme-color"', false)
-            ->assertSee('rel="apple-touch-icon"', false);
+            ->assertSee('<link rel="manifest" href="'.asset('manifest.json').'"', false)
+            ->assertSee('<meta name="theme-color" content="#054b6d"', false)
+            ->assertSee('href="'.asset('img/apple-touch-icon.png').'"', false);
     }
 }

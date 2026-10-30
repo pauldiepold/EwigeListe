@@ -17,8 +17,8 @@ createInertiaApp({
   },
 });
 
-const isLocalHost = location.hostname === 'localhost' || location.hostname.endsWith('.test');
+const isLocalDevHost = location.hostname === 'localhost' || location.hostname.endsWith('.test');
 
-if ('serviceWorker' in navigator && !isLocalHost) {
+if ('serviceWorker' in navigator && !isLocalDevHost) {
   void navigator.serviceWorker.register('/service-worker.js');
 }

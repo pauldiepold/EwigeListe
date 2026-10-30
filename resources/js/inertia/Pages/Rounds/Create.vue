@@ -139,6 +139,7 @@ if (initialPlayer) {
               v-model="searchTerm"
               icon="i-lucide-search"
               placeholder="Bitte Namen eingeben"
+              :ui="{ base: 'scroll-mt-16' }"
               @focus="scrollSearchIntoView"
               @keyup.enter="filteredPlayers.length === 1 ? addPlayer(filteredPlayers[0]) : null"
             />
