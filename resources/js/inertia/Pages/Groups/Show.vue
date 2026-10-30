@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Head, router, WhenVisible } from '@inertiajs/vue3';
+import { Head, WhenVisible } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChart from '@/Components/Groups/GamesChart.vue';
 import GamesChartLoading from '@/Components/Groups/GamesChartLoading.vue';
@@ -9,11 +9,11 @@ import GroupBadges from '@/Components/Groups/GroupBadges.vue';
 import GroupMembersPanel from '@/Components/Groups/GroupMembersPanel.vue';
 import GroupStatisticsTable from '@/Components/Groups/GroupStatisticsTable.vue';
 import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
+import { useRoundArchiveVisit } from '@/composables/useRoundArchiveVisit';
 import { EWIGE_LISTE } from '@/composables/useRoundListSelection';
 import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { index as groupsIndex, show as showGroup } from '@/routes/groups';
 import type { GroupShowProps } from '@/types/groups-show';
-import type { ArchiveSortColumn } from '@/types/rounds-index';
 
 const props = defineProps<GroupShowProps>();
 
@@ -35,29 +35,10 @@ const tabs = computed(() => [
 
 const activeTab = useTabInUrlHash(tabs, 'mitglieder', 'Groups/Show');
 
-function visitArchive(query: {
-  sort: ArchiveSortColumn;
-  direction: 'asc' | 'desc';
-  page: number;
-}): void {
-  router.visit(showGroup.url(props.group.id, { query }), {
-    only: ['rounds', 'archiveSort'],
-    preserveScroll: true,
-    preserveState: true,
-  });
-}
-
-function onArchivePageChange(targetPage: number): void {
-  visitArchive({
-    sort: props.archiveSort.column,
-    direction: props.archiveSort.direction,
-    page: targetPage,
-  });
-}
-
-function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc'): void {
-  visitArchive({ sort: column, direction, page: 1 });
-}
+const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
+  () => props.archiveSort,
+  (query) => showGroup.url(props.group.id, { query }),
+);
 </script>
 
 <template>

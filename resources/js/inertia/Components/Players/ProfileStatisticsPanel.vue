@@ -4,15 +4,16 @@ import type { ProfileStatistics } from '@/types/players-show';
 
 defineProps<{
   profile: ProfileStatistics;
+  badgeCount: number;
 }>();
 </script>
 
 <template>
   <section class="mx-auto max-w-md space-y-6">
     <template v-if="profile.statistics">
-      <p v-if="profile.badgeCount > 0" class="flex items-center gap-2 text-sm">
+      <p v-if="badgeCount > 0" class="flex items-center gap-2 text-sm">
         <span class="text-muted">Abzeichen:</span>
-        <span class="font-semibold text-highlighted">{{ profile.badgeCount }}</span>
+        <span class="font-semibold text-highlighted">{{ badgeCount }}</span>
         <UIcon name="i-lucide-crown" class="size-5 text-yellow-500" aria-hidden="true" />
       </p>
 

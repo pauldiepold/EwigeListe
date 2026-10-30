@@ -86,6 +86,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 
 **Keine Vollseiten, bleiben als Endpunkte:** `charts/round/{round}` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
 
+**Ungenutzt, noch installiert:** `yajra/laravel-datatables-oracle`. Seit #31 greift nichts mehr darauf zu, der Ausbau des Pakets bleibt bei #45.
+
 ## Entscheidungen
 
 | Datum | Entscheidung | Begründung |
@@ -134,7 +136,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Jeder Spieler gehört zu genau einem Benutzer: `PlayerRegistration` legt Spieler, Benutzer und Mitgliedschaft in der Ewigen Liste in einer Transaktion an, `users.player_id` ist eindeutig. Die Migration bricht bei Verstößen mit den IDs ab; dieses Ticket läuft trotz lokaler Session über Staging | „Jeder Spieler hat einen Benutzer“ ist per Datenbank nicht erzwingbar (MySQL kann Fremdschlüssel nicht aufschieben). Bereinigt wird gezielt statt automatisch; ob die Prod-Daten passen, zeigt nur der Lauf mit Prod-Dump (#73) |
 | 2026-10-30 | Versteckte Spieler sperrt eine Middleware im `web`-Stack bei jedem Request (Logout, Redirect auf den Login, Toast), der Admin ist ausgenommen. Keine eigene Fehlermeldung im `LoginController` | Deckt mit einem Weg Passwort-Login, Socialite, Passwort-Reset, laufende Sessions und „Angemeldet bleiben“ ab; die Meldung erscheint nur bei korrektem Passwort und verrät Fremden nichts. Vor dem Prod-Deploy prüft Paul die Liste `WHERE hide = 1` (#73) |
 | 2026-10-30 | Profile versteckter Spieler und von KI-Spielern sind nur für den Admin sichtbar (`PlayerPolicy`, 403). In Tabellen, Rekorden und Abzeichen bleiben die Namen stehen, die Resources liefern dann `path: null` und der Name erscheint ohne Link | Betrifft nur das Profil, nicht die Auswertung der Liste; ein Link auf einen 403 wäre eine Sackgasse. Die Rundenseite zieht mit #32 nach (#31) |
-| 2026-10-30 | Profil-Charts wie auf der Listen-Seite per `Inertia::optional` + `WhenVisible`, Berechnung 1:1 in `ProfileChartSeries`, `charts/profile/{profile}` gelöscht | Ein Muster, und die Sperre gilt ohne eigenen Endpunkt. Die Berechnung lädt alle Spiele des Spielers; ob das auf Prod reicht, zeigt die Abnahme auf Staging (#31) |
+| 2026-10-30 | Profil-Charts wie auf der Listen-Seite per `Inertia::optional` + `WhenVisible`, Berechnung in `ProfileChartSeries`, `charts/profile/{profile}` gelöscht | Ein Muster, und die Sperre gilt ohne eigenen Endpunkt. Die Berechnung lädt alle Spiele des Spielers; ob das auf Prod reicht, zeigt die Abnahme auf Staging. Gegenüber `master` korrigiert: Tage ohne Spiel zählten das nächste Spiel schon mit, beim Ausdünnen konnte der neueste Punkt fehlen (#31) |
 | 2026-10-30 | Profil zeigt immer alle fünf Tabs, leere mit Hinweistext; die Listen-Seite blendet leere Tabs aus | Der Listenwechsel im Profil behält den Tab, er darf nicht wegspringen, weil die neue Liste keine Abzeichen hat (#31) |
 | 2026-10-30 | Der Begriff bleibt überall „Abzeichen“, „Monatsrekorde“ aus der alten Profil-Seite entfällt | Eine Sache, ein Name; „Rekord“ ist der Bestwert einer Liste (#31) |
 

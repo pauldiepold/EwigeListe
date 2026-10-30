@@ -36,6 +36,7 @@ class PlayerController extends Controller
             'selectedGroupId' => $group->id,
             'profile' => new ProfileStatisticsResource($profile),
             'badges' => (new BadgesResource($badges))->withoutLinks(),
+            'badgeCount' => $badges->count(),
             ...$roundArchive->forGroup($group, $request, $player),
             ...($hasStatistics ? ['profileChart' => Inertia::optional(fn (): array => $profileChartSeries->forProfile($profile))] : []),
         ]);

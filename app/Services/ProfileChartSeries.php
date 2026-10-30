@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Profile;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * Punkteverlauf und kumulierte Spielanzahl eines Profils für die Charts (Zeitreihen).
@@ -14,8 +15,6 @@ class ProfileChartSeries
     private const MAX_POINTS = 700;
 
     /**
-     * Setzt voraus, dass das Profil mindestens ein Spiel hat.
-     *
      * @return array{dates: list<string>, points: list<int>, gameDates: list<string>, gameCounter: list<int>}
      */
     public function forProfile(Profile $profile): array
@@ -27,6 +26,10 @@ class ProfileChartSeries
             })
             ->oldest()
             ->get();
+
+        if ($games->isEmpty()) {
+            return ['dates' => [], 'points' => [], 'gameDates' => [], 'gameCounter' => []];
+        }
 
         $dates = collect();
         $points = collect();
@@ -50,7 +53,7 @@ class ProfileChartSeries
 
             while ($date->lessThan($currentDate->startOfDay())) {
                 $gameDates->push($date->isoFormat('D. MMM YYYY'));
-                $gameCounter->push($i + 1);
+                $gameCounter->push($i);
                 $date->addDay();
             }
 
@@ -59,13 +62,31 @@ class ProfileChartSeries
         $gameDates->push($currentDate->isoFormat('D. MMM YYYY'));
         $gameCounter->push($i);
 
-        $step = (int) ceil($i / self::MAX_POINTS);
-
         return [
-            'dates' => $dates->nth($step)->all(),
-            'points' => $points->nth($step)->all(),
-            'gameDates' => $gameDates->nth($step)->all(),
-            'gameCounter' => $gameCounter->nth($step)->all(),
+            'dates' => $this->thinOut($dates),
+            'points' => $this->thinOut($points),
+            'gameDates' => $this->thinOut($gameDates),
+            'gameCounter' => $this->thinOut($gameCounter),
         ];
+    }
+
+    /**
+     * Begrenzt die Anzahl der Punkte, der neueste bleibt immer erhalten.
+     *
+     * @template TValue
+     *
+     * @param  Collection<int, TValue>  $series
+     * @return list<TValue>
+     */
+    private function thinOut(Collection $series): array
+    {
+        $step = (int) ceil($series->count() / self::MAX_POINTS);
+        $thinnedOut = $series->nth($step);
+
+        if (($series->count() - 1) % $step !== 0) {
+            $thinnedOut->push($series->last());
+        }
+
+        return $thinnedOut->all();
     }
 }

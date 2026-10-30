@@ -6,12 +6,12 @@ import GroupBadges from '@/Components/Groups/GroupBadges.vue';
 import ProfileCharts from '@/Components/Players/ProfileCharts.vue';
 import ProfileStatisticsPanel from '@/Components/Players/ProfileStatisticsPanel.vue';
 import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
+import { useRoundArchiveVisit } from '@/composables/useRoundArchiveVisit';
 import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { show as showGroup } from '@/routes/groups';
 import { show as showPlayer } from '@/routes/players';
 import { edit as editUser } from '@/routes/users';
 import type { PlayerShowProps } from '@/types/players-show';
-import type { ArchiveSortColumn } from '@/types/rounds-index';
 
 const props = defineProps<PlayerShowProps>();
 
@@ -37,32 +37,10 @@ function onGroupChange(groupId: number): void {
   });
 }
 
-function visitArchive(query: {
-  sort: ArchiveSortColumn;
-  direction: 'asc' | 'desc';
-  page: number;
-}): void {
-  router.visit(
-    showPlayer.url({ player: props.player.id, group: props.selectedGroupId }, { query }),
-    {
-      only: ['rounds', 'archiveSort'],
-      preserveScroll: true,
-      preserveState: true,
-    },
-  );
-}
-
-function onArchivePageChange(targetPage: number): void {
-  visitArchive({
-    sort: props.archiveSort.column,
-    direction: props.archiveSort.direction,
-    page: targetPage,
-  });
-}
-
-function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc'): void {
-  visitArchive({ sort: column, direction, page: 1 });
-}
+const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
+  () => props.archiveSort,
+  (query) => showPlayer.url({ player: props.player.id, group: props.selectedGroupId }, { query }),
+);
 </script>
 
 <template>
@@ -94,7 +72,11 @@ function onArchiveSortChange(column: ArchiveSortColumn, direction: 'asc' | 'desc
         />
       </UFormField>
 
-      <ProfileStatisticsPanel v-if="activeTab === 'statistiken'" :profile="profile" />
+      <ProfileStatisticsPanel
+        v-if="activeTab === 'statistiken'"
+        :profile="profile"
+        :badge-count="badgeCount"
+      />
 
       <template v-else-if="activeTab === 'graphen'">
         <ProfileCharts

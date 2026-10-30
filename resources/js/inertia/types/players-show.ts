@@ -3,7 +3,6 @@ import type { ArchiveSort, GroupOption, PaginatedRoundArchiveRows } from '@/type
 
 export type ProfileStatistics = {
   joinedLabel: string;
-  badgeCount: number;
   statistics: StatRow[][] | null;
   opportunityCosts: StatRow[] | null;
 };
@@ -24,6 +23,7 @@ export type PlayerShowProps = {
   selectedGroupId: number;
   profile: ProfileStatistics;
   badges: GroupBadgesOfType[];
+  badgeCount: number;
   rounds: PaginatedRoundArchiveRows;
   archiveSort: ArchiveSort;
   profileChart?: ProfileChartPayload;

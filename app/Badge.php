@@ -27,7 +27,7 @@ class Badge extends Model
     /**
      * `null`, wenn der Betrachter dieses Profil nicht sehen darf: Der Name erscheint dann ohne Link.
      */
-    public function playerPathFor(User $viewer): ?string
+    public function playerPathFor(?User $viewer): ?string
     {
         return Gate::forUser($viewer)->allows('view', $this->player) ? $this->playerPath() : null;
     }

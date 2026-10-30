@@ -28,13 +28,12 @@ class ProfileStatisticsResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return array{joinedLabel: string, badgeCount: int, statistics: ?list<list<Row>>, opportunityCosts: ?list<Row>}
+     * @return array{joinedLabel: string, statistics: ?list<list<Row>>, opportunityCosts: ?list<Row>}
      */
     public function toArray(Request $request): array
     {
         return [
             'joinedLabel' => $this->joinedLabel(),
-            'badgeCount' => $this->badges()->count(),
             'statistics' => $this->games >= self::MINIMUM_GAMES ? $this->statistics() : null,
             'opportunityCosts' => $this->games > self::OPPORTUNITY_COSTS_ABOVE_GAMES ? $this->opportunityCosts() : null,
         ];

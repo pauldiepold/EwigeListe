@@ -344,7 +344,7 @@ class PlayerShowTest extends TestCase
         $this->get(route('players.show', [$player, $list]))
             ->assertInertia(fn (Assert $page) => $page
                 ->has('badges', 2)
-                ->where('profile.badgeCount', 2)
+                ->where('badgeCount', 2)
                 ->where('badges.0.type', 'games')
                 ->where('badges.1.type', 'points')
                 ->where('badges.1.years.0', [
@@ -373,8 +373,41 @@ class PlayerShowTest extends TestCase
                         'dates' => ['1. Jan 2023', '1. Jan 2023', '3. Jan 2023'],
                         'points' => [3, 2, 6],
                         'gameDates' => ['1. Jan 2023', '1. Jan 2023', '2. Jan 2023', '3. Jan 2023'],
-                        'gameCounter' => [0, 3, 3, 3],
+                        'gameCounter' => [0, 2, 2, 3],
                     ])
+                )
+            );
+    }
+
+    #[Test]
+    public function the_charts_stay_empty_when_the_stored_game_count_is_outdated(): void
+    {
+        $player = $this->memberOfEwigeListe();
+        $this->setProfile($player, ['games' => 10]);
+
+        $this->get(route('players.show', $player))
+            ->assertInertia(fn (Assert $page) => $page
+                ->reloadOnly('profileChart', fn (Assert $reload) => $reload
+                    ->where('profileChart', ['dates' => [], 'points' => [], 'gameDates' => [], 'gameCounter' => []])
+                )
+            );
+    }
+
+    #[Test]
+    public function thinned_out_charts_keep_the_newest_game(): void
+    {
+        $player = $this->memberOfEwigeListe();
+        $this->setProfile($player, ['games' => 702]);
+        $round = Round::factory()->create();
+        $round->groups()->attach(Group::EWIGE_LISTE_ID);
+        $games = Game::factory()->count(702)->create(['round_id' => $round->id]);
+        $player->games()->attach($games->pluck('id'), ['points' => 1, 'soloist' => false, 'won' => true, 'misplayed' => false]);
+
+        $this->get(route('players.show', $player))
+            ->assertInertia(fn (Assert $page) => $page
+                ->reloadOnly('profileChart', fn (Assert $reload) => $reload
+                    ->where('profileChart.points', fn ($points) => count($points) <= 700 + 1 && collect($points)->last() === 702)
+                    ->where('profileChart.gameCounter', fn ($counter) => collect($counter)->last() === 702)
                 )
             );
     }
