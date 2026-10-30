@@ -40,16 +40,14 @@ class QuickRegisterController extends Controller
             'name' => $request->name
         ]);
 
-        $password = Str::random(14);
-
         User::create([
             'player_id' => $player->id,
             'email' => $this->placeholderEmail(),
-            'password' => Hash::make($password),
+            'password' => Hash::make(Str::random(14)),
         ]);
 
         // Füge Spieler zur Standard-Gruppe hinzu
-        Group::find(1)->addPlayer($player);
+        Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player);
 
         // Berechne das erste Profil
         $player->profiles->first()->calculate();
@@ -70,12 +68,9 @@ class QuickRegisterController extends Controller
     }
 
     /**
-     * Get a validator for an incoming quick registration request.
-     *
-     * @param array $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @param  array<string, mixed>  $data
      */
-    protected function validator(array $data)
+    protected function validator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $messages = [
             'surname.required' => 'Es muss ein Vorname angegeben werden!',

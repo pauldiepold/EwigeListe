@@ -8,13 +8,19 @@
 let recaptchaLoaded: Promise<void> | null = null;
 
 function loadRecaptcha(): Promise<void> {
-  recaptchaLoaded ??= new Promise((resolve) => {
+  recaptchaLoaded ??= new Promise((resolve, reject) => {
     window.onRecaptchaLoad = () => resolve();
     const script = document.createElement('script');
     script.src =
       'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit&hl=de';
     script.async = true;
     script.defer = true;
+    // Ladefehler (Netz, Adblocker): beim nächsten Besuch der Seite neu versuchen.
+    script.onerror = () => {
+      script.remove();
+      recaptchaLoaded = null;
+      reject(new Error('reCAPTCHA konnte nicht geladen werden.'));
+    };
     document.head.appendChild(script);
   });
   return recaptchaLoaded;
@@ -62,7 +68,9 @@ function submit(): void {
 }
 
 onMounted(() => {
-  void loadRecaptcha().then(renderCaptcha);
+  loadRecaptcha()
+    .then(renderCaptcha)
+    .catch(() => undefined);
 });
 
 function renderCaptcha(): void {

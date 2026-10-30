@@ -20,16 +20,21 @@ class PasswordResetTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
+    public function the_forgot_password_page_renders(): void
+    {
+        $this->get(route('password.request'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
+    }
+
+    #[Test]
     public function requesting_a_reset_link_sends_the_notification(): void
     {
         Notification::fake();
         $user = User::factory()->create();
 
-        $this->get(route('password.request'))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Auth/ForgotPassword'));
-
-        $this->post(route('password.email'), ['email' => $user->email]);
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertSessionHasNoErrors();
 
         Notification::assertSentTo($user, MyOwnResetPassword::class);
     }
@@ -56,8 +61,9 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
             'password' => 'neuesPasswort123',
             'password_confirmation' => 'neuesPasswort123',
-        ])->assertSessionHasNoErrors();
+        ])->assertSessionHasNoErrors()->assertRedirect('/home');
 
+        $this->assertAuthenticatedAs($user);
         $this->assertTrue(Hash::check('neuesPasswort123', $user->fresh()->password));
     }
 }
