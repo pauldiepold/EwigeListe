@@ -66,7 +66,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `rundenarchiv/{group?}` | `rounds.index` | `RoundController@index` | `Rounds/Index` | #28 | ✅ | Sortierung serverseitig (`sort`, `direction`), `UTable` mit `manualSorting` |
 | GET | `listen` | `groups.index` | `GroupController@index` | `Groups/Index` | #28 | ✅ | |
 | GET | `liste/erstellen` | `groups.create` | `GroupController@create` | `Groups/Create` | #28 | ✅ | nur Namensfeld |
-| GET | `login`, `register`, `password/*`, `register/quick`, `login/social/{socialiteUser}` | diverse | Auth-Controller | `Auth/*` | #28 | ✅ | `UAuthForm`, reCAPTCHA, Socialite-Attach |
+| GET | `login`, `register`, `password/*`, `login/social/{socialiteUser}` | diverse | Auth-Controller | `Auth/*` | #28 | ✅ | `UAuthForm`, reCAPTCHA, Socialite-Attach; Nachbesserungen und Tests #54 |
+| GET | `register/quick` | `register.quick` | `QuickRegisterController@show` | — | #54 | gestrichen | Schnellregistrierung ist ein Modal in `Rounds/Create`, nur noch `POST register/quick` |
 | GET | `datenschutz`, `impressum`, `regeln` | gleichnamig | `StaticPageController` | `Static/*` | #28 | ✅ | |
 | GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | todo | 4 PATCH-Formulare, Avatar-Upload mit Cropper; `UserController` `->with('message')` (3×) auf `Toast::success()` umstellen |
 | GET | `liste`, `liste/{group}` | `ewigeListe`, `groups.show` | `GroupController@show` | `Groups/Show` | #30 | todo | mit `records`/`stats` (#39) und POST für beitreten/verlassen/schließen (#40) |
@@ -109,6 +110,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Echtzeit-Aktualisierung der Offline-Runde (`RoundUpdated`) kommt mit #32, nicht erst in Phase 5; Echo verbindet sich nur auf Seiten, die lauschen | Bei jedem Spieleabend schauen mehrere Handys auf die Punkte; ohne Push wäre Staging zwischen #32 und #36 schlechter als Prod. Pusher vs. Reverb bleibt bei #36 (nur Transport) |
 | 2026-10-30 | Meldungen nach Aktionen als Inertia-v3-Flash `toast` (`App\Http\Toast::success/error`), zentral als Toast an der App-Wurzel (`AppRoot.vue`); nur `success` und `error`; Validierungsfehler bleiben `errors` der Page | eine Stelle statt Anzeige pro Page; Inertia-Flash landet nicht im History-State, kommt also beim Zurück-Button nicht wieder; weitere Typen erst bei Bedarf (Live-Spiel) (#53) |
 | 2026-10-30 | CI/Deploy-Runner fest auf `ubuntu-26.04`, Actions auf Node-24-Majors (`checkout@v7`, `setup-node@v7`, `cache@v6`), Node-Version aus `.nvmrc` (24) | `ubuntu-latest` wechselt ohnehin bis 19.11.2026 auf 26.04, fest gepinnt wechselt nichts unbemerkt; Node 26 ist erst seit 28.10.2026 LTS, der Server baut mit Node 24, CI soll dieselbe Version nutzen – Umstieg auf 26 zusammen mit dem Server |
+| 2026-10-30 | Schnellregistrierung als Modal in „Neue Runde“ statt eigener Seite; der neue Spieler kommt per Inertia-Flash `addedPlayerId` zurück und wird direkt ausgewählt | Mit eigener Seite geht die bisherige Auswahl verloren (der Redirect ist ein neuer History-Eintrag, `useRemember` hilft nicht); das Modal mit `preserveState` erhält sie ohne Übergangscode (#54) |
+| 2026-10-30 | Schnellregistrierte Benutzer bekommen eine Platzhalter-E-Mail (`schnellregistrierung-<uuid>@ewigeliste.invalid`) statt einer Pflichtangabe | Die Personen loggen sich realistisch nie ein; erfundene Adressen blockierten sonst später die echte. Login bei Bedarf durch Nachtragen der echten E-Mail (#54) |
 
 ## Offene Fragen
 
@@ -132,3 +135,4 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Benutzer- und Spieler-IDs nie gleichsetzen: Jede `GroupFactory` legt einen eigenen Spieler (`created_by`) an, die IDs laufen also auseinander. Ältere Tests schickten Benutzer-IDs als `players` und waren nur zufällig grün (#51).
 - Eine Migration kann Funktionen still verlieren, die berechnet, aber nie gerendert werden (Listenauswahl in `rounds.create`, #51). Beim Review die Legacy-Kerninteraktionen einzeln gegen die neue Page abhaken.
 - Laravel-Auth-Traits (`SendsPasswordResetEmails`, `ResetsPasswords`) setzen Session-`status`. Für Toasts `sendResetLinkResponse`/`sendResetResponse` im Controller überschreiben (#53).
+- `useRemember` speichert im History-State des aktuellen Eintrags. Ein Formular-POST mit Redirect zurück auf die Seite erzeugt einen neuen Eintrag: Der gemerkte State ist dort leer. Zustand über einen Umweg erhalten geht nur ohne Navigation (Modal mit `preserveState`) (#54).

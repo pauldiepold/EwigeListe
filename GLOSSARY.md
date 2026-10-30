@@ -24,6 +24,10 @@ _Avoid_: Mitspieler, Teilnehmer, User
 Das Login-Konto einer echten Person; gehört genau einem Spieler.
 _Avoid_: Account, User, Spieler
 
+**Schnellregistrierung**:
+Ein angemeldeter Benutzer legt beim Erstellen einer Runde für eine andere Person einen Spieler an, der sofort in der Runde mitspielt. Dazu entsteht ein Benutzer ohne echte E-Mail und ohne bekanntes Passwort; ein Login ist nicht vorgesehen, ließe sich durch Nachtragen der echten E-Mail und „Passwort vergessen“ nachholen.
+_Avoid_: Quick-Register, Gastspieler
+
 **Versteckter Spieler**:
 Ein Spieler, der nicht mehr für neue Runden ausgewählt werden kann (z. B. ehemalige Mitspieler oder Testkonten). Wird nur direkt in der Datenbank gesetzt.
 _Avoid_: Inaktiver Spieler, gelöschter Spieler

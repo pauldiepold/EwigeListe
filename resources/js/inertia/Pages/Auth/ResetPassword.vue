@@ -29,6 +29,8 @@ const fields = computed(() => [
     label: 'E-Mail Adresse',
     autocomplete: 'email',
     required: true,
+    // UAuthForm hält eigenen State; ohne defaultValue bleibt die E-Mail aus dem Link leer.
+    defaultValue: props.email,
     error: form.errors.email,
   },
   {

@@ -1,3 +1,32 @@
+<script lang="ts">
+/**
+ * Lädt die reCAPTCHA-API einmal pro App. Erst der `onload`-Callback der API garantiert,
+ * dass `grecaptcha.render` bereit ist; das Script-`onload` kommt dafür zu früh. Das Promise
+ * liegt auf Modulebene, damit es SPA-Navigation überlebt: Kommt man auf die Seite zurück,
+ * während das Script noch lädt, wartet die neue Instanz auf dasselbe Promise.
+ */
+let recaptchaLoaded: Promise<void> | null = null;
+
+function loadRecaptcha(): Promise<void> {
+  recaptchaLoaded ??= new Promise((resolve, reject) => {
+    window.onRecaptchaLoad = () => resolve();
+    const script = document.createElement('script');
+    script.src =
+      'https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit&hl=de';
+    script.async = true;
+    script.defer = true;
+    // Ladefehler (Netz, Adblocker): beim nächsten Besuch der Seite neu versuchen.
+    script.onerror = () => {
+      script.remove();
+      recaptchaLoaded = null;
+      reject(new Error('reCAPTCHA konnte nicht geladen werden.'));
+    };
+    document.head.appendChild(script);
+  });
+  return recaptchaLoaded;
+}
+</script>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
@@ -39,18 +68,9 @@ function submit(): void {
 }
 
 onMounted(() => {
-  const scriptId = 'recaptcha-script';
-  if (!document.getElementById(scriptId)) {
-    const script = document.createElement('script');
-    script.id = scriptId;
-    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit&hl=de';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => renderCaptcha();
-    document.head.appendChild(script);
-  } else if (window.grecaptcha) {
-    renderCaptcha();
-  }
+  loadRecaptcha()
+    .then(renderCaptcha)
+    .catch(() => undefined);
 });
 
 function renderCaptcha(): void {

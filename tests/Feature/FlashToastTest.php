@@ -29,8 +29,6 @@ class FlashToastTest extends TestCase
                 'type' => 'success',
                 'message' => 'Spieler Max Mustermann wurde erfolgreich erstellt!',
             ]);
-
-        $this->assertDatabaseHas('users', ['email' => 'max@example.com']);
     }
 
     #[Test]
@@ -86,14 +84,13 @@ class FlashToastTest extends TestCase
     }
 
     /**
-     * @return array{surname: string, name: string, email: string}
+     * @return array{surname: string, name: string}
      */
     private function quickRegisterAttributes(): array
     {
         return [
             'surname' => 'Max',
             'name' => 'Mustermann',
-            'email' => 'max@example.com',
         ];
     }
 }

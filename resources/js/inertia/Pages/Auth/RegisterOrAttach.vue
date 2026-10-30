@@ -22,7 +22,7 @@ const registerForm = useForm({
 });
 
 const loginForm = useForm({
-  email: '',
+  email: props.existingUserEmail ?? '',
   password: '',
   remember: true,
   socialiteUserId: props.socialiteUser.id,

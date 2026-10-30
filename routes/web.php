@@ -127,7 +127,6 @@ Route::get('login/social/{socialiteUser}', 'Auth\SocialiteController@showView')-
 
 /* *********** Quick Register ************** */
 Route::middleware('auth')->group(function () {
-    Route::get('/register/quick', 'Auth\QuickRegisterController@show')->name('register.quick');
     Route::post('/register/quick', 'Auth\QuickRegisterController@store')->name('register.quick.store');
 });
 
