@@ -3,11 +3,12 @@
 namespace Tests\Feature;
 
 use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
+use App\Group;
+use App\Player;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use App\Player;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
@@ -22,7 +23,7 @@ class AuthTest extends TestCase
 
         $this->post('register', $this->registrationAttributes())->assertRedirect('/');
 
-        $ewigeListe = \App\Group::find(\App\Group::EWIGE_LISTE_ID);
+        $ewigeListe = Group::find(Group::EWIGE_LISTE_ID);
         $this->assertTrue($ewigeListe->players->contains(auth()->user()->player));
         $this->assertInstanceOf('App\Player', auth()->user()->player);
         $this->assertInstanceOf('App\User', auth()->user());
@@ -57,8 +58,8 @@ class AuthTest extends TestCase
     #[Test]
     public function test_seeding()
     {
-        //$this->seed('PlayerSeeder');
-        \App\Player::factory()->create();
+        // $this->seed('PlayerSeeder');
+        Player::factory()->create();
 
         $this->assertTrue(Player::all()->count() > 0);
     }

@@ -5,18 +5,13 @@ namespace App\Http\Controllers;
 use App\Events\RoundUpdated;
 use App\Game;
 use App\Group;
+use App\Http\Requests\StoreGame;
 use App\Profile;
 use App\Round;
-use App\Player;
-use App\Http\Requests\StoreGame;
-use App\Http\Requests\UpdateGame;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
-class   GameController extends Controller
+class GameController extends Controller
 {
-
     public function store(StoreGame $request, Round $round)
     {
         $this->authorize('update', $round);
@@ -41,8 +36,7 @@ class   GameController extends Controller
 
         $this->authorize('update', $round);
 
-        if ($game->isNot($round->getLastGame()))
-        {
+        if ($game->isNot($round->getLastGame())) {
             return Redirect::back()->withInput()->withErrors(['Du kannst nur das letzte Spiel einer Runde löschen!']);
         }
 

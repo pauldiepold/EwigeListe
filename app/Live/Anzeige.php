@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Live;
-
 
 class Anzeige
 {
@@ -10,11 +8,9 @@ class Anzeige
 
     public function __construct($players = '')
     {
-        if ($players != '')
-        {
+        if ($players != '') {
             $spieler = collect();
-            foreach ($players as $player)
-            {
+            foreach ($players as $player) {
                 $spieler->put($player->id, collect([
                     'ansage' => '',
                     'spieltyp' => '',
@@ -28,19 +24,16 @@ class Anzeige
 
     public static function create($input)
     {
-        if (isset($input))
-        {
-            $anzeige = new self();
+        if (isset($input)) {
+            $anzeige = new self;
 
-            $spieler = collect($input->spieler)->map(function ($item, $key)
-            {
+            $spieler = collect($input->spieler)->map(function ($item, $key) {
                 return collect($item);
             });
             $anzeige->spieler = $spieler;
 
             return $anzeige;
-        } else
-        {
+        } else {
             dd('fehler beim anzeige createn');
 
             return false;
@@ -49,14 +42,11 @@ class Anzeige
 
     public function set($attribut, $spielerID, $wert)
     {
-        if ($attribut == 'absage')
-        {
-            if ($wert == '0')
-            {
+        if ($attribut == 'absage') {
+            if ($wert == '0') {
                 $wert = 'Schwarz';
-            } else
-            {
-                $wert = 'keine ' . $wert;
+            } else {
+                $wert = 'keine '.$wert;
             }
         }
         $attribut = $attribut == 'absage' ? 'ansage' : $attribut;

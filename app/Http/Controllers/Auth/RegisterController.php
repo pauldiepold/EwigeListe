@@ -3,23 +3,21 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Group;
+use App\Http\Controllers\Controller;
+use App\Player;
 use App\SocialiteUser;
 use App\User;
-use App\Player;
-use App\Profile;
-use App\Invitation;
-use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class RegisterController extends Controller {
-
+class RegisterController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Register Controller
@@ -60,7 +58,6 @@ class RegisterController extends Controller {
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -82,21 +79,20 @@ class RegisterController extends Controller {
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required_without:socialiteUserId|string|min:6|confirmed',
             'socialiteUserId' => 'exists:socialite_users,id',
-            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha'
+            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha',
         ], $messages);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param array $data
      * @return User
      */
     protected function create(array $data)
     {
         $player = Player::create([
             'surname' => $data['surname'],
-            'name' => $data['name']
+            'name' => $data['name'],
         ]);
 
         $socialiteUserId = isset($data['socialiteUserId']) ? $data['socialiteUserId'] : null;
@@ -109,11 +105,9 @@ class RegisterController extends Controller {
             'password' => Hash::make($password),
         ]);
 
-        if ($socialiteUserId)
-        {
+        if ($socialiteUserId) {
             $socialiteUser = SocialiteUser::find($socialiteUserId);
-            if ($socialiteUser->user_id == null)
-            {
+            if ($socialiteUser->user_id == null) {
                 $socialiteUser->user_id = $user->id;
                 $socialiteUser->save();
             }
@@ -126,9 +120,5 @@ class RegisterController extends Controller {
         return $user;
     }
 
-
-    protected function registered(Request $request, $user)
-    {
-
-    }
+    protected function registered(Request $request, $user) {}
 }

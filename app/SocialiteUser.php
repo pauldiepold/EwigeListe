@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SocialiteUser extends Model
 {
-
     protected $fillable = ['user_id', 'provider', 'provider_id', 'name', 'email', 'avatar'];
 
     public function user()
@@ -20,7 +19,7 @@ class SocialiteUser extends Model
             ->where('provider_id', $providerUser->getId())
             ->first();
 
-        if($socialiteUser) {
+        if ($socialiteUser) {
             return $socialiteUser;
         } else {
             $socialiteUser = SocialiteUser::create([

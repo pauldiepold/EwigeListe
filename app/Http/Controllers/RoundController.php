@@ -2,31 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Group;
+use App\Http\Requests\StoreRound;
+use App\Http\Requests\UpdateRound;
 use App\Http\Resources\CreateRoundPlayerResource;
 use App\Http\Resources\GroupOptionResource;
-use App\Http\Resources\RoundArchiveRowResource;
 use App\Http\Resources\Round as RoundResource;
-use App\Http\Requests\UpdateRound;
-use App\Live\Deck;
-use App\LiveRound;
+use App\Http\Resources\RoundArchiveRowResource;
+use App\Player;
 use App\Profile;
 use App\Round;
-use App\Player;
-use App\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use App\Http\Requests\StoreRound;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
 {
-
-    public function index(Group $group = null): Response
+    public function index(?Group $group = null): Response
     {
         $selectedGroup = $group ?? Group::findOrFail(Group::EWIGE_LISTE_ID);
 
@@ -66,11 +62,11 @@ class RoundController extends Controller
         );
 
         return Inertia::render('Rounds/Index', [
-            'groupOptions'     => array_values(GroupOptionResource::collection($groups)->resolve($request)),
-            'selectedGroup'    => (new GroupOptionResource($selectedGroup))->resolve($request),
-            'rounds'           => $paginator,
-            'archiveSort'      => [
-                'column'    => $sort,
+            'groupOptions' => array_values(GroupOptionResource::collection($groups)->resolve($request)),
+            'selectedGroup' => (new GroupOptionResource($selectedGroup))->resolve($request),
+            'rounds' => $paginator,
+            'archiveSort' => [
+                'column' => $sort,
                 'direction' => $direction,
             ],
         ]);
@@ -91,11 +87,9 @@ class RoundController extends Controller
     public function current()
     {
         $lastRound = auth()->user()->player->rounds()->latest()->first();
-        if ($lastRound)
-        {
+        if ($lastRound) {
             return redirect($lastRound->path());
-        } else
-        {
+        } else {
             return redirect()->route('rounds.create');
         }
     }
@@ -123,22 +117,19 @@ class RoundController extends Controller
 
         $round = Round::create();
 
-        foreach ($validated->get('players') as $key => $playerID)
-        {
+        foreach ($validated->get('players') as $key => $playerID) {
             $round->players()->attach($playerID, [
-                'index' => $key
+                'index' => $key,
             ]);
         }
 
         $round->groups()->saveMany($groups);
 
-        foreach ($groups as $group)
-        {
+        foreach ($groups as $group) {
             $group->addPlayers($round->players);
         }
 
-        if ($validated->get('liveGame'))
-        {
+        if ($validated->get('liveGame')) {
             $round->createLiveRound();
         }
 
@@ -160,8 +151,7 @@ class RoundController extends Controller
         $round->groups()->detach();
         $round->groups()->saveMany($groups);
 
-        foreach ($groups as $group)
-        {
+        foreach ($groups as $group) {
             $group->addPlayers($players);
         }
 
@@ -175,8 +165,7 @@ class RoundController extends Controller
     {
         $this->authorize('update', $round);
 
-        if ($round->games->count() != 0)
-        {
+        if ($round->games->count() != 0) {
             return Redirect::back()->with('deleteError', 'Du kannst nur eine Runde ohne Spiele löschen!');
         }
 
@@ -188,28 +177,24 @@ class RoundController extends Controller
     public function changeDates(Round $round, Request $request)
     {
         $request->validate([
-            'date' => 'required|date'
+            'date' => 'required|date',
         ]);
 
         $dateDiff = Carbon::create($request->input('date'))->diffInDays($round->created_at, false);
 
-        if ($dateDiff > 0)
-        {
+        if ($dateDiff > 0) {
             $case = 'subDays';
-        } elseif ($dateDiff < 0)
-        {
+        } elseif ($dateDiff < 0) {
             $case = 'addDays';
             $dateDiff = abs($dateDiff) + 1;
-        } else
-        {
+        } else {
             return 'false';
         }
 
         $round->created_at = $round->created_at->$case($dateDiff);
         $round->save();
 
-        foreach ($round->games as $game)
-        {
+        foreach ($round->games as $game) {
             $game->created_at = $game->created_at->$case($dateDiff);
             $game->save();
         }
@@ -217,14 +202,13 @@ class RoundController extends Controller
         return 'success';
     }
 
-    public function archiveTable(Group $group, Player $player = null)
+    public function archiveTable(Group $group, ?Player $player = null)
     {
         $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group) {
             $query->where('groups.id', '=', $group->id);
         });
 
-        if (isset($player))
-        {
+        if (isset($player)) {
             $roundsQuery->whereHas('players', function (Builder $query) use ($player) {
                 $query->where('players.id', '=', $player->id);
             });
@@ -234,9 +218,9 @@ class RoundController extends Controller
             ->with('players', 'liveRound')
             ->withCount(['games', 'groups']);
 
-        return Datatables::of($rounds)
+        return DataTables::of($rounds)
             ->addColumn('players', function ($round) {
-                return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
+                return '<a href="'.$round->path.'">'.$round->players_string.'</a>';
             })
             ->addColumn('date', function ($round) {
                 return $round->updated_at->format('d.m.Y');
@@ -251,5 +235,4 @@ class RoundController extends Controller
             ->orderColumn('date', 'updated_at $1')
             ->make(true);
     }
-
 }

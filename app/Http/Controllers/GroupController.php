@@ -11,7 +11,6 @@ use Inertia\Response;
 
 class GroupController extends Controller
 {
-
     public function index(): Response
     {
         $groups = Group::withCount('rounds')
@@ -24,17 +23,15 @@ class GroupController extends Controller
         ]);
     }
 
-
     public function create(): Response
     {
         return Inertia::render('Groups/Create');
     }
 
-
     public function store(Request $request)
     {
         $attributes = request()->validate([
-            'name' => 'required'
+            'name' => 'required',
         ]);
 
         $group = auth()->user()->player->createdGroups()->create($attributes);
@@ -46,16 +43,14 @@ class GroupController extends Controller
         return redirect($group->path());
     }
 
-
-    public function show(Group $group = null)
+    public function show(?Group $group = null)
     {
         $group = isset($group) ? $group : Group::find(1);
         $selectedGroup = $group;
         $group->load(['players.profiles', 'profiles.player.user', 'badges.player']);
 
         $rounds_count = $group->rounds()
-            ->whereHas('groups', function (Builder $query) use ($group)
-            {
+            ->whereHas('groups', function (Builder $query) use ($group) {
                 $query->where('groups.id', '=', $group->id);
             })
             ->count();
@@ -63,8 +58,7 @@ class GroupController extends Controller
         $badges = $group->badges->groupBy(['type', 'year']);
 
         $player = auth()->user()->player;
-        $playersRoundsInGroup = $player->rounds()->whereHas('groups', function (Builder $query) use ($group)
-        {
+        $playersRoundsInGroup = $player->rounds()->whereHas('groups', function (Builder $query) use ($group) {
             $query->where('groups.id', '=', $group->id);
         })->get();
 
@@ -72,15 +66,14 @@ class GroupController extends Controller
                          $group->profiles->where('player_id', auth()->user()->player->id)->first()->games == 0 &&
                          $group->profiles->count() != 1 &&
                          ($playersRoundsInGroup->count() != 1 ||
-                          !$playersRoundsInGroup->first()->players->contains(auth()->user()->player));
+                          ! $playersRoundsInGroup->first()->players->contains(auth()->user()->player));
 
         return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges', 'canLeaveGroup'));
     }
 
     public function calculateAll()
     {
-        Group::all()->each(function ($group, $key)
-        {
+        Group::all()->each(function ($group, $key) {
             $group->calculate();
         });
 
@@ -91,22 +84,21 @@ class GroupController extends Controller
     {
         $group->calculate();
 
-        return redirect($group->path() . '#statistiken');
+        return redirect($group->path().'#statistiken');
     }
 
     public function calculateBadges(Group $group)
     {
         $group->calculateBadges();
 
-        return redirect($group->path() . '#abzeichen');
+        return redirect($group->path().'#abzeichen');
     }
 
     public function update(Group $group)
     {
         $player = auth()->user()->player;
 
-        if ($group->players->contains($player))
-        {
+        if ($group->players->contains($player)) {
             return redirect($group->path());
         }
 
@@ -119,10 +111,9 @@ class GroupController extends Controller
     {
         $player = auth()->user()->player;
 
-        if (!$group->players->contains($player) ||
+        if (! $group->players->contains($player) ||
             $group->profiles->where('player_id', $player->id)->first()->games != 0 ||
-            $group->profiles->count() == 1)
-        {
+            $group->profiles->count() == 1) {
             return redirect($group->path());
         }
 
@@ -133,13 +124,12 @@ class GroupController extends Controller
 
     public function close(Group $group, $close)
     {
-        if (!($group->creator->is(auth()->user()->player) || auth()->user()->id == 1))
-        {
-            return redirect($group->path() . '#admin');
+        if (! ($group->creator->is(auth()->user()->player) || auth()->user()->id == 1)) {
+            return redirect($group->path().'#admin');
         }
         $group->closed = boolval($close);
         $group->save();
 
-        return redirect($group->path() . '#admin');
+        return redirect($group->path().'#admin');
     }
 }

@@ -4,13 +4,7 @@ namespace App\Http\Controllers\Live;
 
 use App\Events\RoundUpdated;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\KarteSpielen;
-use App\Live\Deck;
-use App\Live\Karte;
-use App\Live\Stich;
-use App\Live\Spieler;
 use App\LiveGame;
-use App\LiveRound;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -39,8 +33,8 @@ class GameController extends Controller
                     'Farbsolo Herz',
                     'Farbsolo Pik',
                     'Farbsolo Kreuz',
-                ])
-            ]
+                ]),
+            ],
         ]);
 
         $vorbehalt = $validated['vorbehalt'];
@@ -50,8 +44,7 @@ class GameController extends Controller
 
         $liveGame->naechstenSpielerBerechnen();
 
-        if ($liveGame->dran == $liveGame->spielerIDs->get(0))
-        {
+        if ($liveGame->dran == $liveGame->spielerIDs->get(0)) {
             $liveGame->vorbehalteAbhandeln();
         }
 
@@ -74,8 +67,7 @@ class GameController extends Controller
         ]);
 
         $karten = collect();
-        foreach ($validated['karten'] as $karte)
-        {
+        foreach ($validated['karten'] as $karte) {
             $karte_temp = $liveGame->getKarteVonSpieler($karte['id']);
             $karte_temp->armut_zurueck = true;
             $karten->push($karte_temp);
@@ -99,8 +91,7 @@ class GameController extends Controller
             'mitnehmen' => 'required|boolean',
         ]);
 
-        if ($validated['mitnehmen'])
-        {
+        if ($validated['mitnehmen']) {
             $spieler = $liveGame->getSpieler();
             $armutSpieler = $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'));
 
@@ -116,12 +107,10 @@ class GameController extends Controller
 
             $liveGame->phase = 33;
             $liveGame->kartenSortieren();
-        } else
-        {
+        } else {
             $liveGame->naechstenSpielerBerechnen();
 
-            if ($liveGame->dran == $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'))->id)
-            {
+            if ($liveGame->dran == $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'))->id) {
                 $liveGame->schmeissen(null, true);
             }
         }
@@ -142,8 +131,7 @@ class GameController extends Controller
         ]);
 
         $karten = collect();
-        foreach ($validated['karten'] as $karte)
-        {
+        foreach ($validated['karten'] as $karte) {
             $karten->push($liveGame->getKarteVonSpieler($karte['id']));
         }
 
@@ -164,23 +152,20 @@ class GameController extends Controller
 
         $validated = $request->validate([
             'karte' => 'required|array',
-            'karte.id' => 'required|integer|between:0,47'
+            'karte.id' => 'required|integer|between:0,47',
         ]);
         $karte = $liveGame->getKarteVonSpieler($validated['karte']['id']);
 
         $liveGame->kartenSortieren();
         $liveGame->istKarteSpielbar($karte);
 
-
         $liveGame->karteSpielen($karte);
 
-        if ($liveGame->aktuellerStich->count() == 4)
-        {
+        if ($liveGame->aktuellerStich->count() == 4) {
             $liveGame->stichVerteilen();
         }
 
-        if ($liveGame->spielBeendet())
-        {
+        if ($liveGame->spielBeendet()) {
             $liveGame->beendet = true;
             $liveGame->phase = 101;
 
@@ -215,17 +200,15 @@ class GameController extends Controller
         $validated = $request->validate([
             'ansage' => [
                 'required',
-                Rule::in(['Schwarz', 30, 60, 90, 'Re', 'Kontra'])
-            ]
+                Rule::in(['Schwarz', 30, 60, 90, 'Re', 'Kontra']),
+            ],
         ]);
 
         $ansage = $validated['ansage'];
 
-        if ($ansage == 'Re' || $ansage == 'Kontra')
-        {
+        if ($ansage == 'Re' || $ansage == 'Kontra') {
             $liveGame->ansageMachen($ansage);
-        } else
-        {
+        } else {
             $liveGame->absageMachen($ansage);
         }
 

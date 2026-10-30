@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Group;
+use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ManagePlayerTest extends TestCase
 {
-
     use RefreshDatabase;
 
     #[Test]
@@ -17,12 +17,12 @@ class ManagePlayerTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $player = \App\User::factory()->create()->player;
+        $player = User::factory()->create()->player;
 
-        \App\Group::find(\App\Group::EWIGE_LISTE_ID)->addPlayer($player);
-        $group = \App\Group::factory()->create();
+        Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player);
+        $group = Group::factory()->create();
 
         $player->groups()->save($group);
 

@@ -28,17 +28,16 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('test'),
             'remember_token' => Str::random(10),
-            'player_id' => function ()
-            {
+            'player_id' => function () {
                 return Player::factory()->create()->id;
-            }
+            },
         ];
     }
 
     /**
      * Indicate that the model's email address should be unverified.
      *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     * @return Factory
      */
     public function unverified()
     {
@@ -49,4 +48,3 @@ class UserFactory extends Factory
         });
     }
 }
-

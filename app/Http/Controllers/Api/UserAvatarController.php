@@ -12,11 +12,10 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class UserAvatarController extends Controller
 {
-
     public function store(Request $request, User $user)
     {
         $request->validate([
-            'avatar' => 'required|string'
+            'avatar' => 'required|string',
         ]);
 
         $this->authorize('update', $user);
@@ -27,13 +26,13 @@ class UserAvatarController extends Controller
             throw ValidationException::withMessages(['avatar' => 'Das Bild konnte nicht gelesen werden.']);
         }
 
-        $basename = date('Y-m-d_H-i-s_') . $user->player->surname . '_' . $user->player->name;
+        $basename = date('Y-m-d_H-i-s_').$user->player->surname.'_'.$user->player->name;
 
-        Storage::disk('public')->put('avatars/' . $basename . '_full.jpg', (string) $image->encodeUsingFileExtension('jpg'));
-        Storage::disk('public')->put('avatars/' . $basename . '.jpg', (string) $image->scale(width: 200)->encodeUsingFileExtension('jpg'));
+        Storage::disk('public')->put('avatars/'.$basename.'_full.jpg', (string) $image->encodeUsingFileExtension('jpg'));
+        Storage::disk('public')->put('avatars/'.$basename.'.jpg', (string) $image->scale(width: 200)->encodeUsingFileExtension('jpg'));
 
         $user->update([
-            'avatar_path' => $basename . '.jpg'
+            'avatar_path' => $basename.'.jpg',
         ]);
 
         return response()->noContent();

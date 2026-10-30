@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Group;
-use App\User;
-use App\Player;
 use App\Http\Controllers\Controller;
 use App\Http\Toast;
+use App\Player;
+use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 
 class QuickRegisterController extends Controller
@@ -37,7 +37,7 @@ class QuickRegisterController extends Controller
 
         $player = Player::create([
             'surname' => $request->surname,
-            'name' => $request->name
+            'name' => $request->name,
         ]);
 
         User::create([
@@ -53,7 +53,7 @@ class QuickRegisterController extends Controller
         $player->profiles->first()->calculate();
 
         Inertia::flash('addedPlayerId', $player->id);
-        Toast::success('Spieler ' . $player->surname . ' ' . $player->name . ' wurde erfolgreich erstellt!');
+        Toast::success('Spieler '.$player->surname.' '.$player->name.' wurde erfolgreich erstellt!');
 
         return redirect()->route('rounds.create');
     }
@@ -64,7 +64,7 @@ class QuickRegisterController extends Controller
      */
     private function placeholderEmail(): string
     {
-        return 'schnellregistrierung-' . Str::uuid() . '@ewigeliste.invalid';
+        return 'schnellregistrierung-'.Str::uuid().'@ewigeliste.invalid';
     }
 
     /**
@@ -82,4 +82,4 @@ class QuickRegisterController extends Controller
             'name' => 'required|string|max:255',
         ], $messages);
     }
-} 
+}

@@ -13,8 +13,7 @@ class CreateLiveGamesTable extends Migration
      */
     public function up()
     {
-        Schema::create('live_games', function (Blueprint $table)
-        {
+        Schema::create('live_games', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('live_round_id');
 

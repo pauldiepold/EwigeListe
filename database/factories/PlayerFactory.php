@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Player;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class PlayerFactory extends Factory
 {

@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Group
+ * @mixin Group
  */
 class GroupIndexResource extends JsonResource
 {
@@ -18,11 +19,11 @@ class GroupIndexResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'            => $this->id,
-            'name'          => $this->name,
-            'closed'        => (bool) $this->closed,
+            'id' => $this->id,
+            'name' => $this->name,
+            'closed' => (bool) $this->closed,
             'players_count' => (int) $this->players_count,
-            'rounds_count'  => (int) $this->rounds_count,
+            'rounds_count' => (int) $this->rounds_count,
         ];
     }
 }

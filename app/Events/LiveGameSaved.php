@@ -14,8 +14,6 @@ class LiveGameSaved
 
     /**
      * Create a new event instance.
-     *
-     * @param LiveGame $liveGame
      */
     public function __construct(LiveGame $liveGame)
     {

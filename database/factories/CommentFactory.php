@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Comment;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class CommentFactory extends Factory
 {
@@ -27,4 +26,3 @@ class CommentFactory extends Factory
         ];
     }
 }
-

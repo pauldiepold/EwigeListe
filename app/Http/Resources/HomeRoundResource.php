@@ -12,8 +12,8 @@ class HomeRoundResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id'         => $this->id,
-            'players'    => $this->players->pluck('surname')->implode(' - '),
+            'id' => $this->id,
+            'players' => $this->players->pluck('surname')->implode(' - '),
             'lastGameAt' => $this->games_max_created_at ? printDate(Carbon::parse($this->games_max_created_at)) : null,
         ];
     }

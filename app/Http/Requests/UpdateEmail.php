@@ -6,10 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEmail extends FormRequest
 {
-
     protected function getRedirectUrl()
     {
-        return parent::getRedirectUrl() . '#email';
+        return parent::getRedirectUrl().'#email';
     }
 
     /**
@@ -30,7 +29,7 @@ class UpdateEmail extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users,email'
+            'email' => 'required|email|unique:users,email',
         ];
     }
 }

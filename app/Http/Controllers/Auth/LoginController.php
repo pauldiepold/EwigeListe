@@ -11,7 +11,6 @@ use Inertia\Response;
 
 class LoginController extends Controller
 {
-
     /*
     |--------------------------------------------------------------------------
     | Login Controller
@@ -47,15 +46,12 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-
     protected function authenticated(Request $request, $user)
     {
         $socialiteUserId = $request->input('socialiteUserId');
-        if ($socialiteUserId)
-        {
+        if ($socialiteUserId) {
             $socialiteUser = SocialiteUser::find($socialiteUserId);
-            if ($socialiteUser->user_id == null)
-            {
+            if ($socialiteUser->user_id == null) {
                 $socialiteUser->user_id = $user->id;
                 $socialiteUser->save();
             }

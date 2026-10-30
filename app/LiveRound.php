@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Live\Anzeige;
-use App\Live\Deck;
 use App\Live\Spieler;
 use App\Live\Stich;
 use DateTimeInterface;
@@ -39,24 +38,20 @@ class LiveRound extends Model
 
     public function currentLiveGame()
     {
-        if ($this->liveGames->count() == 0)
-        {
+        if ($this->liveGames->count() == 0) {
             return null;
-        } else
-        {
+        } else {
             $liveGame = $this->liveGames->first();
 
-            return !$liveGame->beendet ? $liveGame : null;
+            return ! $liveGame->beendet ? $liveGame : null;
         }
     }
 
     public function lastLiveGame()
     {
-        if ($this->liveGames->count() == 0)
-        {
+        if ($this->liveGames->count() == 0) {
             return null;
-        } else
-        {
+        } else {
             $liveGame = $this->liveGames->first();
 
             return $liveGame->beendet ? $liveGame : null;
@@ -70,18 +65,16 @@ class LiveRound extends Model
 
     public function starteNeuesSpiel()
     {
-        if ($this->liveGames->where('beendet', 0)->count() != 0)
-        {
-            //abort(422, 'Es darf keine geöffneten Spiele geben!');
+        if ($this->liveGames->where('beendet', 0)->count() != 0) {
+            // abort(422, 'Es darf keine geöffneten Spiele geben!');
         }
 
         $activePlayers = $this->round->getActivePlayers(false);
 
         $spielerIDsInaktiv = $this->round->getInactivePlayers()->pluck('id');
 
-        foreach ($activePlayers as $key => $player)
-        {
-            $spielerString = 'spieler' . $key;
+        foreach ($activePlayers as $key => $player) {
+            $spielerString = 'spieler'.$key;
 
             $$spielerString = new Spieler($player);
         }
@@ -94,8 +87,8 @@ class LiveRound extends Model
         });
         $liveGame->vorhand = $activePlayers->first()->pivot->player_id;
         $liveGame->dran = $activePlayers->first()->pivot->player_id;
-        $liveGame->aktuellerStich = new Stich();
-        $liveGame->letzterStich = new Stich();
+        $liveGame->aktuellerStich = new Stich;
+        $liveGame->letzterStich = new Stich;
         $liveGame->spielerIDsInaktiv = $spielerIDsInaktiv;
         $liveGame->spieler0 = $spieler0;
         $liveGame->spieler1 = $spieler1;
@@ -110,13 +103,11 @@ class LiveRound extends Model
         $liveGame->moeglicheVorbehalteBerechnen();
         $liveGame->phase = 2;
 
-        if ($liveGame->is_with_ai)
-        {
+        if ($liveGame->is_with_ai) {
             if ($liveGame->spieler0->moeglicheVorbehalte->contains('Hochzeit') ||
                 $liveGame->spieler1->moeglicheVorbehalte->contains('Hochzeit') ||
                 $liveGame->spieler2->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler3->moeglicheVorbehalte->contains('Hochzeit'))
-            {
+                $liveGame->spieler3->moeglicheVorbehalte->contains('Hochzeit')) {
                 $this->starteNeuesSpiel();
 
                 return 0;

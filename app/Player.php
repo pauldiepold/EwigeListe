@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
 class Player extends Model
 {
     use HasFactory;
@@ -38,13 +37,12 @@ class Player extends Model
 
     public function getIsAiAttribute()
     {
-        return !is_null($this->ai_path);
+        return ! is_null($this->ai_path);
     }
 
     public function calculate()
     {
-        foreach ($this->profiles as $profile)
-        {
+        foreach ($this->profiles as $profile) {
             $profile->calculate();
         }
     }

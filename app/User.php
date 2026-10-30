@@ -4,13 +4,12 @@ namespace App;
 
 use App\Notifications\MyOwnResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasFactory;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -18,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'player_id', 'avatar_path'
+        'email', 'password', 'player_id', 'avatar_path',
     ];
 
     /**
@@ -48,7 +47,7 @@ class User extends Authenticatable
 
     public function getAvatarPathAttribute($avatar)
     {
-        return $avatar ? '/storage/avatars/' . $avatar : '/img/default.jpg';
+        return $avatar ? '/storage/avatars/'.$avatar : '/img/default.jpg';
     }
 
     public function sendPasswordResetNotification($token)

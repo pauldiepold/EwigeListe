@@ -4,21 +4,19 @@ namespace App\Jobs;
 
 use App\Profile;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class UpdateProfile implements ShouldQueue {
-
+class UpdateProfile implements ShouldQueue
+{
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $profile;
 
     /**
      * Create a new job instance.
-     *
-     * @param Profile $profile
      */
     public function __construct(Profile $profile)
     {

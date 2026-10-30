@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Profile extends Pivot
 {
     use HasFactory;
 
     protected $table = 'profiles';
+
     public $incrementing = true;
 
     public function path()
@@ -24,8 +24,7 @@ class Profile extends Pivot
 
     public function updateStats()
     {
-        if (!$this->queued)
-        {
+        if (! $this->queued) {
             $this->queued = true;
             $this->save();
             UpdateProfile::dispatch($this);
@@ -34,10 +33,8 @@ class Profile extends Pivot
 
     public static function updateManyStats(Collection $profiles)
     {
-        foreach ($profiles as $profile)
-        {
-            if (!$profile->queued)
-            {
+        foreach ($profiles as $profile) {
+            if (! $profile->queued) {
                 $profile->queued = true;
                 $profile->save();
                 UpdateProfile::dispatch($profile);
@@ -85,16 +82,13 @@ class Profile extends Pivot
         $groupID = $this->group_id;
         $playerID = $this->player_id;
 
-        $games = GamePlayer::whereHas('game.round.groups', function (Builder $query) use ($groupID)
-        {
+        $games = GamePlayer::whereHas('game.round.groups', function (Builder $query) use ($groupID) {
             $query->where('groups.id', '=', $groupID);
         })
             ->where('player_id', $playerID)
             ->orderBy('id', 'asc');
 
-
-        if ($games->count() == 0)
-        {
+        if ($games->count() == 0) {
             $this->games = 0;
             $this->points = null;
             $this->pointsPerGame = null;
@@ -144,7 +138,7 @@ class Profile extends Pivot
         $normalGamesWon->where('won', 1);
         $normalGamesLost = clone $normalGames;
         $normalGamesLost->where('won', '0');
-        
+
         $this->normalGames = $normalGames->count();
         $this->normalGamesWon = $normalGamesWon->count();
         $this->normalGamesLost = $normalGamesLost->count();
@@ -155,7 +149,7 @@ class Profile extends Pivot
             $query->where('groups.id', '=', $groupID);
         })->where('created_by', $playerID)->count();
         $this->gamesCreated = $gamesCreated;
-        
+
         // Für gamesCreateRate nur Spiele ab ID 7343 berücksichtigen (created_by wurde erst ab da gespeichert)
         $gamesFromId7343 = clone $games;
         $gamesFromId7343->whereHas('game', function (Builder $query) {
@@ -165,35 +159,28 @@ class Profile extends Pivot
         $this->gamesCreateRate = $gamesCountFromId7343 == 0 ? null : $gamesCreated / $gamesCountFromId7343 * 100;
 
         /* Meiste Spiele Tag ************************* */
-        $groupedByDay = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
-        {
+        $groupedByDay = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID) {
             $query->where('groups.id', '=', $groupID);
-        })->latest()->get()->groupBy(function ($item)
-        {
+        })->latest()->get()->groupBy(function ($item) {
             return $item->created_at->format('Y-m-d');
         });
-        $groupedByDayCounted = $groupedByDay->map(function ($item, $key)
-        {
+        $groupedByDayCounted = $groupedByDay->map(function ($item, $key) {
             return collect($item)->count();
         })->sort();
         $this->mostGamesDay = $groupedByDayCounted->last();
         $this->mostGamesDayDate = $groupedByDayCounted->keys()->last();
 
         /* Meiste Spiele Monat ************************* */
-        $groupedByMonth = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID)
-        {
+        $groupedByMonth = $this->player->games()->whereHas('round.groups', function (Builder $query) use ($groupID) {
             $query->where('groups.id', '=', $groupID);
-        })->latest()->get()->groupBy(function ($item)
-        {
+        })->latest()->get()->groupBy(function ($item) {
             return $item->created_at->format('Y-m');
         });
-        $groupedByMonthCounted = $groupedByMonth->map(function ($item, $key)
-        {
+        $groupedByMonthCounted = $groupedByMonth->map(function ($item, $key) {
             return collect($item)->count();
         })->sort();
         $this->mostGamesMonth = $groupedByMonthCounted->last();
-        $this->mostGamesMonthDate = $groupedByMonthCounted->keys()->last() . "-01";
-
+        $this->mostGamesMonthDate = $groupedByMonthCounted->keys()->last().'-01';
 
         $points = 0;
         $this->lowestPoints = 0;
@@ -205,43 +192,34 @@ class Profile extends Pivot
         $loseStreak = 0;
         $loseStreakStart = null;
 
-        foreach ($games->get() as $game)
-        {
+        foreach ($games->get() as $game) {
             $points += $game->points;
-            if ($points > $this->highestPoints)
-            {
+            if ($points > $this->highestPoints) {
                 $this->highestPoints = $points;
                 $this->highestPointsDate = $game->created_at;
             }
-            if ($points < $this->lowestPoints)
-            {
+            if ($points < $this->lowestPoints) {
                 $this->lowestPoints = $points;
                 $this->lowestPointsDate = $game->created_at;
             }
-            if ($game->won)
-            {
+            if ($game->won) {
                 $winStreak++;
-                if ($loseStreak != 0)
-                {
+                if ($loseStreak != 0) {
                     $loseStreak = 0;
                     $winStreakStart = $game->created_at;
                 }
-                if ($winStreak > $this->winStreak)
-                {
+                if ($winStreak > $this->winStreak) {
                     $this->winStreak = $winStreak;
                     $this->winStreakStart = $winStreakStart;
                     $this->winStreakEnd = $game->created_at;
                 }
-            } else
-            {
+            } else {
                 $loseStreak++;
-                if ($winStreak != 0)
-                {
+                if ($winStreak != 0) {
                     $winStreak = 0;
                     $loseStreakStart = $game->created_at;
                 }
-                if ($loseStreak > $this->loseStreak)
-                {
+                if ($loseStreak > $this->loseStreak) {
                     $this->loseStreak = $loseStreak;
                     $this->loseStreakStart = $loseStreakStart;
                     $this->loseStreakEnd = $game->created_at;

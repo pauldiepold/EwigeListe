@@ -1,12 +1,12 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Profile;
+use Illuminate\Database\Seeder;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class DatabaseSeederOld extends Seeder {
-
+class DatabaseSeederOld extends Seeder
+{
     /**
      * Seed the application's database.
      *
@@ -19,12 +19,11 @@ class DatabaseSeederOld extends Seeder {
         ]);
         $this->command->comment('updating: profiles');
         $profiles = Profile::all();
-        $output = new ConsoleOutput();
+        $output = new ConsoleOutput;
         $bar = new ProgressBar($output, $profiles->count());
         $bar->start();
 
-        foreach ($profiles as $profile)
-        {
+        foreach ($profiles as $profile) {
             $profile->updateProfile();
             $bar->advance();
         }

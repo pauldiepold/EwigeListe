@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Group;
 use App\Player;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class GroupFactory extends Factory
 {
@@ -25,11 +24,9 @@ class GroupFactory extends Factory
     {
         return [
             'name' => $this->faker->lastName,
-            'created_by' => function ()
-
-            {
+            'created_by' => function () {
                 return Player::factory()->create()->id;
-            }
+            },
         ];
     }
 
@@ -52,4 +49,3 @@ class GroupFactory extends Factory
         return $this->state(['closed' => true]);
     }
 }
-

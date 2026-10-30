@@ -10,8 +10,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class ResetPasswordController extends Controller {
-
+class ResetPasswordController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller

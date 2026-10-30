@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Game;
 use App\Round;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class GameFactory extends Factory
 {
@@ -26,11 +25,9 @@ class GameFactory extends Factory
         return [
             'points' => $this->faker->randomDigitNotNull,
             'solo' => false,
-            'round_id' => function ()
-            {
+            'round_id' => function () {
                 return Round::factory()->create()->id;
-            }
+            },
         ];
     }
 }
-

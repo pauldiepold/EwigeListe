@@ -2,11 +2,12 @@
 
 namespace App\Http\Resources;
 
+use App\Player;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * @mixin \App\Player
+ * @mixin Player
  */
 class CreateRoundPlayerResource extends JsonResource
 {
@@ -18,15 +19,15 @@ class CreateRoundPlayerResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'          => $this->id,
-            'surname'     => $this->surname,
-            'name'        => $this->name,
+            'id' => $this->id,
+            'surname' => $this->surname,
+            'name' => $this->name,
             'avatar_path' => $this->avatar_path,
-            'groups'      => $this->whenLoaded('groups', function () {
+            'groups' => $this->whenLoaded('groups', function () {
                 return $this->groups->map(function ($group) {
                     return [
-                        'id'     => $group->id,
-                        'name'   => $group->name,
+                        'id' => $group->id,
+                        'name' => $group->name,
                         'closed' => (bool) $group->closed,
                     ];
                 })->values();
@@ -35,7 +36,7 @@ class CreateRoundPlayerResource extends JsonResource
                 return $this->profiles->map(function ($profile) {
                     return [
                         'group_id' => $profile->group_id,
-                        'default'  => (bool) $profile->default,
+                        'default' => (bool) $profile->default,
                     ];
                 })->values();
             }),
