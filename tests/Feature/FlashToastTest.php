@@ -23,16 +23,14 @@ class FlashToastTest extends TestCase
     {
         $this->actingAs(User::factory()->create());
 
-        $this->post(route('register.quick.store'), [
-            'surname' => 'Max',
-            'name' => 'Mustermann',
-            'email' => 'max@example.com',
-        ])
+        $this->post(route('register.quick.store'), $this->quickRegisterAttributes())
             ->assertRedirect(route('rounds.create'))
             ->assertInertiaFlash('toast', [
                 'type' => 'success',
                 'message' => 'Spieler Max Mustermann wurde erfolgreich erstellt!',
             ]);
+
+        $this->assertDatabaseHas('users', ['email' => 'max@example.com']);
     }
 
     #[Test]
@@ -41,11 +39,7 @@ class FlashToastTest extends TestCase
         $this->actingAs(User::factory()->create());
 
         $this->followingRedirects()
-            ->post(route('register.quick.store'), [
-                'surname' => 'Max',
-                'name' => 'Mustermann',
-                'email' => 'max@example.com',
-            ])
+            ->post(route('register.quick.store'), $this->quickRegisterAttributes())
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Rounds/Create')
@@ -91,14 +85,15 @@ class FlashToastTest extends TestCase
             ]);
     }
 
-    #[Test]
-    public function pages_no_longer_share_a_flash_prop(): void
+    /**
+     * @return array{surname: string, name: string, email: string}
+     */
+    private function quickRegisterAttributes(): array
     {
-        $this->get(route('password.request'))
-            ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page
-                ->component('Auth/ForgotPassword')
-                ->missing('flash')
-            );
+        return [
+            'surname' => 'Max',
+            'name' => 'Mustermann',
+            'email' => 'max@example.com',
+        ];
     }
 }

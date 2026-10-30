@@ -9,15 +9,17 @@ import type { FlashToast } from '@/types/flash';
  */
 const toast = useToast();
 
-function showToast(flashToast: FlashToast): void {
-  const isError = flashToast.type === 'error';
+const toastStyles: Record<
+  FlashToast['type'],
+  { color: 'success' | 'error'; icon: string; duration?: number }
+> = {
+  success: { color: 'success', icon: 'i-lucide-check-circle' },
+  // Fehler bleiben stehen, bis man sie schließt.
+  error: { color: 'error', icon: 'i-lucide-circle-alert', duration: 0 },
+};
 
-  toast.add({
-    title: flashToast.message,
-    color: isError ? 'error' : 'success',
-    icon: isError ? 'i-lucide-circle-alert' : 'i-lucide-check-circle',
-    duration: isError ? 0 : undefined,
-  });
+function showToast(flashToast: FlashToast): void {
+  toast.add({ title: flashToast.message, ...toastStyles[flashToast.type] });
 }
 
 const removeFlashListener = router.on('flash', (event) => {
