@@ -44,6 +44,7 @@ function close(): void {
     v-model:open="open"
     title="Neue Person registrieren"
     description="Legt einen neuen Spieler an und fügt ihn dieser Runde hinzu."
+    :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
   >
     <UButton
       color="secondary"
