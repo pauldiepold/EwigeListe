@@ -11,8 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class QuickRegisterController extends Controller
 {
@@ -26,18 +26,12 @@ class QuickRegisterController extends Controller
         $this->middleware('auth');
     }
 
-    public function show(): Response
-    {
-        return Inertia::render('Auth/QuickRegister');
-    }
-
     /**
-     * Handle a quick registration request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * Schnellregistrierung aus „Neue Runde“. Die Person loggt sich nicht ein, der Benutzer
+     * bekommt daher eine Platzhalter-E-Mail. `addedPlayerId` lässt `Rounds/Create` den
+     * neuen Spieler direkt auswählen.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->validator($request->all())->validate();
 
@@ -48,9 +42,9 @@ class QuickRegisterController extends Controller
 
         $password = Str::random(14);
 
-        $user = User::create([
+        User::create([
             'player_id' => $player->id,
-            'email' => $request->email,
+            'email' => $this->placeholderEmail(),
             'password' => Hash::make($password),
         ]);
 
@@ -60,9 +54,19 @@ class QuickRegisterController extends Controller
         // Berechne das erste Profil
         $player->profiles->first()->calculate();
 
+        Inertia::flash('addedPlayerId', $player->id);
         Toast::success('Spieler ' . $player->surname . ' ' . $player->name . ' wurde erfolgreich erstellt!');
 
         return redirect()->route('rounds.create');
+    }
+
+    /**
+     * Eindeutig und nie zustellbar (`.invalid` ist laut RFC 2606 reserviert). Soll sich die
+     * Person später doch einloggen, trägt man ihre echte E-Mail nach.
+     */
+    private function placeholderEmail(): string
+    {
+        return 'schnellregistrierung-' . Str::uuid() . '@ewigeliste.invalid';
     }
 
     /**
@@ -76,15 +80,11 @@ class QuickRegisterController extends Controller
         $messages = [
             'surname.required' => 'Es muss ein Vorname angegeben werden!',
             'name.required' => 'Es muss ein Nachname angegeben werden!',
-            'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
-            'email.email' => 'Bitte geben Sie eine gültige E-Mail Adresse ein!',
-            'email.unique' => 'Diese E-Mail Adresse wird bereits verwendet!',
         ];
 
         return Validator::make($data, [
             'surname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
         ], $messages);
     }
 } 

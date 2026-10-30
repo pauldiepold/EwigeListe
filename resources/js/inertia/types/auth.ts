@@ -12,6 +12,8 @@ declare global {
       reset: (widgetId: number) => void;
       ready: (callback: () => void) => void;
     };
+    /** Von der reCAPTCHA-API per `onload=` aufgerufen, sobald `grecaptcha.render` bereit ist. */
+    onRecaptchaLoad?: () => void;
   }
 }
 

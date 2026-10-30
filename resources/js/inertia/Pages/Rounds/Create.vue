@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head, useForm } from '@inertiajs/vue3';
+import QuickRegisterModal from '@/Components/Rounds/QuickRegisterModal.vue';
 import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useRoundListSelection } from '@/composables/useRoundListSelection';
-import { quick as quickRegister } from '@/routes/register';
 import { store as storeRound } from '@/routes/rounds';
 import type { CreateRoundPlayer } from '@/types/round-create';
 
@@ -59,6 +59,14 @@ function addPlayer(player: CreateRoundPlayer): void {
   selectedPlayers.value.push(player);
   reselectStandardListsOf(player);
   searchTerm.value = '';
+}
+
+/** Spieler aus der Schnellregistrierung; `players` ist nach dem Redirect schon neu geladen. */
+function addPlayerById(playerId: number): void {
+  const player = props.players.find((entry) => entry.id === playerId);
+  if (player) {
+    addPlayer(player);
+  }
 }
 
 /** Auf dem Handy bleibt so die Trefferliste über der Bildschirmtastatur sichtbar. */
@@ -161,13 +169,7 @@ if (initialPlayer) {
             </p>
           </div>
 
-          <UButton
-            :to="quickRegister.url()"
-            color="secondary"
-            variant="outline"
-            icon="i-lucide-user-plus"
-            label="Neue Person registrieren"
-          />
+          <QuickRegisterModal v-if="canAddPlayers" @registered="addPlayerById" />
         </div>
       </UCard>
 
