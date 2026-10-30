@@ -15,10 +15,10 @@ defineProps<{
 }>();
 
 const tabs = [
-  { label: 'Listen', icon: 'i-lucide-list', value: 'listen', slot: 'listen' as const },
-  { label: 'Name', icon: 'i-lucide-user', value: 'name', slot: 'name' as const },
-  { label: 'E-Mail', icon: 'i-lucide-at-sign', value: 'email', slot: 'email' as const },
-  { label: 'Passwort', icon: 'i-lucide-key-round', value: 'passwort', slot: 'passwort' as const },
+  { label: 'Listen', value: 'listen', slot: 'listen' as const },
+  { label: 'Name', value: 'name', slot: 'name' as const },
+  { label: 'E-Mail', value: 'email', slot: 'email' as const },
+  { label: 'Passwort', value: 'passwort', slot: 'passwort' as const },
 ];
 </script>
 
@@ -36,7 +36,7 @@ const tabs = [
       />
 
       <UCard>
-        <UTabs :items="tabs" default-value="name" :unmount-on-hide="false">
+        <UTabs :items="tabs" size="sm" default-value="name" :unmount-on-hide="false">
           <template #listen>
             <UserDefaultListsForm :user="user" :profiles="profiles" class="mt-4" />
           </template>
