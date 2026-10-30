@@ -1,4 +1,4 @@
-// PostToolUse-Hook für Edit/Write: formatiert Inertia-Dateien mit Prettier und prüft PHP-Syntax.
+// PostToolUse-Hook für Edit/Write: formatiert Inertia-Dateien mit Prettier, prüft PHP-Syntax und formatiert PHP mit Pint.
 // Exit-Code 2 meldet einen PHP-Syntaxfehler an Claude zurück.
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
@@ -28,5 +28,10 @@ if (relative.endsWith('.php') && !relative.startsWith('vendor/')) {
   if (result.status !== 0) {
     process.stderr.write(`PHP-Syntaxfehler in ${relative}:\n${result.stdout}${result.stderr}`);
     process.exit(2);
+  }
+
+  if (!relative.endsWith('.blade.php')) {
+    const pint = path.join(projectDir, 'vendor', 'bin', isWindows ? 'pint.bat' : 'pint');
+    spawnSync(`"${pint}" --quiet "${filePath}"`, { cwd: projectDir, stdio: 'ignore', shell: true });
   }
 }

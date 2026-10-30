@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 und 1 erledigt, Phase 2 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 bis 2 erledigt, Phase 3 offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -24,10 +24,12 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 1. Issue wählen (Reihenfolge siehe Roadmap), Branch `mig/<nr>-kurzname` von `inertia-migration`.
 2. TDD: zuerst ein Test, der fehlschlägt, dann die Umsetzung.
-3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
+3. Vor dem PR: `vendor/bin/pint --test`, `php artisan test --compact`, `npm run build`, `npm run type-check`, `npm run lint`, `npm run format`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
 4. PR nach `inertia-migration` mit `Closes #nr`, `/code-review`.
 5. **Im selben PR** wird der Status in diesem Dokument aktualisiert (Roadmap und Routen-Matrix).
-6. **Abnahme auf Staging vor dem Merge:** Workflow „Deploy Staging“ manuell auf dem Feature-Branch starten (immer `sync_db=yes`, frische Prod-Daten), Ende abwarten, Paul Bescheid geben. Paul nimmt am Handy ab.
+6. **Abnahme vor dem Merge:**
+   - **Lokale Session:** Die Prüfungen aus Schritt 3 lokal ausführen, ohne auf die GitHub-CI zu warten. Paul nimmt lokal ab, der manuelle Staging-Deploy entfällt.
+   - **Cloud-Session:** Wenn die CI grün ist, Workflow „Deploy Staging“ manuell auf dem Feature-Branch starten (immer `sync_db=yes`, frische Prod-Daten), Ende abwarten, Paul Bescheid geben. Paul nimmt am Handy ab.
 7. Merge per Squash nach `inertia-migration`, Issue schließen. Jeder Push auf `inertia-migration` deployt Staging automatisch (mit Prod-Dump).
 
 ## Roadmap
@@ -36,7 +38,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 |---|---|---|---|
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
 | 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | ✅ |
-| 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten | #28 | todo |
+| 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
@@ -54,6 +56,7 @@ Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #31 Profil → #32 Runde 
 3. Legacy-JS, Legacy-CSS und Legacy-Abhängigkeiten sind entfernt.
 4. Mindestens ein echter Spieleabend auf Staging inklusive Live-Spiel ohne funktionale Fehler.
 5. Rollback-Plan: `master` vor dem Merge taggen, DB-Backup, Datenmigrationen per wiederholbarem Neuberechnungs-Befehl.
+6. Go-Live-PR #16 wird per Merge-Commit gemergt, damit die Historie und der Hash in `.git-blame-ignore-revs` erhalten bleiben.
 
 ## Routen-Matrix
 
@@ -116,6 +119,9 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | „Letzte Runden“ auf Home: Runden mit einem Spiel aus den letzten 24 h, sortiert nach dem neuesten Spiel (vorher `updated_at` der Runde) | Das Bearbeiten einer alten Runde (Spieler, Listen) holte sie sonst wieder auf die Startseite (#55) |
 | 2026-10-30 | `HomeGamesChartSeries` bleibt MySQL-spezifisch (`DATE_FORMAT`, `WEEKDAY`); getestet werden nur Leerfall und Deferred-Prop | Die Logik ändert sich praktisch nicht mehr; ein datenbankneutraler Umbau lohnt den Aufwand nicht (#55) |
 | 2026-10-30 | Seitenwechsel vorerst ohne Instant Visits, Skeletons, Prefetch und persistentes Layout; nur die Fortschrittsleiste ist orange; Deferred nur für langsame, in der ersten Ansicht entbehrliche Daten | Am Handy fühlt es sich schnell genug an, der Aufwand lohnt nicht. Bedarf wird nach dem Spieleabend auf Staging geprüft (#37), Erkenntnisse stehen in #57 |
+| 2026-10-30 | Alle Textdateien fest mit LF (`.gitattributes`, `.editorconfig`), auch unter Windows | Pint und Prettier verlangen LF; mit `core.autocrlf=true` wären `pint --test` und `npm run format` unter Windows sonst dauerhaft rot, während die CI grün ist (#58) |
+| 2026-10-30 | #58 ausnahmsweise per Rebase and merge, Go-Live-PR #16 per Merge-Commit | Der Formatierungs-Commit muss einzeln mit stabilem Hash erhalten bleiben, damit `.git-blame-ignore-revs` greift; Squash würde ihn mit anderen Änderungen vermischen (#58) |
+| 2026-10-30 | Abnahme hängt von der Session ab: lokal ohne Warten auf die CI und ohne manuellen Staging-Deploy, in der Cloud-Session wie bisher mit beidem | Lokal ist schneller, die CI läuft trotzdem bei jedem PR mit (siehe Arbeitsweise, Schritt 6) |
 
 ## Offene Fragen
 

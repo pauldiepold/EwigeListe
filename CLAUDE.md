@@ -16,9 +16,8 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 
 ## Befehle
 
-- `php artisan test --compact` (Tests), `npm run build`
-- Nach Frontend-Änderungen: `npm run type-check && npm run lint` (Prettier und `php -l` laufen per Hook nach jedem Edit, `.claude/hooks/post-edit.mjs`)
-- Laravel Pint noch nicht ausführen: kommt nach #28 als einmaliger Formatierungs-Commit, danach im Hook.
+- `php artisan test --compact` (Tests), `npm run build`, `vendor/bin/pint --test` (PHP-Formatierung)
+- Nach Frontend-Änderungen: `npm run type-check && npm run lint` (Prettier, `php -l` und Pint laufen per Hook nach jedem Edit, `.claude/hooks/post-edit.mjs`)
 
 ## Struktur-Hinweise
 
@@ -31,4 +30,6 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 - Kleine Anfragen klein lösen. Übersteigt der „richtige“ Weg den Nutzen deutlich, die einfachste Variante wählen und in wenigen Sätzen begründen.
 - Fehlt in der Shell ein Tool (`php`, `composer`, Netzwerk), Paul um die Ausführung bitten statt einen Workaround zu bauen.
 - Dauerhaftes Feedback zum Vorgehen in `CLAUDE.md` bzw. im passenden Skill festhalten.
-- Ticket-Abschluss (z. B. am Ende von `/implement`): Wenn die CI grün ist, Workflow „Deploy Staging“ auf dem Feature-Branch mit `sync_db=yes` starten (`gh api repos/pauldiepold/EwigeListe/actions/workflows/deploy-staging.yml/dispatches -f ref=<branch> -f inputs[sync_db]=yes`), bis zum Ende beobachten und Paul mit „deployed“ melden. Erst nach seiner Abnahme mergen (Squash) und das Issue schließen. Details: `docs/migration.md`, Arbeitsweise.
+- Ticket-Abschluss (z. B. am Ende von `/implement`) hängt von der Session ab. Erst nach Pauls Abnahme mergen (Squash) und das Issue schließen. Details: `docs/migration.md`, Arbeitsweise.
+  - **Lokale Session:** Alle Prüfungen lokal ausführen (`docs/migration.md`, Arbeitsweise, Schritt 3) und ohne Warten auf die GitHub-CI weitermachen. Paul nimmt lokal ab, der Staging-Deploy entfällt.
+  - **Cloud-Session:** Wenn die CI grün ist, Workflow „Deploy Staging“ auf dem Feature-Branch mit `sync_db=yes` starten (`gh api repos/pauldiepold/EwigeListe/actions/workflows/deploy-staging.yml/dispatches -f ref=<branch> -f inputs[sync_db]=yes`), bis zum Ende beobachten und Paul mit „deployed“ melden.
