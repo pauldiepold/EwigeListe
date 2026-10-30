@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class HomeRoundResource extends JsonResource
@@ -10,13 +11,10 @@ class HomeRoundResource extends JsonResource
 
     public function toArray($request): array
     {
-        $lastGame = $this->games->last();
-
         return [
             'id'         => $this->id,
-            'path'       => $this->path(),
             'players'    => $this->players->pluck('surname')->implode(' - '),
-            'lastGameAt' => $lastGame ? printDate($lastGame->created_at) : null,
+            'lastGameAt' => $this->games_max_created_at ? printDate(Carbon::parse($this->games_max_created_at)) : null,
         ];
     }
 }

@@ -22,7 +22,6 @@ export type HomeGroup = {
 
 export type HomeRound = {
   id: number;
-  path: string;
   players: string;
   lastGameAt: string | null;
 };

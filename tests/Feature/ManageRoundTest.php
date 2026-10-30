@@ -45,7 +45,7 @@ class ManageRoundTest extends TestCase
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Rounds/Create')
-                ->where('loggedInPlayerId', $players[0]->id)
+                ->where('auth.player.id', $players[0]->id)
                 ->where('players', fn ($props) => collect($props)->pluck('id')->intersect($players->pluck('id'))->count() === 2
                     && collect($props)->doesntContain('id', $hiddenPlayer->id))
                 ->where('players', function ($props) use ($players, $list) {

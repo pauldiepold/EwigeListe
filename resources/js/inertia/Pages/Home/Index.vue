@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Deferred, Head } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CurrentRoundsSection from '@/Components/Home/CurrentRoundsSection.vue';
@@ -8,37 +7,18 @@ import HomeGamesChart from '@/Components/Home/HomeGamesChart.vue';
 import AppLoadingIndicator from '@/Components/Ui/AppLoadingIndicator.vue';
 import type { HomeGamesChartPayload, HomeGroup, HomeRound } from '@/types/home';
 
-function normalizeRoundList(raw: unknown): HomeRound[] {
-  if (Array.isArray(raw)) {
-    return raw as HomeRound[];
-  }
-
-  if (
-    raw !== null &&
-    typeof raw === 'object' &&
-    'data' in raw &&
-    Array.isArray((raw as { data: unknown }).data)
-  ) {
-    return (raw as { data: HomeRound[] }).data;
-  }
-
-  return [];
-}
-
-const props = defineProps<{
+defineProps<{
   group: HomeGroup;
-  currentRounds?: unknown;
+  currentRounds: HomeRound[];
   homeGamesChart?: HomeGamesChartPayload;
 }>();
-
-const currentRoundsList = computed(() => normalizeRoundList(props.currentRounds));
 </script>
 
 <template>
   <Head title="Startseite" />
 
   <AppLayout title="Startseite">
-    <CurrentRoundsSection :rounds="currentRoundsList" />
+    <CurrentRoundsSection :rounds="currentRounds" />
 
     <section class="mb-8">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Rekorde</h2>

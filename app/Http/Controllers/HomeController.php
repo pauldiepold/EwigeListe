@@ -7,7 +7,7 @@ use App\Round;
 use App\Http\Resources\GroupHomeResource;
 use App\Http\Resources\HomeRoundResource;
 use App\Services\HomeGamesChartSeries;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,13 +15,13 @@ class HomeController extends Controller
 {
     public function index(HomeGamesChartSeries $homeGamesChartSeries): Response
     {
-        $group = Group::findOrFail(1);
+        $group = Group::findOrFail(Group::EWIGE_LISTE_ID);
 
         $currentRounds = auth()->check()
-            ? Round::with(['players', 'games'])
-                ->where('updated_at', '>=', Carbon::now()->subDay()->toDateTimeString())
-                ->has('games')
-                ->latest('updated_at')
+            ? Round::with('players')
+                ->whereHas('games', fn (Builder $query) => $query->where('created_at', '>=', now()->subDay()))
+                ->withMax('games', 'created_at')
+                ->orderByDesc('games_max_created_at')
                 ->get()
             : collect();
 

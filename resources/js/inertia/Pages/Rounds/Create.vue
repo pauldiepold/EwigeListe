@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
 import QuickRegisterModal from '@/Components/Rounds/QuickRegisterModal.vue';
 import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -13,8 +13,9 @@ const MAX_PLAYERS = 7;
 
 const props = defineProps<{
   players: CreateRoundPlayer[];
-  loggedInPlayerId: number;
 }>();
+
+const authPlayerId = usePage().props.auth.player?.id;
 
 const searchTerm = ref('');
 const selectedPlayers = ref<CreateRoundPlayer[]>([]);
@@ -98,7 +99,7 @@ function submitRound(): void {
   form.post(storeRound.url(), { preserveScroll: true });
 }
 
-const initialPlayer = props.players.find((player) => player.id === props.loggedInPlayerId);
+const initialPlayer = props.players.find((player) => player.id === authPlayerId);
 if (initialPlayer) {
   addPlayer(initialPlayer);
 }
@@ -217,7 +218,7 @@ if (initialPlayer) {
                 size="xs"
                 color="error"
                 variant="ghost"
-                :disabled="player.id === loggedInPlayerId"
+                :disabled="player.id === authPlayerId"
                 @click="removePlayer(player.id)"
               />
             </div>
