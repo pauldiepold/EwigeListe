@@ -39,7 +39,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
 | 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | ✅ |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
-| 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #31, #32, #33 | todo |
+| 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | todo |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
@@ -47,7 +47,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 
 #48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
 
-Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #31 Profil → #32 Runde → #33 Rest. Die Listen-Seite kommt vor dem Profil, weil dort die wiederverwendbaren Komponenten entstehen (Badges, Charts, Statistik-Tabellen, Archiv).
+Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #73 Spieler und Benutzer absichern → #31 Profil → #32 Runde → #33 Rest. Die Listen-Seite kommt vor dem Profil, weil dort die wiederverwendbaren Komponenten entstehen (Badges, Charts, Statistik-Tabellen, Archiv).
 
 ## Go-Live-Kriterien
 
@@ -131,6 +131,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Das Listen-Icon der Navigation führt auf die Ewige Liste, alle Listen sind von dort verlinkt | meist wird nur die Ewige Liste aufgerufen (#19) |
 | 2026-10-30 | Tabs der Listen-Seite stehen im URL-Hash, aber ohne eigenen History-Eintrag; das Chart lädt erst, wenn der Tab offen ist (`Inertia::optional` + `WhenVisible`) | Der Zurück-Button verlässt die Seite, statt durch die Tabs zu springen (Abweichung von `master`); die Chart-Abfrage läuft auf Prod über rund 30.000 Spiele und soll nicht bei jedem Aufruf anfallen (#30) |
 | 2026-10-30 | `groups.pointsPerGame` und `gamesPerRound` werden vor dem Befüllen auf `decimal(6,1)` erweitert | Auf Prod noch `float(3,1)` (maximal 99,9), Liste 9 hat 200 Spiele pro Runde. Lokal und in der CI nicht sichtbar: Laravel 13 ignoriert die Nachkommastellen in `float()`, SQLite kennt keinen Wertebereich |
+| 2026-10-30 | Jeder Spieler gehört zu genau einem Benutzer: `PlayerRegistration` legt Spieler, Benutzer und Mitgliedschaft in der Ewigen Liste in einer Transaktion an, `users.player_id` ist eindeutig. Die Migration bricht bei Verstößen mit den IDs ab; dieses Ticket läuft trotz lokaler Session über Staging | „Jeder Spieler hat einen Benutzer“ ist per Datenbank nicht erzwingbar (MySQL kann Fremdschlüssel nicht aufschieben). Bereinigt wird gezielt statt automatisch; ob die Prod-Daten passen, zeigt nur der Lauf mit Prod-Dump (#73) |
+| 2026-10-30 | Versteckte Spieler sperrt eine Middleware im `web`-Stack bei jedem Request (Logout, Redirect auf den Login, Toast), der Admin ist ausgenommen. Keine eigene Fehlermeldung im `LoginController` | Deckt mit einem Weg Passwort-Login, Socialite, Passwort-Reset, laufende Sessions und „Angemeldet bleiben“ ab; die Meldung erscheint nur bei korrektem Passwort und verrät Fremden nichts. Vor dem Prod-Deploy prüft Paul die Liste `WHERE hide = 1` (#73) |
 
 ## Offene Fragen
 

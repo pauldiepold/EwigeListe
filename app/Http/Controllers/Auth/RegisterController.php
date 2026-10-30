@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Group;
 use App\Http\Controllers\Controller;
-use App\Player;
+use App\Services\PlayerRegistration;
 use App\SocialiteUser;
 use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -43,7 +41,7 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private PlayerRegistration $playerRegistration)
     {
         $this->middleware('guest');
     }
@@ -64,7 +62,7 @@ class RegisterController extends Controller
     {
         $messages = [
             'surname.required' => 'Es muss ein Vorname angegeben werden!',
-            'name.required' => 'Es muss ein Vorname angegeben werden!',
+            'name.required' => 'Es muss ein Nachname angegeben werden!',
             'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
             'password.required' => 'Es muss ein Passwort angegeben werden!',
             'password.min' => 'Das Passwort muss mindestens 6 Zeichen haben!',
@@ -90,20 +88,16 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $player = Player::create([
-            'surname' => $data['surname'],
-            'name' => $data['name'],
-        ]);
-
         $socialiteUserId = isset($data['socialiteUserId']) ? $data['socialiteUserId'] : null;
 
         $password = $socialiteUserId ? Str::random(14) : $data['password'];
 
-        $user = User::create([
-            'player_id' => $player->id,
-            'email' => $data['email'],
-            'password' => Hash::make($password),
-        ]);
+        $user = $this->playerRegistration->register(
+            surname: $data['surname'],
+            name: $data['name'],
+            email: $data['email'],
+            password: $password,
+        );
 
         if ($socialiteUserId) {
             $socialiteUser = SocialiteUser::find($socialiteUserId);
@@ -112,10 +106,6 @@ class RegisterController extends Controller
                 $socialiteUser->save();
             }
         }
-
-        Group::find(1)->addPlayer($player);
-
-        $player->profiles->first()->calculate();
 
         return $user;
     }

@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Group;
 use App\Http\Controllers\Controller;
 use App\Http\Toast;
-use App\Player;
-use App\User;
+use App\Services\PlayerRegistration;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -31,26 +28,16 @@ class QuickRegisterController extends Controller
      * bekommt daher eine Platzhalter-E-Mail. `addedPlayerId` lässt `Rounds/Create` den
      * neuen Spieler direkt auswählen.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, PlayerRegistration $playerRegistration): RedirectResponse
     {
         $this->validator($request->all())->validate();
 
-        $player = Player::create([
-            'surname' => $request->surname,
-            'name' => $request->name,
-        ]);
-
-        User::create([
-            'player_id' => $player->id,
-            'email' => $this->placeholderEmail(),
-            'password' => Hash::make(Str::random(14)),
-        ]);
-
-        // Füge Spieler zur Standard-Gruppe hinzu
-        Group::find(Group::EWIGE_LISTE_ID)->addPlayer($player);
-
-        // Berechne das erste Profil
-        $player->profiles->first()->calculate();
+        $player = $playerRegistration->register(
+            surname: $request->surname,
+            name: $request->name,
+            email: $this->placeholderEmail(),
+            password: Str::random(14),
+        )->player;
 
         Inertia::flash('addedPlayerId', $player->id);
         Toast::success('Spieler '.$player->surname.' '.$player->name.' wurde erfolgreich erstellt!');
