@@ -7,6 +7,8 @@ use App\Group;
 use App\Player;
 use App\Round;
 use App\User;
+use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -71,7 +73,7 @@ class HomeControllerTest extends TestCase
     #[Test]
     public function a_current_round_shows_its_players_and_last_game(): void
     {
-        $this->freezeTime();
+        $this->travelTo(Carbon::parse('2026-10-30 14:00:00'));
         $this->actingAs(User::factory()->create());
 
         $round = $this->roundWithGameAt(now()->subHour());
@@ -83,7 +85,7 @@ class HomeControllerTest extends TestCase
                 ->has('currentRounds.0', fn (Assert $currentRound) => $currentRound
                     ->where('id', $round->id)
                     ->where('players', 'Anna - Ben')
-                    ->where('lastGameAt', printDate(now()->subHour()))
+                    ->where('lastGameAt', 'heute  um 13:00 Uhr')
                 )
             );
     }
@@ -127,7 +129,7 @@ class HomeControllerTest extends TestCase
             );
     }
 
-    private function roundWithGameAt(\DateTimeInterface $playedAt): Round
+    private function roundWithGameAt(DateTimeInterface $playedAt): Round
     {
         $round = Round::factory()->create();
         Game::factory()->create([

@@ -18,7 +18,7 @@ class HomeController extends Controller
         $group = Group::findOrFail(Group::EWIGE_LISTE_ID);
 
         $currentRounds = auth()->check()
-            ? Round::with(['players', 'games'])
+            ? Round::with('players')
                 ->whereHas('games', fn (Builder $query) => $query->where('created_at', '>=', now()->subDay()))
                 ->withMax('games', 'created_at')
                 ->orderByDesc('games_max_created_at')

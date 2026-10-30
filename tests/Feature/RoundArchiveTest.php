@@ -91,12 +91,14 @@ class RoundArchiveTest extends TestCase
             'games' => $this->roundsDifferingInGames($ewigeListe),
             'online' => $this->roundsDifferingInOnline($ewigeListe),
         };
-        $expected = $direction === 'asc' ? [$lower->id, $higher->id] : [$higher->id, $lower->id];
+        [$first, $second] = $direction === 'asc' ? [$lower, $higher] : [$higher, $lower];
 
         $this->get(route('rounds.index', ['sort' => $column, 'direction' => $direction]))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('archiveSort', ['column' => $column, 'direction' => $direction])
-                ->where('rounds.data', fn ($rows) => collect($rows)->pluck('id')->all() === $expected)
+                ->has('rounds.data', 2)
+                ->where('rounds.data.0.id', $first->id)
+                ->where('rounds.data.1.id', $second->id)
             );
     }
 
@@ -110,7 +112,8 @@ class RoundArchiveTest extends TestCase
         $this->get(route('rounds.index', ['sort' => 'players', 'direction' => 'asc']))
             ->assertInertia(fn (Assert $page) => $page
                 ->where('archiveSort', ['column' => 'date', 'direction' => 'asc'])
-                ->where('rounds.data', fn ($rows) => collect($rows)->pluck('id')->all() === [$older->id, $newer->id])
+                ->where('rounds.data.0.id', $older->id)
+                ->where('rounds.data.1.id', $newer->id)
             );
     }
 
