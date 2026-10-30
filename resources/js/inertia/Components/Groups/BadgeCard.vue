@@ -12,8 +12,9 @@ const typeLabel = computed(() => (props.type === 'points' ? 'Meiste Punkte' : 'M
 </script>
 
 <template>
-  <Link
-    :href="badge.path"
+  <component
+    :is="badge.path ? Link : 'div'"
+    :href="badge.path ?? undefined"
     class="mx-auto flex w-64 items-center gap-4 rounded-lg bg-yellow-400 p-2 text-black no-underline shadow"
   >
     <div class="flex flex-1 flex-col items-center">
@@ -25,5 +26,5 @@ const typeLabel = computed(() => (props.type === 'points' ? 'Meiste Punkte' : 'M
       <span class="text-2xl">{{ badge.name }}</span>
       <span class="text-xs text-gray-700">{{ badge.date }}</span>
     </div>
-  </Link>
+  </component>
 </template>

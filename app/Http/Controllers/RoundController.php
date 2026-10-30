@@ -13,12 +13,10 @@ use App\Profile;
 use App\Round;
 use App\Services\RoundArchive;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-use Yajra\DataTables\Facades\DataTables;
 
 class RoundController extends Controller
 {
@@ -163,39 +161,5 @@ class RoundController extends Controller
         }
 
         return 'success';
-    }
-
-    public function archiveTable(Group $group, ?Player $player = null)
-    {
-        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group) {
-            $query->where('groups.id', '=', $group->id);
-        });
-
-        if (isset($player)) {
-            $roundsQuery->whereHas('players', function (Builder $query) use ($player) {
-                $query->where('players.id', '=', $player->id);
-            });
-        }
-
-        $rounds = $roundsQuery
-            ->with('players', 'liveRound')
-            ->withCount(['games', 'groups']);
-
-        return DataTables::of($rounds)
-            ->addColumn('players', function ($round) {
-                return '<a href="'.$round->path.'">'.$round->players_string.'</a>';
-            })
-            ->addColumn('date', function ($round) {
-                return $round->updated_at->format('d.m.Y');
-            })
-            ->addColumn('playerIDs', function ($round) {
-                return $round->players->pluck('id');
-            })
-            ->addColumn('liveRound', function ($round) {
-                return $round->liveRound ? '<i class="fas fa-dice tw-text-gray-800"></i>' : '';
-            })
-            ->escapeColumns([''])
-            ->orderColumn('date', 'updated_at $1')
-            ->make(true);
     }
 }

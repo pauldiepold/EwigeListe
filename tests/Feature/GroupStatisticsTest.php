@@ -62,6 +62,20 @@ class GroupStatisticsTest extends TestCase
     }
 
     #[Test]
+    public function guests_only_get_links_to_visible_profiles(): void
+    {
+        $this->memberWith('Anna', ['games' => 12]);
+        $hidden = $this->memberWith('Ben', ['games' => 12]);
+        $hidden->forceFill(['hide' => true])->save();
+
+        $this->get(route('index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('group.records.0.holders.0.path', fn (?string $path) => $path !== null)
+                ->where('group.records.0.holders.1.path', null)
+            );
+    }
+
+    #[Test]
     public function calculating_a_group_stores_its_statistics(): void
     {
         $group = Group::findOrFail(Group::EWIGE_LISTE_ID);

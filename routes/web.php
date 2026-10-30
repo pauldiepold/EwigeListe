@@ -31,7 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::post('users/{user}/avatar', 'UserAvatarController@store')->name('users.updateAvatar');
 
     /* *********** Players *********** */
-    Route::get('profil/{player}/{group?}', 'PlayerController@show');
+    Route::get('profil/{player}/{group?}', 'PlayerController@show')->name('players.show');
     Route::get('/players/calculate', 'PlayerController@calculateAll');
     Route::get('/players/calculate/{player}', 'PlayerController@calculate');
 
@@ -44,7 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
     Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
     Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');
-    Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable')->name('rounds.archiveTable');
 
     Route::patch('/liveRounds/{liveRound}', 'Live\RoundController@updateRegeln')->name('liveRounds.updateRegeln');
 
@@ -65,7 +64,6 @@ Route::middleware('auth')->group(function () {
 
     /* *********** Charts ************** */
     Route::get('/charts/round/{round}/', 'ChartController@roundChart');
-    Route::get('/charts/profile/{profile}/', 'ChartController@profileChart');
 
     /* *********** Comments ************** */
     Route::post('/comments', 'CommentController@store');

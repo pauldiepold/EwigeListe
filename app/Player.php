@@ -27,7 +27,7 @@ class Player extends Model
 
     public function path()
     {
-        return "/profil/{$this->id}";
+        return route('players.show', $this, false);
     }
 
     public function getAvatarPathAttribute()

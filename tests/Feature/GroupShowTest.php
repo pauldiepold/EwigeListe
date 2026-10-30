@@ -121,6 +121,40 @@ class GroupShowTest extends TestCase
     }
 
     #[Test]
+    public function names_of_players_with_a_locked_profile_are_not_linked(): void
+    {
+        $group = Group::factory()->create();
+        $locked = Player::factory()->hidden()->create();
+        $group->addPlayer($locked);
+        Profile::where('player_id', $locked->id)->update(['games' => 12]);
+        Badge::factory()->create(['player_id' => $locked->id, 'group_id' => $group->id, 'type' => 'points', 'year' => 2024, 'month' => 7]);
+
+        $this->get(route('groups.show', $group))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('members.0.path', null)
+                ->where('statistics.records.0.holders.0.path', null)
+                ->where('badges.0.years.0.badges.0.path', null)
+            );
+    }
+
+    #[Test]
+    public function the_admin_keeps_the_links_to_locked_profiles(): void
+    {
+        $group = Group::factory()->create();
+        $locked = Player::factory()->hidden()->create();
+        $group->addPlayer($locked);
+        Profile::where('player_id', $locked->id)->update(['games' => 12]);
+        Badge::factory()->create(['player_id' => $locked->id, 'group_id' => $group->id, 'type' => 'points', 'year' => 2024, 'month' => 7]);
+
+        $this->actingAs(User::findOrFail(1))->get(route('groups.show', $group))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('members.0.path', "/profil/{$locked->id}/{$group->id}")
+                ->where('statistics.records.0.holders.0.path', "/profil/{$locked->id}/{$group->id}")
+                ->where('badges.0.years.0.badges.0.path', "/profil/{$locked->id}/{$group->id}#abzeichen")
+            );
+    }
+
+    #[Test]
     public function the_games_chart_loads_on_demand_and_needs_five_rounds(): void
     {
         $group = Group::factory()->create();

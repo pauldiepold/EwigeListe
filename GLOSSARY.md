@@ -70,4 +70,4 @@ Eine Kennzahl über alle Spiele einer Liste, zum Beispiel die Anzahl der Spiele 
 
 **Abzeichen**:
 Auszeichnung für den Spieler mit den meisten Punkten bzw. Spielen einer Liste in einem Kalendermonat. Bei Gleichstand bekommt es nur ein Spieler.
-_Avoid_: Badge
+_Avoid_: Badge, Monatsrekord

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 
 class Profile extends Pivot
 {
@@ -19,7 +20,15 @@ class Profile extends Pivot
 
     public function path()
     {
-        return "/profil/{$this->player_id}/{$this->group_id}";
+        return route('players.show', [$this->player_id, $this->group_id], false);
+    }
+
+    /**
+     * `null`, wenn der Betrachter dieses Profil nicht sehen darf: Der Name erscheint dann ohne Link.
+     */
+    public function pathFor(?User $viewer): ?string
+    {
+        return Gate::forUser($viewer)->allows('view', $this->player) ? $this->path() : null;
     }
 
     public function canBeDefault(): bool

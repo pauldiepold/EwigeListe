@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChart from '@/Components/Groups/GamesChart.vue';
@@ -10,6 +10,7 @@ import GroupMembersPanel from '@/Components/Groups/GroupMembersPanel.vue';
 import GroupStatisticsTable from '@/Components/Groups/GroupStatisticsTable.vue';
 import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
 import { EWIGE_LISTE } from '@/composables/useRoundListSelection';
+import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { index as groupsIndex, show as showGroup } from '@/routes/groups';
 import type { GroupShowProps } from '@/types/groups-show';
 import type { ArchiveSortColumn } from '@/types/rounds-index';
@@ -32,30 +33,7 @@ const tabs = computed(() => [
   ...(props.canClose ? [{ label: 'Admin', icon: 'i-lucide-settings', value: 'admin' }] : []),
 ]);
 
-const activeTab = ref('mitglieder');
-
-/** `replaceState` behält den History-State von Inertia; ein neuer Eintrag entsteht nicht. */
-function writeActiveTabToUrl(): void {
-  window.history.replaceState(window.history.state, '', `#${activeTab.value}`);
-}
-
-watch(activeTab, writeActiveTabToUrl);
-
-/** Inertia übernimmt den Hash nach einer Antwort nur bei exakt gleicher Query-Reihenfolge. */
-const stopRestoringHash = router.on('success', (event) => {
-  if (event.detail.page.component === 'Groups/Show') {
-    writeActiveTabToUrl();
-  }
-});
-
-onMounted(() => {
-  const tabFromHash = window.location.hash.slice(1);
-  if (tabs.value.some((tab) => tab.value === tabFromHash)) {
-    activeTab.value = tabFromHash;
-  }
-});
-
-onUnmounted(stopRestoringHash);
+const activeTab = useTabInUrlHash(tabs, 'mitglieder', 'Groups/Show');
 
 function visitArchive(query: {
   sort: ArchiveSortColumn;

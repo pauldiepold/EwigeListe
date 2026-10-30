@@ -1,7 +1,7 @@
 import { computed, inject, onBeforeUnmount, ref, watch, type Ref } from 'vue';
 import Chart from 'chart.js/auto';
 import { inertiaColorModeKey } from '@/composables/inertiaColorMode';
-import type { GamesChartPayload } from '@/types/groups-show';
+import type { LineChartSeries } from '@/types/charts';
 
 function chartPalette(isDark: boolean): {
   borderColor: string;
@@ -27,22 +27,22 @@ function chartPalette(isDark: boolean): {
 }
 
 /**
- * Rendert das Spiele-Zeitreihen-Chart aus servergelieferten Daten (Inertia-Prop).
+ * Rendert ein Zeitreihen-Chart aus servergelieferten Daten (Inertia-Prop).
  */
-export function useGamesChart(
+export function useLineChart(
   canvasRef: Ref<HTMLCanvasElement | null>,
-  chartData: Ref<GamesChartPayload | null | undefined>,
+  series: Ref<LineChartSeries | null | undefined>,
 ): {
   error: Ref<string | null>;
 } {
   const colorMode = inject(inertiaColorModeKey);
   if (colorMode === undefined) {
-    throw new Error('useGamesChart: Farbmodus fehlt — Seite muss in AppLayout liegen.');
+    throw new Error('useLineChart: Farbmodus fehlt — Seite muss in AppLayout liegen.');
   }
   const isDark = computed(() => colorMode.value === 'dark');
   const error = ref<string | null>(null);
   let chart: Chart | null = null;
-  let lastPayload: GamesChartPayload | null = null;
+  let lastPayload: LineChartSeries | null = null;
 
   const destroyChart = (): void => {
     if (chart) {
@@ -51,7 +51,7 @@ export function useGamesChart(
     }
   };
 
-  const renderFromPayload = (data: GamesChartPayload, animate: boolean): void => {
+  const renderFromPayload = (data: LineChartSeries, animate: boolean): void => {
     error.value = null;
 
     if (!canvasRef.value) {
@@ -68,12 +68,12 @@ export function useGamesChart(
       chart = new Chart(canvasRef.value, {
         type: 'line',
         data: {
-          labels: data.gameDates,
+          labels: data.labels,
           datasets: [
             {
               borderColor: palette.borderColor,
               backgroundColor: palette.fillColor,
-              data: data.gameCounter,
+              data: data.values,
             },
           ],
         },
@@ -142,7 +142,7 @@ export function useGamesChart(
   };
 
   watch(
-    [canvasRef, chartData],
+    [canvasRef, series],
     ([canvas, data]) => {
       if (!canvas || data == null) {
         return;

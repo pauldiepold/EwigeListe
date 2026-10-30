@@ -15,7 +15,7 @@ class GroupStatisticsResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return array{records: list<array{label: string, value: string, holders: list<array{name: string, path: string}>}>, stats: list<array{label: string, value: string}>}
+     * @return array{records: list<array{label: string, value: string, holders: list<array{name: string, path: ?string}>}>, stats: list<array{label: string, value: string}>}
      */
     public function toArray(Request $request): array
     {
@@ -25,7 +25,7 @@ class GroupStatisticsResource extends JsonResource
                 'value' => $record['value'],
                 'holders' => $record['profiles']->map(fn (Profile $profile): array => [
                     'name' => $profile->player->surname,
-                    'path' => $profile->path(),
+                    'path' => $profile->pathFor($request->user()),
                 ])->all(),
             ])->all(),
             'stats' => [
