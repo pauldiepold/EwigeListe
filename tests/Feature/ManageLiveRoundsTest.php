@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use PHPUnit\Framework\Attributes\Test;
 use App\Group;
 use App\Round;
 use App\User;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class ManageLiveRoundsTest extends TestCase
 {
@@ -24,12 +24,11 @@ class ManageLiveRoundsTest extends TestCase
         $response = $this->post(route('rounds.store'), [
             'players' => $users->pluck('player_id')->toArray(),
             'groups' => [Group::EWIGE_LISTE_ID],
-            'liveGame' => true
+            'liveGame' => true,
         ]);
 
         $round = Round::sole();
         $response->assertRedirect($round->path());
         $this->assertNotNull($round->liveRound);
     }
-
 }

@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 /*
@@ -22,8 +21,7 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('index');
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::middleware('auth')->group(function ()
-{
+Route::middleware('auth')->group(function () {
     /* *********** Users *********** */
     Route::get('users/{user}/edit', 'UserController@edit')->name('users.edit');
     Route::patch('users/{user}/name', 'UserController@updateName')->name('users.updateName');
@@ -35,7 +33,6 @@ Route::middleware('auth')->group(function ()
     Route::get('profil/{player}/{group?}', 'PlayerController@show');
     Route::get('/players/calculate', 'PlayerController@calculateAll');
     Route::get('/players/calculate/{player}', 'PlayerController@calculate');
-
 
     /* *********** Rounds ************ */
     Route::get('/rundenarchiv/{group?}', 'RoundController@index')->name('rounds.index');
@@ -65,32 +62,26 @@ Route::middleware('auth')->group(function ()
     Route::get('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
     Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->name('groups.close');
 
-
     /* *********** Charts ************** */
     Route::get('/charts/round/{round}/', 'ChartController@roundChart');
     Route::get('/charts/profile/{profile}/', 'ChartController@profileChart');
-
 
     /* *********** Comments ************** */
     Route::post('/comments', 'CommentController@store');
     Route::delete('/comments/{comment}', 'CommentController@destroy');
 
-
     /* *********** API ************** */
-    Route::prefix('api')->group(function ()
-    {
+    Route::prefix('api')->group(function () {
         Route::get('/rounds/{round}/fetchData', 'RoundController@fetchData');
 
         Route::post('/rounds/{round}/game', 'GameController@store');
         Route::delete('/games/{game}', 'GameController@destroy');
 
-        Route::middleware('can:update,liveRound')->group(function ()
-        {
+        Route::middleware('can:update,liveRound')->group(function () {
             Route::post('live/{liveRound}/spielStarten', 'Live\RoundController@starteNeuesSpiel');
         });
 
-        Route::middleware('can:update,liveGame')->group(function ()
-        {
+        Route::middleware('can:update,liveGame')->group(function () {
             Route::post('live/{liveGame}/vorbehalt', 'Live\GameController@vorbehalt');
             Route::post('live/{liveGame}/armutAbgeben', 'Live\GameController@armutAbgeben');
             Route::post('live/{liveGame}/armutMitnehmen', 'Live\GameController@armutMitnehmen');
@@ -104,12 +95,10 @@ Route::middleware('auth')->group(function ()
     });
 
     /* *********** Admin ************** */
-    Route::middleware('admin')->group(function ()
-    {
+    Route::middleware('admin')->group(function () {
         Route::get('/report', 'ReportController@report');
     });
 });
-
 
 /* *********** Charts ************** */
 Route::get('/charts/home/{group}', 'ChartController@homeChart')->name('charts.home');
@@ -118,7 +107,6 @@ Route::get('/charts/home/{group}', 'ChartController@homeChart')->name('charts.ho
 Route::get('/datenschutz/', 'StaticPageController@datenschutz')->name('datenschutz');
 Route::get('/impressum/', 'StaticPageController@impressum')->name('impressum');
 Route::get('/regeln/', 'StaticPageController@regeln')->name('regeln');
-
 
 /* *********** AUTH ************** */
 Route::get('auth/redirect/{provider}', 'Auth\SocialiteController@redirect')->name('auth.socialite');
@@ -129,7 +117,3 @@ Route::get('login/social/{socialiteUser}', 'Auth\SocialiteController@showView')-
 Route::middleware('auth')->group(function () {
     Route::post('/register/quick', 'Auth\QuickRegisterController@store')->name('register.quick.store');
 });
-
-
-
-

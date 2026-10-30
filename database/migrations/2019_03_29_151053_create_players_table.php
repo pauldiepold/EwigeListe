@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreatePlayersTable extends Migration {
-
+class CreatePlayersTable extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -13,8 +13,7 @@ class CreatePlayersTable extends Migration {
      */
     public function up()
     {
-        Schema::create('players', function (Blueprint $table)
-        {
+        Schema::create('players', function (Blueprint $table) {
             $table->increments('id');
             $table->string('surname');
             $table->string('name');

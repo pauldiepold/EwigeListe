@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateName extends FormRequest
 {
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,7 +25,7 @@ class UpdateName extends FormRequest
     {
         return [
             'vorname' => 'required|string|min:2',
-            'nachname' => 'required|string|min:2'
+            'nachname' => 'required|string|min:2',
         ];
     }
 
@@ -34,7 +33,7 @@ class UpdateName extends FormRequest
     {
         return [
             'vorname' => 'Vorname',
-            'nachname' => 'Nachname'
+            'nachname' => 'Nachname',
         ];
     }
 }

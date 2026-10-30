@@ -2,8 +2,6 @@
 
 namespace App\Live;
 
-use Illuminate\Support\Collection;
-
 class Karte
 {
     public $id;
@@ -17,7 +15,9 @@ class Karte
     public $punkte;
 
     public $trumpf;
+
     public $spielbar;
+
     public $armut_zurueck;
 
     public $gespieltVon;
@@ -36,30 +36,24 @@ class Karte
         $this->wert = $wert;
 
         $this->wert = $wert;
-        if ($wert == '1')
-        {
+        if ($wert == '1') {
             $this->punkte = 0;
-        } elseif ($wert == '2')
-        {
+        } elseif ($wert == '2') {
             $this->punkte = 2;
-        } elseif ($wert == '3')
-        {
+        } elseif ($wert == '3') {
             $this->punkte = 3;
-        } elseif ($wert == '4')
-        {
+        } elseif ($wert == '4') {
             $this->punkte = 4;
-        } elseif ($wert == '5')
-        {
+        } elseif ($wert == '5') {
             $this->punkte = 10;
-        } elseif ($wert == '6')
-        {
+        } elseif ($wert == '6') {
             $this->punkte = 11;
         }
     }
 
     public static function create($input)
     {
-        $karte = new self();
+        $karte = new self;
 
         $karte->id = $input->id;
         $karte->rang = $input->rang;
@@ -79,7 +73,7 @@ class Karte
         $farben = [1 => 'd', 2 => 'h', 3 => 's', 4 => 'c'];
         $werte = [1 => 'n', 2 => 'j', 3 => 'q', 4 => 'k', 5 => 't', 6 => 'a'];
 
-        return $farben[$this->farbe] . $werte[$this->wert];
+        return $farben[$this->farbe].$werte[$this->wert];
     }
 
     public function matchesAIString($aiString)

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class GamePlayer extends Pivot
 {
-
     protected $table = 'game_player';
+
     public $incrementing = true;
 
     public function player()
@@ -19,5 +19,4 @@ class GamePlayer extends Pivot
     {
         return $this->belongsTo(Game::class);
     }
-
 }

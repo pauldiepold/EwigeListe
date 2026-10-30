@@ -18,8 +18,9 @@ class Badge extends Model
         return Carbon::createMidnightDate($this->year, $this->month, 1);
     }
 
-    public function playerPath() {
-        return $this->player->path() . '/' . $this->group_id . '#abzeichen';
+    public function playerPath()
+    {
+        return $this->player->path().'/'.$this->group_id.'#abzeichen';
     }
 
     public function calculate()
@@ -27,11 +28,9 @@ class Badge extends Model
         $group = $this->group;
         $highestPlayer = null;
         $highestValue = 0;
-        foreach ($group->players as $player)
-        {
+        foreach ($group->players as $player) {
             $gamePlayers = GamePlayer::where('player_id', $player->id)
-                ->whereHas('game.round.groups', function (Builder $query) use ($group)
-                {
+                ->whereHas('game.round.groups', function (Builder $query) use ($group) {
                     $query->where('groups.id', '=', $group->id);
                 })
                 ->where('created_at', '>=', $this->date)
@@ -39,7 +38,7 @@ class Badge extends Model
 
             if ($this->type == 'games') {
                 $value = $gamePlayers->count();
-            } else if ($this->type == 'points') {
+            } elseif ($this->type == 'points') {
                 $value = $gamePlayers->sum('points');
             } else {
                 $value = 0;
@@ -51,8 +50,7 @@ class Badge extends Model
             }
         }
 
-        if(isset($highestPlayer))
-        {
+        if (isset($highestPlayer)) {
             $this->value = $highestValue;
             $this->player_id = $highestPlayer->id;
             $this->save();

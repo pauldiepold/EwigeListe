@@ -4,22 +4,21 @@ namespace App\Jobs;
 
 use App\Group;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class UpdateGroup implements ShouldQueue {
-
+class UpdateGroup implements ShouldQueue
+{
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $group;
+
     protected $date;
 
     /**
      * Create a new job instance.
-     *
-     * @param $group
      */
     public function __construct(Group $group, $date)
     {

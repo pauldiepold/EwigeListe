@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use App\LiveGame;
 use App\Http\Resources\LiveGame as LiveGameResource;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -15,13 +15,11 @@ class LiveGameDataBroadcasted implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     private $liveGame;
+
     private $playerID;
 
     /**
      * Create a new event instance.
-     *
-     * @param $liveGame
-     * @param $playerID
      */
     public function __construct($liveGame, $playerID)
     {
@@ -32,12 +30,12 @@ class LiveGameDataBroadcasted implements ShouldBroadcastNow
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel|array
      */
     public function broadcastOn()
     {
         return new PrivateChannel(
-            'liveRound.' . $this->liveGame->live_round_id . '.' . $this->playerID
+            'liveRound.'.$this->liveGame->live_round_id.'.'.$this->playerID
         );
     }
 

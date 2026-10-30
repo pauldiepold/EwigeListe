@@ -25,7 +25,7 @@ class HomeGamesChartSeries
             $query->where('groups.id', '=', $group->id);
         })->latest()->first();
 
-        if (!$firstGame || !$lastGame) {
+        if (! $firstGame || ! $lastGame) {
             return [
                 'gameDates' => [],
                 'gameCounter' => [],

@@ -2,20 +2,23 @@
 
 namespace Tests\Feature;
 
+use App\Group;
+use App\Player;
+use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ManageGroupsTest extends TestCase {
-
+class ManageGroupsTest extends TestCase
+{
     use RefreshDatabase, WithFaker;
 
     #[Test]
     public function guests_cannot_manage_groups()
     {
-        $group = \App\Group::factory()->create();
+        $group = Group::factory()->create();
 
         $this->get('/liste/erstellen')->assertRedirect('/login');
         $this->post('/groups', $group->toArray())->assertRedirect('login');
@@ -25,17 +28,17 @@ class ManageGroupsTest extends TestCase {
     public function a_user_can_create_a_group()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
         $this->get(route('groups.create'))
             ->assertOk()
             ->assertInertia(fn (Assert $page) => $page->component('Groups/Create'));
 
-        $attributes = \App\Group::factory()->raw(['created_by' => auth()->user()->player->id]);
+        $attributes = Group::factory()->raw(['created_by' => auth()->user()->player->id]);
 
         $response = $this->post('groups', $attributes);
 
-        $response->assertRedirect(\App\Group::where('name', $attributes['name'])->sole()->path());
+        $response->assertRedirect(Group::where('name', $attributes['name'])->sole()->path());
 
         $this->assertDatabaseHas('groups', $attributes);
 
@@ -52,9 +55,9 @@ class ManageGroupsTest extends TestCase {
     public function the_creator_of_a_group_is_in_that_group()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $attributes = \App\Group::factory()->raw(['created_by' => auth()->user()->player->id]);
+        $attributes = Group::factory()->raw(['created_by' => auth()->user()->player->id]);
 
         $this->post('groups', $attributes);
 
@@ -66,9 +69,9 @@ class ManageGroupsTest extends TestCase {
     #[Test]
     public function a_user_can_view_a_group()
     {
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $group = \App\Group::factory()->create(['name' => "O'Kon"]);
+        $group = Group::factory()->create(['name' => "O'Kon"]);
         $group->calculate();
 
         $this->get($group->path())->assertOk()->assertSee($group->name);
@@ -79,11 +82,11 @@ class ManageGroupsTest extends TestCase {
     {
         $this->markTestIncomplete('Die Tabelle erscheint erst nach gespielten Runden; wird mit der Migration der Seite neu geschrieben (#30).');
 
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $group = \App\Group::factory()->create();
+        $group = Group::factory()->create();
 
-        $players = \App\Player::factory()->count(6)->create();
+        $players = Player::factory()->count(6)->create();
 
         $group->addPlayers($players);
         $group->calculate();
@@ -94,9 +97,9 @@ class ManageGroupsTest extends TestCase {
     #[Test]
     public function a_group_requires_a_name()
     {
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $attributes = \App\Group::factory()->raw(['name' => '']);
+        $attributes = Group::factory()->raw(['name' => '']);
 
         $this->post('/groups', $attributes)->assertSessionHasErrors('name');
 

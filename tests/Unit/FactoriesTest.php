@@ -2,6 +2,13 @@
 
 namespace Tests\Unit;
 
+use App\Badge;
+use App\Comment;
+use App\Game;
+use App\Group;
+use App\Player;
+use App\Round;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -18,13 +25,13 @@ class FactoriesTest extends TestCase
     public static function models(): array
     {
         return [
-            'Badge' => [\App\Badge::class],
-            'Comment' => [\App\Comment::class],
-            'Game' => [\App\Game::class],
-            'Group' => [\App\Group::class],
-            'Player' => [\App\Player::class],
-            'Round' => [\App\Round::class],
-            'User' => [\App\User::class],
+            'Badge' => [Badge::class],
+            'Comment' => [Comment::class],
+            'Game' => [Game::class],
+            'Group' => [Group::class],
+            'Player' => [Player::class],
+            'Round' => [Round::class],
+            'User' => [User::class],
         ];
     }
 
@@ -35,7 +42,7 @@ class FactoriesTest extends TestCase
     #[DataProvider('models')]
     public function each_factory_creates_a_valid_model(string $model): void
     {
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
         $instance = $model::factory()->create();
 

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class DeleteProfilesInvitationsTable extends Migration
 {
@@ -24,8 +24,7 @@ class DeleteProfilesInvitationsTable extends Migration
      */
     public function down()
     {
-        Schema::create('invitations', function (Blueprint $table)
-        {
+        Schema::create('invitations', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('pin');
             $table->unsignedInteger('player_id')->nullable();
@@ -35,8 +34,7 @@ class DeleteProfilesInvitationsTable extends Migration
             $table->foreign('player_id')->references('id')->on('players');
         });
 
-        Schema::create('profiles', function (Blueprint $table)
-        {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->increments('id');
 
             $table->unsignedInteger('player_id')->nullable();
@@ -79,7 +77,6 @@ class DeleteProfilesInvitationsTable extends Migration
             $table->integer('loseStreak')->nullable();
             $table->timestamp('loseStreakStart')->nullable();
             $table->timestamp('loseStreakEnd')->nullable();
-
 
             $table->timestamps();
         });

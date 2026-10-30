@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Group extends Model
 {
@@ -18,7 +17,7 @@ class Group extends Model
 
     protected $fillable = [
         'name',
-        'created_by'
+        'created_by',
     ];
 
     protected $hidden = [
@@ -40,13 +39,12 @@ class Group extends Model
         'mostGamesMonth',
         'totalGames',
         'pointsPerGame',
-        'gamesPerRound'
+        'gamesPerRound',
     ];
 
     public function updateStats($date = null)
     {
-        if (!$this->queued)
-        {
+        if (! $this->queued) {
             $this->queued = true;
             $this->save();
             UpdateGroup::dispatch($this, $date);
@@ -55,10 +53,8 @@ class Group extends Model
 
     public static function updateManyStats(Collection $groups, $date = null)
     {
-        foreach ($groups as $group)
-        {
-            if (!$group->queued)
-            {
+        foreach ($groups as $group) {
+            if (! $group->queued) {
                 $group->queued = true;
                 $group->save();
                 UpdateGroup::dispatch($group, $date);
@@ -83,7 +79,7 @@ class Group extends Model
         'mostGamesDay' => 'collection',
         'mostGamesMonth' => 'collection',
         'pointsPerGame' => 'decimal:1',
-        'gamesPerRound' => 'decimal:1'
+        'gamesPerRound' => 'decimal:1',
     ];
 
     public function calculateBadges()
@@ -94,8 +90,7 @@ class Group extends Model
             ->created_at
             ->startOfMonth();
 
-        while ($currentMonth->lessThan(Carbon::now()))
-        {
+        while ($currentMonth->lessThan(Carbon::now())) {
             $this->calculateBadgesByMonth($currentMonth);
             $currentMonth->addMonth();
         }
@@ -107,7 +102,7 @@ class Group extends Model
             'group_id' => $this->id,
             'year' => $date->year,
             'month' => $date->month,
-            'type' => 'points'
+            'type' => 'points',
         ], [
 
         ]);
@@ -117,7 +112,7 @@ class Group extends Model
             'group_id' => $this->id,
             'year' => $date->year,
             'month' => $date->month,
-            'type' => 'games'
+            'type' => 'games',
         ], [
 
         ]);
@@ -142,18 +137,16 @@ class Group extends Model
             collect(['highestWinstreak', 'winStreak', 'max', 'Längste Sieges-Strähne:', 'games', 0, '']),
             collect(['highestLosestreak', 'loseStreak', 'max', 'Längste Pech-Strähne:', 'games', 0, '']),
             collect(['mostGamesDay', 'mostGamesDay', 'max', 'Meiste Spiele an einem Tag:', 'games', 0, '']),
-            collect(['mostGamesMonth', 'mostGamesMonth', 'max', 'Meiste Spiele in einem Monat:', 'games', 0, ''])
+            collect(['mostGamesMonth', 'mostGamesMonth', 'max', 'Meiste Spiele in einem Monat:', 'games', 0, '']),
         ]);
 
         $col = collect();
 
-        foreach ($columns as $column)
-        {
+        foreach ($columns as $column) {
             $columnName = $column->get(0);
             $highscoresCollection = $this->getHighscoreCollection($column);
             $this->$columnName = $highscoresCollection;
-            if ($highscoresCollection->get(2) != '')
-            {
+            if ($highscoresCollection->get(2) != '') {
                 $col->push($highscoresCollection);
             }
         }
@@ -168,18 +161,18 @@ class Group extends Model
     {
         $minmax = $column->get(2);
         $value = $this->profiles()
-            ->where('profiles.' . $column->get(4), '>', $column->get(5))
+            ->where('profiles.'.$column->get(4), '>', $column->get(5))
             ->$minmax($column->get(1));
 
         $profiles = $this->profiles()
-            ->where('profiles.' . $column->get(4), '>', $column->get(5))
-            ->where('profiles.' . $column->get(1), $value)
+            ->where('profiles.'.$column->get(4), '>', $column->get(5))
+            ->where('profiles.'.$column->get(1), $value)
             ->with('player')
             ->get();
 
         $col = collect();
         $col->push($column->get(3));
-        $col->push($value . $column->get(6));
+        $col->push($value.$column->get(6));
         $col->push($this->getPlayerLink($profiles));
 
         return $col;
@@ -189,24 +182,23 @@ class Group extends Model
     {
         $links = collect();
 
-        foreach ($profiles as $profile)
-        {
-            $links->push('<a href="' . $profile->path() . '">' . $profile->player->surname . '</a>');
+        foreach ($profiles as $profile) {
+            $links->push('<a href="'.$profile->path().'">'.$profile->player->surname.'</a>');
         }
 
         return niceCount($links);
     }
 
-    private function calcStats() {
+    private function calcStats()
+    {
 
         $colStats = collect();
         $groupID = $this->id;
 
-        /* ***** Spiele insgesamt *****/
-        $gamesAll = Game::whereHas('round.groups', function (Builder $query) use ($groupID)
-            {
-                $query->where('groups.id', '=', $groupID);
-            })
+        /* ***** Spiele insgesamt **** */
+        $gamesAll = Game::whereHas('round.groups', function (Builder $query) use ($groupID) {
+            $query->where('groups.id', '=', $groupID);
+        })
             ->count();
 
         $colRow = collect();
@@ -214,13 +206,11 @@ class Group extends Model
         $colRow->push($gamesAll);
         $colStats->push($colRow);
 
+        /* ***** Punkte Durchschnitt **** */
 
-        /* ***** Punkte Durchschnitt *****/
-
-        $pointsAvg = Game::whereHas('round.groups', function (Builder $query) use ($groupID)
-            {
-                $query->where('groups.id', '=', $groupID);
-            })
+        $pointsAvg = Game::whereHas('round.groups', function (Builder $query) use ($groupID) {
+            $query->where('groups.id', '=', $groupID);
+        })
             ->avg('points');
 
         $colRow = collect();
@@ -228,12 +218,11 @@ class Group extends Model
         $colRow->push(round($pointsAvg, 1));
         $colStats->push($colRow);
 
-        /* ***** Spiele Schnitt pro Runde *****/
+        /* ***** Spiele Schnitt pro Runde **** */
 
-        $gamesAvg = Round::whereHas('groups', function (Builder $query) use ($groupID)
-            {
-                $query->where('groups.id', '=', $groupID);
-            })
+        $gamesAvg = Round::whereHas('groups', function (Builder $query) use ($groupID) {
+            $query->where('groups.id', '=', $groupID);
+        })
             ->withCount('games')
             ->get()
             ->avg('games_count');
@@ -247,7 +236,8 @@ class Group extends Model
 
     }
 
-    public function addPlayer($player) {
+    public function addPlayer($player)
+    {
         $this->players()->save($player);
     }
 
@@ -297,8 +287,5 @@ class Group extends Model
             ->where('player_id', '!=', 0);
     }
 
-    public function games()
-    {
-
-    }
+    public function games() {}
 }

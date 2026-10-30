@@ -2,12 +2,14 @@
 
 namespace Tests\Unit;
 
-use PHPUnit\Framework\Attributes\Test;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\URL;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Group;
+use App\Player;
+use App\Round;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class GroupTest extends TestCase
 {
@@ -16,15 +18,15 @@ class GroupTest extends TestCase
     #[Test]
     public function it_has_a_path()
     {
-        $group = \App\Group::factory()->create();
-        $this->assertEquals(URL::to('/') . '/liste/' . $group->id, $group->path());
+        $group = Group::factory()->create();
+        $this->assertEquals(URL::to('/').'/liste/'.$group->id, $group->path());
     }
 
     #[Test]
     public function it_is_owned_by_one_player()
     {
-        $player = \App\Player::factory()->create();
-        $group = \App\Group::factory()->create(['created_by' => $player->id]);
+        $player = Player::factory()->create();
+        $group = Group::factory()->create(['created_by' => $player->id]);
 
         $this->assertEquals($group->created_by, $player->id);
     }
@@ -34,9 +36,9 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $group = \App\Group::factory()->create();
+        $group = Group::factory()->create();
 
-        $players = \App\Player::factory()->count(5)->create();
+        $players = Player::factory()->count(5)->create();
 
         $group->players()->saveMany($players);
 
@@ -49,9 +51,9 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $player = \App\Player::factory()->create();
+        $player = Player::factory()->create();
 
-        $groups = \App\Group::factory()->count(5)->create();
+        $groups = Group::factory()->count(5)->create();
 
         $player->groups()->saveMany($groups);
 
@@ -64,11 +66,11 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $group = \App\Group::factory()->create();
+        $group = Group::factory()->create();
 
-        $rounds = \App\Round::factory()->count(5)->create();
+        $rounds = Round::factory()->count(5)->create();
 
         $group->rounds()->saveMany($rounds);
 
@@ -81,11 +83,11 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(\App\User::factory()->create());
+        $this->actingAs(User::factory()->create());
 
-        $round = \App\Round::factory()->create();
+        $round = Round::factory()->create();
 
-        $groups = \App\Group::factory()->count(5)->create();
+        $groups = Group::factory()->count(5)->create();
 
         $round->groups()->saveMany($groups);
 
@@ -98,14 +100,14 @@ class GroupTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $group = \App\Group::factory()->create();
+        $group = Group::factory()->create();
 
-        $firstPlayer = \App\Player::factory()->create();
+        $firstPlayer = Player::factory()->create();
         $group->players()->save($firstPlayer);
 
         $this->assertCount(1, $group->players);
 
-        $players = \App\Player::factory()->count(3)->create()->add($firstPlayer);
+        $players = Player::factory()->count(3)->create()->add($firstPlayer);
 
         $group->addPlayers($players);
         $group->load('players');

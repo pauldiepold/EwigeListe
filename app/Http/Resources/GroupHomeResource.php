@@ -11,15 +11,15 @@ class GroupHomeResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id'      => $this->id,
+            'id' => $this->id,
             'records' => collect($this->records)->map(fn ($row) => [
-                'labelHtml'  => (string) collect($row)->get(0, ''),
-                'value'      => (string) collect($row)->get(1, ''),
+                'labelHtml' => (string) collect($row)->get(0, ''),
+                'value' => (string) collect($row)->get(1, ''),
                 'detailHtml' => (string) collect($row)->get(2, ''),
             ])->values(),
             'stats' => collect($this->stats)->map(fn ($row) => [
                 'labelHtml' => (string) collect($row)->get(0, ''),
-                'value'     => (string) collect($row)->get(1, ''),
+                'value' => (string) collect($row)->get(1, ''),
             ])->values(),
         ];
     }

@@ -61,6 +61,7 @@ class DeleteInactiveUsers extends Command
 
         if ($players->isEmpty()) {
             $this->info('Keine zu löschenden Benutzer gefunden.');
+
             return 0;
         }
 
@@ -69,10 +70,11 @@ class DeleteInactiveUsers extends Command
 
         if ($users->isEmpty()) {
             $this->info('Keine zu löschenden Benutzer gefunden.');
+
             return 0;
         }
 
-        $this->info('Gefundene zu löschende Benutzer: ' . $users->count());
+        $this->info('Gefundene zu löschende Benutzer: '.$users->count());
 
         // Zeige Benutzer an
         $headers = ['ID', 'E-Mail', 'Player ID'];
@@ -82,7 +84,7 @@ class DeleteInactiveUsers extends Command
             $rows[] = [
                 $user->id,
                 $user->email,
-                $user->player_id
+                $user->player_id,
             ];
         }
 
@@ -91,12 +93,14 @@ class DeleteInactiveUsers extends Command
         // Wenn dry-run Option gesetzt ist, beende hier
         if ($this->option('dry-run')) {
             $this->info('Dry-Run Modus: Keine Benutzer wurden gelöscht.');
+
             return 0;
         }
 
         // Bestätigung einholen, es sei denn --force ist gesetzt
-        if (!$this->option('force') && !$this->confirm('Möchtest du diese ' . $users->count() . ' Benutzer wirklich löschen?')) {
+        if (! $this->option('force') && ! $this->confirm('Möchtest du diese '.$users->count().' Benutzer wirklich löschen?')) {
             $this->info('Vorgang abgebrochen.');
+
             return 0;
         }
 
@@ -132,7 +136,8 @@ class DeleteInactiveUsers extends Command
 
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->error('Fehler beim Löschen der Benutzer: ' . $e->getMessage());
+            $this->error('Fehler beim Löschen der Benutzer: '.$e->getMessage());
+
             return 1;
         }
 

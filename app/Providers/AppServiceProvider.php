@@ -3,10 +3,9 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         Paginator::defaultView('pagination.pagination');
-		setlocale(LC_TIME, config('app.locale'));
-		Carbon::setLocale(config('app.locale'));
+        setlocale(LC_TIME, config('app.locale'));
+        Carbon::setLocale(config('app.locale'));
     }
 }

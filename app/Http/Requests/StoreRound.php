@@ -6,8 +6,8 @@ use App\Group;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
-class StoreRound extends FormRequest {
-
+class StoreRound extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -30,21 +30,18 @@ class StoreRound extends FormRequest {
             'players.*' => 'exists:players,id',
             'groups' => 'array',
             'groups.*' => 'exists:groups,id',
-            'liveGame' => 'required|boolean'
+            'liveGame' => 'required|boolean',
         ];
     }
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator)
-        {
-            if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count())
-            {
+        $validator->after(function ($validator) {
+            if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count()) {
                 $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
             }
 
-            if (!collect($this->input('players'))->contains(auth()->user()->player->id))
-            {
+            if (! collect($this->input('players'))->contains(auth()->user()->player->id)) {
                 $validator->errors()->add('players', 'Du selbst musst Teil der Runde sein!');
             }
 
@@ -65,13 +62,10 @@ class StoreRound extends FormRequest {
             ->whereKeyNot(Group::EWIGE_LISTE_ID)
             ->get();
 
-        foreach ($groups as $group)
-        {
-            if ($group->closed)
-            {
+        foreach ($groups as $group) {
+            if ($group->closed) {
                 $validator->errors()->add('groups', "Die Liste {$group->name} ist geschlossen.");
-            } elseif (!$group->hasAnyPlayer($playerIds))
-            {
+            } elseif (! $group->hasAnyPlayer($playerIds)) {
                 $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
             }
         }

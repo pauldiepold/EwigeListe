@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateInvitationsTable extends Migration {
-
+class CreateInvitationsTable extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -13,8 +13,7 @@ class CreateInvitationsTable extends Migration {
      */
     public function up()
     {
-        Schema::create('invitations', function (Blueprint $table)
-        {
+        Schema::create('invitations', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('pin');
             $table->unsignedInteger('player_id')->nullable();

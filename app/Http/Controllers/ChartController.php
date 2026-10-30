@@ -3,56 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Group;
-use App\Round;
-use App\Player;
 use App\Profile;
-use App\Game;
+use App\Round;
 use App\Services\HomeGamesChartSeries;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ChartController extends Controller
 {
-
     public function roundChart(Round $round)
     {
         $points = collect();
         $names = collect();
 
-        //Kopfzeile
-        foreach ($round->players as $player)
-        {
+        // Kopfzeile
+        foreach ($round->players as $player) {
             $points->put($player->id, collect(0));
             $names->push($player->surname);
         }
 
-        //Spiele
+        // Spiele
         $games = $round->games()
             ->oldest()
             ->with('players')
             ->get();
 
-        foreach ($games as $game)
-        {
-            foreach ($game->players as $player)
-            {
+        foreach ($games as $game) {
+            foreach ($game->players as $player) {
                 $currentPlayerPoints = $points->get($player->id);
                 $currentPlayerPoints->push($currentPlayerPoints->last() + $player->pivot->points);
             }
 
-            foreach ($round->players as $player)
-            {
-                if (!$game->players->contains($player))
-                {
+            foreach ($round->players as $player) {
+                if (! $game->players->contains($player)) {
                     $currentPlayerPoints = $points->get($player->id);
-                    if ($currentPlayerPoints->count() == 0)
-                    {
+                    if ($currentPlayerPoints->count() == 0) {
                         $currentPlayerPoints->push(0);
-                    } else
-                    {
+                    } else {
                         $currentPlayerPoints->push($currentPlayerPoints->last());
                     }
                 }
@@ -82,27 +69,22 @@ class ChartController extends Controller
         $gameDates = collect();
         $gameCounter = collect();
         $i = 0;
-        foreach ($games as $game)
-        {
+        foreach ($games as $game) {
             $currentDate = Carbon::parse($game->created_at);
-            if ($i == 0)
-            {
+            if ($i == 0) {
                 $points->push($game->pivot->points);
-            } else
-            {
+            } else {
                 $points->push($points->last() + $game->pivot->points);
             }
             $dates->push(($currentDate->isoFormat('D. MMM YYYY')));
 
-            if ($i == 0)
-            {
+            if ($i == 0) {
                 $date = $currentDate->startOfDay();
                 $gameDates->push(($currentDate->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i);
             }
 
-            while ($date->lessThan($currentDate->startOfDay()))
-            {
+            while ($date->lessThan($currentDate->startOfDay())) {
                 $gameDates->push(($date->isoFormat('D. MMM YYYY')));
                 $gameCounter->push($i + 1);
                 $date->addDay();
@@ -121,8 +103,7 @@ class ChartController extends Controller
         $data->put('gameDates', $gameDates->nth($n));
         $data->put('gameCounter', $gameCounter->nth($n));
 
-
-        return ($data->toArray());
+        return $data->toArray();
     }
 
     public function homeChart(Group $group, HomeGamesChartSeries $homeGamesChartSeries)

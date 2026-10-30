@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreGame extends FormRequest {
-
+class StoreGame extends FormRequest
+{
     protected $errorBag = 'create';
 
     /**
@@ -29,20 +29,17 @@ class StoreGame extends FormRequest {
             'winners' => 'required|max:3|array',
             'winners.*' => 'integer|exists:players,id',
             'points' => 'required|integer|nullable|between:-4,16',
-            'misplayed' => 'boolean'
+            'misplayed' => 'boolean',
         ];
     }
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator)
-        {
-            if ($this->input('misplayed') && count($this->input('winners')) != 3)
-            {
+        $validator->after(function ($validator) {
+            if ($this->input('misplayed') && count($this->input('winners')) != 3) {
                 $validator->errors()->add('misplayed', 'Wenn sich jemand vergibt, muss dies als verlorenes Solo eingetragen werden!');
             }
-            if ($this->input('misplayed') && $this->input('points') < 2)
-            {
+            if ($this->input('misplayed') && $this->input('points') < 2) {
                 $validator->errors()->add('points', 'Wenn sich jemand vergibt, verliert er mit mindestens 2 Punkten!');
             }
         });
@@ -53,7 +50,7 @@ class StoreGame extends FormRequest {
         return [
             'winners.required' => 'Es muss mindestens ein Gewinner ausgewählt werden!',
             'winners.max' => 'Es dürfen höchstens drei Gewinner ausgewählt werden!',
-            'points.required' => 'Es muss eine Punktzahl angegeben werden!'
+            'points.required' => 'Es muss eine Punktzahl angegeben werden!',
         ];
     }
 }

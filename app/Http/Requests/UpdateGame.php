@@ -4,8 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateGame extends FormRequest {
-
+class UpdateGame extends FormRequest
+{
     protected $errorBag = 'update';
 
     /**
@@ -29,16 +29,14 @@ class UpdateGame extends FormRequest {
             'updateWinners' => 'required|max:3|array',
             'updateWinners.*' => 'integer',
             'updatePoints' => 'required|integer|nullable|between:-4,16',
-            'updateMisplayed' => 'boolean'
+            'updateMisplayed' => 'boolean',
         ];
     }
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator)
-        {
-            if ($this->input('updateMisplayed') && count($this->input('updateWinners')) != 3)
-            {
+        $validator->after(function ($validator) {
+            if ($this->input('updateMisplayed') && count($this->input('updateWinners')) != 3) {
                 $validator->errors()->add('updateMisplayed', 'Wenn sich jemand vergibt, muss dies als verlorenes Solo eingetragen werden!');
             }
         });
@@ -49,7 +47,7 @@ class UpdateGame extends FormRequest {
         return [
             'updateWinners.required' => 'Es muss mindestens ein Gewinner ausgewählt werden!',
             'updateWinners.max' => 'Es dürfen höchstens drei Gewinner ausgewählt werden!',
-            'updatePoints.required' => 'Es muss eine Punktzahl angegeben werden!'
+            'updatePoints.required' => 'Es muss eine Punktzahl angegeben werden!',
         ];
     }
 }
