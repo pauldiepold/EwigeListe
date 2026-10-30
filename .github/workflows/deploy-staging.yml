@@ -47,6 +47,11 @@ jobs:
             echo "=== Maintenance ON ==="
             php artisan down
 
+            # Wayfinder liest beim Build die Routen; ein alter Cache würde neue Routen verschweigen.
+            echo "=== Caches leeren ==="
+            php artisan route:clear
+            php artisan config:clear
+
             echo "=== Composer Install ==="
             composer install --optimize-autoloader
 
