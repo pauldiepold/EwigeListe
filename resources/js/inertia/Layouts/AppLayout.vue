@@ -68,7 +68,7 @@ onMounted(() => {
 
 <template>
   <div class="flex min-h-screen flex-col bg-default text-highlighted">
-    <header class="z-50 shrink-0">
+    <header class="shrink-0">
       <div class="bg-blue-dark py-2 text-center">
         <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
           >Ewige Liste</Link
