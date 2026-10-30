@@ -159,7 +159,7 @@ if (initialPlayer) {
               @click="addPlayer(player)"
             >
               <UAvatar
-                :src="player.avatar_path"
+                :src="player.avatar_path ?? undefined"
                 :alt="`${player.surname} ${player.name}`"
                 size="sm"
               />
@@ -189,7 +189,7 @@ if (initialPlayer) {
           >
             <div class="flex items-center gap-3">
               <UAvatar
-                :src="player.avatar_path"
+                :src="player.avatar_path ?? undefined"
                 :alt="`${player.surname} ${player.name}`"
                 size="sm"
               />

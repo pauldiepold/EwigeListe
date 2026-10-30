@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Http\Toast;
 use App\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -12,13 +13,13 @@ use Intervention\Image\Laravel\Facades\Image;
 
 class UserAvatarController extends Controller
 {
-    public function store(Request $request, User $user)
+    public function store(Request $request, User $user): RedirectResponse
     {
+        $this->authorize('update', $user);
+
         $request->validate([
             'avatar' => 'required|string',
         ]);
-
-        $this->authorize('update', $user);
 
         try {
             $image = Image::decodeDataUri($request->get('avatar'));
@@ -26,7 +27,7 @@ class UserAvatarController extends Controller
             throw ValidationException::withMessages(['avatar' => 'Das Bild konnte nicht gelesen werden.']);
         }
 
-        $basename = date('Y-m-d_H-i-s_').$user->player->surname.'_'.$user->player->name;
+        $basename = date('Y-m-d_H-i-s_').$user->id;
 
         Storage::disk('public')->put('avatars/'.$basename.'_full.jpg', (string) $image->encodeUsingFileExtension('jpg'));
         Storage::disk('public')->put('avatars/'.$basename.'.jpg', (string) $image->scale(width: 200)->encodeUsingFileExtension('jpg'));
@@ -35,6 +36,8 @@ class UserAvatarController extends Controller
             'avatar_path' => $basename.'.jpg',
         ]);
 
-        return response()->noContent();
+        Toast::success('Avatar wurde erfolgreich gespeichert!');
+
+        return redirect()->route('users.edit', $user);
     }
 }

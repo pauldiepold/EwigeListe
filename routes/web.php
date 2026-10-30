@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('users/{user}/mail', 'UserController@updateMail')->name('users.updateMail');
     Route::patch('users/{user}/password', 'UserController@updatePassword')->name('users.updatePassword');
     Route::patch('users/{user}/listen', 'UserController@updateListen')->name('users.updateListen');
+    Route::post('users/{user}/avatar', 'UserAvatarController@store')->name('users.updateAvatar');
 
     /* *********** Players *********** */
     Route::get('profil/{player}/{group?}', 'PlayerController@show');
@@ -89,8 +90,6 @@ Route::middleware('auth')->group(function () {
             Route::post('live/{liveGame}/karteSpielen', 'Live\GameController@karteSpielen');
             Route::post('live/{liveGame}/ansage', 'Live\GameController@ansage');
         });
-
-        Route::post('users/{user}/avatar', 'Api\UserAvatarController@store')->name('avatar');
 
     });
 

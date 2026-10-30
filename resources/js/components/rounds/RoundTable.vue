@@ -24,8 +24,7 @@
 
                                 <!-- Punkte -->
                                 <th class="text-dark">
-                                    <img :src="'/img/default.jpg'"
-                                         class="mx-auto mb-1 md:h-10 md:w-10 h-7 w-7 rounded-full opacity-0">
+                                    <div class="mx-auto mb-1 md:h-10 md:w-10 h-7 w-7"></div>
                                     Punkte
                                 </th>
                             </tr>

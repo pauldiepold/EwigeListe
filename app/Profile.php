@@ -22,6 +22,11 @@ class Profile extends Pivot
         return "/profil/{$this->player_id}/{$this->group_id}";
     }
 
+    public function canBeDefault(): bool
+    {
+        return (int) $this->group_id !== Group::EWIGE_LISTE_ID && ! $this->group->closed;
+    }
+
     public function updateStats()
     {
         if (! $this->queued) {

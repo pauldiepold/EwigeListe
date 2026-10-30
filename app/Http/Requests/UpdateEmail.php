@@ -3,14 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateEmail extends FormRequest
 {
-    protected function getRedirectUrl()
-    {
-        return parent::getRedirectUrl().'#email';
-    }
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -29,7 +25,7 @@ class UpdateEmail extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users,email',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->route('user'))],
         ];
     }
 }

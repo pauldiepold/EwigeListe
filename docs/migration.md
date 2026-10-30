@@ -72,7 +72,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `login`, `register`, `password/*`, `login/social/{socialiteUser}` | diverse | Auth-Controller | `Auth/*` | #28 | ✅ | `UAuthForm`, reCAPTCHA, Socialite-Attach; Nachbesserungen und Tests #54 |
 | GET | `register/quick` | `register.quick` | `QuickRegisterController@show` | — | #54 | gestrichen | Schnellregistrierung ist ein Modal in `Rounds/Create`, nur noch `POST register/quick` |
 | GET | `datenschutz`, `impressum`, `regeln` | gleichnamig | `StaticPageController` | `Static/*` | #28 | ✅ | |
-| GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | todo | 4 PATCH-Formulare, Avatar-Upload mit Cropper; `UserController` `->with('message')` (3×) auf `Toast::success()` umstellen |
+| GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | ✅ | Tabs per `UTabs`; Avatar-Upload mit `vue-advanced-cropper` über `POST users/{user}/avatar` (`users.updateAvatar`); Button „Zurück zum Profil“ geht erst mit #31 |
 | GET | `liste`, `liste/{group}` | `ewigeListe`, `groups.show` | `GroupController@show` | `Groups/Show` | #30 | todo | mit `records`/`stats` (#39) und POST für beitreten/verlassen/schließen (#40) |
 | GET | `profil/{player}/{group?}` | — → `players.show` | `PlayerController@show` | `Players/Show` | #31 | todo | Route benennen |
 | GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline inkl. Echtzeit per `RoundUpdated` (#32), Live-Tab in Phase 5 (#36); `withErrors([...])` in `GameController@destroy`, `CommentController@destroy` und `->with('deleteError')` in `RoundController@destroy` auf `Toast::error()` umstellen |
@@ -84,7 +84,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | gestrichen | Routen, Controller und Views entfernt |
 | — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | gestrichen | Controller und `auth/verify.blade.php` entfernt |
 
-**Keine Vollseiten, bleiben als Endpunkte:** `charts/*` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, `api/users/{user}/avatar`, `rounds/ajax/*` (DataTables, entfällt mit #45), Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
+**Keine Vollseiten, bleiben als Endpunkte:** `charts/*` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, `rounds/ajax/*` (DataTables, entfällt mit #45), Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
 
 ## Entscheidungen
 
@@ -122,6 +122,9 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | Alle Textdateien fest mit LF (`.gitattributes`, `.editorconfig`), auch unter Windows | Pint und Prettier verlangen LF; mit `core.autocrlf=true` wären `pint --test` und `npm run format` unter Windows sonst dauerhaft rot, während die CI grün ist (#58) |
 | 2026-10-30 | #58 ausnahmsweise per Rebase and merge, Go-Live-PR #16 per Merge-Commit | Der Formatierungs-Commit muss einzeln mit stabilem Hash erhalten bleiben, damit `.git-blame-ignore-revs` greift; Squash würde ihn mit anderen Änderungen vermischen (#58) |
 | 2026-10-30 | Abnahme hängt von der Session ab: lokal ohne Warten auf die CI und ohne manuellen Staging-Deploy, in der Cloud-Session wie bisher mit beidem | Lokal ist schneller, die CI läuft trotzdem bei jedem PR mit (siehe Arbeitsweise, Schritt 6) |
+| 2026-10-30 | Ohne Avatar ist `avatar_path` `null`, `UAvatar` zeigt dann die Initialen; `default.jpg` ist gelöscht | Nuxt UI bringt das Verhalten mit. Legacy-Seiten zeigen bei Personen ohne Avatar bis zu ihrer Migration ein kaputtes Bild, das deckt der Big Bang ab (#29) |
+| 2026-10-30 | Avatar-Upload als normales Inertia-Formular (`users.updateAvatar`, Redirect, Toast) statt JSON-Endpunkt; Zuschnitt im Browser auf höchstens 800 px; Dateiname aus Benutzer-ID und Zeitstempel | Ein Muster für alle Formulare der Seite. Name im Dateinamen konnte durch Sonderzeichen die URL brechen, alte Dateien bleiben unverändert (#29) |
+| 2026-10-30 | Standardlisten: Das Frontend schickt nur die IDs der gewählten Profile, der Server ändert nur eigene, offene Profile außerhalb der Ewigen Liste | Vorher prüfte `updateListen` den Besitzer nicht und vertraute `closed`/`group_id` aus dem Request, jeder konnte fremde Standardlisten umschalten (#29) |
 
 ## Offene Fragen
 
@@ -146,3 +149,5 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - Eine Migration kann Funktionen still verlieren, die berechnet, aber nie gerendert werden (Listenauswahl in `rounds.create`, #51). Beim Review die Legacy-Kerninteraktionen einzeln gegen die neue Page abhaken.
 - Laravel-Auth-Traits (`SendsPasswordResetEmails`, `ResetsPasswords`) setzen Session-`status`. Für Toasts `sendResetLinkResponse`/`sendResetResponse` im Controller überschreiben (#53).
 - `useRemember` speichert im History-State des aktuellen Eintrags. Ein Formular-POST mit Redirect zurück auf die Seite erzeugt einen neuen Eintrag: Der gemerkte State ist dort leer. Zustand über einen Umweg erhalten geht nur ohne Navigation (Modal mit `preserveState`) (#54).
+- `Resource::collection()` direkt als Prop landet trotz `$wrap = null` unter `data`, weil die Collection den Wrapper der Basisklasse nutzt. Immer `->resolve(request())` anhängen (#29).
+- `herd workspace` zweigt von `master` ab, nicht vom aktuellen Branch, und verknüpft mit `origin/master`. Danach den frischen Branch auf `origin/inertia-migration` umsetzen und die Verknüpfung lösen (#29).

@@ -13,7 +13,7 @@ export type CreateRoundPlayer = {
   id: number;
   surname: string;
   name: string;
-  avatar_path: string;
+  avatar_path: string | null;
   groups: CreateRoundList[];
   profiles: CreateRoundProfile[];
 };

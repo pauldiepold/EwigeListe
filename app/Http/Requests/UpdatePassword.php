@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UpdatePassword extends FormRequest
 {
-    protected function getRedirectUrl()
-    {
-        return parent::getRedirectUrl().'#passwort';
-    }
-
     /**
      * Determine if the user is authorized to make this request.
      *
