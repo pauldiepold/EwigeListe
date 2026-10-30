@@ -25,9 +25,10 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 1. Issue wählen (Reihenfolge siehe Roadmap), Branch `mig/<nr>-kurzname` von `inertia-migration`.
 2. TDD: zuerst ein Test, der fehlschlägt, dann die Umsetzung.
 3. Vor dem PR: `php artisan test --compact`, `npm run type-check`, `npm run lint`, `npm run format`. Die CI (`.github/workflows/ci.yml`) prüft dasselbe bei jedem PR nach `inertia-migration` und `master`.
-4. PR nach `inertia-migration` mit `Closes #nr`, `/code-review`, Paul merged per Squash.
+4. PR nach `inertia-migration` mit `Closes #nr`, `/code-review`.
 5. **Im selben PR** wird der Status in diesem Dokument aktualisiert (Roadmap und Routen-Matrix).
-6. Staging-Deploy bei Bedarf über den Workflow „Deploy Staging“ auf `inertia-migration` (optional mit Prod-Dump).
+6. **Abnahme auf Staging vor dem Merge:** Workflow „Deploy Staging“ manuell auf dem Feature-Branch starten (immer `sync_db=yes`, frische Prod-Daten), Ende abwarten, Paul Bescheid geben. Paul nimmt am Handy ab.
+7. Merge per Squash nach `inertia-migration`, Issue schließen. Jeder Push auf `inertia-migration` deployt Staging automatisch (mit Prod-Dump).
 
 ## Roadmap
 
