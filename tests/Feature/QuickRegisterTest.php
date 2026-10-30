@@ -104,7 +104,7 @@ class QuickRegisterTest extends TestCase
         $this->post(route('register.quick.store'), $this->attributes())->assertServerError();
 
         $this->assertDatabaseMissing('players', $this->attributes());
-        $this->assertSame($userCount, User::count());
+        $this->assertDatabaseCount('users', $userCount);
     }
 
     /**

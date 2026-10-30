@@ -41,7 +41,7 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private PlayerRegistration $playerRegistration)
     {
         $this->middleware('guest');
     }
@@ -92,7 +92,12 @@ class RegisterController extends Controller
 
         $password = $socialiteUserId ? Str::random(14) : $data['password'];
 
-        $user = app(PlayerRegistration::class)->register($data['surname'], $data['name'], $data['email'], $password);
+        $user = $this->playerRegistration->register(
+            surname: $data['surname'],
+            name: $data['name'],
+            email: $data['email'],
+            password: $password,
+        );
 
         if ($socialiteUserId) {
             $socialiteUser = SocialiteUser::find($socialiteUserId);

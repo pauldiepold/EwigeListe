@@ -33,10 +33,10 @@ class QuickRegisterController extends Controller
         $this->validator($request->all())->validate();
 
         $player = $playerRegistration->register(
-            $request->surname,
-            $request->name,
-            $this->placeholderEmail(),
-            Str::random(14),
+            surname: $request->surname,
+            name: $request->name,
+            email: $this->placeholderEmail(),
+            password: Str::random(14),
         )->player;
 
         Inertia::flash('addedPlayerId', $player->id);

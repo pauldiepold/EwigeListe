@@ -14,7 +14,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $this->abortIfDataViolatesRule();
+        $this->abortUnlessEveryPlayerHasExactlyOneUser();
 
         Schema::table('users', function (Blueprint $table): void {
             $table->unique('player_id');
@@ -33,7 +33,7 @@ return new class extends Migration
         });
     }
 
-    private function abortIfDataViolatesRule(): void
+    private function abortUnlessEveryPlayerHasExactlyOneUser(): void
     {
         $playersWithoutUser = DB::table('players')
             ->leftJoin('users', 'users.player_id', '=', 'players.id')

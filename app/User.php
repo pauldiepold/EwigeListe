@@ -45,6 +45,14 @@ class User extends Authenticatable
         return $this->id == 1;
     }
 
+    /**
+     * Versteckte Spieler können sich nicht einloggen. Der Admin ist ausgenommen, damit er sich nicht selbst aussperrt.
+     */
+    public function isLockedOut(): bool
+    {
+        return $this->player->hide && ! $this->isAdmin();
+    }
+
     public function getAvatarPathAttribute($avatar)
     {
         return $avatar ? '/storage/avatars/'.$avatar : null;

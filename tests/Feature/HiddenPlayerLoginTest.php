@@ -110,6 +110,21 @@ class HiddenPlayerLoginTest extends TestCase
     }
 
     #[Test]
+    public function a_remembered_hidden_player_is_locked_out_and_loses_the_recaller_cookie(): void
+    {
+        $user = $this->hiddenUser();
+        $user->forceFill(['remember_token' => 'erinnerungs-token'])->save();
+        $recallerName = auth()->guard()->getRecallerName();
+
+        $response = $this->withCookie($recallerName, "{$user->id}|erinnerungs-token|{$user->getAuthPassword()}")
+            ->get('/');
+
+        $this->assertLockedOut($response);
+        $response->assertCookieExpired($recallerName);
+        $this->assertNotSame('erinnerungs-token', $user->fresh()->remember_token);
+    }
+
+    #[Test]
     public function a_hidden_admin_stays_logged_in(): void
     {
         $admin = User::factory()->for(Player::factory()->hidden())->create();

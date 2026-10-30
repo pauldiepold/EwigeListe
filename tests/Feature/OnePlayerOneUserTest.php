@@ -28,13 +28,13 @@ class OnePlayerOneUserTest extends TestCase
 
         $this->expectException(UniqueConstraintViolationException::class);
 
-        User::factory()->create(['player_id' => $user->player_id]);
+        User::factory()->for($user->player)->create();
     }
 
     #[Test]
     public function the_migration_names_players_without_a_user_and_aborts(): void
     {
-        $this->revertToCleanStateBeforeMigration();
+        $this->restorePreMigrationStateWithCleanData();
         $orphan = Player::factory()->create();
 
         $this->expectException(RuntimeException::class);
@@ -46,9 +46,9 @@ class OnePlayerOneUserTest extends TestCase
     #[Test]
     public function the_migration_names_players_with_several_users_and_aborts(): void
     {
-        $this->revertToCleanStateBeforeMigration();
+        $this->restorePreMigrationStateWithCleanData();
         $user = User::factory()->create();
-        User::factory()->create(['player_id' => $user->player_id]);
+        User::factory()->for($user->player)->create();
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Spieler ohne Benutzer: keine. Spieler mit mehreren Benutzern: {$user->player_id}.");
@@ -59,7 +59,7 @@ class OnePlayerOneUserTest extends TestCase
     #[Test]
     public function the_migration_adds_the_unique_index_when_the_data_is_clean(): void
     {
-        $this->revertToCleanStateBeforeMigration();
+        $this->restorePreMigrationStateWithCleanData();
 
         $this->migration()->up();
 
@@ -69,13 +69,13 @@ class OnePlayerOneUserTest extends TestCase
     /**
      * `Player::factory()` legt bewusst keinen Benutzer an, auch nicht für den Ersteller der Ewigen Liste.
      */
-    private function revertToCleanStateBeforeMigration(): void
+    private function restorePreMigrationStateWithCleanData(): void
     {
         Schema::table('users', function (Blueprint $table): void {
             $table->dropUnique(['player_id']);
         });
 
-        Player::doesntHave('user')->each(fn (Player $player) => User::factory()->create(['player_id' => $player->id]));
+        Player::doesntHave('user')->each(fn (Player $player) => User::factory()->for($player)->create());
     }
 
     private function migration(): Migration
