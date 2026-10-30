@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Toast;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -35,5 +38,15 @@ class ForgotPasswordController extends Controller {
     public function showLinkRequestForm(): Response
     {
         return Inertia::render('Auth/ForgotPassword');
+    }
+
+    /**
+     * Ersetzt die Session-Meldung `status` des Traits durch einen Toast.
+     */
+    protected function sendResetLinkResponse(Request $request, string $response): RedirectResponse
+    {
+        Toast::success(trans($response));
+
+        return back();
     }
 }

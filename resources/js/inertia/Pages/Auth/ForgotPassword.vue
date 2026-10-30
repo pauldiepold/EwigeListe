@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3';
 import type { FormSubmitEvent } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { login } from '@/routes';
 import { email as passwordEmail } from '@/routes/password';
-
-const page = usePage<{ flash?: { status?: string } }>();
-const statusMessage = computed(() => page.props.flash?.status ?? null);
 
 type ForgotData = { email: string };
 
@@ -45,16 +42,6 @@ function onSubmit(event: FormSubmitEvent<ForgotData>): void {
           :submit="{ label: 'Link senden', loading: form.processing }"
           @submit="onSubmit"
         >
-          <template #validation>
-            <UAlert
-              v-if="statusMessage"
-              color="success"
-              variant="soft"
-              icon="i-lucide-check-circle"
-              :title="statusMessage"
-            />
-          </template>
-
           <template #footer>
             <ULink :to="login.url()" class="text-primary font-medium">Zurück zum Login</ULink>
           </template>
