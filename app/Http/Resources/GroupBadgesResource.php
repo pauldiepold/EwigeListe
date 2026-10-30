@@ -18,7 +18,7 @@ class GroupBadgesResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return list<array<string, mixed>>
+     * @return list<array{type: string, years: list<array{year: int, badges: list<array{name: string, value: int, date: string, path: string}>}>}>
      */
     public function toArray(Request $request): array
     {

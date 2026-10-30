@@ -31,7 +31,7 @@ export type GroupMember = {
   name: string;
   surname: string;
   path: string;
-  avatarPath: string;
+  avatarPath: string | null;
   games: number;
   points: number;
   pointsPerGame: number;

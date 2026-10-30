@@ -14,7 +14,7 @@ class GroupMemberResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return array<string, mixed>
+     * @return array{id: int, name: string, surname: string, path: string, avatarPath: ?string, games: int, points: int, pointsPerGame: float, soli: int}
      */
     public function toArray(Request $request): array
     {

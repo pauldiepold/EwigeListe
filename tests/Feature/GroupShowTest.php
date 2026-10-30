@@ -121,7 +121,7 @@ class GroupShowTest extends TestCase
     }
 
     #[Test]
-    public function the_games_chart_is_deferred_and_needs_five_rounds(): void
+    public function the_games_chart_loads_on_demand_and_needs_five_rounds(): void
     {
         $group = Group::factory()->create();
         $this->roundsIn($group, 4);
@@ -138,7 +138,7 @@ class GroupShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('hasGamesChart', true)
                 ->missing('gamesChart')
-                ->loadDeferredProps(fn (Assert $reload) => $reload
+                ->reloadOnly('gamesChart', fn (Assert $reload) => $reload
                     ->where('gamesChart', ['gameDates' => [], 'gameCounter' => []])
                 )
             );

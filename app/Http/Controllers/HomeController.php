@@ -6,14 +6,14 @@ use App\Group;
 use App\Http\Resources\GroupStatisticsResource;
 use App\Http\Resources\HomeRoundResource;
 use App\Round;
-use App\Services\HomeGamesChartSeries;
+use App\Services\GamesChartSeries;
 use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(HomeGamesChartSeries $homeGamesChartSeries): Response
+    public function index(GamesChartSeries $gamesChartSeries): Response
     {
         $group = Group::with('profiles.player')->findOrFail(Group::EWIGE_LISTE_ID);
 
@@ -29,7 +29,7 @@ class HomeController extends Controller
             'group' => new GroupStatisticsResource($group),
             'currentRounds' => HomeRoundResource::collection($currentRounds)->toArray(request()),
             'homeGamesChart' => Inertia::defer(
-                fn (): array => $homeGamesChartSeries->forGroup($group),
+                fn (): array => $gamesChartSeries->forGroup($group),
             ),
         ]);
     }

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @return array{gameDates: list<string>, gameCounter: list<int>}
  */
-class HomeGamesChartSeries
+class GamesChartSeries
 {
     public function forGroup(Group $group): array
     {

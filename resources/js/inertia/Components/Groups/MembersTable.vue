@@ -69,11 +69,11 @@ const tableMeta = computed(() => ({
     >
       <template #avatar-cell="{ row }">
         <Link :href="row.original.path">
-          <img
-            :src="row.original.avatarPath"
+          <UAvatar
+            :src="row.original.avatarPath ?? undefined"
             :alt="row.original.name"
             loading="lazy"
-            class="h-10 w-10 max-w-none rounded-full sm:h-8 sm:w-8"
+            size="md"
           />
         </Link>
       </template>

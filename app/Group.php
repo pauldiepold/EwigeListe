@@ -177,18 +177,6 @@ class Group extends Model
             ->values();
     }
 
-    /**
-     * @return list<array{label: string, value: string}>
-     */
-    public function statisticRows(): array
-    {
-        return [
-            ['label' => 'Spiele insgesamt:', 'value' => (string) (int) $this->totalGames],
-            ['label' => '∅ Punktzahl pro Spiel:', 'value' => (string) (float) $this->pointsPerGame],
-            ['label' => '∅ Anzahl Spiele pro Runde:', 'value' => (string) (float) $this->gamesPerRound],
-        ];
-    }
-
     public function addPlayer($player)
     {
         $this->players()->save($player);

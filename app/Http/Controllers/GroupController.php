@@ -6,9 +6,10 @@ use App\Group;
 use App\Http\Resources\GroupBadgesResource;
 use App\Http\Resources\GroupIndexResourceCollection;
 use App\Http\Resources\GroupMemberResource;
+use App\Http\Resources\GroupShowResource;
 use App\Http\Resources\GroupStatisticsResource;
 use App\Http\Toast;
-use App\Services\HomeGamesChartSeries;
+use App\Services\GamesChartSeries;
 use App\Services\RoundArchive;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,13 +47,13 @@ class GroupController extends Controller
 
         $group->calculate();
 
-        return redirect($group->path());
+        return redirect()->route('groups.show', $group);
     }
 
     public function show(
         Request $request,
         RoundArchive $roundArchive,
-        HomeGamesChartSeries $gamesChartSeries,
+        GamesChartSeries $gamesChartSeries,
         ?Group $group = null,
     ): Response {
         $group ??= Group::findOrFail(Group::EWIGE_LISTE_ID);
@@ -63,17 +64,13 @@ class GroupController extends Controller
         $hasGamesChart = $archive['rounds']->total() >= 5;
 
         return Inertia::render('Groups/Show', [
-            'group' => [
-                'id' => $group->id,
-                'name' => $group->name,
-                'closed' => (bool) $group->closed,
-            ],
+            'group' => new GroupShowResource($group),
             'members' => GroupMemberResource::collection($group->profiles->sortByDesc('games')->values())->resolve($request),
             'statistics' => new GroupStatisticsResource($group),
             'badges' => new GroupBadgesResource($group),
             ...$archive,
             'hasGamesChart' => $hasGamesChart,
-            ...($hasGamesChart ? ['gamesChart' => Inertia::defer(fn (): array => $gamesChartSeries->forGroup($group))] : []),
+            ...($hasGamesChart ? ['gamesChart' => Inertia::optional(fn (): array => $gamesChartSeries->forGroup($group))] : []),
             'canJoin' => $group->canBeJoinedBy($player),
             'canLeave' => $group->canBeLeftBy($player),
             'canClose' => $group->canBeClosedBy($request->user()),

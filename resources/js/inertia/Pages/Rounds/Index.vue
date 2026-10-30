@@ -3,19 +3,9 @@ import { Head, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
 import { index as roundsIndex } from '@/routes/rounds';
-import type {
-  ArchiveSort,
-  ArchiveSortColumn,
-  GroupOption,
-  PaginatedRoundArchiveRows,
-} from '@/types/rounds-index';
+import type { ArchiveSortColumn, RoundsIndexProps } from '@/types/rounds-index';
 
-const props = defineProps<{
-  groupOptions: GroupOption[];
-  selectedGroup: GroupOption;
-  rounds: PaginatedRoundArchiveRows;
-  archiveSort: ArchiveSort;
-}>();
+const props = defineProps<RoundsIndexProps>();
 
 type RoundsIndexQuery = {
   sort?: ArchiveSortColumn;

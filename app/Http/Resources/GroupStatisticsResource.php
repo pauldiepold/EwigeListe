@@ -15,7 +15,7 @@ class GroupStatisticsResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return array<string, mixed>
+     * @return array{records: list<array{label: string, value: string, holders: list<array{name: string, path: string}>}>, stats: list<array{label: string, value: string}>}
      */
     public function toArray(Request $request): array
     {
@@ -28,7 +28,11 @@ class GroupStatisticsResource extends JsonResource
                     'path' => $profile->path(),
                 ])->all(),
             ])->all(),
-            'stats' => $this->statisticRows(),
+            'stats' => [
+                ['label' => 'Spiele insgesamt:', 'value' => (string) (int) $this->totalGames],
+                ['label' => '∅ Punktzahl pro Spiel:', 'value' => (string) (float) $this->pointsPerGame],
+                ['label' => '∅ Anzahl Spiele pro Runde:', 'value' => (string) (float) $this->gamesPerRound],
+            ],
         ];
     }
 }

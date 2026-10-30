@@ -41,3 +41,10 @@ export type GroupOption = {
   id: number;
   name: string;
 };
+
+export type RoundsIndexProps = {
+  groupOptions: GroupOption[];
+  selectedGroup: GroupOption;
+  rounds: PaginatedRoundArchiveRows;
+  archiveSort: ArchiveSort;
+};
