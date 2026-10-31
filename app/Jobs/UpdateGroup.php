@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Group;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -13,29 +14,17 @@ class UpdateGroup implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $group;
-
-    protected $date;
+    public function __construct(protected Group $group, protected ?Carbon $date = null) {}
 
     /**
-     * Create a new job instance.
+     * Setzt `queued` vor der Berechnung zurück, damit ein währenddessen eingetragenes Spiel eine
+     * neue Berechnung auslöst und ein Fehlschlag spätere Berechnungen nicht blockiert.
      */
-    public function __construct(Group $group, $date)
+    public function handle(): void
     {
-        $this->group = $group;
-        $this->date = $date;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $this->group->calculate($this->date);
-
         $this->group->queued = false;
         $this->group->save();
+
+        $this->group->calculate($this->date);
     }
 }

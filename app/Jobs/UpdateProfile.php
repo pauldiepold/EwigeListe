@@ -13,26 +13,17 @@ class UpdateProfile implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $profile;
+    public function __construct(protected Profile $profile) {}
 
     /**
-     * Create a new job instance.
+     * Setzt `queued` vor der Berechnung zurück, damit ein währenddessen eingetragenes Spiel eine
+     * neue Berechnung auslöst und ein Fehlschlag spätere Berechnungen nicht blockiert.
      */
-    public function __construct(Profile $profile)
+    public function handle(): void
     {
-        $this->profile = $profile;
-    }
-
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $this->profile->calculate();
-
         $this->profile->queued = false;
         $this->profile->save();
+
+        $this->profile->calculate();
     }
 }
