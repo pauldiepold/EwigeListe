@@ -5,6 +5,7 @@ defineProps<{
   label: string;
   confirmLabel: string;
   loading?: boolean;
+  icon?: string;
 }>();
 
 const emit = defineEmits<{
@@ -25,6 +26,7 @@ function confirm(): void {
     color="neutral"
     variant="outline"
     :label="label"
+    :icon="icon"
     :loading="loading"
     @click="confirming = true"
   />

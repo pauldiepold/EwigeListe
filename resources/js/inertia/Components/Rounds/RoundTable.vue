@@ -16,23 +16,39 @@ const props = defineProps<{
 
 const marksActivePlayers = computed(() => props.players.length >= MARK_ACTIVE_FROM_PLAYERS);
 
-const highlightedGameIds = ref<number[]>([]);
+const highlightedGames = ref<Record<number, 'new' | 'edited'>>({});
 const highlightTimers = new Set<ReturnType<typeof setTimeout>>();
 
-/** Beim ersten Laden leuchtet nichts, danach jede neu erschienene Zeile. */
+/**
+ * Beim ersten Laden leuchtet nichts, danach jede neu erschienene Zeile grün und jede
+ * inhaltlich geänderte (bearbeitete) Zeile gelb.
+ */
 watch(
-  () => props.games.map((game) => game.id),
-  (gameIds, previousGameIds) => {
-    const newGameIds = gameIds.filter((gameId) => !previousGameIds.includes(gameId));
-    if (newGameIds.length === 0) {
+  () => props.games.map((game) => [game.id, JSON.stringify(game)] as const),
+  (games, previousGames) => {
+    const previousContents = new Map(previousGames);
+    const changes: Record<number, 'new' | 'edited'> = {};
+    for (const [gameId, content] of games) {
+      const previousContent = previousContents.get(gameId);
+      if (previousContent === undefined) {
+        changes[gameId] = 'new';
+      } else if (previousContent !== content) {
+        changes[gameId] = 'edited';
+      }
+    }
+
+    const changedGameIds = Object.keys(changes).map(Number);
+    if (changedGameIds.length === 0) {
       return;
     }
 
-    highlightedGameIds.value = [...highlightedGameIds.value, ...newGameIds];
+    highlightedGames.value = { ...highlightedGames.value, ...changes };
     const timer = setTimeout(() => {
       highlightTimers.delete(timer);
-      highlightedGameIds.value = highlightedGameIds.value.filter(
-        (gameId) => !newGameIds.includes(gameId),
+      highlightedGames.value = Object.fromEntries(
+        Object.entries(highlightedGames.value).filter(
+          ([gameId]) => !changedGameIds.includes(Number(gameId)),
+        ),
       );
     }, HIGHLIGHT_MILLISECONDS);
     highlightTimers.add(timer);
@@ -44,8 +60,12 @@ onUnmounted(() => {
 });
 
 function rowBackground(game: RoundGame): string {
-  if (highlightedGameIds.value.includes(game.id)) {
+  const highlight = highlightedGames.value[game.id];
+  if (highlight === 'new') {
     return 'bg-success/30';
+  }
+  if (highlight === 'edited') {
+    return 'bg-warning/30';
   }
   if (game.isMisplay) {
     return 'bg-error/15';
@@ -71,7 +91,9 @@ function rowBackground(game: RoundGame): string {
               <UAvatar
                 :src="player.avatarPath ?? undefined"
                 :alt="player.surname"
-                :class="{ 'ring-2 ring-success': onlinePlayerIds.includes(player.id) }"
+                :class="{
+                  'shadow-[0_0_10px_2px] shadow-success/60': onlinePlayerIds.includes(player.id),
+                }"
               />
               <span
                 class="rounded-lg px-1.5 py-0.5 font-semibold"

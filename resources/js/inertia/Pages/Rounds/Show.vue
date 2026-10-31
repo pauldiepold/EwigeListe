@@ -96,6 +96,7 @@ function deleteRound(): void {
           <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
           <ConfirmAction
             :key="round.lastGameId"
+            icon="i-lucide-trash-2"
             label="Letztes Spiel löschen"
             confirm-label="Letztes Spiel wirklich löschen?"
             :loading="deleting"

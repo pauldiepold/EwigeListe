@@ -103,13 +103,14 @@ function closeBecauseOfOtherChange(title: string): void {
       : 'Prüfe die Tabelle, bevor du ein weiteres Spiel einträgst.',
     color: 'warning',
     icon: 'i-lucide-triangle-alert',
-    duration: 0,
+    // Nuxt UI schließt Toasts nicht per Touch außerhalb; daher nach längerer Zeit automatisch.
+    duration: 15000,
   });
 }
 
 /**
  * Ein anderes Handy hat die Runde geändert: Die Auswahl passt nicht mehr, und ein Speichern ergäbe
- * ein doppeltes Spiel oder falsche Punkte. Der Hinweis bleibt stehen, bis er weggeklickt wird.
+ * ein doppeltes Spiel oder falsche Punkte. Der Hinweis schließt sich nach einigen Sekunden von selbst.
  * Spiel-IDs wachsen, ein eingetragenes Spiel hat also immer eine höhere ID als das vorige.
  */
 watch(
@@ -180,19 +181,54 @@ watch(
           </button>
         </div>
 
-        <UFormField label="Punkte" class="mx-auto w-40">
-          <UInputNumber
-            v-model="form.points"
-            name="points"
-            :min="MIN_POINTS"
-            :max="MAX_POINTS"
-            class="w-full"
-          />
-        </UFormField>
+        <div class="flex flex-col items-center gap-1.5 pt-4">
+          <div class="flex items-center justify-center gap-2">
+            <UButton
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-minus"
+              aria-label="Weniger Punkte"
+              :disabled="form.points <= MIN_POINTS"
+              @mousedown.prevent
+              @click="form.points -= 1"
+            />
+            <UInputNumber
+              v-model="form.points"
+              name="points"
+              :min="MIN_POINTS"
+              :max="MAX_POINTS"
+              :increment="false"
+              :decrement="false"
+              class="w-20"
+              :ui="{ base: 'text-center' }"
+            />
+            <UButton
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-plus"
+              aria-label="Mehr Punkte"
+              :disabled="form.points >= MAX_POINTS"
+              @mousedown.prevent
+              @click="form.points += 1"
+            />
+          </div>
+          <span class="text-sm font-medium text-highlighted">Punkte</span>
+        </div>
 
-        <div>
+        <div class="flex justify-center">
+          <UButton
+            type="submit"
+            color="primary"
+            size="lg"
+            label="Speichern"
+            :disabled="!canSubmit"
+            :loading="form.processing"
+          />
+        </div>
+
+        <div class="flex flex-col items-center pt-4">
           <UCheckbox v-model="form.misplayed" name="misplayed" label="Falsch bedient?" />
-          <p v-if="form.misplayed" class="mt-2 text-sm text-muted">
+          <p v-if="form.misplayed" class="mt-2 text-center text-sm text-muted">
             Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die
             getätigten Ansagen gewertet. Dieses Ergebnis wird oben eingetragen.
           </p>
@@ -201,16 +237,8 @@ watch(
     </template>
 
     <template #footer>
-      <div class="flex w-full justify-end gap-3">
-        <UButton color="neutral" variant="outline" label="Schließen" @click="open = false" />
-        <UButton
-          type="submit"
-          form="enter-game-form"
-          color="primary"
-          label="Speichern"
-          :disabled="!canSubmit"
-          :loading="form.processing"
-        />
+      <div class="flex w-full justify-center">
+        <UButton color="neutral" variant="link" label="Schließen" @click="open = false" />
       </div>
     </template>
   </UModal>

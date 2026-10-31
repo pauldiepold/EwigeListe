@@ -37,6 +37,12 @@ export default defineConfig(async () => {
                         secondary: 'blue',
                         neutral: 'slate',
                     },
+                    // Toasts heben sich sonst kaum vom Seitenhintergrund ab.
+                    toast: {
+                        slots: {
+                            root: 'bg-elevated ring-accented shadow-xl',
+                        },
+                    },
                 },
             }),
         ],
