@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
 import { computed, h, ref, resolveComponent } from 'vue';
-import { Link } from '@inertiajs/vue3';
 import type { Column, ColumnDef, Row, SortingState } from '@tanstack/vue-table';
+import ProfileLink from '@/Components/Ui/ProfileLink.vue';
 import type { GroupMember } from '@/types/groups-show';
 
 const props = defineProps<{
@@ -68,20 +68,18 @@ const tableMeta = computed(() => ({
       class="w-full"
     >
       <template #avatar-cell="{ row }">
-        <Link :href="row.original.path">
+        <ProfileLink :href="row.original.path">
           <UAvatar
             :src="row.original.avatarPath ?? undefined"
             :alt="row.original.name"
             loading="lazy"
             size="md"
           />
-        </Link>
+        </ProfileLink>
       </template>
 
       <template #name-cell="{ row }">
-        <Link :href="row.original.path" class="text-primary hover:underline">
-          {{ row.original.name }}
-        </Link>
+        <ProfileLink :href="row.original.path">{{ row.original.name }}</ProfileLink>
       </template>
     </UTable>
   </div>

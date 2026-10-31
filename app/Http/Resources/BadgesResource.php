@@ -3,26 +3,37 @@
 namespace App\Http\Resources;
 
 use App\Badge;
-use App\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * Abzeichen einer Liste, gruppiert nach Typ und Jahr (neueste zuerst).
+ * Abzeichen, gruppiert nach Typ und Jahr (neueste zuerst). Erwartet sie bereits sortiert.
  *
- * @mixin Group
+ * @property Collection<int, Badge> $resource
  */
-class GroupBadgesResource extends JsonResource
+class BadgesResource extends JsonResource
 {
     public static $wrap = null;
 
+    private bool $linked = true;
+
     /**
-     * @return list<array{type: string, years: list<array{year: int, badges: list<array{name: string, value: int, date: string, path: string}>}>}>
+     * Für das Profil: Die Karten würden sonst auf dieselbe Seite führen.
+     */
+    public function withoutLinks(): static
+    {
+        $this->linked = false;
+
+        return $this;
+    }
+
+    /**
+     * @return list<array{type: string, years: list<array{year: int, badges: list<array{name: string, value: int, date: string, path: ?string}>}>}>
      */
     public function toArray(Request $request): array
     {
-        return $this->badges
+        return $this->resource
             ->groupBy('type')
             ->map(fn (Collection $badges, string $type): array => [
                 'type' => $type,
@@ -34,7 +45,7 @@ class GroupBadgesResource extends JsonResource
                             'name' => $badge->player->surname,
                             'value' => $badge->value,
                             'date' => $badge->date->isoFormat('MMMM YYYY'),
-                            'path' => $badge->playerPath(),
+                            'path' => $this->linked ? $badge->playerPathFor($request->user()) : null,
                         ])->all(),
                     ])
                     ->values()

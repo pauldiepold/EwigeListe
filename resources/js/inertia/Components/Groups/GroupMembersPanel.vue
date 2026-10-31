@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import MembersTable from '@/Components/Groups/MembersTable.vue';
+import ProfileLink from '@/Components/Ui/ProfileLink.vue';
 import { join, leave } from '@/routes/groups';
 import type { GroupMember } from '@/types/groups-show';
 
@@ -43,9 +44,7 @@ function leaveGroup(): void {
     </p>
     <p v-else-if="onlyMember" class="text-lg text-toned">
       Bisher ist nur
-      <Link :href="onlyMember.path" class="text-primary hover:underline">{{
-        onlyMember.surname
-      }}</Link>
+      <ProfileLink :href="onlyMember.path">{{ onlyMember.surname }}</ProfileLink>
       Mitglied dieser Liste.
     </p>
     <p v-else class="text-lg text-toned">Bisher wurde keine Runde auf dieser Liste gespielt.</p>

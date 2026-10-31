@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Group;
-use App\Http\Resources\GroupBadgesResource;
+use App\Http\Resources\BadgesResource;
 use App\Http\Resources\GroupIndexResourceCollection;
 use App\Http\Resources\GroupMemberResource;
 use App\Http\Resources\GroupShowResource;
@@ -67,7 +67,7 @@ class GroupController extends Controller
             'group' => new GroupShowResource($group),
             'members' => GroupMemberResource::collection($group->profiles->sortByDesc('games')->values())->resolve($request),
             'statistics' => new GroupStatisticsResource($group),
-            'badges' => new GroupBadgesResource($group),
+            'badges' => new BadgesResource($group->badges),
             ...$archive,
             'hasGamesChart' => $hasGamesChart,
             ...($hasGamesChart ? ['gamesChart' => Inertia::optional(fn (): array => $gamesChartSeries->forGroup($group))] : []),

@@ -8,10 +8,14 @@ import type {
   PaginatedRoundArchiveRows,
 } from '@/types/rounds-index';
 
-const props = defineProps<{
-  rounds: PaginatedRoundArchiveRows;
-  archiveSort: ArchiveSort;
-}>();
+const props = withDefaults(
+  defineProps<{
+    rounds: PaginatedRoundArchiveRows;
+    archiveSort: ArchiveSort;
+    highlightOwnRounds?: boolean;
+  }>(),
+  { highlightOwnRounds: true },
+);
 
 const emit = defineEmits<{
   'update:page': [page: number];
@@ -37,7 +41,7 @@ function goToPage(targetPage: number): void {
   <div v-if="rounds.total > 0" class="space-y-6">
     <ArchiveRoundsTable
       :rows="rounds.data"
-      :highlight-player-id="authPlayerId"
+      :highlight-player-id="highlightOwnRounds ? authPlayerId : null"
       :sort-column="archiveSort.column"
       :sort-direction="archiveSort.direction"
       @update:sort="(column, direction) => emit('update:sort', column, direction)"

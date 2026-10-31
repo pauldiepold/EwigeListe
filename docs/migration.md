@@ -74,7 +74,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `datenschutz`, `impressum`, `regeln` | gleichnamig | `StaticPageController` | `Static/*` | #28 | ✅ | |
 | GET | `users/{user}/edit` | `users.edit` | `UserController@edit` | `Users/Edit` | #29 | ✅ | Tabs per `UTabs`; Avatar-Upload mit `vue-advanced-cropper` über `POST users/{user}/avatar` (`users.updateAvatar`); Button „Zurück zum Profil“ geht erst mit #31 |
 | GET | `liste`, `liste/{group}` | `ewigeListe`, `groups.show` | `GroupController@show` | `Groups/Show` | #30 | ✅ | Rekorde aus Profilen (#39), `POST`/`PATCH` für beitreten/verlassen/schließen (#40), Tabs per URL-Hash |
-| GET | `profil/{player}/{group?}` | — → `players.show` | `PlayerController@show` | `Players/Show` | #31 | todo | Route benennen |
+| GET | `profil/{player}/{group?}` | `players.show` | `PlayerController@show` | `Players/Show` | #31 | ✅ | Tabs per URL-Hash, Charts per `Inertia::optional`, Archiv mit Spieler-Filter (`RoundArchive`); Profile versteckter und KI-Spieler nur für den Admin (`PlayerPolicy`) |
 | GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | todo | erst offline inkl. Echtzeit per `RoundUpdated` (#32), Live-Tab in Phase 5 (#36); `withErrors([...])` in `GameController@destroy`, `CommentController@destroy` und `->with('deleteError')` in `RoundController@destroy` auf `Toast::error()` umstellen |
 | GET | `rounds/current` | `rounds.current` | `RoundController@current` | Redirect | #32 | todo | |
 | GET | `report` | — | `ReportController@report` | — | #33 | todo → gestrichen | wird durch einen Artisan-Befehl zum Neuberechnen ersetzt |
@@ -84,7 +84,9 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | gestrichen | Routen, Controller und Views entfernt |
 | — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | gestrichen | Controller und `auth/verify.blade.php` entfernt |
 
-**Keine Vollseiten, bleiben als Endpunkte:** `charts/*` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, `rounds/ajax/*` (DataTables, entfällt mit #45, noch von `players.show` genutzt), Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
+**Keine Vollseiten, bleiben als Endpunkte:** `charts/round/{round}` (JSON, per `fetch`), `api/rounds/{round}/fetchData`, `api/rounds/{round}/game`, `api/games/{game}`, `api/live/*`, Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
+
+**Ungenutzt, noch installiert:** `yajra/laravel-datatables-oracle`. Seit #31 greift nichts mehr darauf zu, der Ausbau des Pakets bleibt bei #45.
 
 ## Entscheidungen
 
@@ -133,6 +135,10 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-30 | `groups.pointsPerGame` und `gamesPerRound` werden vor dem Befüllen auf `decimal(6,1)` erweitert | Auf Prod noch `float(3,1)` (maximal 99,9), Liste 9 hat 200 Spiele pro Runde. Lokal und in der CI nicht sichtbar: Laravel 13 ignoriert die Nachkommastellen in `float()`, SQLite kennt keinen Wertebereich |
 | 2026-10-30 | Jeder Spieler gehört zu genau einem Benutzer: `PlayerRegistration` legt Spieler, Benutzer und Mitgliedschaft in der Ewigen Liste in einer Transaktion an, `users.player_id` ist eindeutig. Die Migration bricht bei Verstößen mit den IDs ab; dieses Ticket läuft trotz lokaler Session über Staging | „Jeder Spieler hat einen Benutzer“ ist per Datenbank nicht erzwingbar (MySQL kann Fremdschlüssel nicht aufschieben). Bereinigt wird gezielt statt automatisch; ob die Prod-Daten passen, zeigt nur der Lauf mit Prod-Dump (#73) |
 | 2026-10-30 | Versteckte Spieler sperrt eine Middleware im `web`-Stack bei jedem Request (Logout, Redirect auf den Login, Toast), der Admin ist ausgenommen. Keine eigene Fehlermeldung im `LoginController` | Deckt mit einem Weg Passwort-Login, Socialite, Passwort-Reset, laufende Sessions und „Angemeldet bleiben“ ab; die Meldung erscheint nur bei korrektem Passwort und verrät Fremden nichts. Vor dem Prod-Deploy prüft Paul die Liste `WHERE hide = 1` (#73) |
+| 2026-10-30 | Profile versteckter Spieler und von KI-Spielern sind nur für den Admin sichtbar (`PlayerPolicy`, 403). In Tabellen, Rekorden und Abzeichen bleiben die Namen stehen, die Resources liefern dann `path: null` und der Name erscheint ohne Link | Betrifft nur das Profil, nicht die Auswertung der Liste; ein Link auf einen 403 wäre eine Sackgasse. Die Rundenseite zieht mit #32 nach (#31) |
+| 2026-10-30 | Profil-Charts wie auf der Listen-Seite per `Inertia::optional` + `WhenVisible`, Berechnung in `ProfileChartSeries`, `charts/profile/{profile}` gelöscht | Ein Muster, und die Sperre gilt ohne eigenen Endpunkt. Die Berechnung lädt alle Spiele des Spielers; ob das auf Prod reicht, zeigt die Abnahme auf Staging. Gegenüber `master` korrigiert: Tage ohne Spiel zählten das nächste Spiel schon mit, beim Ausdünnen konnte der neueste Punkt fehlen (#31) |
+| 2026-10-30 | Profil zeigt immer alle fünf Tabs, leere mit Hinweistext; die Listen-Seite blendet leere Tabs aus | Der Listenwechsel im Profil behält den Tab, er darf nicht wegspringen, weil die neue Liste keine Abzeichen hat (#31) |
+| 2026-10-30 | Der Begriff bleibt überall „Abzeichen“, „Monatsrekorde“ aus der alten Profil-Seite entfällt | Eine Sache, ein Name; „Rekord“ ist der Bestwert einer Liste (#31) |
 
 ## Offene Fragen
 
@@ -160,3 +166,5 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - `Resource::collection()` direkt als Prop landet trotz `$wrap = null` unter `data`, weil die Collection den Wrapper der Basisklasse nutzt. Immer `->resolve(request())` anhängen (#29).
 - `herd workspace` zweigt von `master` ab, nicht vom aktuellen Branch, und verknüpft mit `origin/master`. Danach den frischen Branch auf `origin/inertia-migration` umsetzen und die Verknüpfung lösen (#29).
 - Wayfinder erzeugt seine Dateien beim `npm run build` aus den geladenen Routen, also auch aus einem vorhandenen `route:cache`. Die Deploy-Workflows leeren deshalb vor dem Build die Caches; sonst fehlen neue Routen, obwohl die CI ohne Cache grün ist.
+- Der Pint-Hook entfernt nach jedem Edit ungenutzte Imports. Einen neuen `use` daher zusammen mit oder nach seiner Verwendung einfügen, sonst ist er beim nächsten Edit schon wieder weg (#31).
+- `WhenVisible` lädt pro Komponenten-Instanz nur einmal. Bleibt der State bei einem Listenwechsel erhalten (`preserveState`), braucht die Komponente einen `key` je Liste, sonst bleibt das Chart leer (#31).

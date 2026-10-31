@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class Badge extends Model
 {
@@ -20,7 +21,15 @@ class Badge extends Model
 
     public function playerPath()
     {
-        return $this->player->path().'/'.$this->group_id.'#abzeichen';
+        return route('players.show', [$this->player_id, $this->group_id], false).'#abzeichen';
+    }
+
+    /**
+     * `null`, wenn der Betrachter dieses Profil nicht sehen darf: Der Name erscheint dann ohne Link.
+     */
+    public function playerPathFor(?User $viewer): ?string
+    {
+        return Gate::forUser($viewer)->allows('view', $this->player) ? $this->playerPath() : null;
     }
 
     public function calculate()

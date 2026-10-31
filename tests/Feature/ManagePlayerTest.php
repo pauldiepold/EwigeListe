@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Group;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -26,6 +27,10 @@ class ManagePlayerTest extends TestCase
 
         $player->groups()->save($group);
 
-        $this->get($player->path())->assertOk()->assertSee($group->name);
+        $this->get($player->path())
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('groupOptions', fn ($options) => collect($options)->pluck('name')->contains($group->name))
+            );
     }
 }

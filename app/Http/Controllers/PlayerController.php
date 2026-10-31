@@ -3,35 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Group;
+use App\Http\Resources\BadgesResource;
+use App\Http\Resources\GroupOptionResource;
+use App\Http\Resources\PlayerShowResource;
+use App\Http\Resources\ProfileStatisticsResource;
 use App\Player;
-use Illuminate\Database\Eloquent\Builder;
+use App\Services\ProfileChartSeries;
+use App\Services\RoundArchive;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PlayerController extends Controller
 {
-    public function show(Player $player, ?Group $group = null)
-    {
-        $selectedGroup = ! $group ? Group::find(1) : $group;
+    public function show(
+        Request $request,
+        RoundArchive $roundArchive,
+        ProfileChartSeries $profileChartSeries,
+        Player $player,
+        ?Group $group = null,
+    ): Response {
+        $this->authorize('view', $player);
 
-        $player->load(['profiles.group', 'groups', 'rounds', 'games', 'badges']);
+        $group ??= Group::findOrFail(Group::EWIGE_LISTE_ID);
+        $profile = $player->profiles()->where('group_id', $group->id)->firstOrFail();
+        $badges = $player->badges()->where('group_id', $group->id)->with('player')->get();
+        $hasStatistics = $profile->games >= ProfileStatisticsResource::MINIMUM_GAMES;
 
-        $badges = $player->badges()
-            ->where('group_id', $selectedGroup->id)
-            ->with(['player', 'group'])
-            ->get()
-            ->groupBy('type');
-
-        $profile = $player->profiles()
-            ->where('group_id', $selectedGroup->id)
-            ->first();
-
-        $rounds_count = $player->rounds()
-            ->whereHas('groups', function (Builder $query) use ($selectedGroup) {
-                $query->where('groups.id', '=', $selectedGroup->id);
-            })
-            ->count();
-
-        return view('players.show', compact('player', 'profile', 'rounds_count', 'selectedGroup', 'badges'));
-
+        return Inertia::render('Players/Show', [
+            'player' => new PlayerShowResource($player),
+            'groupOptions' => GroupOptionResource::collection($player->groups)->resolve($request),
+            'selectedGroupId' => $group->id,
+            'profile' => new ProfileStatisticsResource($profile),
+            'badges' => (new BadgesResource($badges))->withoutLinks(),
+            'badgeCount' => $badges->count(),
+            ...$roundArchive->forGroup($group, $request, $player),
+            ...($hasStatistics ? ['profileChart' => Inertia::optional(fn (): array => $profileChartSeries->forProfile($profile))] : []),
+        ]);
     }
 
     public function calculateAll()
