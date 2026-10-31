@@ -36,6 +36,7 @@ function refresh(): void {
 const { onlinePlayerIds } = useRoundUpdates(props.round.id, refresh);
 
 const deleting = ref(false);
+const pendingGame = ref<'new' | 'edited' | null>(null);
 
 function deleteLastGame(): void {
   if (props.round.lastGameId === null) {
@@ -73,6 +74,7 @@ function deleteRound(): void {
             :last-game-id="round.lastGameId"
             :active-players="round.activePlayers"
             :viewer-is-active="round.viewerIsActive"
+            @pending="pendingGame = $event"
           />
         </div>
 
@@ -80,6 +82,7 @@ function deleteRound(): void {
           :players="round.players"
           :games="round.games"
           :online-player-ids="onlinePlayerIds"
+          :pending-game="pendingGame"
         />
 
         <div
@@ -92,10 +95,12 @@ function deleteRound(): void {
             :active-players="round.activePlayers"
             :viewer-is-active="round.viewerIsActive"
             :edited-game="round.lastGame"
+            @pending="pendingGame = $event"
           />
           <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
           <ConfirmAction
             :key="round.lastGameId"
+            icon="i-lucide-trash-2"
             label="Letztes Spiel löschen"
             confirm-label="Letztes Spiel wirklich löschen?"
             :loading="deleting"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { store as storeGame, update as updateGame } from '@/routes/games';
 import type { RoundActivePlayer, RoundLastGame } from '@/types/round-show';
@@ -14,6 +14,11 @@ const props = defineProps<{
   viewerIsActive: boolean;
   /** Gesetzt, wenn statt eines neuen Spiels dieses letzte Spiel bearbeitet wird. */
   editedGame?: RoundLastGame | null;
+}>();
+
+const emit = defineEmits<{
+  /** Meldet eine ausstehende Antwort, damit die Tabelle ein Skeleton zeigt. */
+  pending: [kind: 'new' | 'edited' | null];
 }>();
 
 const toast = useToast();
@@ -48,6 +53,18 @@ const canSubmit = computed(() => {
 
 const validationError = computed(() => Object.values(form.errors)[0]);
 
+/** Erst nach einem Speichern-Versuch sichtbar, damit der Dialog nicht gleich mit Fehlern öffnet. */
+const hasTriedToSubmit = ref(false);
+const winnersHint = computed(() => {
+  if (!hasTriedToSubmit.value || canSubmit.value) {
+    return null;
+  }
+
+  return form.misplayed
+    ? 'Bei „Falsch bedient?“ müssen genau drei Personen ausgewählt sein.'
+    : 'Wähle mindestens eine Person aus.';
+});
+
 function toggleWinner(playerId: number): void {
   form.winners = form.winners.includes(playerId)
     ? form.winners.filter((winnerId) => winnerId !== playerId)
@@ -59,7 +76,12 @@ function toggleWinner(playerId: number): void {
  * Beim Bearbeiten beginnt er mit den Werten des Spiels.
  */
 watch(open, (isOpen) => {
+  if (keepsFormState) {
+    return;
+  }
+
   form.clearErrors();
+  hasTriedToSubmit.value = false;
 
   if (isOpen && props.editedGame) {
     form.defaults({
@@ -74,14 +96,45 @@ watch(open, (isOpen) => {
   form.reset();
 });
 
+/** Solange gesetzt, ändern Schließen und Wiederöffnen den Formularstand nicht. */
+let keepsFormState = false;
+
+/**
+ * Der Dialog schließt sofort beim Speichern; die Tabelle folgt mit der Antwort. Scheitert die
+ * Anfrage (Validierung, Netz), öffnet er mit der unveränderten Eingabe und dem Fehler wieder.
+ */
 function submit(): void {
+  hasTriedToSubmit.value = true;
+  if (!canSubmit.value) {
+    return;
+  }
+
+  let succeeded = false;
   const options = {
     preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
-      open.value = false;
+      succeeded = true;
+    },
+    onFinish: () => {
+      emit('pending', null);
+      if (succeeded) {
+        keepsFormState = false;
+        form.defaults({ winners: [], points: 0, misplayed: false });
+        form.reset();
+        return;
+      }
+
+      open.value = true;
+      nextTick(() => {
+        keepsFormState = false;
+      });
     },
   };
+
+  keepsFormState = true;
+  open.value = false;
+  emit('pending', isEditing.value ? 'edited' : 'new');
 
   if (props.editedGame) {
     form.patch(updateGame.url(props.editedGame.id), options);
@@ -103,13 +156,14 @@ function closeBecauseOfOtherChange(title: string): void {
       : 'Prüfe die Tabelle, bevor du ein weiteres Spiel einträgst.',
     color: 'warning',
     icon: 'i-lucide-triangle-alert',
-    duration: 0,
+    // Nuxt UI schließt Toasts nicht per Touch außerhalb; daher nach längerer Zeit automatisch.
+    duration: 15000,
   });
 }
 
 /**
  * Ein anderes Handy hat die Runde geändert: Die Auswahl passt nicht mehr, und ein Speichern ergäbe
- * ein doppeltes Spiel oder falsche Punkte. Der Hinweis bleibt stehen, bis er weggeklickt wird.
+ * ein doppeltes Spiel oder falsche Punkte. Der Hinweis schließt sich nach einigen Sekunden von selbst.
  * Spiel-IDs wachsen, ein eingetragenes Spiel hat also immer eine höhere ID als das vorige.
  */
 watch(
@@ -180,19 +234,56 @@ watch(
           </button>
         </div>
 
-        <UFormField label="Punkte" class="mx-auto w-40">
-          <UInputNumber
-            v-model="form.points"
-            name="points"
-            :min="MIN_POINTS"
-            :max="MAX_POINTS"
-            class="w-full"
-          />
-        </UFormField>
+        <div class="flex flex-col items-center gap-1.5 pt-4">
+          <div class="flex items-center justify-center gap-2">
+            <UButton
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-minus"
+              aria-label="Weniger Punkte"
+              :disabled="form.points <= MIN_POINTS"
+              @mousedown.prevent
+              @click="form.points -= 1"
+            />
+            <UInputNumber
+              v-model="form.points"
+              name="points"
+              :min="MIN_POINTS"
+              :max="MAX_POINTS"
+              :increment="false"
+              :decrement="false"
+              class="w-20"
+              :ui="{ base: 'text-center' }"
+            />
+            <UButton
+              color="neutral"
+              variant="outline"
+              icon="i-lucide-plus"
+              aria-label="Mehr Punkte"
+              :disabled="form.points >= MAX_POINTS"
+              @mousedown.prevent
+              @click="form.points += 1"
+            />
+          </div>
+          <span class="text-sm font-medium text-highlighted">Punkte</span>
+        </div>
 
-        <div>
+        <div class="flex flex-col items-center gap-2">
+          <UButton
+            type="submit"
+            color="primary"
+            size="lg"
+            label="Speichern"
+            :loading="form.processing"
+          />
+          <p v-if="winnersHint" class="text-center text-xs text-error" role="alert">
+            {{ winnersHint }}
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center pt-4">
           <UCheckbox v-model="form.misplayed" name="misplayed" label="Falsch bedient?" />
-          <p v-if="form.misplayed" class="mt-2 text-sm text-muted">
+          <p v-if="form.misplayed" class="mt-2 text-center text-sm text-muted">
             Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die
             getätigten Ansagen gewertet. Dieses Ergebnis wird oben eingetragen.
           </p>
@@ -201,16 +292,8 @@ watch(
     </template>
 
     <template #footer>
-      <div class="flex w-full justify-end gap-3">
-        <UButton color="neutral" variant="outline" label="Schließen" @click="open = false" />
-        <UButton
-          type="submit"
-          form="enter-game-form"
-          color="primary"
-          label="Speichern"
-          :disabled="!canSubmit"
-          :loading="form.processing"
-        />
+      <div class="flex w-full justify-center">
+        <UButton color="neutral" variant="link" label="Schließen" @click="open = false" />
       </div>
     </template>
   </UModal>
