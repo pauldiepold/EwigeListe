@@ -105,6 +105,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Design-Spikes bleiben innerhalb von Nuxt UI | kein Framework-Wechsel; Varianten unterscheiden sich in Theme und Layout |
 | 2026-10-28 | Claude Code als einziges Agent-Tooling; `.cursor/` wird aufgelöst | eine Quelle für Regeln und Skills |
 | 2026-10-28 | Test-/Report-Routen streichen, Neuberechnung als Artisan-Befehl | Testseiten ungenutzt; ein Befehl wird ohnehin für den Rollback gebraucht |
+| 2026-10-31 | Alle Routen sind benannt (`live.games.*`, `live.rounds.start`, `rounds.fetchData`, `auth.socialite.callback`; Pfade unverändert) und nutzen `[Controller::class, 'method']`. Der `$namespace` im `RouteServiceProvider` entfällt. Mutierende GET-Routen gibt es nicht mehr (#40, #41, #43) | Einheitliche Routen-Definition, Namen für `route()` und Wayfinder; kein eigener Test, die Suite löst jede Controller-Referenz auf |
 | 2026-10-28 | „Profil“ bleibt als Begriff (Spieler in einer Liste) | passt zur Seite für die Benutzer; Umbenennung im Code zu teuer |
 | 2026-10-28 | Laravel 13, Inertia v3, alle Abhängigkeiten auf aktuellem Stand | jede Seite nur einmal auf den finalen Stack bringen; Upgrade-Guides ohne relevante Brüche |
 | 2026-10-28 | Wayfinder statt Ziggy | im Laravel-Ökosystem bleiben, typisierte Routen; siehe `docs/adr/0001-wayfinder-statt-ziggy.md` |
