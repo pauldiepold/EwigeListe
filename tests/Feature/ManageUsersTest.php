@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Group;
-use App\Player;
-use App\Profile;
-use App\User;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;

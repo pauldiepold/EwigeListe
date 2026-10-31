@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Live;
 
 use App\Events\RoundUpdated;
 use App\Http\Controllers\Controller;
-use App\LiveGame;
+use App\Models\LiveGame;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 

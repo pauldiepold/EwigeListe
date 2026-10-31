@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Resources\BadgesResource;
 use App\Http\Resources\GroupIndexResourceCollection;
 use App\Http\Resources\GroupMemberResource;
 use App\Http\Resources\GroupShowResource;
 use App\Http\Resources\GroupStatisticsResource;
 use App\Http\Toast;
+use App\Models\Group;
 use App\Services\GamesChartSeries;
 use App\Services\RoundArchive;
 use Illuminate\Http\RedirectResponse;

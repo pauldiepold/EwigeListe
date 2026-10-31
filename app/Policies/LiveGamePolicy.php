@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\LiveGame;
-use App\User;
+use App\Models\LiveGame;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LiveGamePolicy

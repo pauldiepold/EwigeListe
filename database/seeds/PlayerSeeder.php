@@ -1,12 +1,12 @@
 <?php
 
-use App\Game;
-use App\GamePlayer;
-use App\Group;
-use App\Player;
-use App\Profile;
-use App\Round;
-use App\User;
+use App\Models\Game;
+use App\Models\GamePlayer;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\Round;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;

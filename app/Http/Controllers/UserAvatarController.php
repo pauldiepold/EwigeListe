@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Toast;
-use App\User;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;

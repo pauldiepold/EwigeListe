@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
-use App\Badge;
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\Badge;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\DataProvider;

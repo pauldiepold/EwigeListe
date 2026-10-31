@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Badge;
-use App\Group;
-use App\Player;
+use App\Models\Badge;
+use App\Models\Group;
+use App\Models\Player;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

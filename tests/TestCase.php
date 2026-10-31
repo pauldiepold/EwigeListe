@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\Group;
+use App\Models\Group;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 

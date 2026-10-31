@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Group;
-use App\Round;
+use App\Models\Group;
+use App\Models\Round;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;

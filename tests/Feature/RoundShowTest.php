@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;

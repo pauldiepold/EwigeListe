@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use App\Jobs\UpdateGroup;
 use Carbon\Carbon;
@@ -224,7 +224,7 @@ class Group extends Model
 
     public function creator()
     {
-        return $this->belongsTo('App\Player', 'created_by');
+        return $this->belongsTo('App\Models\Player', 'created_by');
     }
 
     public function players()

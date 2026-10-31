@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 /**
- * App\Round
+ * App\Models\Round
  *
  * @property int $id
  * @property int|null $live_round_id
@@ -29,14 +29,14 @@ use Illuminate\Support\Facades\DB;
  * @property-read Collection|Player[] $players
  * @property-read int|null $players_count
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round query()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereCreatedBy($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereLiveRoundId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Round whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round whereLiveRoundId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Round whereUpdatedAt($value)
  *
  * @mixin \Eloquent
  *
@@ -294,7 +294,7 @@ class Round extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo('App\Player', 'created_by');
+        return $this->belongsTo('App\Models\Player', 'created_by');
     }
 
     public function players()

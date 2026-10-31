@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Group;
 use App\Jobs\UpdateGroup;
 use App\Jobs\UpdateProfile;
-use App\Player;
-use App\Profile;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
 use Closure;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Bus;

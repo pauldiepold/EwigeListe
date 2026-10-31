@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Group;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\URL;
 use PHPUnit\Framework\Attributes\Test;
@@ -42,7 +42,7 @@ class GroupTest extends TestCase
 
         $group->players()->saveMany($players);
 
-        $this->assertInstanceOf('App\Player', $group->players->first());
+        $this->assertInstanceOf('App\Models\Player', $group->players->first());
         $this->assertCount(5, $group->players);
     }
 
@@ -57,7 +57,7 @@ class GroupTest extends TestCase
 
         $player->groups()->saveMany($groups);
 
-        $this->assertInstanceOf('App\Group', $player->groups->first());
+        $this->assertInstanceOf('App\Models\Group', $player->groups->first());
         $this->assertCount(5, $player->groups);
     }
 
@@ -74,7 +74,7 @@ class GroupTest extends TestCase
 
         $group->rounds()->saveMany($rounds);
 
-        $this->assertInstanceOf('App\Round', $group->rounds->first());
+        $this->assertInstanceOf('App\Models\Round', $group->rounds->first());
         $this->assertCount(5, $group->rounds);
     }
 
@@ -91,7 +91,7 @@ class GroupTest extends TestCase
 
         $round->groups()->saveMany($groups);
 
-        $this->assertInstanceOf('App\Group', $round->groups->first());
+        $this->assertInstanceOf('App\Models\Group', $round->groups->first());
         $this->assertCount(5, $round->groups);
     }
 

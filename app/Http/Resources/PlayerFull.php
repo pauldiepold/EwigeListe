@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Http\Resources\Group as GroupResource;
-use App\Player;
+use App\Models\Player;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlayerFull extends JsonResource

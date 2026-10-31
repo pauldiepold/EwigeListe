@@ -11,10 +11,10 @@
 |
 */
 
-use App\LiveRound;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\LiveRound;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('round.{round}', function ($user, Round $round) { // Verbunden mit Rounds/Show - jeder darf

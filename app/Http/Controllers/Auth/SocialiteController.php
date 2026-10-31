@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SocialiteUserResource;
-use App\SocialiteUser;
-use App\User;
+use App\Models\SocialiteUser;
+use App\Models\User;
 use GuzzleHttp\Exception\ClientException;
 use Inertia\Inertia;
 use Inertia\Response;

@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Player;
-use App\Round;
+use App\Models\Player;
+use App\Models\Round;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class RoundFactory extends Factory

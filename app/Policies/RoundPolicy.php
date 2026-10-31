@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Round;
-use App\User;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class RoundPolicy

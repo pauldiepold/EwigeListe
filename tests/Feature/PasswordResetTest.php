@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Notifications\MyOwnResetPassword;
-use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SocialiteUser;
+use App\Models\User;
 use App\Services\PlayerRegistration;
-use App\SocialiteUser;
-use App\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;

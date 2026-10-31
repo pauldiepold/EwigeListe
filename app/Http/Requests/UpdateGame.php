@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Game;
-use App\Round;
+use App\Models\Game;
+use App\Models\Round;
 use Illuminate\Support\Collection;
 
 class UpdateGame extends StoreGame

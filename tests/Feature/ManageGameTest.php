@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\Events\RoundUpdated;
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Broadcasting\Broadcasters\NullBroadcaster;
 use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Foundation\Testing\RefreshDatabase;

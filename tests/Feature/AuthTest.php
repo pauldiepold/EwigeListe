@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use Anhskohbo\NoCaptcha\Facades\NoCaptcha;
-use App\Group;
-use App\Player;
-use App\User;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
@@ -27,8 +27,8 @@ class AuthTest extends TestCase
 
         $ewigeListe = Group::find(Group::EWIGE_LISTE_ID);
         $this->assertTrue($ewigeListe->players->contains(auth()->user()->player));
-        $this->assertInstanceOf('App\Player', auth()->user()->player);
-        $this->assertInstanceOf('App\User', auth()->user());
+        $this->assertInstanceOf('App\Models\Player', auth()->user()->player);
+        $this->assertInstanceOf('App\Models\User', auth()->user());
     }
 
     #[Test]

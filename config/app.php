@@ -1,30 +1,8 @@
 <?php
 
-use App\Providers\AppServiceProvider;
-use App\Providers\EventServiceProvider;
-use App\Providers\RouteServiceProvider;
-use Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider;
-use Illuminate\Auth\AuthServiceProvider;
-use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
-use Illuminate\Broadcasting\BroadcastServiceProvider;
-use Illuminate\Bus\BusServiceProvider;
-use Illuminate\Cache\CacheServiceProvider;
-use Illuminate\Cookie\CookieServiceProvider;
-use Illuminate\Database\DatabaseServiceProvider;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Encryption\EncryptionServiceProvider;
-use Illuminate\Filesystem\FilesystemServiceProvider;
-use Illuminate\Foundation\Providers\ConsoleSupportServiceProvider;
-use Illuminate\Foundation\Providers\FoundationServiceProvider;
-use Illuminate\Hashing\HashServiceProvider;
-use Illuminate\Mail\MailServiceProvider;
-use Illuminate\Notifications\NotificationServiceProvider;
-use Illuminate\Pagination\PaginationServiceProvider;
-use Illuminate\Pipeline\PipelineServiceProvider;
-use Illuminate\Queue\QueueServiceProvider;
-use Illuminate\Redis\RedisServiceProvider;
-use Illuminate\Session\SessionServiceProvider;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
@@ -58,13 +36,8 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
-use Illuminate\Translation\TranslationServiceProvider;
-use Illuminate\Validation\ValidationServiceProvider;
-use Illuminate\View\ViewServiceProvider;
 use Intervention\Image\Facades\Image;
 use Laravel\Socialite\Facades\Socialite;
-use Laravel\Socialite\SocialiteServiceProvider;
-use Yajra\DataTables\DataTablesServiceProvider;
 use Yajra\DataTables\Facades\DataTables;
 
 return [
@@ -192,63 +165,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Autoloaded Service Providers
-    |--------------------------------------------------------------------------
-    |
-    | The service providers listed here will be automatically loaded on the
-    | request to your application. Feel free to add your own services to
-    | this array to grant expanded functionality to your applications.
-    |
-    */
-
-    'providers' => [
-
-        /*
-         * Laravel Framework Service Providers...
-         */
-        AuthServiceProvider::class,
-        BroadcastServiceProvider::class,
-        BusServiceProvider::class,
-        CacheServiceProvider::class,
-        ConsoleSupportServiceProvider::class,
-        CookieServiceProvider::class,
-        DatabaseServiceProvider::class,
-        EncryptionServiceProvider::class,
-        FilesystemServiceProvider::class,
-        FoundationServiceProvider::class,
-        HashServiceProvider::class,
-        MailServiceProvider::class,
-        NotificationServiceProvider::class,
-        PaginationServiceProvider::class,
-        PipelineServiceProvider::class,
-        QueueServiceProvider::class,
-        RedisServiceProvider::class,
-        PasswordResetServiceProvider::class,
-        SessionServiceProvider::class,
-        TranslationServiceProvider::class,
-        ValidationServiceProvider::class,
-        ViewServiceProvider::class,
-
-        /*
-         * Package Service Providers...
-         */
-
-        /*
-         * Application Service Providers...
-         */
-        AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        App\Providers\BroadcastServiceProvider::class,
-        EventServiceProvider::class,
-        RouteServiceProvider::class,
-        DataTablesServiceProvider::class,
-        SocialiteServiceProvider::class,
-        IdeHelperServiceProvider::class,
-
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Class Aliases
     |--------------------------------------------------------------------------
     |
@@ -260,7 +176,7 @@ return [
 
     'aliases' => [
 
-        'App' => Illuminate\Support\Facades\App::class,
+        'App' => App::class,
         'Arr' => Arr::class,
         'Artisan' => Artisan::class,
         'Auth' => Auth::class,
