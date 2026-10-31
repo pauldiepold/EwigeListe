@@ -307,27 +307,6 @@
       gelöscht.
     </p>
 
-    <h3 id="dsg-comments">Kommentare und Beiträge</h3>
-    <p>
-      Wenn Nutzer Kommentare oder sonstige Beiträge hinterlassen, können ihre IP-Adressen auf
-      Grundlage unserer berechtigten Interessen im Sinne des Art. 6 Abs. 1 lit. f. DSGVO für 7 Tage
-      gespeichert werden. Das erfolgt zu unserer Sicherheit, falls jemand in Kommentaren und
-      Beiträgen widerrechtliche Inhalte hinterlässt (Beleidigungen, verbotene politische Propaganda,
-      etc.). In diesem Fall können wir selbst für den Kommentar oder Beitrag belangt werden und sind
-      daher an der Identität des Verfassers interessiert.<br />
-      <br />
-      Des Weiteren behalten wir uns vor, auf Grundlage unserer berechtigten Interessen gem. Art. 6
-      Abs. 1 lit. f. DSGVO, die Angaben der Nutzer zwecks Spamerkennung zu verarbeiten.<br />
-      <br />
-      Auf derselben Rechtsgrundlage behalten wir uns vor, im Fall von Umfragen die IP-Adressen der
-      Nutzer für deren Dauer zu speichern und Cookies zu verwenden, um Mehrfachabstimmungen zu
-      vermeiden.<br />
-      <br />
-      Die im Rahmen der Kommentare und Beiträge mitgeteilte Informationen zur Person, etwaige
-      Kontakt- sowie Websiteinformationen als auch die inhaltlichen Angaben, werden von uns bis zum
-      Widerspruch der Nutzer dauerhaft gespeichert.
-    </p>
-
     <h3 id="dsg-hostingprovider">Hosting und E-Mail-Versand</h3>
     <p>
       Die von uns in Anspruch genommenen Hosting-Leistungen dienen der Zurverfügungstellung der

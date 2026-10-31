@@ -18,7 +18,7 @@ use Inertia\Response;
 
 class GroupController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $groups = Group::withCount('rounds')
             ->withCount('players')
@@ -27,6 +27,7 @@ class GroupController extends Controller
 
         return Inertia::render('Groups/Index', [
             'groups' => new GroupIndexResourceCollection($groups),
+            'canRecalculateStatistics' => $request->user()->isAdmin(),
         ]);
     }
 
@@ -75,29 +76,6 @@ class GroupController extends Controller
             'canLeave' => $group->canBeLeftBy($player),
             'canClose' => $group->canBeClosedBy($request->user()),
         ]);
-    }
-
-    public function calculateAll()
-    {
-        Group::all()->each(function ($group, $key) {
-            $group->calculate();
-        });
-
-        return redirect('/listen');
-    }
-
-    public function calculate(Group $group)
-    {
-        $group->calculate();
-
-        return redirect($group->path().'#statistiken');
-    }
-
-    public function calculateBadges(Group $group)
-    {
-        $group->calculateBadges();
-
-        return redirect($group->path().'#abzeichen');
     }
 
     public function join(Request $request, Group $group): RedirectResponse

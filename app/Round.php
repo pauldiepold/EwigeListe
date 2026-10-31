@@ -18,8 +18,6 @@ use Illuminate\Support\Facades\DB;
  * @property int $created_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read Collection|Comment[] $comments
- * @property-read int|null $comments_count
  * @property-read Player $createdBy
  * @property-read Collection|Game[] $games
  * @property-read int|null $games_count
@@ -305,11 +303,6 @@ class Round extends Model
             ->withTimestamps()
             ->withPivot('index')
             ->orderBy('pivot_index');
-    }
-
-    public function comments()
-    {
-        return $this->morphMany('App\Comment', 'commentable');
     }
 
     public function groups()

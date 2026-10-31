@@ -62,7 +62,7 @@ class QuickRegisterTest extends TestCase
 
         $response = $this->post(route('register.quick.store'), $this->attributes());
 
-        $player = Player::where('surname', 'Max')->sole();
+        $player = Player::where('surname', 'Max')->where('name', 'Mustermann')->sole();
         $response->assertInertiaFlash('addedPlayerId', $player->id);
     }
 

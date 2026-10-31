@@ -86,3 +86,9 @@ jobs:
 
             echo "=== Maintenance OFF ==="
             php artisan up
+
+            # Der Prod-Dump kennt die Listenstatistik noch nicht in den neuen Spalten.
+            if [ "${{ github.event.inputs.sync_db || 'yes' }}" = "yes" ]; then
+              echo "=== Statistiken neu berechnen ==="
+              php artisan stats:recalculate
+            fi

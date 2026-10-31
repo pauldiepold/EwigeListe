@@ -46,13 +46,6 @@ class Player extends Model
         return ! is_null($this->ai_path);
     }
 
-    public function calculate()
-    {
-        foreach ($this->profiles as $profile) {
-            $profile->calculate();
-        }
-    }
-
     public function rounds()
     {
         return $this->belongsToMany(Round::class)->withTimestamps()->withPivot('index');
@@ -79,11 +72,6 @@ class Player extends Model
     public function createdGames()
     {
         return $this->hasMany('App\Game', 'created_by');
-    }
-
-    public function comments()
-    {
-        return $this->hasMany('App\Comment', 'created_by');
     }
 
     public function createdGroups()

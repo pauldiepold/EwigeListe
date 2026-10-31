@@ -46,8 +46,8 @@ class GroupMembershipTest extends TestCase
     {
         $group = Group::factory()->create();
 
-        $this->get("/liste/{$group->id}/beitreten")->assertMethodNotAllowed();
-        $this->get("/liste/{$group->id}/verlassen")->assertMethodNotAllowed();
+        $this->get("/liste/{$group->id}/beitreten")->assertNotFound();
+        $this->get("/liste/{$group->id}/verlassen")->assertNotFound();
     }
 
     #[Test]

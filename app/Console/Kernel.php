@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Player;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -26,11 +25,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('telescope:prune')->dailyAt('03:55');
 
-        $schedule->call(function () {
-            Player::all()->each(function ($player, $key) {
-                $player->calculate();
-            });
-        })->dailyAt('04:10');
+        // Zum Monatswechsel, sonst zeigen Profile ohne neues Spiel weiter „Punkte in diesem Monat“ des Vormonats.
+        $schedule->command('stats:recalculate')->monthlyOn(1, '04:10');
     }
 
     /**

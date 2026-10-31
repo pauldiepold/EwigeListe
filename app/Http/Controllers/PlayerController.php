@@ -41,20 +41,4 @@ class PlayerController extends Controller
             ...($hasStatistics ? ['profileChart' => Inertia::optional(fn (): array => $profileChartSeries->forProfile($profile))] : []),
         ]);
     }
-
-    public function calculateAll()
-    {
-        Player::all()->each(function ($player, $key) {
-            $player->calculate();
-        });
-
-        return redirect('/liste/1');
-    }
-
-    public function calculate(Player $player)
-    {
-        $player->calculate();
-
-        return redirect($player->path());
-    }
 }
