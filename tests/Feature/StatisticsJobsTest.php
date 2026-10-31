@@ -104,6 +104,16 @@ class StatisticsJobsTest extends TestCase
 
             protected $table = 'groups';
 
+            public function getForeignKey(): string
+            {
+                return 'group_id';
+            }
+
+            public function joiningTableSegment(): string
+            {
+                return 'group';
+            }
+
             public function calculate($date = null): void
             {
                 ($this->interruption)();

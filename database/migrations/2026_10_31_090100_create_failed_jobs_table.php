@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Ohne diese Tabelle scheitert der Worker beim Protokollieren eines fehlgeschlagenen Jobs, und die
- * eigentliche Fehlerursache geht verloren. Auf Prod könnte sie ohne Migration bereits existieren.
+ * eigentliche Fehlerursache geht verloren. Auf Prod könnte sie ohne Migration bereits existieren;
+ * der Rollback lässt sie deshalb stehen, statt womöglich fremde Daten zu löschen.
  */
 return new class extends Migration
 {
