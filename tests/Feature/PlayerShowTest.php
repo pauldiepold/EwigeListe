@@ -435,7 +435,6 @@ class PlayerShowTest extends TestCase
         $profile = $player->profiles()->firstOrFail();
 
         $this->get("/charts/profile/{$profile->id}")->assertNotFound();
-        $this->get('/rounds/ajax/'.Group::EWIGE_LISTE_ID."/{$player->id}")->assertNotFound();
     }
 
     private function gameOn(Round $round, Player $player, string $createdAt, int $points): void

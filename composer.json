@@ -20,8 +20,7 @@
         "laravel/ui": "^4.6",
         "laravel/wayfinder": "^0.1.23",
         "pusher/pusher-php-server": "^7.3",
-        "spatie/laravel-ignition": "^2.12",
-        "yajra/laravel-datatables-oracle": "^13.0"
+        "spatie/laravel-ignition": "^2.12"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.4",

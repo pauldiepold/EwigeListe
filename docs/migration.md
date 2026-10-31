@@ -87,8 +87,6 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 
 **Keine Vollseiten, bleiben als Endpunkte:** `api/rounds/{round}/fetchData` (bis #36), `api/live/*`, Formular-POSTs/PATCHes/DELETEs, OAuth (`auth/redirect/*`, `callback/*`), Framework-Routen (`telescope`, `_debugbar`, `broadcasting/auth`).
 
-**Ungenutzt, noch installiert:** `yajra/laravel-datatables-oracle`. Seit #31 greift nichts mehr darauf zu, der Ausbau des Pakets bleibt bei #45.
-
 ## Entscheidungen
 
 | Datum | Entscheidung | Begründung |
