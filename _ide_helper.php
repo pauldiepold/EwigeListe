@@ -1397,7 +1397,7 @@
          */ 
         public static function handle($input, $output = null)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->handle($input, $output);
         }
                     /**
@@ -1410,7 +1410,7 @@
          */ 
         public static function terminate($input, $status)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         $instance->terminate($input, $status);
         }
                     /**
@@ -1423,7 +1423,7 @@
          */ 
         public static function command($signature, $callback)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->command($signature, $callback);
         }
                     /**
@@ -1435,7 +1435,7 @@
          */ 
         public static function registerCommand($command)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         $instance->registerCommand($command);
         }
                     /**
@@ -1450,7 +1450,7 @@
          */ 
         public static function call($command, $parameters = [], $outputBuffer = null)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->call($command, $parameters, $outputBuffer);
         }
                     /**
@@ -1463,7 +1463,7 @@
          */ 
         public static function queue($command, $parameters = [])
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->queue($command, $parameters);
         }
                     /**
@@ -1474,7 +1474,7 @@
          */ 
         public static function all()
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->all();
         }
                     /**
@@ -1485,7 +1485,7 @@
          */ 
         public static function output()
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         return $instance->output();
         }
                     /**
@@ -1496,7 +1496,7 @@
          */ 
         public static function bootstrap()
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         $instance->bootstrap();
         }
                     /**
@@ -1508,7 +1508,7 @@
          */ 
         public static function setArtisan($artisan)
         {            //Method inherited from \Illuminate\Foundation\Console\Kernel         
-                        /** @var \App\Console\Kernel $instance */
+                        /** @var \Illuminate\Foundation\Console\Kernel $instance */
                         $instance->setArtisan($artisan);
         }
          
