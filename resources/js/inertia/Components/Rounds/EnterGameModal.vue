@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import { store as storeGame, update as updateGame } from '@/routes/games';
 import type { RoundActivePlayer, RoundLastGame } from '@/types/round-show';
@@ -71,6 +71,10 @@ function toggleWinner(playerId: number): void {
  * Beim Bearbeiten beginnt er mit den Werten des Spiels.
  */
 watch(open, (isOpen) => {
+  if (keepsFormState) {
+    return;
+  }
+
   form.clearErrors();
   hasTriedToSubmit.value = false;
 
@@ -87,19 +91,43 @@ watch(open, (isOpen) => {
   form.reset();
 });
 
+/** Solange gesetzt, ändern Schließen und Wiederöffnen den Formularstand nicht. */
+let keepsFormState = false;
+
+/**
+ * Der Dialog schließt sofort beim Speichern; die Tabelle folgt mit der Antwort. Scheitert die
+ * Anfrage (Validierung, Netz), öffnet er mit der unveränderten Eingabe und dem Fehler wieder.
+ */
 function submit(): void {
   hasTriedToSubmit.value = true;
   if (!canSubmit.value) {
     return;
   }
 
+  let succeeded = false;
   const options = {
     preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
-      open.value = false;
+      succeeded = true;
+    },
+    onFinish: () => {
+      if (succeeded) {
+        keepsFormState = false;
+        form.defaults({ winners: [], points: 0, misplayed: false });
+        form.reset();
+        return;
+      }
+
+      open.value = true;
+      nextTick(() => {
+        keepsFormState = false;
+      });
     },
   };
+
+  keepsFormState = true;
+  open.value = false;
 
   if (props.editedGame) {
     form.patch(updateGame.url(props.editedGame.id), options);
