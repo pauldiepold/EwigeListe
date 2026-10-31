@@ -3,12 +3,11 @@
 namespace App\Notifications;
 
 use Closure;
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
-class MyOwnResetPassword extends Notification {
-
+class MyOwnResetPassword extends Notification
+{
     /**
      * The password reset token.
      *
@@ -26,7 +25,7 @@ class MyOwnResetPassword extends Notification {
     /**
      * Create a notification instance.
      *
-     * @param string $token
+     * @param  string  $token
      * @return void
      */
     public function __construct($token)
@@ -37,7 +36,7 @@ class MyOwnResetPassword extends Notification {
     /**
      * Get the notification's channels.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array|string
      */
     public function via($notifiable)
@@ -48,13 +47,12 @@ class MyOwnResetPassword extends Notification {
     /**
      * Build the mail representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return MailMessage
      */
     public function toMail($notifiable)
     {
-        if (static::$toMailCallback)
-        {
+        if (static::$toMailCallback) {
             return call_user_func(static::$toMailCallback, $notifiable, $this->token);
         }
 
@@ -62,15 +60,15 @@ class MyOwnResetPassword extends Notification {
             ->greeting('Hallo!')
             ->subject('Passwort Zurücksetzen')
             ->line('Um mit einem neuen Passwort weiterhin Doppelkopf zu spielen, setze dein Passwort zurück:')
-            ->action('Passwort zurücksetzen', url(config('app.url') . route('password.reset', ['token' => $this->token], false)))
-            ->line('Dieser Link ist ' . config('auth.passwords.users.expire') . ' Minuten gültig.')
+            ->action('Passwort zurücksetzen', url(config('app.url').route('password.reset', ['token' => $this->token], false)))
+            ->line('Dieser Link ist '.config('auth.passwords.users.expire').' Minuten gültig.')
             ->salutation('Beste Grüße, deine Ewige Liste.');
     }
 
     /**
      * Set a callback that should be used when building the notification mail message.
      *
-     * @param Closure $callback
+     * @param  Closure  $callback
      * @return void
      */
     public static function toMailUsing($callback)

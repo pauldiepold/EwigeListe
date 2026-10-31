@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class AddGamesPerDay extends Migration
 {
@@ -14,8 +14,8 @@ class AddGamesPerDay extends Migration
     public function up()
     {
         Schema::table('profiles', function (Blueprint $table) {
-    		$table->float('gamesPerDay', 3, 2)->nullable()->after('gamesThisMonth');
-		});
+            $table->float('gamesPerDay', 3, 2)->nullable()->after('gamesThisMonth');
+        });
     }
 
     /**
@@ -26,7 +26,7 @@ class AddGamesPerDay extends Migration
     public function down()
     {
         Schema::table('profiles', function (Blueprint $table) {
-    		$table->dropColumn('gamesPerDay');
-		});
+            $table->dropColumn('gamesPerDay');
+        });
     }
 }

@@ -1,8 +1,20 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\QuickRegisterController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\GameController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Live\GameController as LiveGameController;
+use App\Http\Controllers\Live\RoundController as LiveRoundController;
+use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\RoundController;
+use App\Http\Controllers\StaticPageController;
+use App\Http\Controllers\StatisticsController;
+use App\Http\Controllers\UserAvatarController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 /*
 Verb          Path                        Action  Route Name
@@ -18,122 +30,85 @@ DELETE        /users/{user}               destroy users.destroy
 Auth::routes();
 
 /* *********** Home ************** */
-Route::get('/', 'HomeController@index');
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('index');
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-Route::middleware('auth')->group(function ()
-{
+Route::middleware('auth')->group(function () {
     /* *********** Users *********** */
-    Route::get('users/{user}/edit', 'UserController@edit')->name('users.edit');
-    Route::patch('users/{user}/name', 'UserController@updateName')->name('users.updateName');
-    Route::patch('users/{user}/mail', 'UserController@updateMail')->name('users.updateMail');
-    Route::patch('users/{user}/password', 'UserController@updatePassword')->name('users.updatePassword');
-    Route::patch('users/{user}/listen', 'UserController@updateListen')->name('users.updateListen');
-
-    Route::get('mail', 'TestController@mail');
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::patch('users/{user}/name', [UserController::class, 'updateName'])->name('users.updateName');
+    Route::patch('users/{user}/mail', [UserController::class, 'updateMail'])->name('users.updateMail');
+    Route::patch('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.updatePassword');
+    Route::patch('users/{user}/listen', [UserController::class, 'updateListen'])->name('users.updateListen');
+    Route::post('users/{user}/avatar', [UserAvatarController::class, 'store'])->name('users.updateAvatar');
 
     /* *********** Players *********** */
-    Route::get('profil/{player}/{group?}', 'PlayerController@show');
-    Route::get('/players/calculate', 'PlayerController@calculateAll');
-    Route::get('/players/calculate/{player}', 'PlayerController@calculate');
-
+    Route::get('profil/{player}/{group?}', [PlayerController::class, 'show'])->name('players.show');
 
     /* *********** Rounds ************ */
-    Route::get('/rundenarchiv/{group?}', 'RoundController@index')->name('rounds.index');
-    Route::get('/runde/erstellen', 'RoundController@create')->name('rounds.create');
-    Route::post('/rounds', 'RoundController@store')->name('rounds.store');
-    Route::get('/rounds/current', 'RoundController@current')->name('rounds.current');
-    Route::get('/runde/{round}', 'RoundController@show')->name('rounds.show');
-    Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
-    Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
-    Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');
-    Route::get('/rounds/ajax/{group}/{player?}', 'RoundController@archiveTable')->name('rounds.archiveTable');
+    Route::get('/rundenarchiv/{group?}', [RoundController::class, 'index'])->name('rounds.index');
+    Route::get('/runde/erstellen', [RoundController::class, 'create'])->name('rounds.create');
+    Route::post('/rounds', [RoundController::class, 'store'])->name('rounds.store');
+    Route::get('/rounds/current', [RoundController::class, 'current'])->name('rounds.current');
+    Route::get('/runde/{round}', [RoundController::class, 'show'])->name('rounds.show');
+    Route::patch('/rounds/{round}', [RoundController::class, 'update'])->name('rounds.update');
+    Route::delete('/rounds/{round}', [RoundController::class, 'destroy'])->name('rounds.destroy');
+    Route::post('/rounds/{round}/games', [GameController::class, 'store'])->name('games.store');
+    Route::patch('/games/{game}', [GameController::class, 'update'])->name('games.update');
+    Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
 
-    Route::patch('/liveRounds/{liveRound}', 'Live\RoundController@updateRegeln')->name('liveRounds.updateRegeln');
+    Route::patch('/liveRounds/{liveRound}', [LiveRoundController::class, 'updateRegeln'])->name('liveRounds.updateRegeln');
 
     /* *********** Groups ************** */
-    Route::get('liste', 'GroupController@show')->name('ewigeListe');
-    Route::get('/listen', 'GroupController@index')->name('groups.index');
-    Route::get('/liste/erstellen', 'GroupController@create')->name('groups.create');
-    Route::get('/liste/{group}', 'GroupController@show')->name('groups.show');
-    Route::post('/groups', 'GroupController@store')->name('groups.store');
+    Route::get('liste', [GroupController::class, 'show'])->name('ewigeListe');
+    Route::get('/listen', [GroupController::class, 'index'])->name('groups.index');
+    Route::get('/liste/erstellen', [GroupController::class, 'create'])->name('groups.create');
+    Route::get('/liste/{group}', [GroupController::class, 'show'])->name('groups.show');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
 
-    Route::get('/listen/calculate', 'GroupController@calculateAll');
-    Route::get('/liste/calculate/{group}', 'GroupController@calculate');
-    Route::get('/liste/calculateBadges/{group}', 'GroupController@calculateBadges');
-
-    Route::get('/liste/{group}/beitreten', 'GroupController@update')->name('groups.addPlayer');
-    Route::get('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
-    Route::get('/liste/{group}/schließen/{close}', 'GroupController@close')->name('groups.close');
-
-
-    /* *********** Charts ************** */
-    Route::get('/charts/round/{round}/', 'ChartController@roundChart');
-    Route::get('/charts/profile/{profile}/', 'ChartController@profileChart');
-
-
-    /* *********** Comments ************** */
-    Route::post('/comments', 'CommentController@store');
-    Route::delete('/comments/{comment}', 'CommentController@destroy');
-
+    Route::post('/liste/{group}/beitreten', [GroupController::class, 'join'])->name('groups.join');
+    Route::post('/liste/{group}/verlassen', [GroupController::class, 'leave'])->name('groups.leave');
+    Route::patch('/liste/{group}/schließen', [GroupController::class, 'close'])->name('groups.close');
 
     /* *********** API ************** */
-    Route::prefix('api')->group(function ()
-    {
-        Route::get('/rounds/{round}/fetchData', 'RoundController@fetchData');
+    Route::prefix('api')->group(function () {
+        Route::get('/rounds/{round}/fetchData', [RoundController::class, 'fetchData'])->name('rounds.fetchData');
 
-        Route::post('/rounds/{round}/game', 'GameController@store');
-        Route::delete('/games/{game}', 'GameController@destroy');
-
-        Route::middleware('can:update,liveRound')->group(function ()
-        {
-            Route::post('live/{liveRound}/spielStarten', 'Live\RoundController@starteNeuesSpiel');
+        Route::middleware('can:update,liveRound')->group(function () {
+            Route::post('live/{liveRound}/spielStarten', [LiveRoundController::class, 'starteNeuesSpiel'])->name('live.rounds.start');
         });
 
-        Route::middleware('can:update,liveGame')->group(function ()
-        {
-            Route::post('live/{liveGame}/vorbehalt', 'Live\GameController@vorbehalt');
-            Route::post('live/{liveGame}/armutAbgeben', 'Live\GameController@armutAbgeben');
-            Route::post('live/{liveGame}/armutMitnehmen', 'Live\GameController@armutMitnehmen');
-            Route::post('live/{liveGame}/armutZurueck', 'Live\GameController@armutZurueckgeben');
-            Route::post('live/{liveGame}/karteSpielen', 'Live\GameController@karteSpielen');
-            Route::post('live/{liveGame}/ansage', 'Live\GameController@ansage');
+        Route::middleware('can:update,liveGame')->group(function () {
+            Route::post('live/{liveGame}/vorbehalt', [LiveGameController::class, 'vorbehalt'])->name('live.games.vorbehalt');
+            Route::post('live/{liveGame}/armutAbgeben', [LiveGameController::class, 'armutAbgeben'])->name('live.games.armutAbgeben');
+            Route::post('live/{liveGame}/armutMitnehmen', [LiveGameController::class, 'armutMitnehmen'])->name('live.games.armutMitnehmen');
+            Route::post('live/{liveGame}/armutZurueck', [LiveGameController::class, 'armutZurueckgeben'])->name('live.games.armutZurueckgeben');
+            Route::post('live/{liveGame}/karteSpielen', [LiveGameController::class, 'karteSpielen'])->name('live.games.karteSpielen');
+            Route::post('live/{liveGame}/ansage', [LiveGameController::class, 'ansage'])->name('live.games.ansage');
         });
-
-        Route::post('users/{user}/avatar', 'Api\UserAvatarController@store')->name('avatar');
 
     });
 
     /* *********** Admin ************** */
-    Route::middleware('admin')->group(function ()
-    {
-        Route::get('/test', 'TestController@test');
-        Route::get('/testClient', 'TestController@client');
-        Route::get('/report', 'ReportController@report');
+    Route::middleware('admin')->group(function () {
+        Route::post('/statistiken/neu-berechnen', [StatisticsController::class, 'recalculate'])->name('statistics.recalculate');
     });
 });
 
-
-/* *********** Charts ************** */
-Route::get('/charts/home/{group}', 'ChartController@homeChart');
-
-/* *********** Sonstiges ************** */
-Route::view('/datenschutz/', 'sonstiges.datenschutz')->name('datenschutz');
-Route::view('/impressum/', 'sonstiges.impressum')->name('impressum');
-Route::view('/regeln/', 'sonstiges.regeln')->name('regeln');
-
+/* *********** Statische Seiten (Inertia) ************** */
+Route::get('/datenschutz/', [StaticPageController::class, 'datenschutz'])->name('datenschutz');
+Route::get('/impressum/', [StaticPageController::class, 'impressum'])->name('impressum');
+Route::get('/regeln/', [StaticPageController::class, 'regeln'])->name('regeln');
 
 /* *********** AUTH ************** */
-Route::get('auth/redirect/{provider}', 'Auth\SocialiteController@redirect')->name('auth.socialite');
-Route::get('callback/{provider}', 'Auth\SocialiteController@callback');
-Route::get('login/social/{socialiteUser}', 'Auth\SocialiteController@showView')->name('auth.registerOrAttach');
+Route::get('auth/redirect/{provider}', [SocialiteController::class, 'redirect'])->name('auth.socialite');
+Route::get('callback/{provider}', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
+Route::get('login/social/{socialiteUser}', [SocialiteController::class, 'showView'])->name('auth.registerOrAttach');
 
 /* *********** Quick Register ************** */
 Route::middleware('auth')->group(function () {
-    Route::get('/register/quick', 'Auth\QuickRegisterController@show')->name('register.quick');
-    Route::post('/register/quick', 'Auth\QuickRegisterController@store')->name('register.quick.store');
+    Route::post('/register/quick', [QuickRegisterController::class, 'store'])->name('register.quick.store');
 });
 
-
-
-
+/* Läuft im web-Stack: Ohne Route gäbe es keine Session, Angemeldete sähen die Fehlerseite wie abgemeldet. */
+Route::fallback(fn () => abort(404));

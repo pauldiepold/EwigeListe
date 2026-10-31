@@ -2,35 +2,33 @@
 
 namespace Tests\Feature;
 
-use App\LiveRound;
-use App\Round;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Group;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class ManageLiveRoundsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function a_user_can_create_a_live_round()
     {
-        //$this->withoutExceptionHandling();
-
-        $users = factory('App\User', 5)->create();
-        $groups = factory('App\Group', 2)->create();
+        $users = User::factory()->count(5)->create();
 
         $this->actingAs($users->get(0));
 
-        $this->post('/rounds', [
-            'players' => $users->pluck('id')->toArray(),
-            'groups' => $groups->pluck('id')->toArray(),
-            'liveGame' => true
-        ])
-            ->assertOk()
-            ->assertSee(Round::first()->path());
+        $response = $this->post(route('rounds.store'), [
+            'players' => $users->pluck('player_id')->toArray(),
+            'groups' => [Group::EWIGE_LISTE_ID],
+            'liveGame' => true,
+        ]);
 
-        $this->assertDatabaseHas('live_rounds', LiveRound::first()->toArray());
+        $round = Round::sole();
+        $response->assertRedirect($round->path());
+        $this->assertNotNull($round->liveRound);
     }
-
 }

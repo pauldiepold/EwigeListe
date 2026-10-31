@@ -1,17 +1,17 @@
-<template>
+﻿<template>
     <div style="min-height: 50vh;">
-        <div class="tw-sticky tw-top-0 tw-z-50 tw-pt-2 tw--mx-4 tw-flex tw-justify-center"
+        <div class="sticky top-0 z-50 pt-2 -mx-4 flex justify-center"
              style="background-color: #f1f1ef;">
-            <ul class="tw-flex-1 tw-flex tw-justify-around tw-border-b tw-border-gray-400 tw-max-w-md">
-                <li v-for="tab in tabs" class="tw-mx-1">
-                    <a class="tw-min-w-7xs tw-inline-block tw-py-2 tw-text-orange-600 tw-w-100 tw-no-underline hover:tw-no-underline "
-                       :class="{ 'tw--mx-px tw--mt-px tw-border-l tw-border-t tw-border-r tw-rounded-t-lg tw-border-gray-400 tw-text-orange-700': tab.isActive }"
+            <ul class="flex-1 flex justify-around border-b border-gray-400 max-w-md">
+                <li v-for="tab in tabs" class="mx-1">
+                    <a class="min-w-7xs inline-block py-2 text-orange-600 w-100 no-underline hover:no-underline "
+                       :class="{ '-mx-px -mt-px border-l border-t border-r rounded-t-lg border-gray-400 text-orange-700': tab.isActive }"
                        :href="tab.href"
                        @click="selectTab(tab);">
-                        <div class="tw-flex tw-flex-col"
+                        <div class="flex flex-col"
                              :title="tab.name">
                             <i :class="tab.icon"
-                               class="fas tw-text-2xl tw-align-middle"
+                               class="fas text-2xl align-middle"
                             ></i>
                         </div>
                     </a>

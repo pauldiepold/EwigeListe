@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Group;
-use App\SocialiteUser;
-use App\User;
-use App\Player;
-use App\Profile;
-use App\Invitation;
 use App\Http\Controllers\Controller;
+use App\Models\SocialiteUser;
+use App\Models\User;
+use App\Services\PlayerRegistration;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Inertia\Response;
 
-class RegisterController extends Controller {
-
+class RegisterController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Register Controller
@@ -43,22 +41,28 @@ class RegisterController extends Controller {
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private PlayerRegistration $playerRegistration)
     {
         $this->middleware('guest');
+    }
+
+    public function showRegistrationForm(): Response
+    {
+        return Inertia::render('Auth/Register', [
+            'captchaSiteKey' => config('captcha.sitekey'),
+        ]);
     }
 
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param array $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
     {
         $messages = [
             'surname.required' => 'Es muss ein Vorname angegeben werden!',
-            'name.required' => 'Es muss ein Vorname angegeben werden!',
+            'name.required' => 'Es muss ein Nachname angegeben werden!',
             'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
             'password.required' => 'Es muss ein Passwort angegeben werden!',
             'password.min' => 'Das Passwort muss mindestens 6 Zeichen haben!',
@@ -73,53 +77,38 @@ class RegisterController extends Controller {
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required_without:socialiteUserId|string|min:6|confirmed',
             'socialiteUserId' => 'exists:socialite_users,id',
-            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha'
+            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha',
         ], $messages);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param array $data
      * @return User
      */
     protected function create(array $data)
     {
-        $player = Player::create([
-            'surname' => $data['surname'],
-            'name' => $data['name']
-        ]);
-
         $socialiteUserId = isset($data['socialiteUserId']) ? $data['socialiteUserId'] : null;
 
         $password = $socialiteUserId ? Str::random(14) : $data['password'];
 
-        $user = User::create([
-            'player_id' => $player->id,
-            'email' => $data['email'],
-            'password' => Hash::make($password),
-        ]);
+        $user = $this->playerRegistration->register(
+            surname: $data['surname'],
+            name: $data['name'],
+            email: $data['email'],
+            password: $password,
+        );
 
-        if ($socialiteUserId)
-        {
+        if ($socialiteUserId) {
             $socialiteUser = SocialiteUser::find($socialiteUserId);
-            if ($socialiteUser->user_id == null)
-            {
+            if ($socialiteUser->user_id == null) {
                 $socialiteUser->user_id = $user->id;
                 $socialiteUser->save();
             }
         }
 
-        Group::find(1)->addPlayer($player);
-
-        $player->profiles->first()->calculate();
-
         return $user;
     }
 
-
-    protected function registered(Request $request, $user)
-    {
-
-    }
+    protected function registered(Request $request, $user) {}
 }

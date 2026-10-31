@@ -2,41 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
-use App\Player;
-use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\BadgesResource;
+use App\Http\Resources\GroupIndexResourceCollection;
+use App\Http\Resources\GroupMemberResource;
+use App\Http\Resources\GroupShowResource;
+use App\Http\Resources\GroupStatisticsResource;
+use App\Http\Toast;
+use App\Models\Group;
+use App\Services\GamesChartSeries;
+use App\Services\RoundArchive;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class GroupController extends Controller
 {
-
-    public function index()
+    public function index(Request $request): Response
     {
         $groups = Group::withCount('rounds')
             ->withCount('players')
             ->orderByRaw('rounds_count desc')
             ->get();
 
-        return view('groups.index', compact('groups'));
+        return Inertia::render('Groups/Index', [
+            'groups' => new GroupIndexResourceCollection($groups),
+            'canRecalculateStatistics' => $request->user()->isAdmin(),
+        ]);
     }
 
-
-    public function create()
+    public function create(): Response
     {
-        $allPlayers = Player::where('hide', '=', '0')
-            ->withCount('gamePlayers')
-            ->orderByRaw('game_players_count desc')
-            ->get();
-
-        return view('groups.create', compact('allPlayers'));
+        return Inertia::render('Groups/Create');
     }
-
 
     public function store(Request $request)
     {
         $attributes = request()->validate([
-            'name' => 'required'
+            'name' => 'required',
         ]);
 
         $group = auth()->user()->player->createdGroups()->create($attributes);
@@ -45,103 +48,84 @@ class GroupController extends Controller
 
         $group->calculate();
 
-        return redirect($group->path());
+        return redirect()->route('groups.show', $group);
     }
 
+    public function show(
+        Request $request,
+        RoundArchive $roundArchive,
+        GamesChartSeries $gamesChartSeries,
+        ?Group $group = null,
+    ): Response {
+        $group ??= Group::findOrFail(Group::EWIGE_LISTE_ID);
+        $group->load(['profiles.player.user', 'badges.player']);
 
-    public function show(Group $group = null)
-    {
-        $group = isset($group) ? $group : Group::find(1);
-        $selectedGroup = $group;
-        $group->load(['players.profiles', 'profiles.player.user', 'badges.player']);
+        $player = $request->user()->player;
+        $archive = $roundArchive->forGroup($group, $request);
+        $hasGamesChart = $archive['rounds']->total() >= 5;
 
-        $rounds_count = $group->rounds()
-            ->whereHas('groups', function (Builder $query) use ($group)
-            {
-                $query->where('groups.id', '=', $group->id);
-            })
-            ->count();
-
-        $badges = $group->badges->groupBy(['type', 'year']);
-
-        $player = auth()->user()->player;
-        $playersRoundsInGroup = $player->rounds()->whereHas('groups', function (Builder $query) use ($group)
-        {
-            $query->where('groups.id', '=', $group->id);
-        })->get();
-
-        $canLeaveGroup = $group->players->contains(auth()->user()->player) &&
-                         $group->profiles->where('player_id', auth()->user()->player->id)->first()->games == 0 &&
-                         $group->profiles->count() != 1 &&
-                         ($playersRoundsInGroup->count() != 1 ||
-                          !$playersRoundsInGroup->first()->players->contains(auth()->user()->player));
-
-        return view('groups.show', compact('group', 'rounds_count', 'selectedGroup', 'badges', 'canLeaveGroup'));
+        return Inertia::render('Groups/Show', [
+            'group' => new GroupShowResource($group),
+            'members' => GroupMemberResource::collection($group->profiles->sortByDesc('games')->values())->resolve($request),
+            'statistics' => new GroupStatisticsResource($group),
+            'badges' => new BadgesResource($group->badges),
+            ...$archive,
+            'hasGamesChart' => $hasGamesChart,
+            ...($hasGamesChart ? ['gamesChart' => Inertia::optional(fn (): array => $gamesChartSeries->forGroup($group))] : []),
+            'canJoin' => $group->canBeJoinedBy($player),
+            'canLeave' => $group->canBeLeftBy($player),
+            'canClose' => $group->canBeClosedBy($request->user()),
+        ]);
     }
 
-    public function calculateAll()
+    public function join(Request $request, Group $group): RedirectResponse
     {
-        Group::all()->each(function ($group, $key)
-        {
-            $group->calculate();
-        });
+        $player = $request->user()->player;
 
-        return redirect('/listen');
-    }
+        if (! $group->canBeJoinedBy($player)) {
+            Toast::error('Du kannst dieser Liste nicht beitreten.');
 
-    public function calculate(Group $group)
-    {
-        $group->calculate();
-
-        return redirect($group->path() . '#statistiken');
-    }
-
-    public function calculateBadges(Group $group)
-    {
-        $group->calculateBadges();
-
-        return redirect($group->path() . '#abzeichen');
-    }
-
-    public function update(Group $group)
-    {
-        $player = auth()->user()->player;
-
-        if ($group->players->contains($player))
-        {
-            return redirect($group->path());
+            return redirect()->route('groups.show', $group);
         }
 
         $group->addPlayer($player);
+        Toast::success('Du bist der Liste beigetreten.');
 
-        return redirect($group->path());
+        return redirect()->route('groups.show', $group);
     }
 
-    public function leave(Group $group)
+    public function leave(Request $request, Group $group): RedirectResponse
     {
-        $player = auth()->user()->player;
+        $player = $request->user()->player;
 
-        if (!$group->players->contains($player) ||
-            $group->profiles->where('player_id', $player->id)->first()->games != 0 ||
-            $group->profiles->count() == 1)
-        {
-            return redirect($group->path());
+        if (! $group->canBeLeftBy($player)) {
+            Toast::error('Du kannst diese Liste nicht verlassen.');
+
+            return redirect()->route('groups.show', $group);
         }
 
         $group->players()->detach($player->id);
+        Toast::success('Du hast die Liste verlassen.');
 
-        return redirect($group->path());
+        return redirect()->route('groups.show', $group);
     }
 
-    public function close(Group $group, $close)
+    public function close(Request $request, Group $group): RedirectResponse
     {
-        if (!($group->creator->is(auth()->user()->player) || auth()->user()->id == 1))
-        {
-            return redirect($group->path() . '#admin');
-        }
-        $group->closed = boolval($close);
-        $group->save();
+        $attributes = $request->validate([
+            'closed' => ['required', 'boolean'],
+        ]);
 
-        return redirect($group->path() . '#admin');
+        if (! $group->canBeClosedBy($request->user())) {
+            Toast::error('Du kannst diese Liste nicht schließen oder öffnen.');
+
+            return redirect()->route('groups.show', $group);
+        }
+
+        $group->closed = $attributes['closed'];
+        $group->save();
+        Toast::success($group->closed ? 'Die Liste wurde geschlossen.' : 'Die Liste wurde geöffnet.');
+
+        return redirect()->route('groups.show', $group);
     }
 }

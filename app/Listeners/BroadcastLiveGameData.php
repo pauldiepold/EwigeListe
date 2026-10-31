@@ -11,13 +11,11 @@ class BroadcastLiveGameData
     /**
      * Handle the event.
      *
-     * @param LiveGameSaved $event
      * @return void
      */
     public function handle(LiveGameSaved $event)
     {
-        foreach ($event->liveGame->spielerIDs as $spielerID)
-        {
+        foreach ($event->liveGame->spielerIDs as $spielerID) {
             event(new LiveGameDataBroadcasted($event->liveGame, $spielerID));
         }
 

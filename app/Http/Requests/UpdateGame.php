@@ -2,54 +2,27 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Game;
+use App\Models\Round;
+use Illuminate\Support\Collection;
 
-class UpdateGame extends FormRequest {
-
-    protected $errorBag = 'update';
-
+class UpdateGame extends StoreGame
+{
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
+     * @return Collection<int, int>
      */
-    public function authorize()
+    protected function activePlayerIds(): Collection
     {
-        return true;
+        return $this->round()->getActivePlayersForDealer($this->round()->getDealerIndexOf($this->game()))->pluck('id');
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    protected function round(): Round
     {
-        return [
-            'updateWinners' => 'required|max:3|array',
-            'updateWinners.*' => 'integer',
-            'updatePoints' => 'required|integer|nullable|between:-4,16',
-            'updateMisplayed' => 'boolean'
-        ];
+        return $this->game()->round;
     }
 
-    public function withValidator($validator)
+    private function game(): Game
     {
-        $validator->after(function ($validator)
-        {
-            if ($this->input('updateMisplayed') && count($this->input('updateWinners')) != 3)
-            {
-                $validator->errors()->add('updateMisplayed', 'Wenn sich jemand vergibt, muss dies als verlorenes Solo eingetragen werden!');
-            }
-        });
-    }
-
-    public function messages()
-    {
-        return [
-            'updateWinners.required' => 'Es muss mindestens ein Gewinner ausgewählt werden!',
-            'updateWinners.max' => 'Es dürfen höchstens drei Gewinner ausgewählt werden!',
-            'updatePoints.required' => 'Es muss eine Punktzahl angegeben werden!'
-        ];
+        return $this->route('game');
     }
 }

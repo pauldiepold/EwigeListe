@@ -1,0 +1,26 @@
+import type { DefineComponent } from 'vue';
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import ui from '@nuxt/ui/vue-plugin';
+import AppRoot from './AppRoot.vue';
+
+const pages = import.meta.glob<DefineComponent>('./Pages/**/*.vue');
+
+createInertiaApp({
+  title: (title) => (title ? `${title} - Ewige Liste` : 'Ewige Liste'),
+  resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, pages),
+  progress: { color: '#d16341' },
+  setup({ el, App, props, plugin }) {
+    createApp({ render: () => h(AppRoot, () => h(App, props)) })
+      .use(plugin)
+      .use(ui)
+      .mount(el);
+  },
+});
+
+const isLocalDevHost = location.hostname === 'localhost' || location.hostname.endsWith('.test');
+
+if ('serviceWorker' in navigator && !isLocalDevHost) {
+  void navigator.serviceWorker.register('/service-worker.js');
+}

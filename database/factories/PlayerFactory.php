@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Player;
+use App\Models\Player;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class PlayerFactory extends Factory
 {
@@ -23,8 +22,16 @@ class PlayerFactory extends Factory
     public function definition()
     {
         return [
-            'surname' => e($this->faker->firstName),
-            'name' => e($this->faker->lastName),
+            'surname' => $this->faker->firstName,
+            'name' => $this->faker->lastName,
         ];
+    }
+
+    /**
+     * Versteckter Spieler: bei der Rundenerstellung nicht auswählbar.
+     */
+    public function hidden(): static
+    {
+        return $this->state(['hide' => true]);
     }
 }

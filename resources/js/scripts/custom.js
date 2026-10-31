@@ -1,7 +1,1 @@
-$(function () {
-    $('body').on('hidden.bs.modal', '.modal', function() {
-        $('.btn').blur();
-    });
-});
-
-
+// Bootstrap/jQuery modal behaviour entfernt (Bootstrap JS und jQuery wurden entfernt)

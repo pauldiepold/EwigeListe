@@ -1,0 +1,155 @@
+<script setup lang="ts">
+import { computed, onUnmounted, ref, watch } from 'vue';
+import { Link } from '@inertiajs/vue3';
+import type { RoundGame, RoundPlayer } from '@/types/round-show';
+
+const HIGHLIGHT_MILLISECONDS = 2000;
+
+/** Erst ab 6 Spielern setzen mehrere aus, dann lohnt die Markierung der Aktiven. */
+const MARK_ACTIVE_FROM_PLAYERS = 6;
+
+const props = defineProps<{
+  players: RoundPlayer[];
+  games: RoundGame[];
+  onlinePlayerIds: number[];
+  /** Eine gerade gespeicherte Änderung, deren Antwort noch aussteht: Die Zeile zeigt ein Skeleton. */
+  pendingGame?: 'new' | 'edited' | null;
+}>();
+
+const marksActivePlayers = computed(() => props.players.length >= MARK_ACTIVE_FROM_PLAYERS);
+
+const highlightedGames = ref<Record<number, 'new' | 'edited'>>({});
+const highlightTimers = new Set<ReturnType<typeof setTimeout>>();
+
+/**
+ * Beim ersten Laden leuchtet nichts, danach jede neu erschienene Zeile grün und jede
+ * inhaltlich geänderte (bearbeitete) Zeile gelb.
+ */
+watch(
+  () => props.games.map((game) => [game.id, JSON.stringify(game)] as const),
+  (games, previousGames) => {
+    const previousContents = new Map(previousGames);
+    const changes: Record<number, 'new' | 'edited'> = {};
+    for (const [gameId, content] of games) {
+      const previousContent = previousContents.get(gameId);
+      if (previousContent === undefined) {
+        changes[gameId] = 'new';
+      } else if (previousContent !== content) {
+        changes[gameId] = 'edited';
+      }
+    }
+
+    const changedGameIds = Object.keys(changes).map(Number);
+    if (changedGameIds.length === 0) {
+      return;
+    }
+
+    highlightedGames.value = { ...highlightedGames.value, ...changes };
+    const timer = setTimeout(() => {
+      highlightTimers.delete(timer);
+      highlightedGames.value = Object.fromEntries(
+        Object.entries(highlightedGames.value).filter(
+          ([gameId]) => !changedGameIds.includes(Number(gameId)),
+        ),
+      );
+    }, HIGHLIGHT_MILLISECONDS);
+    highlightTimers.add(timer);
+  },
+);
+
+onUnmounted(() => {
+  highlightTimers.forEach(clearTimeout);
+});
+
+function isPendingRow(game: RoundGame): boolean {
+  return props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id;
+}
+
+function rowBackground(game: RoundGame): string {
+  const highlight = highlightedGames.value[game.id];
+  if (highlight === 'new') {
+    return 'bg-success/30';
+  }
+  if (highlight === 'edited') {
+    return 'bg-warning/30';
+  }
+  if (game.isMisplay) {
+    return 'bg-error/15';
+  }
+  if (game.isSolo) {
+    return 'bg-elevated';
+  }
+  return '';
+}
+</script>
+
+<template>
+  <div class="mx-auto max-w-3xl overflow-x-auto">
+    <table class="w-full text-center tabular-nums">
+      <thead>
+        <tr class="border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)">
+          <th v-for="player in players" :key="player.id" class="px-1 py-2 font-normal">
+            <component
+              :is="player.path ? Link : 'span'"
+              :href="player.path ?? undefined"
+              class="flex flex-col items-center gap-1"
+            >
+              <UAvatar
+                :src="player.avatarPath ?? undefined"
+                :alt="player.surname"
+                :class="{
+                  'shadow-[0_0_10px_2px] shadow-success/60': onlinePlayerIds.includes(player.id),
+                }"
+              />
+              <span
+                class="rounded-lg px-1.5 py-0.5 font-semibold"
+                :class="[
+                  player.isDealer ? 'text-primary' : 'text-highlighted',
+                  { 'bg-primary/15': marksActivePlayers && player.isActive },
+                ]"
+              >
+                {{ player.surname }}
+              </span>
+            </component>
+          </th>
+          <th class="px-1 py-2 align-bottom font-semibold text-highlighted">
+            <span class="px-1.5 py-0.5">Punkte</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="game in games"
+          :key="game.id"
+          class="transition-colors duration-1000"
+          :class="[
+            rowBackground(game),
+            game.endsDealerCycle
+              ? 'border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)'
+              : 'border-b border-accented/70',
+          ]"
+        >
+          <td
+            v-for="(score, seat) in game.scores"
+            :key="seat"
+            class="px-1 py-1.5"
+            :class="{ 'font-bold': score.won }"
+          >
+            <USkeleton v-if="isPendingRow(game)" class="mx-auto h-5 w-8" />
+            <template v-else>{{ score.points ?? '-' }}</template>
+          </td>
+          <td class="px-1 py-1.5">
+            <USkeleton v-if="isPendingRow(game)" class="mx-auto h-5 w-6" />
+            <template v-else>{{ game.points }}</template>
+          </td>
+        </tr>
+        <tr v-if="pendingGame === 'new'" class="border-b border-accented/70">
+          <td v-for="player in players" :key="player.id" class="px-1 py-1.5">
+            <USkeleton class="mx-auto h-5 w-8" />
+          </td>
+          <td class="px-1 py-1.5"><USkeleton class="mx-auto h-5 w-6" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</template>

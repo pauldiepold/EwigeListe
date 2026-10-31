@@ -2,10 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Player;
-use App\Round;
+use App\Models\Player;
+use App\Models\Round;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 class RoundFactory extends Factory
 {
@@ -24,8 +23,7 @@ class RoundFactory extends Factory
     public function definition()
     {
         return [
-            'created_by' => function ()
-            {
+            'created_by' => function () {
                 return Player::factory()->create()->id;
             },
         ];

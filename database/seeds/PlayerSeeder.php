@@ -1,19 +1,19 @@
 <?php
 
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Round;
-use App\User;
+use App\Models\Game;
+use App\Models\GamePlayer;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\Round;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class PlayerSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -73,12 +73,12 @@ class PlayerSeeder extends Seeder
 
         User::factory()->count(intval(config('database.seed.players')))->create([
             'created_at' => $date300,
-            'updated_at' => $date300
+            'updated_at' => $date300,
         ]);
 
         DB::table('players')->update(['created_at' => $date300, 'updated_at' => $date300]);
 
-        $allPlayers = App\Player::all();
+        $allPlayers = Player::all();
 
         $group = Group::factory()->create([
             'created_by' => $allPlayers->random(),
@@ -95,8 +95,7 @@ class PlayerSeeder extends Seeder
             'updated_at' => $date300,
         ]);
 
-        for ($i = 0; $i < intval(config('database.seed.rounds')); $i++)
-        {
+        for ($i = 0; $i < intval(config('database.seed.rounds')); $i++) {
             $date = Carbon::now()->subMinutes(rand(0, 60 * 24 * 300));
 
             $playerInRound = $allPlayers->random(rand(4, 7));
@@ -104,31 +103,27 @@ class PlayerSeeder extends Seeder
             $round = Round::factory()->create([
                 'created_by' => $playerInRound->random(),
                 'created_at' => $date,
-                'updated_at' => $date
+                'updated_at' => $date,
             ]);
             $round->groups()->save($group);
 
-
             $index = 0;
-            foreach ($playerInRound as $player)
-            {
+            foreach ($playerInRound as $player) {
                 $round->players()->attach($player, [
                     'index' => $index,
                     'created_at' => $date,
-                    'updated_at' => $date
+                    'updated_at' => $date,
                 ]);
                 $index++;
             }
 
-            for ($u = 0; $u < rand(0, 1); $u++)
-            {
+            for ($u = 0; $u < rand(0, 1); $u++) {
                 $group_temp = $groups->random()->load('players');
                 $round->groups()->save($group_temp);
                 $group_temp->addPlayers($playerInRound);
             }
 
-            for ($k = 0; $k < rand(10, 25); $k++)
-            {
+            for ($k = 0; $k < rand(10, 25); $k++) {
                 $date->addMinutes(8);
 
                 $activePlayers = $round->getActivePlayers();
@@ -150,18 +145,15 @@ class PlayerSeeder extends Seeder
                     'updated_at' => $date,
                 ]);
 
-                foreach ($activePlayers as $player)
-                {
+                foreach ($activePlayers as $player) {
                     if (count($winners) == 1 &&
-                        in_array($player->id, $winners))           // Solo gewonnen
-                    {
+                        in_array($player->id, $winners)) {           // Solo gewonnen
                         $soloist = true;
                         $won = true;
                         $points = 3 * $pointsRound;
                         $misplayed = false;
                     } elseif (count($winners) == 3 &&
-                        !in_array($player->id, $winners))    // Solo verloren
-                    {
+                        ! in_array($player->id, $winners)) {    // Solo verloren
                         $soloist = $misplay ? false : true;
                         $won = false;
                         $points = -3 * $pointsRound;
@@ -169,17 +161,15 @@ class PlayerSeeder extends Seeder
                     } elseif ((count($winners) == 2 &&
                             in_array($player->id, $winners)) ||
                         (count($winners) == 3 &&
-                            in_array($player->id, $winners)))    // Normalspiel gewonnen - Gegen Solo gewonnen
-                    {
+                            in_array($player->id, $winners))) {    // Normalspiel gewonnen - Gegen Solo gewonnen
                         $soloist = false;
                         $won = true;
                         $points = 1 * $pointsRound;
                         $misplayed = false;
                     } elseif ((count($winners) == 2 &&
-                            !in_array($player->id, $winners)) ||
+                            ! in_array($player->id, $winners)) ||
                         (count($winners) == 1 &&
-                            !in_array($player->id, $winners)))   // Normalspiel verloren - Gegen Solo verloren
-                    {
+                            ! in_array($player->id, $winners))) {   // Normalspiel verloren - Gegen Solo verloren
                         $soloist = false;
                         $won = false;
                         $points = -1 * $pointsRound;
@@ -192,12 +182,12 @@ class PlayerSeeder extends Seeder
                         'points' => $points,
                         'misplayed' => $misplayed,
                         'created_at' => $date,
-                        'updated_at' => $date
+                        'updated_at' => $date,
                     ]);
 
-                    App\GamePlayer::where('game_id', $game->id)->update([
+                    GamePlayer::where('game_id', $game->id)->update([
                         'created_at' => $date,
-                        'updated_at' => $date
+                        'updated_at' => $date,
                     ]);
                 }
 
@@ -206,13 +196,14 @@ class PlayerSeeder extends Seeder
             $round->save();
         }
 
-        App\Profile::all()->each(function ($profile, $key) {
+        Profile::all()->each(function ($profile, $key) {
             $profile->calculate();
         });
 
-        App\Group::all()->each(function ($group, $key) {
-            $group->calculate();
-            $group->calculateBadges();
+        Group::all()->each(function ($group, $key) {
+            foreach ($group->monthsSinceFirstRound() as $month) {
+                $group->calculate($month);
+            }
         });
     }
 }

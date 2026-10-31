@@ -1,8 +1,8 @@
-<template>
-    <div class="tw-text-left tw-max-w-lg tw-mx-auto">
+﻿<template>
+    <div class="text-left max-w-lg mx-auto">
         <!-- ----- Super-Schwein ------ -->
-        <div class="tw-rounded-lg tw-p-4 tw-bg-white tw-mb-4">
-            <div class="tw-flex tw-justify-between tw-items-center">
+        <div class="rounded-lg p-4 bg-white mb-4">
+            <div class="flex justify-between items-center">
                 <div>
                     Super-Schwein
                     <small class="form-text text-muted">
@@ -14,13 +14,13 @@
                     <i class="fas fa-2x " @click="changeable ? schweinchen = !schweinchen : ''"
                        :class="{'fa-toggle-on': schweinchen,
                                 'fa-toggle-off': !schweinchen,
-                                'tw-text-orange-500': schweinchen && changeable,
-                                'tw-text-gray-700': !schweinchen && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': schweinchen && changeable,
+                                'text-gray-700': !schweinchen && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
-            <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
+            <div v-if="schweinchen" class="flex justify-between items-center mt-4">
                 <div>
                     Super-Schwein: Fuchs muss stechen
                     <small class="form-text text-muted">
@@ -31,13 +31,13 @@
                     <i class="fas fa-2x " @click="changeable ? fuchsSticht = !fuchsSticht : ''"
                        :class="{'fa-toggle-on': fuchsSticht,
                                 'fa-toggle-off': !fuchsSticht,
-                                'tw-text-orange-500': fuchsSticht && changeable,
-                                'tw-text-gray-700': !fuchsSticht && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': fuchsSticht && changeable,
+                                'text-gray-700': !fuchsSticht && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
-            <div v-if="schweinchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
+            <div v-if="schweinchen" class="flex justify-between items-center mt-4">
                 <div>
                     Super-Schwein: auch im Trumpfsolo
                     <small class="form-text text-muted">
@@ -48,17 +48,17 @@
                     <i class="fas fa-2x " @click="changeable ? schweinchenTrumpfsolo = !schweinchenTrumpfsolo : ''"
                        :class="{'fa-toggle-on': schweinchenTrumpfsolo,
                                 'fa-toggle-off': !schweinchenTrumpfsolo,
-                                'tw-text-orange-500': schweinchenTrumpfsolo && changeable,
-                                'tw-text-gray-700': !schweinchenTrumpfsolo && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': schweinchenTrumpfsolo && changeable,
+                                'text-gray-700': !schweinchenTrumpfsolo && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
 
         <!-- ----- Königssolo ------ -->
-        <div class="tw-rounded-lg tw-p-4 tw-bg-white tw-mb-4">
-            <div class="tw-flex tw-justify-between tw-items-center">
+        <div class="rounded-lg p-4 bg-white mb-4">
+            <div class="flex justify-between items-center">
                 <div>
                     Mit Königssolo
                     <small class="form-text text-muted">
@@ -69,17 +69,17 @@
                     <i class="fas fa-2x " @click="changeable ? koenigsSolo = !koenigsSolo : ''"
                        :class="{'fa-toggle-on': koenigsSolo,
                                 'fa-toggle-off': !koenigsSolo,
-                                'tw-text-orange-500': koenigsSolo && changeable,
-                                'tw-text-gray-700': !koenigsSolo && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': koenigsSolo && changeable,
+                                'text-gray-700': !koenigsSolo && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
 
         <!-- ----- Karlchen ------ -->
-        <div class="tw-rounded-lg tw-p-4 tw-bg-white tw-mb-4">
-            <div class="tw-flex tw-justify-between tw-items-center">
+        <div class="rounded-lg p-4 bg-white mb-4">
+            <div class="flex justify-between items-center">
                 <div>
                     Karlchen
                     <small class="form-text text-muted">
@@ -90,13 +90,13 @@
                     <i class="fas fa-2x " @click="changeable ? karlchen = !karlchen : ''"
                        :class="{'fa-toggle-on': karlchen,
                                 'fa-toggle-off': !karlchen,
-                                'tw-text-orange-500': karlchen && changeable,
-                                'tw-text-gray-700': !karlchen && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': karlchen && changeable,
+                                'text-gray-700': !karlchen && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
-            <div v-if="karlchen" class="tw-flex tw-justify-between tw-items-center tw-mt-4">
+            <div v-if="karlchen" class="flex justify-between items-center mt-4">
                 <div>
                     Karlchen kann gefangen werden
                     <small class="form-text text-muted">
@@ -107,15 +107,15 @@
                     <i class="fas fa-2x " @click="changeable ? karlchenFangen = !karlchenFangen : ''"
                        :class="{'fa-toggle-on': karlchenFangen,
                                 'fa-toggle-off': !karlchenFangen,
-                                'tw-text-orange-500': karlchenFangen && changeable,
-                                'tw-text-gray-700': !karlchenFangen && changeable,
-                                'tw-text-gray-600': !changeable,
-                                'tw-cursor-pointer': changeable}"/>
+                                'text-orange-500': karlchenFangen && changeable,
+                                'text-gray-700': !karlchenFangen && changeable,
+                                'text-gray-600': !changeable,
+                                'cursor-pointer': changeable}"/>
                 </div>
             </div>
         </div>
 
-        <div class="tw-text-center" v-if="round.players.map(v => v.id).includes(round.auth_id)">
+        <div class="text-center" v-if="round.players.map(v => v.id).includes(round.auth_id)">
             <form @submit.prevent="submit">
                 <button type="submit"
                         :disabled="!changeable"

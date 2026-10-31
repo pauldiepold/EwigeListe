@@ -2,20 +2,20 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
 class PlayerTest extends TestCase
 {
-
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function a_user_has_groups()
     {
-        $user = factory('App\User')->create();
+        $user = User::factory()->create();
 
         $this->assertInstanceOf(Collection::class, $user->player->createdGroups);
     }
