@@ -245,16 +245,8 @@ input[type=number] {
     border: none !important;
 }
 
-tr {
-    border-bottom: 1px solid #cfdfe1;
-}
-
 td, th {
     vertical-align: middle !important;
-}
-
-table, tbody, tr, th {
-    border-top: none !important;
 }
 
 .border-bottom-thick td,
