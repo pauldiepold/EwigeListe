@@ -48,6 +48,18 @@ const canSubmit = computed(() => {
 
 const validationError = computed(() => Object.values(form.errors)[0]);
 
+/** Erst nach einem Speichern-Versuch sichtbar, damit der Dialog nicht gleich mit Fehlern öffnet. */
+const hasTriedToSubmit = ref(false);
+const winnersHint = computed(() => {
+  if (!hasTriedToSubmit.value || canSubmit.value) {
+    return null;
+  }
+
+  return form.misplayed
+    ? 'Bei „Falsch bedient?“ müssen genau drei Personen ausgewählt sein.'
+    : 'Wähle mindestens eine Person aus.';
+});
+
 function toggleWinner(playerId: number): void {
   form.winners = form.winners.includes(playerId)
     ? form.winners.filter((winnerId) => winnerId !== playerId)
@@ -60,6 +72,7 @@ function toggleWinner(playerId: number): void {
  */
 watch(open, (isOpen) => {
   form.clearErrors();
+  hasTriedToSubmit.value = false;
 
   if (isOpen && props.editedGame) {
     form.defaults({
@@ -75,6 +88,11 @@ watch(open, (isOpen) => {
 });
 
 function submit(): void {
+  hasTriedToSubmit.value = true;
+  if (!canSubmit.value) {
+    return;
+  }
+
   const options = {
     preserveState: true,
     preserveScroll: true,
@@ -215,15 +233,17 @@ watch(
           <span class="text-sm font-medium text-highlighted">Punkte</span>
         </div>
 
-        <div class="flex justify-center">
+        <div class="flex flex-col items-center gap-2">
           <UButton
             type="submit"
             color="primary"
             size="lg"
             label="Speichern"
-            :disabled="!canSubmit"
             :loading="form.processing"
           />
+          <p v-if="winnersHint" class="text-center text-xs text-error" role="alert">
+            {{ winnersHint }}
+          </p>
         </div>
 
         <div class="flex flex-col items-center pt-4">
