@@ -70,7 +70,9 @@ class RoundShowResource extends JsonResource
         $playerCount = $this->players->count();
         $totals = $this->players->mapWithKeys(fn (Player $player): array => [$player->id => 0])->all();
 
-        return $this->games->map(function (Game $game) use ($playerCount, &$totals): array {
+        $gamesMovingTheDealer = 0;
+
+        return $this->games->map(function (Game $game) use ($playerCount, &$totals, &$gamesMovingTheDealer): array {
             $scores = $this->players->map(function (Player $player) use ($game, &$totals): array {
                 $gamePlayer = $game->players->firstWhere('id', $player->id);
 
@@ -85,13 +87,15 @@ class RoundShowResource extends JsonResource
 
             $isSolo = (bool) $game->solo;
             $isMisplay = (bool) $game->misplay;
+            $movesTheDealer = ! $isSolo && ! $isMisplay;
+            $gamesMovingTheDealer += $movesTheDealer ? 1 : 0;
 
             return [
                 'id' => $game->id,
                 'points' => (int) $game->points,
                 'isSolo' => $isSolo,
                 'isMisplay' => $isMisplay,
-                'endsDealerCycle' => (int) $game->dealerIndex + 1 === $playerCount && ! $isSolo && ! $isMisplay,
+                'endsDealerCycle' => $movesTheDealer && $gamesMovingTheDealer % $playerCount === 0,
                 'scores' => $scores,
             ];
         })->all();

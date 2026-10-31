@@ -117,6 +117,25 @@ class RoundShowTest extends TestCase
     }
 
     #[Test]
+    public function the_end_of_a_dealer_cycle_follows_from_the_games_played(): void
+    {
+        $players = $this->otherPlayers(4);
+        $round = $this->roundWithPlayers($players);
+        $ids = $players->pluck('id')->all();
+
+        foreach (range(1, 4) as $ignored) {
+            $round->addNewGame([$ids[0], $ids[1]], 1);
+        }
+        Game::query()->update(['dealerIndex' => 0]);
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('round.games.2.endsDealerCycle', false)
+                ->where('round.games.3.endsDealerCycle', true)
+            );
+    }
+
+    #[Test]
     public function only_players_of_the_round_may_change_it(): void
     {
         $others = $this->roundWithPlayers($this->otherPlayers(4));

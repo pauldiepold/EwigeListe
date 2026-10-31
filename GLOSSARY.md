@@ -24,6 +24,10 @@ Eine Runde, die in der App gespielt wird; ihre Spiele entstehen automatisch.
 Der Spieler, der im aktuellen Spiel gibt. Das Amt wandert nach jedem Spiel weiter, außer nach Soli und falsch bedienten Spielen.
 _Avoid_: Dealer
 
+**Geberumlauf**:
+Jeder Spieler einer Runde hat einmal gegeben. Am Tisch heißt das oft ebenfalls „Runde“; hier ist damit immer der ganze Abend gemeint.
+_Avoid_: Runde (für den Umlauf)
+
 **Aussetzen**:
 Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus.
 

@@ -61,7 +61,7 @@ function rowBackground(game: RoundGame): string {
   <div class="mx-auto max-w-3xl overflow-x-auto">
     <table class="w-full text-center tabular-nums">
       <thead>
-        <tr class="border-b-2 border-accented">
+        <tr class="border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)">
           <th v-for="player in players" :key="player.id" class="px-1 py-2 font-normal">
             <component
               :is="player.path ? Link : 'span'"
@@ -93,10 +93,12 @@ function rowBackground(game: RoundGame): string {
         <tr
           v-for="game in games"
           :key="game.id"
-          class="border-b transition-colors duration-1000"
+          class="transition-colors duration-1000"
           :class="[
             rowBackground(game),
-            game.endsDealerCycle ? 'border-b-2 border-accented' : 'border-default',
+            game.endsDealerCycle
+              ? 'border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)'
+              : 'border-b border-accented/70',
           ]"
         >
           <td
