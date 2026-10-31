@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import type { CreateRoundList } from '@/types/round-create';
 
 const props = defineProps<{
-  lists: CreateRoundList[];
+  lists: Pick<CreateRoundList, 'id' | 'name'>[];
   isSelected: (listId: number) => boolean;
   isLocked: (listId: number) => boolean;
   selectedCount: number;

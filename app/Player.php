@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class Player extends Model
 {
@@ -28,6 +29,11 @@ class Player extends Model
     public function path()
     {
         return route('players.show', $this, false);
+    }
+
+    public function pathFor(?User $viewer): ?string
+    {
+        return Gate::forUser($viewer)->allows('view', $this) ? $this->path() : null;
     }
 
     public function getAvatarPathAttribute()

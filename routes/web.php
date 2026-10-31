@@ -43,7 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/runde/{round}', 'RoundController@show')->name('rounds.show');
     Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
     Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
-    Route::patch('/rounds/dates/{round}', 'RoundController@changeDates')->name('rounds.changeDates');
+    Route::post('/rounds/{round}/games', 'GameController@store')->name('games.store');
+    Route::delete('/games/{game}', 'GameController@destroy')->name('games.destroy');
 
     Route::patch('/liveRounds/{liveRound}', 'Live\RoundController@updateRegeln')->name('liveRounds.updateRegeln');
 
@@ -62,9 +63,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
     Route::patch('/liste/{group}/schließen', 'GroupController@close')->name('groups.close');
 
-    /* *********** Charts ************** */
-    Route::get('/charts/round/{round}/', 'ChartController@roundChart');
-
     /* *********** Comments ************** */
     Route::post('/comments', 'CommentController@store');
     Route::delete('/comments/{comment}', 'CommentController@destroy');
@@ -72,9 +70,6 @@ Route::middleware('auth')->group(function () {
     /* *********** API ************** */
     Route::prefix('api')->group(function () {
         Route::get('/rounds/{round}/fetchData', 'RoundController@fetchData');
-
-        Route::post('/rounds/{round}/game', 'GameController@store');
-        Route::delete('/games/{game}', 'GameController@destroy');
 
         Route::middleware('can:update,liveRound')->group(function () {
             Route::post('live/{liveRound}/spielStarten', 'Live\RoundController@starteNeuesSpiel');

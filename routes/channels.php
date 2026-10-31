@@ -17,10 +17,10 @@ use App\Round;
 use App\User;
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('round.{round}', function ($user, Round $round) { // Verbunden mit Round.vue - jeder darf
+Broadcast::channel('round.{round}', function ($user, Round $round) { // Verbunden mit Rounds/Show - jeder darf
     if ($user->id) {
         return [
-            'id' => $user->id,
+            'id' => $user->player_id,
             'name' => $user->player->surname.' '.$user->player->name,
             'avatar_path' => $user->avatar_path,
         ];
