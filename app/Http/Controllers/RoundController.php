@@ -52,7 +52,7 @@ class RoundController extends Controller
         return new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
     }
 
-    public function current()
+    public function current(): RedirectResponse
     {
         $lastRound = auth()->user()->player->rounds()->latest()->first();
 
@@ -110,8 +110,8 @@ class RoundController extends Controller
 
         $round->groups()->sync($groups);
 
-        foreach ($groups as $group) {
-            $group->addPlayers($round->players);
+        foreach ($groups->diff($previousGroups) as $addedGroup) {
+            $addedGroup->addPlayers($round->players);
         }
 
         $affectedGroups = $previousGroups->merge($groups);

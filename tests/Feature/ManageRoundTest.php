@@ -207,20 +207,48 @@ class ManageRoundTest extends TestCase
     }
 
     #[Test]
-    public function an_existing_round_cannot_be_added_to_a_closed_list_or_a_foreign_list(): void
+    public function an_existing_round_cannot_be_added_to_a_closed_list(): void
     {
         $players = $this->actingAsRoundPlayers(4);
         $round = $this->roundWith($players);
         $closedList = Group::factory()->closed()->create();
         $closedList->addPlayer($players[0]);
-        $foreignList = Group::factory()->create();
 
         $this->patch(route('rounds.update', $round), ['groups' => [$closedList->id]])
             ->assertSessionHasErrors(['groups' => "Die Liste {$closedList->name} ist geschlossen."]);
+
+        $this->assertSame([Group::EWIGE_LISTE_ID], $round->groups()->pluck('groups.id')->all());
+    }
+
+    #[Test]
+    public function an_existing_round_cannot_be_added_to_a_list_without_any_of_its_players(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $foreignList = Group::factory()->create();
+
         $this->patch(route('rounds.update', $round), ['groups' => [$foreignList->id]])
             ->assertSessionHasErrors(['groups' => "Keiner der Spieler ist Mitglied der Liste {$foreignList->name}."]);
 
         $this->assertSame([Group::EWIGE_LISTE_ID], $round->groups()->pluck('groups.id')->all());
+    }
+
+    #[Test]
+    public function changing_lists_does_not_change_the_members_of_lists_the_round_stays_on(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $closedList = Group::factory()->closed()->create();
+        $closedList->addPlayer($players[0]);
+        $round->groups()->attach($closedList);
+        $openList = Group::factory()->create();
+        $openList->addPlayer($players[0]);
+        $round->groups()->attach($openList);
+
+        $this->patch(route('rounds.update', $round), ['groups' => [$openList->id]])->assertSessionHasNoErrors();
+
+        $this->assertSame([$players[0]->id], $closedList->fresh()->players->pluck('id')->all());
+        $this->assertSame([$players[0]->id], $openList->fresh()->players->pluck('id')->all());
     }
 
     #[Test]

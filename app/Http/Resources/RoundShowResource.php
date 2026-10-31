@@ -6,6 +6,7 @@ use App\Game;
 use App\Group;
 use App\Player;
 use App\Round;
+use App\Services\RoundChartSeries;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -40,6 +41,7 @@ class RoundShowResource extends JsonResource
             'isLive' => $this->isLive(),
             'canUpdate' => $viewer->can('update', $this->resource),
             'viewerIsActive' => $activePlayerIds->contains($viewer->player_id),
+            'hasChart' => $this->games->count() >= RoundChartSeries::MINIMUM_GAMES,
             'lastGameId' => $this->games->last()?->id,
             'players' => $this->players->map(fn (Player $player): array => [
                 'id' => $player->id,
@@ -107,7 +109,7 @@ class RoundShowResource extends JsonResource
             'averageGameDuration' => $this->averageGameDuration(),
             'startedBy' => $this->createdBy->surname,
             'startedAt' => printDate($this->created_at),
-            'lastGameBy' => $lastGame?->createdBy->surname,
+            'lastGameBy' => $lastGame?->createdBy?->surname,
             'lastGameAt' => $lastGame ? printDate($lastGame->created_at) : null,
         ];
     }

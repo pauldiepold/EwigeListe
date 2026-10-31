@@ -51,6 +51,7 @@ export type RoundShow = {
   isLive: boolean;
   canUpdate: boolean;
   viewerIsActive: boolean;
+  hasChart: boolean;
   lastGameId: number | null;
   players: RoundPlayer[];
   activePlayers: RoundActivePlayer[];

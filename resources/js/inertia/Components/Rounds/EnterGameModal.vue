@@ -9,7 +9,7 @@ const MAX_POINTS = 16;
 
 const props = defineProps<{
   roundId: number;
-  gamesCount: number;
+  lastGameId: number | null;
   activePlayers: RoundActivePlayer[];
   viewerIsActive: boolean;
 }>();
@@ -48,35 +48,40 @@ function toggleWinner(playerId: number): void {
     : [...form.winners, playerId];
 }
 
-function closeAndReset(): void {
-  open.value = false;
-  form.reset();
-  form.clearErrors();
-}
+/** Auch X, Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr. */
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    form.reset();
+    form.clearErrors();
+  }
+});
 
 function submit(): void {
   form.post(storeGame.url(props.roundId), {
     preserveState: true,
     preserveScroll: true,
-    onSuccess: closeAndReset,
+    onSuccess: () => {
+      open.value = false;
+    },
   });
 }
 
 /**
  * Ein anderes Handy hat die Runde geändert: Die Auswahl passt nicht mehr, und ein Speichern ergäbe
  * ein doppeltes Spiel oder falsche Punkte. Der Hinweis bleibt stehen, bis er weggeklickt wird.
+ * Spiel-IDs wachsen, ein eingetragenes Spiel hat also immer eine höhere ID als das vorige.
  */
 watch(
-  () => props.gamesCount,
-  (gamesCount, previousGamesCount) => {
+  () => props.lastGameId,
+  (lastGameId, previousLastGameId) => {
     if (!open.value || form.processing) {
       return;
     }
 
-    closeAndReset();
+    open.value = false;
     toast.add({
       title:
-        gamesCount > previousGamesCount
+        (lastGameId ?? 0) > (previousLastGameId ?? 0)
           ? 'Inzwischen wurde ein Spiel eingetragen'
           : 'Inzwischen wurde ein Spiel gelöscht',
       description: 'Prüfe die Tabelle, bevor du ein weiteres Spiel einträgst.',
@@ -149,7 +154,7 @@ watch(
 
     <template #footer>
       <div class="flex w-full justify-end gap-3">
-        <UButton color="neutral" variant="outline" label="Schließen" @click="closeAndReset" />
+        <UButton color="neutral" variant="outline" label="Schließen" @click="open = false" />
         <UButton
           type="submit"
           form="enter-game-form"

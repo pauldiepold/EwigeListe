@@ -71,17 +71,23 @@ class ManageGameTest extends TestCase
         $sittingOut = $this->players[0]->id;
 
         $this->post(route('games.store', $this->round), $this->validGame(['winners' => [$sittingOut, $this->players[1]->id]]))
-            ->assertSessionHasErrors('winners');
+            ->assertSessionHasErrors(['winners' => 'Gewinnen kann nur, wer in diesem Spiel nicht aussetzt!']);
 
         $this->assertDatabaseCount('games', 0);
     }
 
     #[Test]
-    public function a_game_needs_winners_and_valid_points(): void
+    public function a_game_needs_winners(): void
     {
         $this->post(route('games.store', $this->round), $this->validGame(['winners' => []]))
             ->assertSessionHasErrors(['winners' => 'Es muss mindestens ein Gewinner ausgewählt werden!']);
 
+        $this->assertDatabaseCount('games', 0);
+    }
+
+    #[Test]
+    public function a_game_needs_points_within_the_allowed_range(): void
+    {
         $this->post(route('games.store', $this->round), $this->validGame(['points' => 17]))
             ->assertSessionHasErrors('points');
 
@@ -89,18 +95,22 @@ class ManageGameTest extends TestCase
     }
 
     #[Test]
-    public function a_misplay_is_entered_as_a_lost_solo_with_at_least_two_points(): void
+    public function a_misplay_must_be_entered_as_a_lost_solo(): void
     {
-        $winners = [$this->players[1]->id, $this->players[2]->id];
+        $this->post(route('games.store', $this->round), $this->validGame(['misplayed' => true]))
+            ->assertSessionHasErrors(['misplayed' => 'Wenn sich jemand vergibt, muss dies als verlorenes Solo eingetragen werden!']);
 
-        $this->post(route('games.store', $this->round), $this->validGame(['winners' => $winners, 'misplayed' => true]))
-            ->assertSessionHasErrors('misplayed');
+        $this->assertDatabaseCount('games', 0);
+    }
 
+    #[Test]
+    public function a_misplay_costs_at_least_two_points(): void
+    {
         $this->post(route('games.store', $this->round), $this->validGame([
-            'winners' => [...$winners, $this->players[3]->id],
+            'winners' => [$this->players[1]->id, $this->players[2]->id, $this->players[3]->id],
             'points' => 1,
             'misplayed' => true,
-        ]))->assertSessionHasErrors('points');
+        ]))->assertSessionHasErrors(['points' => 'Wenn sich jemand vergibt, verliert er mit mindestens 2 Punkten!']);
 
         $this->assertDatabaseCount('games', 0);
     }

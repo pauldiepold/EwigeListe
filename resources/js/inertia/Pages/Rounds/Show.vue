@@ -15,8 +15,6 @@ import { destroy as destroyGame } from '@/routes/games';
 import { destroy as destroyRound } from '@/routes/rounds';
 import type { RoundShowProps } from '@/types/round-show';
 
-const MINIMUM_GAMES_FOR_CHART = 4;
-
 const props = defineProps<RoundShowProps>();
 
 const tabs = computed(() => [
@@ -29,7 +27,6 @@ const tabs = computed(() => [
 const activeTab = useTabInUrlHash(tabs, 'runde', 'Rounds/Show');
 
 const canChangeGames = computed(() => props.round.canUpdate && !props.round.isLive);
-const hasChart = computed(() => props.round.info.gamesCount >= MINIMUM_GAMES_FOR_CHART);
 
 /** Ein bereits geladenes Chart lädt mit, ein noch nicht geöffnetes bleibt ungeladen. */
 function refresh(): void {
@@ -73,7 +70,7 @@ function deleteRound(): void {
         <div v-if="canChangeGames" class="flex justify-center">
           <EnterGameModal
             :round-id="round.id"
-            :games-count="round.info.gamesCount"
+            :last-game-id="round.lastGameId"
             :active-players="round.activePlayers"
             :viewer-is-active="round.viewerIsActive"
           />
@@ -86,7 +83,9 @@ function deleteRound(): void {
         />
 
         <div v-if="canChangeGames && round.lastGameId !== null" class="flex justify-center">
+          <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
           <ConfirmAction
+            :key="round.lastGameId"
             label="Letztes Spiel löschen"
             confirm-label="Letztes Spiel wirklich löschen?"
             :loading="deleting"
@@ -115,7 +114,7 @@ function deleteRound(): void {
       />
 
       <section v-else-if="activeTab === 'statistiken'">
-        <WhenVisible v-if="hasChart" data="roundChart">
+        <WhenVisible v-if="round.hasChart" data="roundChart">
           <template #fallback>
             <GamesChartLoading />
           </template>

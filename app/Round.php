@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -167,7 +168,7 @@ class Round extends Model
      * Die aktiven Spieler aus Sicht des eingeloggten Spielers am Tisch: Er selbst steht vorn, wer
      * aussetzt, beginnt beim nächsten aktiven Sitz. Ohne Platz in der Runde gilt die Sitzreihenfolge.
      */
-    public function getActivePlayersRotatedForUser()
+    public function getActivePlayersRotatedForUser(): SupportCollection
     {
         $activePlayers = $this->getActivePlayers()->values();
         $userPlayer = $this->players->firstWhere('id', Auth::user()->player->id);
@@ -282,7 +283,7 @@ class Round extends Model
     /**
      * @param  Collection<int, Group>  $groups
      */
-    public function profilesIn(Collection $groups)
+    public function profilesIn(Collection $groups): Collection
     {
         return Profile::whereIn('group_id', $groups->pluck('id'))
             ->whereIn('player_id', $this->players->pluck('id'))

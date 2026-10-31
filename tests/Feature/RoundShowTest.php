@@ -284,6 +284,19 @@ class RoundShowTest extends TestCase
     }
 
     #[Test]
+    public function a_game_without_a_known_creator_does_not_break_the_page(): void
+    {
+        $players = $this->otherPlayers(4);
+        $round = $this->roundWithPlayers($players);
+        $game = $round->addNewGame([$players[0]->id, $players[1]->id], 1);
+        Game::whereKey($game->id)->update(['created_by' => null]);
+
+        $this->get(route('rounds.show', $round))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->where('round.info.lastGameBy', null));
+    }
+
+    #[Test]
     public function the_chart_is_only_offered_from_four_games_and_loads_on_request(): void
     {
         $players = $this->otherPlayers(4);
@@ -295,12 +308,16 @@ class RoundShowTest extends TestCase
         }
 
         $this->get(route('rounds.show', $round))
-            ->assertInertia(fn (Assert $page) => $page->missing('roundChart'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('round.hasChart', false)
+                ->missing('roundChart')
+            );
 
         $round->addNewGame([$ids[0], $ids[2]], 2);
 
         $this->get(route('rounds.show', $round))
             ->assertInertia(fn (Assert $page) => $page
+                ->where('round.hasChart', true)
                 ->missing('roundChart')
                 ->reloadOnly('roundChart', fn (Assert $reload) => $reload
                     ->where('roundChart.names', $players->pluck('surname')->all())
