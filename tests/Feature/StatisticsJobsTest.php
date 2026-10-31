@@ -24,7 +24,7 @@ class StatisticsJobsTest extends TestCase
         Bus::fake([UpdateProfile::class]);
         $profile = $this->queuedProfile();
 
-        $job = new UpdateProfile($this->profileCalculatingWith($profile, function () use ($profile): void {
+        $job = new UpdateProfile($this->profileCalculatingAfter($profile, function () use ($profile): void {
             Profile::find($profile->id)->updateStats();
         }));
         $job->handle();
@@ -34,31 +34,30 @@ class StatisticsJobsTest extends TestCase
     }
 
     #[Test]
-    public function a_failed_profile_calculation_does_not_block_later_ones(): void
+    public function a_profile_can_be_calculated_again_after_a_failed_calculation(): void
     {
+        Bus::fake([UpdateProfile::class]);
         $profile = $this->queuedProfile();
 
-        $job = new UpdateProfile($this->profileCalculatingWith($profile, function (): void {
+        $job = new UpdateProfile($this->profileCalculatingAfter($profile, function (): void {
             throw new RuntimeException('Berechnung fehlgeschlagen');
         }));
+        $this->assertThrows(fn () => $job->handle(), RuntimeException::class);
 
-        try {
-            $job->handle();
-            $this->fail('Der Job hätte die Exception weiterreichen müssen.');
-        } catch (RuntimeException) {
-            $this->assertFalse((bool) $profile->fresh()->queued);
-        }
+        $profile->fresh()->updateStats();
+
+        Bus::assertDispatched(UpdateProfile::class);
     }
 
     #[Test]
     public function a_game_entered_while_a_list_is_calculated_queues_another_calculation(): void
     {
         Bus::fake([UpdateGroup::class]);
-        $group = $this->queuedGroup();
+        $group = Group::factory()->create(['queued' => true]);
 
-        $job = new UpdateGroup($this->groupCalculatingWith($group, function () use ($group): void {
+        $job = new UpdateGroup($this->groupCalculatingAfter($group, function () use ($group): void {
             Group::find($group->id)->updateStats();
-        }), null);
+        }));
         $job->handle();
 
         Bus::assertDispatched(UpdateGroup::class);
@@ -66,29 +65,19 @@ class StatisticsJobsTest extends TestCase
     }
 
     #[Test]
-    public function a_failed_list_calculation_does_not_block_later_ones(): void
+    public function a_list_can_be_calculated_again_after_a_failed_calculation(): void
     {
-        $group = $this->queuedGroup();
+        Bus::fake([UpdateGroup::class]);
+        $group = Group::factory()->create(['queued' => true]);
 
-        $job = new UpdateGroup($this->groupCalculatingWith($group, function (): void {
+        $job = new UpdateGroup($this->groupCalculatingAfter($group, function (): void {
             throw new RuntimeException('Berechnung fehlgeschlagen');
-        }), null);
+        }));
+        $this->assertThrows(fn () => $job->handle(), RuntimeException::class);
 
-        try {
-            $job->handle();
-            $this->fail('Der Job hätte die Exception weiterreichen müssen.');
-        } catch (RuntimeException) {
-            $this->assertFalse((bool) $group->fresh()->queued);
-        }
-    }
+        $group->fresh()->updateStats();
 
-    private function queuedGroup(): Group
-    {
-        $group = Group::factory()->create();
-        $group->queued = true;
-        $group->save();
-
-        return $group;
+        Bus::assertDispatched(UpdateGroup::class);
     }
 
     private function queuedProfile(): Profile
@@ -104,38 +93,48 @@ class StatisticsJobsTest extends TestCase
         return $profile;
     }
 
-    private function groupCalculatingWith(Group $group, Closure $calculation): Group
+    /**
+     * Die echte Berechnung läuft, nachdem `$interruption` zu ihrem Start ausgeführt wurde.
+     */
+    private function groupCalculatingAfter(Group $group, Closure $interruption): Group
     {
         $double = new class extends Group
         {
-            public Closure $calculation;
+            public Closure $interruption;
 
             protected $table = 'groups';
 
             public function calculate($date = null): void
             {
-                ($this->calculation)();
+                ($this->interruption)();
+
+                parent::calculate($date);
             }
         };
-        $double->calculation = $calculation;
+        $double->interruption = $interruption;
         $double->setRawAttributes($group->getAttributes(), true);
         $double->exists = true;
 
         return $double;
     }
 
-    private function profileCalculatingWith(Profile $profile, Closure $calculation): Profile
+    /**
+     * Die echte Berechnung läuft, nachdem `$interruption` zu ihrem Start ausgeführt wurde.
+     */
+    private function profileCalculatingAfter(Profile $profile, Closure $interruption): Profile
     {
         $double = new class extends Profile
         {
-            public Closure $calculation;
+            public Closure $interruption;
 
             public function calculate(): void
             {
-                ($this->calculation)();
+                ($this->interruption)();
+
+                parent::calculate();
             }
         };
-        $double->calculation = $calculation;
+        $double->interruption = $interruption;
         $double->setRawAttributes($profile->getAttributes(), true);
         $double->exists = true;
 

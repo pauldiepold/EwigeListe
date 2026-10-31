@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Fehlgeschlagene Jobs ließen `queued` früher dauerhaft auf `true`, wodurch das Profil oder die
  * Liste nie wieder neu berechnet wurde. Die Jobs setzen das Flag jetzt vor der Berechnung zurück;
- * bestehende Hänger einmalig lösen.
+ * bestehende Hänger einmalig lösen. Nicht umkehrbar: Der Rollback stellt keine Hänger wieder her.
  */
 return new class extends Migration
 {
