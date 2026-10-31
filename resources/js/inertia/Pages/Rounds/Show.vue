@@ -82,7 +82,17 @@ function deleteRound(): void {
           :online-player-ids="onlinePlayerIds"
         />
 
-        <div v-if="canChangeGames && round.lastGameId !== null" class="flex justify-center">
+        <div
+          v-if="canChangeGames && round.lastGameId !== null"
+          class="flex flex-wrap items-center justify-center gap-3"
+        >
+          <EnterGameModal
+            :round-id="round.id"
+            :last-game-id="round.lastGameId"
+            :active-players="round.activePlayers"
+            :viewer-is-active="round.viewerIsActive"
+            :edited-game="round.lastGame"
+          />
           <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
           <ConfirmAction
             :key="round.lastGameId"

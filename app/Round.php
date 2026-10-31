@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\Round
@@ -103,14 +104,24 @@ class Round extends Model
 
     public function getDealerIndex()
     {
-        return $this
-            ->games
+        return $this->dealerIndexAfter($this->games);
+    }
+
+    private function dealerIndexAfter(SupportCollection $games): int
+    {
+        return $games
             ->where('solo', 0)
             ->where('misplay', 0)
             ->count()
-            % $this
-                ->players
-                ->count();
+            % $this->players->count();
+    }
+
+    /**
+     * Der Geber, mit dem ein Spiel dieser Runde gespielt wurde; bei Altdaten ohne gespeicherten Wert aus den Spielen davor abgeleitet.
+     */
+    public function getDealerIndexOf(Game $game): int
+    {
+        return $game->dealerIndex ?? $this->dealerIndexAfter($this->games->where('id', '<', $game->id));
     }
 
     public function getInactivePlayersAttribute()
@@ -130,7 +141,14 @@ class Round extends Model
 
     public function getActivePlayers($sortPlayers = true)
     {
-        $dealerIndex = $this->getDealerIndex();
+        return $this->getActivePlayersForDealer($this->getDealerIndex(), $sortPlayers);
+    }
+
+    /**
+     * Die aktiven Spieler eines Spiels, das mit dem Geber auf dem Sitz $dealerIndex gespielt wurde.
+     */
+    public function getActivePlayersForDealer(int $dealerIndex, bool $sortPlayers = true)
+    {
         $countPlayers = $this->players->count();
 
         if ($countPlayers == 4 || $countPlayers == 5) {
@@ -168,9 +186,9 @@ class Round extends Model
      * Die aktiven Spieler aus Sicht des eingeloggten Spielers am Tisch: Er selbst steht vorn, wer
      * aussetzt, beginnt beim nächsten aktiven Sitz. Ohne Platz in der Runde gilt die Sitzreihenfolge.
      */
-    public function getActivePlayersRotatedForUser(): SupportCollection
+    public function getActivePlayersRotatedForUser(?int $dealerIndex = null): SupportCollection
     {
-        $activePlayers = $this->getActivePlayers()->values();
+        $activePlayers = $this->getActivePlayersForDealer($dealerIndex ?? $this->getDealerIndex())->values();
         $userPlayer = $this->players->firstWhere('id', Auth::user()->player->id);
 
         if ($userPlayer === null) {
@@ -186,13 +204,9 @@ class Round extends Model
 
     public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = null)
     {
-        $players = $this->getActivePlayers();
-        $solo = count($winners) != 2;
-        $solo = $misplay ? false : $solo;
-
         $game = Game::create([
             'points' => $pointsRound,
-            'solo' => $solo,
+            'solo' => $this->isSolo($winners, $misplay),
             'misplay' => $misplay,
             'dealerIndex' => $this->getDealerIndex(),
             'created_by' => Auth::user()->player->id,
@@ -200,7 +214,42 @@ class Round extends Model
             'live_game_id' => $liveGameID,
         ]);
 
-        foreach ($players as $player) {
+        $this->scoreGame($game, $winners, $pointsRound, $misplay);
+
+        $this->unsetRelation('games');
+
+        return $game;
+    }
+
+    /**
+     * Ändert Gewinner, Punkte und Fehlspiel eines Spiels; Geber, Spieler, Zeitstempel und Eintragender bleiben.
+     */
+    public function updateGame(Game $game, $winners, $pointsRound, $misplay = false): Game
+    {
+        DB::transaction(function () use ($game, $winners, $pointsRound, $misplay): void {
+            $game->update([
+                'points' => $pointsRound,
+                'solo' => $this->isSolo($winners, $misplay),
+                'misplay' => $misplay,
+            ]);
+            $game->players()->detach();
+
+            $this->scoreGame($game, $winners, $pointsRound, $misplay);
+        });
+
+        $this->unsetRelation('games');
+
+        return $game;
+    }
+
+    private function isSolo($winners, bool $misplay): bool
+    {
+        return ! $misplay && count($winners) != 2;
+    }
+
+    private function scoreGame(Game $game, $winners, $pointsRound, bool $misplay): void
+    {
+        foreach ($this->getActivePlayersForDealer($this->getDealerIndexOf($game)) as $player) {
             if (count($winners) == 1 &&
                 in_array($player->id, $winners)) {           // Solo gewonnen
                 $soloist = true;
@@ -238,10 +287,6 @@ class Round extends Model
                 'misplayed' => $misplayed,
             ]);
         }
-
-        $this->unsetRelation('games');
-
-        return $game;
     }
 
     public function games()

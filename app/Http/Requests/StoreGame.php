@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Round;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;
 
 class StoreGame extends FormRequest
@@ -33,7 +34,7 @@ class StoreGame extends FormRequest
                 return;
             }
 
-            $activePlayerIds = $this->round()->getActivePlayers()->pluck('id');
+            $activePlayerIds = $this->activePlayerIds();
             if (collect($this->input('winners'))->diff($activePlayerIds)->isNotEmpty()) {
                 $validator->errors()->add('winners', 'Gewinnen kann nur, wer in diesem Spiel nicht aussetzt!');
             }
@@ -60,7 +61,15 @@ class StoreGame extends FormRequest
         ];
     }
 
-    private function round(): Round
+    /**
+     * @return Collection<int, int>
+     */
+    protected function activePlayerIds(): Collection
+    {
+        return $this->round()->getActivePlayers()->pluck('id');
+    }
+
+    protected function round(): Round
     {
         return $this->route('round');
     }

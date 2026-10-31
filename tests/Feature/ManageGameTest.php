@@ -187,6 +187,89 @@ class ManageGameTest extends TestCase
     }
 
     #[Test]
+    public function the_last_game_can_be_edited_in_place(): void
+    {
+        Event::fake([RoundUpdated::class]);
+        $game = $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $original = $game->only(['id', 'created_at', 'created_by', 'dealerIndex']);
+
+        $this->patch(route('games.update', $game), $this->validGame([
+            'winners' => [$this->players[3]->id],
+            'points' => 4,
+        ]))
+            ->assertRedirect(route('rounds.show', $this->round))
+            ->assertSessionHasNoErrors();
+
+        $game->refresh();
+        $this->assertEquals($original, $game->only(['id', 'created_at', 'created_by', 'dealerIndex']));
+        $this->assertSame(4, (int) $game->points);
+        $this->assertTrue((bool) $game->solo);
+        $this->assertSame(
+            [$this->players[1]->id => -4, $this->players[2]->id => -4, $this->players[3]->id => 12, $this->players[4]->id => -4],
+            $game->players()->get()->mapWithKeys(fn (Player $player): array => [$player->id => (int) $player->pivot->points])->all(),
+        );
+        $this->assertSame(
+            [$this->players[3]->id],
+            $game->players()->wherePivot('soloist', true)->pluck('players.id')->all(),
+        );
+        $this->assertDatabaseCount('games', 1);
+        Event::assertDispatched(RoundUpdated::class, fn (RoundUpdated $event): bool => $event->roundID === $this->round->id);
+    }
+
+    #[Test]
+    public function a_game_keeps_the_players_of_its_time_when_edited(): void
+    {
+        $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $game = $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $this->assertSame(1, (int) $game->dealerIndex);
+        // Im zweiten Spiel gibt Sitz 1 und setzt aus; für das dritte Spiel wäre er wieder aktiv.
+
+        $this->patch(route('games.update', $game), $this->validGame(['winners' => [$this->players[4]->id, $this->players[0]->id]]))
+            ->assertSessionHasNoErrors();
+
+        $this->patch(route('games.update', $game), $this->validGame(['winners' => [$this->players[1]->id, $this->players[2]->id]]))
+            ->assertSessionHasErrors(['winners' => 'Gewinnen kann nur, wer in diesem Spiel nicht aussetzt!']);
+    }
+
+    #[Test]
+    public function an_earlier_game_cannot_be_edited(): void
+    {
+        $earlier = $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $this->round->addNewGame([$this->players[2]->id, $this->players[3]->id], 1);
+
+        $this->from(route('rounds.show', $this->round))
+            ->patch(route('games.update', $earlier), $this->validGame(['points' => 5]))
+            ->assertRedirect(route('rounds.show', $this->round))
+            ->assertInertiaFlash('toast', ['type' => 'error', 'message' => 'Du kannst nur das letzte Spiel einer Runde bearbeiten!']);
+
+        $this->assertSame(1, (int) $earlier->fresh()->points);
+    }
+
+    #[Test]
+    public function someone_outside_the_round_cannot_edit_a_game(): void
+    {
+        $game = $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $this->actingAs(User::factory()->create());
+
+        $this->patch(route('games.update', $game), $this->validGame(['points' => 5]))->assertForbidden();
+
+        $this->assertSame(1, (int) $game->fresh()->points);
+    }
+
+    #[Test]
+    public function games_of_a_live_round_cannot_be_edited(): void
+    {
+        $game = $this->round->addNewGame([$this->players[1]->id, $this->players[2]->id], 1);
+        $this->round->createLiveRound();
+
+        $this->from(route('rounds.show', $this->round))
+            ->patch(route('games.update', $game), $this->validGame(['points' => 5]))
+            ->assertInertiaFlash('toast', ['type' => 'error', 'message' => 'In einer Live-Runde werden Spiele automatisch eingetragen.']);
+
+        $this->assertSame(1, (int) $game->fresh()->points);
+    }
+
+    #[Test]
     public function a_failing_push_does_not_fail_entering_the_game(): void
     {
         Broadcast::extend('failing', fn () => new class extends NullBroadcaster

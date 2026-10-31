@@ -303,6 +303,62 @@ class RoundShowTest extends TestCase
     }
 
     #[Test]
+    public function the_last_game_is_prepared_for_editing_with_the_players_of_its_time(): void
+    {
+        $players = $this->otherPlayers(4)->values();
+        $players->splice(2, 0, [$this->viewer->player]);
+        $round = $this->roundWithPlayers($players);
+        $round->addNewGame([$players[1]->id, $players[2]->id], 1);
+        $game = $round->addNewGame([$players[4]->id, $players[0]->id], 3);
+
+        // Sitz 1 gab im zweiten Spiel und setzte aus; die aktiven Spieler des nächsten Spiels sind andere.
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('round.lastGame.id', $game->id)
+                ->where('round.lastGame.points', 3)
+                ->where('round.lastGame.isMisplay', false)
+                ->where('round.lastGame.winnerIds', fn ($ids) => collect($ids)->sort()->values()->all() === collect([$players[0]->id, $players[4]->id])->sort()->values()->all())
+                ->where('round.lastGame.viewerIsActive', true)
+                ->where('round.lastGame.activePlayers', fn ($active) => collect($active)->pluck('id')->all() === [$players[2]->id, $players[3]->id, $players[4]->id, $players[0]->id])
+            );
+    }
+
+    #[Test]
+    public function the_last_game_signature_changes_when_the_game_is_edited(): void
+    {
+        $players = $this->otherPlayers(3)->push($this->viewer->player);
+        $round = $this->roundWithPlayers($players);
+        $game = $round->addNewGame([$players[0]->id, $players[1]->id], 1);
+
+        $signature = fn (): string => $this->get(route('rounds.show', $round))->viewData('page')['props']['round']['lastGame']['signature'];
+        $before = $signature();
+
+        $round->updateGame($game, [$players[0]->id, $players[1]->id], 2);
+
+        $this->assertNotSame($before, $signature());
+    }
+
+    #[Test]
+    public function someone_who_cannot_change_the_games_gets_no_last_game_to_edit(): void
+    {
+        $players = $this->otherPlayers(4);
+        $round = $this->roundWithPlayers($players);
+        $round->addNewGame([$players[0]->id, $players[1]->id], 1);
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page->where('round.lastGame', null));
+    }
+
+    #[Test]
+    public function a_round_without_games_has_no_last_game(): void
+    {
+        $round = $this->roundWithPlayers($this->otherPlayers(4));
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page->where('round.lastGame', null));
+    }
+
+    #[Test]
     public function a_game_without_a_known_creator_does_not_break_the_page(): void
     {
         $players = $this->otherPlayers(4);

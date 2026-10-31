@@ -7,6 +7,7 @@ use App\Group;
 use App\Player;
 use App\Round;
 use App\Services\RoundChartSeries;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
@@ -35,11 +36,12 @@ class RoundShowResource extends JsonResource
         $viewer = $request->user();
         $dealerIndex = $this->getDealerIndex();
         $activePlayerIds = $this->getActivePlayers()->pluck('id');
+        $canUpdate = $viewer->can('update', $this->resource);
 
         return [
             'id' => $this->id,
             'isLive' => $this->isLive(),
-            'canUpdate' => $viewer->can('update', $this->resource),
+            'canUpdate' => $canUpdate,
             'viewerIsActive' => $activePlayerIds->contains($viewer->player_id),
             'hasChart' => $this->games->count() >= RoundChartSeries::MINIMUM_GAMES,
             'lastGameId' => $this->games->last()?->id,
@@ -51,14 +53,52 @@ class RoundShowResource extends JsonResource
                 'isDealer' => (int) $player->pivot->index === $dealerIndex,
                 'isActive' => $activePlayerIds->contains($player->id),
             ])->all(),
-            'activePlayers' => $this->getActivePlayersRotatedForUser()->map(fn (Player $player): array => [
-                'id' => $player->id,
-                'name' => "{$player->surname} {$player->name}",
-                'avatarPath' => $player->avatar_path,
-            ])->values()->all(),
+            'activePlayers' => $this->activePlayerOptions($this->getActivePlayersRotatedForUser()),
+            'lastGame' => $canUpdate && ! $this->isLive() ? $this->lastGame($viewer) : null,
             'games' => $this->gameRows(),
             'info' => $this->info(),
             'lists' => $this->lists(),
+        ];
+    }
+
+    /**
+     * @param  Collection<int, Player>  $players
+     * @return list<array{id: int, name: string, avatarPath: ?string}>
+     */
+    private function activePlayerOptions(Collection $players): array
+    {
+        return $players->map(fn (Player $player): array => [
+            'id' => $player->id,
+            'name' => "{$player->surname} {$player->name}",
+            'avatarPath' => $player->avatar_path,
+        ])->values()->all();
+    }
+
+    /**
+     * Vorbelegung für das Bearbeiten: Das letzte Spiel wurde mit den Spielern seiner Zeit gespielt, nicht mit denen des nächsten.
+     * Die Signatur ändert sich mit jeder inhaltlichen Änderung und lässt einen offenen Dialog veralten.
+     *
+     * @return ?array{id: int, points: int, isMisplay: bool, winnerIds: list<int>, signature: string, viewerIsActive: bool, activePlayers: list<array{id: int, name: string, avatarPath: ?string}>}
+     */
+    private function lastGame(User $viewer): ?array
+    {
+        $game = $this->games->last();
+
+        if ($game === null) {
+            return null;
+        }
+
+        $activePlayers = $this->getActivePlayersRotatedForUser($this->getDealerIndexOf($game));
+        $winnerIds = $game->players->filter(fn (Player $player): bool => (bool) $player->pivot->won)->pluck('id')->sort()->values();
+
+        return [
+            'id' => $game->id,
+            'points' => (int) $game->points,
+            'isMisplay' => (bool) $game->misplay,
+            'winnerIds' => $winnerIds->all(),
+            'signature' => $game->points.'|'.($game->misplay ? 1 : 0).'|'.$winnerIds->implode(','),
+            'viewerIsActive' => $activePlayers->contains('id', $viewer->player_id),
+            'activePlayers' => $this->activePlayerOptions($activePlayers),
         ];
     }
 
