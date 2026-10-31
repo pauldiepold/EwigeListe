@@ -12,6 +12,8 @@ const props = defineProps<{
   players: RoundPlayer[];
   games: RoundGame[];
   onlinePlayerIds: number[];
+  /** Eine gerade gespeicherte Änderung, deren Antwort noch aussteht: Die Zeile zeigt ein Skeleton. */
+  pendingGame?: 'new' | 'edited' | null;
 }>();
 
 const marksActivePlayers = computed(() => props.players.length >= MARK_ACTIVE_FROM_PLAYERS);
@@ -58,6 +60,10 @@ watch(
 onUnmounted(() => {
   highlightTimers.forEach(clearTimeout);
 });
+
+function isPendingRow(game: RoundGame): boolean {
+  return props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id;
+}
 
 function rowBackground(game: RoundGame): string {
   const highlight = highlightedGames.value[game.id];
@@ -129,9 +135,19 @@ function rowBackground(game: RoundGame): string {
             class="px-1 py-1.5"
             :class="{ 'font-bold': score.won }"
           >
-            {{ score.points ?? '-' }}
+            <USkeleton v-if="isPendingRow(game)" class="mx-auto h-5 w-8" />
+            <template v-else>{{ score.points ?? '-' }}</template>
           </td>
-          <td class="px-1 py-1.5">{{ game.points }}</td>
+          <td class="px-1 py-1.5">
+            <USkeleton v-if="isPendingRow(game)" class="mx-auto h-5 w-6" />
+            <template v-else>{{ game.points }}</template>
+          </td>
+        </tr>
+        <tr v-if="pendingGame === 'new'" class="border-b border-accented/70">
+          <td v-for="player in players" :key="player.id" class="px-1 py-1.5">
+            <USkeleton class="mx-auto h-5 w-8" />
+          </td>
+          <td class="px-1 py-1.5"><USkeleton class="mx-auto h-5 w-6" /></td>
         </tr>
       </tbody>
     </table>

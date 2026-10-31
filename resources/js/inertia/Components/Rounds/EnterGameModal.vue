@@ -16,6 +16,11 @@ const props = defineProps<{
   editedGame?: RoundLastGame | null;
 }>();
 
+const emit = defineEmits<{
+  /** Meldet eine ausstehende Antwort, damit die Tabelle ein Skeleton zeigt. */
+  pending: [kind: 'new' | 'edited' | null];
+}>();
+
 const toast = useToast();
 const open = ref(false);
 
@@ -112,6 +117,7 @@ function submit(): void {
       succeeded = true;
     },
     onFinish: () => {
+      emit('pending', null);
       if (succeeded) {
         keepsFormState = false;
         form.defaults({ winners: [], points: 0, misplayed: false });
@@ -128,6 +134,7 @@ function submit(): void {
 
   keepsFormState = true;
   open.value = false;
+  emit('pending', isEditing.value ? 'edited' : 'new');
 
   if (props.editedGame) {
     form.patch(updateGame.url(props.editedGame.id), options);
