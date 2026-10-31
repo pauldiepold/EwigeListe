@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/rounds/{round}', 'RoundController@update')->name('rounds.update');
     Route::delete('/rounds/{round}', 'RoundController@destroy')->name('rounds.destroy');
     Route::post('/rounds/{round}/games', 'GameController@store')->name('games.store');
+    Route::patch('/games/{game}', 'GameController@update')->name('games.update');
     Route::delete('/games/{game}', 'GameController@destroy')->name('games.destroy');
 
     Route::patch('/liveRounds/{liveRound}', 'Live\RoundController@updateRegeln')->name('liveRounds.updateRegeln');

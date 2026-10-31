@@ -15,6 +15,18 @@ export type RoundActivePlayer = {
   avatarPath: string | null;
 };
 
+/** Das letzte Spiel als Vorbelegung zum Bearbeiten, mit den Spielern und dem Sitzplatz von damals. */
+export type RoundLastGame = {
+  id: number;
+  points: number;
+  isMisplay: boolean;
+  winnerIds: number[];
+  /** Ändert sich mit jeder inhaltlichen Änderung des Spiels. */
+  signature: string;
+  viewerIsActive: boolean;
+  activePlayers: RoundActivePlayer[];
+};
+
 export type RoundGameScore = {
   /** Punktestand nach diesem Spiel; `null`, wenn der Spieler ausgesetzt hat. */
   points: number | null;
@@ -53,6 +65,7 @@ export type RoundShow = {
   viewerIsActive: boolean;
   hasChart: boolean;
   lastGameId: number | null;
+  lastGame: RoundLastGame | null;
   players: RoundPlayer[];
   activePlayers: RoundActivePlayer[];
   games: RoundGame[];

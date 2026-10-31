@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useForm } from '@inertiajs/vue3';
-import { store as storeGame } from '@/routes/games';
-import type { RoundActivePlayer } from '@/types/round-show';
+import { store as storeGame, update as updateGame } from '@/routes/games';
+import type { RoundActivePlayer, RoundLastGame } from '@/types/round-show';
 
 const MIN_POINTS = -4;
 const MAX_POINTS = 16;
@@ -12,6 +12,8 @@ const props = defineProps<{
   lastGameId: number | null;
   activePlayers: RoundActivePlayer[];
   viewerIsActive: boolean;
+  /** Gesetzt, wenn statt eines neuen Spiels dieses letzte Spiel bearbeitet wird. */
+  editedGame?: RoundLastGame | null;
 }>();
 
 const toast = useToast();
@@ -23,13 +25,17 @@ const form = useForm({
   misplayed: false,
 });
 
+const isEditing = computed(() => props.editedGame != null);
+const players = computed(() => props.editedGame?.activePlayers ?? props.activePlayers);
+const isViewerActive = computed(() => props.editedGame?.viewerIsActive ?? props.viewerIsActive);
+
 /**
  * Die Anordnung entspricht dem Blick vom eigenen Platz: Wer mitspielt, steht unten, der nächste
  * Sitz links, gegenüber oben, der letzte rechts. Wer aussetzt, sitzt gedanklich unten zwischen
  * den vier Aktiven; der nächste aktive Sitz steht dann unten links.
  */
 const seatClasses = computed(() =>
-  props.viewerIsActive
+  isViewerActive.value
     ? ['order-4 col-start-2', 'order-2 col-start-1', 'order-1 col-start-2', 'order-3 col-start-3']
     : ['order-3 col-start-1', 'order-1 col-start-1', 'order-2 col-start-3', 'order-4 col-start-3'],
 );
@@ -48,21 +54,56 @@ function toggleWinner(playerId: number): void {
     : [...form.winners, playerId];
 }
 
-/** Auch X, Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr. */
+/**
+ * Auch X, Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr.
+ * Beim Bearbeiten beginnt er mit den Werten des Spiels.
+ */
 watch(open, (isOpen) => {
-  if (!isOpen) {
-    form.reset();
-    form.clearErrors();
+  form.clearErrors();
+
+  if (isOpen && props.editedGame) {
+    form.defaults({
+      winners: [...props.editedGame.winnerIds],
+      points: props.editedGame.points,
+      misplayed: props.editedGame.isMisplay,
+    });
+  } else if (!isOpen) {
+    form.defaults({ winners: [], points: 0, misplayed: false });
   }
+
+  form.reset();
 });
 
 function submit(): void {
-  form.post(storeGame.url(props.roundId), {
+  const options = {
     preserveState: true,
     preserveScroll: true,
     onSuccess: () => {
       open.value = false;
     },
+  };
+
+  if (props.editedGame) {
+    form.patch(updateGame.url(props.editedGame.id), options);
+  } else {
+    form.post(storeGame.url(props.roundId), options);
+  }
+}
+
+function closeBecauseOfOtherChange(title: string): void {
+  if (!open.value || form.processing) {
+    return;
+  }
+
+  open.value = false;
+  toast.add({
+    title,
+    description: isEditing.value
+      ? 'Prüfe die Tabelle, bevor du das Spiel bearbeitest.'
+      : 'Prüfe die Tabelle, bevor du ein weiteres Spiel einträgst.',
+    color: 'warning',
+    icon: 'i-lucide-triangle-alert',
+    duration: 0,
   });
 }
 
@@ -74,21 +115,21 @@ function submit(): void {
 watch(
   () => props.lastGameId,
   (lastGameId, previousLastGameId) => {
-    if (!open.value || form.processing) {
-      return;
-    }
+    closeBecauseOfOtherChange(
+      (lastGameId ?? 0) > (previousLastGameId ?? 0)
+        ? 'Inzwischen wurde ein Spiel eingetragen'
+        : 'Inzwischen wurde ein Spiel gelöscht',
+    );
+  },
+);
 
-    open.value = false;
-    toast.add({
-      title:
-        (lastGameId ?? 0) > (previousLastGameId ?? 0)
-          ? 'Inzwischen wurde ein Spiel eingetragen'
-          : 'Inzwischen wurde ein Spiel gelöscht',
-      description: 'Prüfe die Tabelle, bevor du ein weiteres Spiel einträgst.',
-      color: 'warning',
-      icon: 'i-lucide-triangle-alert',
-      duration: 0,
-    });
+/** Beim Bearbeiten genügt die ID nicht: Ein anderes Handy kann dasselbe Spiel ändern. */
+watch(
+  () => props.editedGame?.signature,
+  (signature, previousSignature) => {
+    if (previousSignature !== undefined && signature !== previousSignature) {
+      closeBecauseOfOtherChange('Inzwischen wurde das Spiel geändert');
+    }
   },
 );
 </script>
@@ -96,11 +137,18 @@ watch(
 <template>
   <UModal
     v-model:open="open"
-    title="Welche Personen haben gewonnen?"
+    :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Welche Personen haben gewonnen?'"
     description="Wähle die Gewinner und trage die Punkte ein."
     :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
   >
-    <UButton color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
+    <UButton
+      v-if="isEditing"
+      color="neutral"
+      variant="outline"
+      icon="i-lucide-pencil"
+      label="Letztes Spiel bearbeiten"
+    />
+    <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
 
     <template #body>
       <form id="enter-game-form" class="space-y-6" @submit.prevent="submit">
@@ -114,7 +162,7 @@ watch(
 
         <div class="grid grid-cols-4 gap-3">
           <button
-            v-for="(player, seat) in activePlayers"
+            v-for="(player, seat) in players"
             :key="player.id"
             type="button"
             class="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-2 py-1.5 font-semibold"
