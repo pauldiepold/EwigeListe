@@ -2,12 +2,12 @@
 
 namespace App\Http\Resources;
 
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Round;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
+use App\Models\User;
 use App\Services\RoundChartSeries;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;

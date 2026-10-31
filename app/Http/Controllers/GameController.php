@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Events\RoundUpdated;
-use App\Game;
-use App\Group;
 use App\Http\Requests\StoreGame;
 use App\Http\Requests\UpdateGame;
 use App\Http\Toast;
-use App\Profile;
-use App\Round;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Profile;
+use App\Models\Round;
 use Illuminate\Http\RedirectResponse;
 
 class GameController extends Controller

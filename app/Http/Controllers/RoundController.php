@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Requests\StoreRound;
 use App\Http\Requests\UpdateRound;
 use App\Http\Resources\CreateRoundPlayerResource;
@@ -10,9 +9,10 @@ use App\Http\Resources\GroupOptionResource;
 use App\Http\Resources\Round as RoundResource;
 use App\Http\Resources\RoundShowResource;
 use App\Http\Toast;
-use App\Player;
-use App\Profile;
-use App\Round;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\Round;
 use App\Services\RoundArchive;
 use App\Services\RoundChartSeries;
 use Illuminate\Http\RedirectResponse;

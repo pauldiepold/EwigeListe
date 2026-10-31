@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Game;
-use App\Player;
-use App\Round;
+use App\Models\Game;
+use App\Models\Player;
+use App\Models\Round;
 
 class RoundChartSeries
 {

@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Group;
 use App\Jobs\UpdateGroup;
 use App\Jobs\UpdateProfile;
-use App\Profile;
+use App\Models\Group;
+use App\Models\Profile;
 use Illuminate\Console\Command;
 
 class RecalculateStatistics extends Command

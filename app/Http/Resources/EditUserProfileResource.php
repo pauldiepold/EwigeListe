@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Profile;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

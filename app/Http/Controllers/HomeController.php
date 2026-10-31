@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Resources\GroupStatisticsResource;
 use App\Http\Resources\HomeRoundResource;
-use App\Round;
+use App\Models\Group;
+use App\Models\Round;
 use App\Services\GamesChartSeries;
 use Illuminate\Database\Eloquent\Builder;
 use Inertia\Inertia;

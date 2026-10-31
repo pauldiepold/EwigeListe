@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Badge;
-use App\Game;
-use App\Group;
-use App\Player;
-use App\Profile;
-use App\Round;
-use App\User;
+use App\Models\Badge;
+use App\Models\Game;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Inertia;
 use Inertia\Testing\AssertableInertia as Assert;

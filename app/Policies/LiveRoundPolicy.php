@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\LiveRound;
-use App\User;
+use App\Models\LiveRound;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class LiveRoundPolicy

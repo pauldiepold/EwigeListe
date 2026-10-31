@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Game;
-use App\Group;
+use App\Models\Game;
+use App\Models\Group;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;

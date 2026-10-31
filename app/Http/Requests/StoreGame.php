@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Round;
+use App\Models\Round;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\Validator;

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Group;
-use App\Player;
-use App\User;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 

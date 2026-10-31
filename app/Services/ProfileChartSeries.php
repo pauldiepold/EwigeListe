@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Profile;
+use App\Models\Profile;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;

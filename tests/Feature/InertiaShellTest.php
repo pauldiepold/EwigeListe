@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Round;
-use App\User;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -66,12 +66,12 @@ class Player extends Model
 
     public function createdRounds()
     {
-        return $this->hasMany('App\Round', 'created_by');
+        return $this->hasMany('App\Models\Round', 'created_by');
     }
 
     public function createdGames()
     {
-        return $this->hasMany('App\Game', 'created_by');
+        return $this->hasMany('App\Models\Game', 'created_by');
     }
 
     public function createdGroups()

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Player;
-use App\SocialiteUser;
-use App\User;
+use App\Models\Player;
+use App\Models\SocialiteUser;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Testing\TestResponse;

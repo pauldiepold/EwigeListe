@@ -1,6 +1,6 @@
 <?php
 
-use App\Profile;
+use App\Models\Profile;
 use Illuminate\Database\Seeder;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;

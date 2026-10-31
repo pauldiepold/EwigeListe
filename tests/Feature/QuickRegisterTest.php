@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Group;
-use App\Player;
-use App\User;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use RuntimeException;

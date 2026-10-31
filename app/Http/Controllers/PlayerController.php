@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Group;
 use App\Http\Resources\BadgesResource;
 use App\Http\Resources\GroupOptionResource;
 use App\Http\Resources\PlayerShowResource;
 use App\Http\Resources\ProfileStatisticsResource;
-use App\Player;
+use App\Models\Group;
+use App\Models\Player;
 use App\Services\ProfileChartSeries;
 use App\Services\RoundArchive;
 use Illuminate\Http\Request;

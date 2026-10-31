@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Player;
-use App\Profile;
-use App\User;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Group;
 use App\Http\Resources\RoundArchiveRowResource;
-use App\Player;
-use App\Round;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Round;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;

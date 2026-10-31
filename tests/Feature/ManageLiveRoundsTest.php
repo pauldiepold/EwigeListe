@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Group;
-use App\Round;
-use App\User;
+use App\Models\Group;
+use App\Models\Round;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PHPUnit\Framework\Attributes\Test;
