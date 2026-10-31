@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 Verb          Path                        Action  Route Name
@@ -32,8 +31,6 @@ Route::middleware('auth')->group(function () {
 
     /* *********** Players *********** */
     Route::get('profil/{player}/{group?}', 'PlayerController@show')->name('players.show');
-    Route::get('/players/calculate', 'PlayerController@calculateAll');
-    Route::get('/players/calculate/{player}', 'PlayerController@calculate');
 
     /* *********** Rounds ************ */
     Route::get('/rundenarchiv/{group?}', 'RoundController@index')->name('rounds.index');
@@ -56,17 +53,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/liste/{group}', 'GroupController@show')->name('groups.show');
     Route::post('/groups', 'GroupController@store')->name('groups.store');
 
-    Route::get('/listen/calculate', 'GroupController@calculateAll');
-    Route::get('/liste/calculate/{group}', 'GroupController@calculate');
-    Route::get('/liste/calculateBadges/{group}', 'GroupController@calculateBadges');
-
     Route::post('/liste/{group}/beitreten', 'GroupController@join')->name('groups.join');
     Route::post('/liste/{group}/verlassen', 'GroupController@leave')->name('groups.leave');
     Route::patch('/liste/{group}/schließen', 'GroupController@close')->name('groups.close');
-
-    /* *********** Comments ************** */
-    Route::post('/comments', 'CommentController@store');
-    Route::delete('/comments/{comment}', 'CommentController@destroy');
 
     /* *********** API ************** */
     Route::prefix('api')->group(function () {
@@ -89,7 +78,7 @@ Route::middleware('auth')->group(function () {
 
     /* *********** Admin ************** */
     Route::middleware('admin')->group(function () {
-        Route::get('/report', 'ReportController@report');
+        Route::post('/statistiken/neu-berechnen', 'StatisticsController@recalculate')->name('statistics.recalculate');
     });
 });
 
@@ -107,3 +96,6 @@ Route::get('login/social/{socialiteUser}', 'Auth\SocialiteController@showView')-
 Route::middleware('auth')->group(function () {
     Route::post('/register/quick', 'Auth\QuickRegisterController@store')->name('register.quick.store');
 });
+
+/* Läuft im web-Stack: Ohne Route gäbe es keine Session, Angemeldete sähen die Fehlerseite wie abgemeldet. */
+Route::fallback(fn () => abort(404));

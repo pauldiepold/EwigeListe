@@ -89,20 +89,6 @@ class Group extends Model
         'gamesPerRound' => 'decimal:1',
     ];
 
-    public function calculateBadges()
-    {
-        $currentMonth = $this->rounds()
-            ->orderBy('created_at', 'asc')
-            ->first()
-            ->created_at
-            ->startOfMonth();
-
-        while ($currentMonth->lessThan(Carbon::now())) {
-            $this->calculateBadgesByMonth($currentMonth);
-            $currentMonth->addMonth();
-        }
-    }
-
     public function calculateBadgesByMonth(Carbon $date)
     {
         $pointsBadge = Badge::firstOrCreate([

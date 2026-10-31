@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Http\Toast;
 use Carbon\Carbon;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Inertia\ExceptionResponse;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,8 +33,42 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        Paginator::defaultView('pagination.pagination');
         setlocale(LC_TIME, config('app.locale'));
         Carbon::setLocale(config('app.locale'));
+
+        Inertia::handleExceptionsUsing(fn (ExceptionResponse $response) => $this->renderErrorPage($response));
+    }
+
+    /**
+     * Keine Inertia-Seite für JSON (Live-Spiel, inklusive 422) und für 503: Während des Deploys werden die
+     * Assets neu gebaut, dann greift die statische `errors/503.blade.php`.
+     *
+     * Ab 500 ohne geteilte Daten, weil diese die Datenbank brauchen, die oft gerade die Ursache ist.
+     */
+    private function renderErrorPage(ExceptionResponse $response): ExceptionResponse|RedirectResponse|null
+    {
+        $status = $response->statusCode();
+
+        if ($status < 400 || $status === 503 || $response->request->expectsJson()) {
+            return null;
+        }
+
+        if ($status === 419) {
+            Toast::error('Die Seite war abgelaufen. Bitte versuche es noch einmal.');
+
+            return back();
+        }
+
+        if ($status < 500) {
+            return $response->render('Error', ['status' => $status])->withSharedData();
+        }
+
+        if (config('app.debug')) {
+            return null;
+        }
+
+        Inertia::flushShared();
+
+        return $response->render('Error', ['status' => $status]);
     }
 }

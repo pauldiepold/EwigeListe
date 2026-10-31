@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Badge;
-use App\Comment;
 use App\Game;
 use App\Group;
 use App\Player;
@@ -26,7 +25,6 @@ class FactoriesTest extends TestCase
     {
         return [
             'Badge' => [Badge::class],
-            'Comment' => [Comment::class],
             'Game' => [Game::class],
             'Group' => [Group::class],
             'Player' => [Player::class],

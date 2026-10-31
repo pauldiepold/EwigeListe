@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 bis 2 erledigt, Phase 3 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 bis 3 erledigt, Phase 4 offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -39,7 +39,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 0 | Repo aufräumen, Cursor → Claude Code, PRs/Branches aufräumen | #26 | ✅ |
 | 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | ✅ |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
-| 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | todo |
+| 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
@@ -51,7 +51,7 @@ Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #73 Spieler und Benutzer 
 
 ## Go-Live-Kriterien
 
-1. Jede Route ist migriert oder bewusst gestrichen; Blade nur noch für E-Mails.
+1. Jede Route ist migriert oder bewusst gestrichen; Blade nur noch für E-Mails, das Inertia-Root-Template und die statische 503-Seite.
 2. Tests, Type-Check und Lint sind grün.
 3. Legacy-JS, Legacy-CSS und Legacy-Abhängigkeiten sind entfernt.
 4. Mindestens ein echter Spieleabend auf Staging inklusive Live-Spiel ohne funktionale Fehler.
@@ -77,10 +77,10 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `profil/{player}/{group?}` | `players.show` | `PlayerController@show` | `Players/Show` | #31 | ✅ | Tabs per URL-Hash, Charts per `Inertia::optional`, Archiv mit Spieler-Filter (`RoundArchive`); Profile versteckter und KI-Spieler nur für den Admin (`PlayerPolicy`) |
 | GET | `runde/{round}` | `rounds.show` | `RoundController@show` | `Rounds/Show` | #32 / #36 | ✅ offline, Live-Spiel todo | offline inkl. Echtzeit per `RoundUpdated` (#32), Live-Tab bis Phase 5 nur mit Hinweis (#36); `Round.vue`, `LiveGame`, `RoundSettings` und `api/rounds/{round}/fetchData` bleiben bis dahin als Spezifikation |
 | GET | `rounds/current` | `rounds.current` | `RoundController@current` | Redirect | #32 | ✅ | |
-| GET | `report` | — | `ReportController@report` | — | #33 | todo → gestrichen | wird durch einen Artisan-Befehl zum Neuberechnen ersetzt |
-| GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | todo → gestrichen | dito |
-| — | Fehlerseiten 401–503 | — | Exception-Handler | `Error` | #33 | todo | |
-| — | Kommentare | — | `CommentController` | ? | #33 | todo | nur noch in der alten Home-Blade eingebunden; Nutzung prüfen, sonst streichen; falls er bleibt, `withErrors([...])` in `destroy` auf `Toast::error()` umstellen |
+| GET | `report` | — | `ReportController@report` | — | #33 | gestrichen | ersetzt durch `stats:recalculate` und den Admin-Button in `Groups/Index` (`POST statistiken/neu-berechnen`) |
+| GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | gestrichen | dito |
+| — | Fehlerseiten ab 400 | — | `AppServiceProvider` | `Error` | #33 | ✅ | 419 als Toast zurück aufs Formular, 503 statisch in `errors/503.blade.php` |
+| — | Kommentare | — | `CommentController` | — | #33 | gestrichen | Tabelle bleibt bis #37; Wiedereinführung in #80 |
 | GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | gestrichen | Routen, Controller und Views entfernt |
 | — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | gestrichen | Controller und `auth/verify.blade.php` entfernt |
 
@@ -145,11 +145,13 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-31 | Listen einer Runde: Die Ewige Liste und geschlossene Listen der Runde bleiben immer erhalten und werden gesperrt angezeigt, fremde geschlossene Listen werden nicht angeboten. Der Server prüft das; neu berechnet werden auch entfernte Listen | Bei einer alten Runde ist wichtig zu sehen, wo sie gezählt hat (Urlaubslisten). `master` blendete geschlossene Listen aus, vertraute dem Request und ließ die Statistik entfernter Listen veraltet (#32) |
 | 2026-10-31 | `changeDates` und `charts/round/{round}` gelöscht, Spiel-Endpunkte auf `games.store` und `games.destroy` umgezogen; Live-Runden sperren manuelles Eintragen und Löschen auf dem Server; ein Push-Fehler lässt das Eintragen nicht mehr scheitern (`ShouldRescue`) | `changeDates` hatte seit Jahren keine Oberfläche und keine Berechtigungsprüfung. Nach einem Push-Fehler war das Spiel schon gespeichert, ein erneutes Absenden hätte es verdoppelt (#32) |
 | 2026-10-31 | Lokal läuft die Queue über `database` mit einem Worker im eigenen Terminal-Tab (`queue:listen --tries=1`), Tests bleiben auf `sync`; Prod bleibt unverändert. Die Statistik-Jobs setzen `queued` vor der Berechnung zurück, `failed_jobs` kommt per Migration dazu | Mit `sync` wartete das Eintragen lokal rund 40 Sekunden. `deferred` hilft unter Herds `php-cgi` voraussichtlich nicht. Ohne `failed_jobs` verdrängt der Fehler beim Protokollieren die eigentliche Ursache |
+| 2026-10-31 | Kommentare gestrichen, die Tabelle bleibt bis #37; der Abschnitt in der Datenschutzerklärung entfällt. Wiedereinführung in #80 | Auf `master` war das Formular nicht mehr erreichbar. Rollback auf `master` findet die Tabelle noch vor (#33) |
+| 2026-10-31 | Ein Befehl `stats:recalculate` stellt Jobs pro Profil und pro Listenmonat in die Queue, der Admin startet ihn auch per Button in `Groups/Index`. Nachtlauf entfällt, stattdessen läuft der Befehl am 1. jedes Monats. Der Staging-Deploy startet ihn nach `sync_db`, auf Prod einmalig beim Go-Live (#37) | Ein großer Job liefe über das Zeitlimit des Workers und hielte neue Spiele auf. Jobs nach jedem Spiel halten die Zahlen aktuell, nur „in diesem Monat“ veraltet zum Monatswechsel ohne neues Spiel; „Spiele pro Tag“ driftet bis zum nächsten Lauf leicht. Der Prod-Dump enthält die Listenstatistik noch nicht in den neuen Spalten (#33) |
+| 2026-10-31 | Eine Page `Error` für jeden Status ab 400. Ab 500 ohne geteilte Daten und Navigation, bei `APP_DEBUG` bleibt die Debug-Seite; JSON bleibt unverändert. 419 führt mit Toast aufs Formular zurück. 503 bleibt eine statische Blade-Datei ohne Vite | Die geteilten Daten brauchen die Datenbank, die bei einem 500er oft die Ursache ist. `artisan down` läuft im Deploy während des Asset-Builds, eine Inertia-503-Seite bliebe weiß (#33) |
 
 ## Offene Fragen
 
 - **Pusher vs. Laravel Reverb** für das Live-Spiel; zusammen mit `@laravel/echo-vue`. Entscheidung zu Beginn von Phase 5 (#36), ADR-Kandidat.
-- **Kommentare:** werden sie in Prod noch genutzt? (#33)
 
 ## Learnings
 

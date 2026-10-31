@@ -16,10 +16,8 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->player->id == 1) {
-            return $next($request);
-        }
+        abort_unless(Auth::user()?->isAdmin(), 403);
 
-        return redirect('home');
+        return $next($request);
     }
 }
