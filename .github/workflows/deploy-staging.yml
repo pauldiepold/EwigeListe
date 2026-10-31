@@ -44,6 +44,11 @@ jobs:
             git checkout ${{ github.ref_name }}
             git reset --hard origin/${{ github.ref_name }}
 
+            # Zwischengespeicherte Provider- und Config-Listen des alten Stands verweisen auf gelöschte Klassen;
+            # schon `artisan down` würde daran scheitern.
+            echo "=== Bootstrap-Cache leeren ==="
+            rm -f bootstrap/cache/*.php
+
             echo "=== Maintenance ON ==="
             php artisan down
 
