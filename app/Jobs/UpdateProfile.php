@@ -30,9 +30,9 @@ class UpdateProfile implements ShouldQueue
      */
     public function handle()
     {
-        $this->profile->calculate();
-
         $this->profile->queued = false;
         $this->profile->save();
+
+        $this->profile->calculate();
     }
 }

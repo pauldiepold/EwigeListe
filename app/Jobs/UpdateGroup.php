@@ -33,9 +33,9 @@ class UpdateGroup implements ShouldQueue
      */
     public function handle()
     {
-        $this->group->calculate($this->date);
-
         $this->group->queued = false;
         $this->group->save();
+
+        $this->group->calculate($this->date);
     }
 }
