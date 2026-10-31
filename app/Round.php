@@ -79,6 +79,11 @@ class Round extends Model
         return $this->path();
     }
 
+    public function isLive(): bool
+    {
+        return $this->live_round_id !== null;
+    }
+
     public function createLiveRound()
     {
         $liveRound = $this->liveRound()->create();
@@ -159,83 +164,23 @@ class Round extends Model
     }
 
     /**
-     * Rotiert die aktiven Spieler so, dass der eingeloggte User an erster Stelle steht
-     * oder (wenn User nicht aktiv ist) die Person links von ihm an erster Stelle steht
-     * Diese Methode ist speziell für das Frontend gedacht
+     * Die aktiven Spieler aus Sicht des eingeloggten Spielers am Tisch: Er selbst steht vorn, wer
+     * aussetzt, beginnt beim nächsten aktiven Sitz. Ohne Platz in der Runde gilt die Sitzreihenfolge.
      */
     public function getActivePlayersRotatedForUser()
     {
-        $activePlayers = $this->getActivePlayers(false);
+        $activePlayers = $this->getActivePlayers()->values();
+        $userPlayer = $this->players->firstWhere('id', Auth::user()->player->id);
 
-        // Sonderfall: Keine aktiven Spieler
-        if ($activePlayers->isEmpty()) {
+        if ($userPlayer === null) {
             return $activePlayers;
         }
 
-        $userId = Auth::user()->player->id;
+        $firstIndex = $activePlayers->search(
+            fn (Player $player): bool => $player->pivot->index >= $userPlayer->pivot->index
+        ) ?: 0;
 
-        // Prüfe ob User aktiv ist
-        $userIndex = $activePlayers->search(function ($player) use ($userId) {
-            return $player->id === $userId;
-        });
-
-        if ($userIndex !== false) {
-            // User ist aktiv: Rotiere so dass er an erster Stelle steht
-            return $this->rotatePlayersFromIndex($activePlayers, $userIndex);
-        }
-
-        // User ist nicht aktiv: Finde die Person links von ihm
-        $referencePlayer = $this->findPlayerLeftOfUser($userId);
-
-        if ($referencePlayer) {
-            $referenceIndex = $activePlayers->search(function ($player) use ($referencePlayer) {
-                return $player->id === $referencePlayer->id;
-            });
-
-            if ($referenceIndex !== false) {
-                return $this->rotatePlayersFromIndex($activePlayers, $referenceIndex);
-            }
-        }
-
-        // Fallback: normale Reihenfolge
-        return $activePlayers->sortBy('pivot.index')->values();
-    }
-
-    /**
-     * Rotiert eine Collection von Spielern ausgehend von einem bestimmten Index
-     */
-    private function rotatePlayersFromIndex($players, $startIndex)
-    {
-        $rotatedPlayers = collect();
-        $count = $players->count();
-
-        for ($i = 0; $i < $count; $i++) {
-            $index = ($startIndex + $i) % $count;
-            $rotatedPlayers->push($players[$index]);
-        }
-
-        return $rotatedPlayers;
-    }
-
-    /**
-     * Findet die Person links vom User (im Uhrzeigersinn)
-     */
-    private function findPlayerLeftOfUser($userId)
-    {
-        $allPlayers = $this->players->sortBy('pivot.index');
-        $userPlayer = $allPlayers->where('id', $userId)->first();
-
-        if (! $userPlayer) {
-            return null;
-        }
-
-        $userPivotIndex = $userPlayer->pivot->index;
-        $countPlayers = $allPlayers->count();
-
-        // Person links von mir (im Uhrzeigersinn)
-        $leftPlayerIndex = ($userPivotIndex - 1 + $countPlayers) % $countPlayers;
-
-        return $allPlayers->where('pivot.index', $leftPlayerIndex)->first();
+        return $activePlayers->slice($firstIndex)->concat($activePlayers->take($firstIndex))->values();
     }
 
     public function addNewGame($winners, $pointsRound, $misplay = false, $liveGameID = null)
@@ -293,6 +238,8 @@ class Round extends Model
             ]);
         }
 
+        $this->unsetRelation('games');
+
         return $game;
     }
 
@@ -329,7 +276,15 @@ class Round extends Model
 
     public function profiles()
     {
-        return Profile::whereIn('group_id', $this->groups->pluck('id'))
+        return $this->profilesIn($this->groups);
+    }
+
+    /**
+     * @param  Collection<int, Group>  $groups
+     */
+    public function profilesIn(Collection $groups)
+    {
+        return Profile::whereIn('group_id', $groups->pluck('id'))
             ->whereIn('player_id', $this->players->pluck('id'))
             ->get();
     }

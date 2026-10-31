@@ -3,11 +3,14 @@
 namespace Tests\Feature;
 
 use App\Group;
+use App\Jobs\UpdateGroup;
+use App\Jobs\UpdateProfile;
 use App\Player;
 use App\Round;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -156,6 +159,137 @@ class ManageRoundTest extends TestCase
             'drei Spieler' => [3],
             'acht Spieler' => [8],
         ];
+    }
+
+    #[Test]
+    public function a_player_of_the_round_can_change_its_lists_and_its_players_become_members(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $list = Group::factory()->create();
+        $list->addPlayer($players[1]);
+
+        $this->patch(route('rounds.update', $round), ['groups' => [Group::EWIGE_LISTE_ID, $list->id]])
+            ->assertRedirect(route('rounds.show', $round))
+            ->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing([Group::EWIGE_LISTE_ID, $list->id], $round->groups()->pluck('groups.id')->all());
+        $this->assertEqualsCanonicalizing($players->pluck('id')->all(), $list->fresh()->players->pluck('id')->all());
+    }
+
+    #[Test]
+    public function someone_outside_the_round_cannot_change_its_lists(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $this->actingAs(User::factory()->create());
+
+        $this->patch(route('rounds.update', $round), ['groups' => [Group::EWIGE_LISTE_ID]])->assertForbidden();
+    }
+
+    #[Test]
+    public function a_round_always_stays_on_the_ewige_liste_and_on_its_closed_lists(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $closedList = Group::factory()->closed()->create();
+        $closedList->addPlayers($players);
+        $round->groups()->attach($closedList);
+        $openList = Group::factory()->create();
+        $openList->addPlayer($players[0]);
+
+        $this->patch(route('rounds.update', $round), ['groups' => [$openList->id]])->assertSessionHasNoErrors();
+
+        $this->assertEqualsCanonicalizing(
+            [Group::EWIGE_LISTE_ID, $closedList->id, $openList->id],
+            $round->groups()->pluck('groups.id')->all()
+        );
+    }
+
+    #[Test]
+    public function an_existing_round_cannot_be_added_to_a_closed_list_or_a_foreign_list(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $closedList = Group::factory()->closed()->create();
+        $closedList->addPlayer($players[0]);
+        $foreignList = Group::factory()->create();
+
+        $this->patch(route('rounds.update', $round), ['groups' => [$closedList->id]])
+            ->assertSessionHasErrors(['groups' => "Die Liste {$closedList->name} ist geschlossen."]);
+        $this->patch(route('rounds.update', $round), ['groups' => [$foreignList->id]])
+            ->assertSessionHasErrors(['groups' => "Keiner der Spieler ist Mitglied der Liste {$foreignList->name}."]);
+
+        $this->assertSame([Group::EWIGE_LISTE_ID], $round->groups()->pluck('groups.id')->all());
+    }
+
+    #[Test]
+    public function lists_a_round_is_removed_from_are_recalculated_as_well(): void
+    {
+        Bus::fake([UpdateGroup::class, UpdateProfile::class]);
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $removedList = Group::factory()->create();
+        $removedList->addPlayers($players);
+        $round->groups()->attach($removedList);
+
+        $this->patch(route('rounds.update', $round), ['groups' => [Group::EWIGE_LISTE_ID]])->assertSessionHasNoErrors();
+
+        $this->assertSame([Group::EWIGE_LISTE_ID], $round->groups()->pluck('groups.id')->all());
+        Bus::assertDispatched(UpdateGroup::class, 2);
+        Bus::assertDispatched(UpdateProfile::class, 8);
+    }
+
+    #[Test]
+    public function a_round_without_games_can_be_deleted(): void
+    {
+        $round = $this->roundWith($this->actingAsRoundPlayers(4));
+
+        $this->delete(route('rounds.destroy', $round))
+            ->assertRedirect(route('rounds.create'))
+            ->assertInertiaFlash('toast', ['type' => 'success', 'message' => 'Die Runde wurde gelöscht.']);
+
+        $this->assertDatabaseCount('rounds', 0);
+    }
+
+    #[Test]
+    public function a_round_with_games_cannot_be_deleted(): void
+    {
+        $players = $this->actingAsRoundPlayers(4);
+        $round = $this->roundWith($players);
+        $round->addNewGame([$players[0]->id, $players[1]->id], 1);
+
+        $this->from(route('rounds.show', $round))
+            ->delete(route('rounds.destroy', $round))
+            ->assertRedirect(route('rounds.show', $round))
+            ->assertInertiaFlash('toast', ['type' => 'error', 'message' => 'Du kannst nur eine Runde ohne Spiele löschen!']);
+
+        $this->assertDatabaseCount('rounds', 1);
+    }
+
+    #[Test]
+    public function someone_outside_the_round_cannot_delete_it(): void
+    {
+        $round = $this->roundWith($this->actingAsRoundPlayers(4));
+        $this->actingAs(User::factory()->create());
+
+        $this->delete(route('rounds.destroy', $round))->assertForbidden();
+
+        $this->assertDatabaseCount('rounds', 1);
+    }
+
+    /**
+     * @param  Collection<int, Player>  $players
+     */
+    private function roundWith(Collection $players): Round
+    {
+        $round = Round::factory()->create();
+        foreach ($players as $seat => $player) {
+            $round->players()->attach($player->id, ['index' => $seat]);
+        }
+        $round->groups()->attach(Group::EWIGE_LISTE_ID);
+
+        return $round->fresh();
     }
 
     /**

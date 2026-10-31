@@ -14,6 +14,19 @@ _Avoid_: Session, Partie, Abend
 Ein einzelnes Doppelkopf-Spiel innerhalb einer Runde, mit Punkten für die beteiligten Spieler.
 _Avoid_: Partie, Hand
 
+**Offline-Runde**:
+Eine Runde am echten Tisch, deren Spiele von Hand eingetragen werden.
+
+**Live-Runde**:
+Eine Runde, die in der App gespielt wird; ihre Spiele entstehen automatisch.
+
+**Geber**:
+Der Spieler, der im aktuellen Spiel gibt. Das Amt wandert nach jedem Spiel weiter, außer nach Soli und falsch bedienten Spielen.
+_Avoid_: Dealer
+
+**Aussetzen**:
+Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus.
+
 ### Personen
 
 **Spieler**:

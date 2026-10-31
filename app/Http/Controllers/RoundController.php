@@ -8,13 +8,15 @@ use App\Http\Requests\UpdateRound;
 use App\Http\Resources\CreateRoundPlayerResource;
 use App\Http\Resources\GroupOptionResource;
 use App\Http\Resources\Round as RoundResource;
+use App\Http\Resources\RoundShowResource;
+use App\Http\Toast;
 use App\Player;
 use App\Profile;
 use App\Round;
 use App\Services\RoundArchive;
-use Carbon\Carbon;
+use App\Services\RoundChartSeries;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,11 +35,16 @@ class RoundController extends Controller
         ]);
     }
 
-    public function show(Round $round)
+    public function show(Request $request, RoundChartSeries $roundChartSeries, Round $round): Response
     {
-        $roundResource = new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
+        $round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user', 'createdBy']);
 
-        return view('rounds.show', compact('round', 'roundResource'));
+        return Inertia::render('Rounds/Show', [
+            'round' => (new RoundShowResource($round))->resolve($request),
+            ...($round->games->count() >= RoundChartSeries::MINIMUM_GAMES
+                ? ['roundChart' => Inertia::optional(fn (): array => $roundChartSeries->forRound($round))]
+                : []),
+        ]);
     }
 
     public function fetchData(Round $round)
@@ -48,11 +55,10 @@ class RoundController extends Controller
     public function current()
     {
         $lastRound = auth()->user()->player->rounds()->latest()->first();
-        if ($lastRound) {
-            return redirect($lastRound->path());
-        } else {
-            return redirect()->route('rounds.create');
-        }
+
+        return $lastRound
+            ? redirect()->route('rounds.show', $lastRound)
+            : redirect()->route('rounds.create');
     }
 
     public function create(): Response
@@ -94,72 +100,41 @@ class RoundController extends Controller
             $round->createLiveRound();
         }
 
-        return redirect()->to($round->path());
+        return redirect()->route('rounds.show', $round);
     }
 
-    public function update(UpdateRound $request, Round $round)
+    public function update(UpdateRound $request, Round $round): RedirectResponse
     {
-        $this->authorize('update', $round);
+        $previousGroups = $round->groups;
+        $groups = Group::findMany($request->groupIds());
 
-        $validated = collect($request->validated());
-
-        $groups = Group::find(
-            $validated->get('groups')
-        );
-
-        $players = $round->players;
-
-        $round->groups()->detach();
-        $round->groups()->saveMany($groups);
+        $round->groups()->sync($groups);
 
         foreach ($groups as $group) {
-            $group->addPlayers($players);
+            $group->addPlayers($round->players);
         }
 
-        Profile::updateManyStats($round->profiles());
-        Group::updateManyStats($groups, $round->updated_at);
+        $affectedGroups = $previousGroups->merge($groups);
+        Profile::updateManyStats($round->profilesIn($affectedGroups));
+        Group::updateManyStats($affectedGroups, $round->updated_at);
 
-        return 'success';
+        return redirect()->route('rounds.show', $round);
     }
 
-    public function destroy(Round $round)
+    public function destroy(Round $round): RedirectResponse
     {
         $this->authorize('update', $round);
 
-        if ($round->games->count() != 0) {
-            return Redirect::back()->with('deleteError', 'Du kannst nur eine Runde ohne Spiele löschen!');
+        if ($round->games->isNotEmpty()) {
+            Toast::error('Du kannst nur eine Runde ohne Spiele löschen!');
+
+            return back();
         }
 
         $round->delete();
 
+        Toast::success('Die Runde wurde gelöscht.');
+
         return redirect()->route('rounds.create');
-    }
-
-    public function changeDates(Round $round, Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date',
-        ]);
-
-        $dateDiff = Carbon::create($request->input('date'))->diffInDays($round->created_at, false);
-
-        if ($dateDiff > 0) {
-            $case = 'subDays';
-        } elseif ($dateDiff < 0) {
-            $case = 'addDays';
-            $dateDiff = abs($dateDiff) + 1;
-        } else {
-            return 'false';
-        }
-
-        $round->created_at = $round->created_at->$case($dateDiff);
-        $round->save();
-
-        foreach ($round->games as $game) {
-            $game->created_at = $game->created_at->$case($dateDiff);
-            $game->save();
-        }
-
-        return 'success';
     }
 }
