@@ -79,9 +79,10 @@ class ErrorPagesTest extends TestCase
     #[Test]
     public function an_expired_session_returns_to_the_form_with_a_toast(): void
     {
-        Route::middleware('web')->post('/test-abgelaufen', fn () => throw new TokenMismatchException);
+        Route::middleware('web')->patch('/test-abgelaufen', fn () => throw new TokenMismatchException);
 
-        $this->from('/login')->post('/test-abgelaufen')
+        $this->from('/login')->patch('/test-abgelaufen')
+            ->assertStatus(303)
             ->assertRedirect('/login')
             ->assertInertiaFlash('toast.type', 'error');
     }

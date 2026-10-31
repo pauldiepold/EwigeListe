@@ -110,7 +110,7 @@ return back();
 - Abgelehnte Aktionen (keine Berechtigung, unzulässiger Zustand) sind `Toast::error()`, nicht `withErrors([...])` ohne Feld.
 - Validierungsfehler bleiben `errors` und werden in der Page angezeigt: am `UFormField` oder, ohne passendes Eingabefeld, als `UAlert` (Beispiel `Rounds/Create`).
 - Test: `->assertInertiaFlash('toast', ['type' => 'success', 'message' => '…'])` auf der Redirect-Antwort, siehe `tests/Feature/FlashToastTest.php`.
-- Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt. Bekannt: `CommentController@destroy` (#33).
+- Beim Migrieren prüfen, ob der Controller der Seite noch alte Meldungen setzt.
 
 ## Laden und Seitenwechsel
 

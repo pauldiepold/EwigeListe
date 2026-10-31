@@ -56,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
         if ($status === 419) {
             Toast::error('Die Seite war abgelaufen. Bitte versuche es noch einmal.');
 
-            return back();
+            return back(303);
         }
 
         if ($status < 500) {

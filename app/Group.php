@@ -4,6 +4,7 @@ namespace App;
 
 use App\Jobs\UpdateGroup;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -88,6 +89,16 @@ class Group extends Model
         'pointsPerGame' => 'decimal:1',
         'gamesPerRound' => 'decimal:1',
     ];
+
+    /**
+     * Eine Liste ohne Runden hat nur den aktuellen Monat.
+     */
+    public function monthsSinceFirstRound(): CarbonPeriod
+    {
+        $firstRoundAt = $this->rounds()->min('rounds.created_at') ?? Carbon::now();
+
+        return CarbonPeriod::create(Carbon::parse($firstRoundAt)->startOfMonth(), '1 month', Carbon::now());
+    }
 
     public function calculateBadgesByMonth(Carbon $date)
     {

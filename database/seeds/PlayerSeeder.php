@@ -201,8 +201,9 @@ class PlayerSeeder extends Seeder
         });
 
         Group::all()->each(function ($group, $key) {
-            $group->calculate();
-            $group->calculateBadges();
+            foreach ($group->monthsSinceFirstRound() as $month) {
+                $group->calculate($month);
+            }
         });
     }
 }
