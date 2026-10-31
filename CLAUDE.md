@@ -22,7 +22,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 
 ## Struktur-Hinweise
 
-- Laravel-10-Struktur (Kernel, RouteServiceProvider); Models direkt in `app/` (z. B. `App\Models\Round`), Controller-Routen als `'Controller@method'`-Strings.
+- Schlanke Laravel-11+-Struktur: Middleware, Routing, Scheduler und Exceptions in `bootstrap/app.php`, Provider in `bootstrap/providers.php`. Models in `app/Models` (z. B. `App\Models\Round`), Controller-Routen als `[Controller::class, 'method']`.
 - Live-Spiel-Engine: `app/Models/LiveGame.php`, `app/Live/*`, Events in `app/Events/`.
 
 ## Arbeitsweise
