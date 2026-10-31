@@ -38,7 +38,6 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 use Laravel\Socialite\Facades\Socialite;
-use Yajra\DataTables\Facades\DataTables;
 
 return [
 
@@ -213,7 +212,6 @@ return [
         'Validator' => Validator::class,
         'View' => View::class,
 
-        'DataTables' => DataTables::class,
         'Socialite' => Socialite::class,
         'Image' => Image::class,
 
