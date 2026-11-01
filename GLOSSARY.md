@@ -29,7 +29,7 @@ Jeder Spieler einer Runde hat einmal gegeben. Am Tisch heißt das oft ebenfalls 
 _Avoid_: Runde (für den Umlauf)
 
 **Aussetzen**:
-Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus.
+Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus. Bei fünf Spielern setzt der Geber aus.
 
 ### Personen
 
