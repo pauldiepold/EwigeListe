@@ -7,7 +7,10 @@ import UserDefaultListsForm from '@/Components/Users/UserDefaultListsForm.vue';
 import UserEmailForm from '@/Components/Users/UserEmailForm.vue';
 import UserNameForm from '@/Components/Users/UserNameForm.vue';
 import UserPasswordForm from '@/Components/Users/UserPasswordForm.vue';
+import { useDesignSpike } from '@/prototype/designSpike';
 import type { EditUser, EditUserProfile } from '@/types/user-edit';
+
+const { tabsVariant } = useDesignSpike();
 
 defineProps<{
   user: EditUser;
@@ -36,7 +39,13 @@ const tabs = [
       />
 
       <UCard>
-        <UTabs :items="tabs" size="sm" default-value="name" :unmount-on-hide="false">
+        <UTabs
+          :items="tabs"
+          size="sm"
+          default-value="name"
+          :unmount-on-hide="false"
+          :variant="tabsVariant"
+        >
           <template #listen>
             <UserDefaultListsForm :user="user" :profiles="profiles" class="mt-4" />
           </template>

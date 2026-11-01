@@ -11,9 +11,12 @@ import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { show as showGroup } from '@/routes/groups';
 import { show as showPlayer } from '@/routes/players';
 import { edit as editUser } from '@/routes/users';
+import { useDesignSpike } from '@/prototype/designSpike';
 import type { PlayerShowProps } from '@/types/players-show';
 
 const props = defineProps<PlayerShowProps>();
+
+const { tabsVariant } = useDesignSpike();
 
 const page = usePage();
 const isOwnProfile = computed(() => page.props.auth.player?.id === props.player.id);
@@ -59,7 +62,13 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
         />
       </div>
 
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
+      <UTabs
+        v-model="activeTab"
+        :items="tabs"
+        :content="false"
+        :variant="tabsVariant"
+        class="w-full"
+      />
 
       <UFormField v-if="activeTab !== 'listen'" label="Liste">
         <USelect

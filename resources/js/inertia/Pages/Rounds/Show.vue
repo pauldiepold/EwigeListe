@@ -13,9 +13,12 @@ import { useRoundUpdates } from '@/composables/useRoundUpdates';
 import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { destroy as destroyGame } from '@/routes/games';
 import { destroy as destroyRound } from '@/routes/rounds';
+import { useDesignSpike } from '@/prototype/designSpike';
 import type { RoundShowProps } from '@/types/round-show';
 
 const props = defineProps<RoundShowProps>();
+
+const { tabsVariant } = useDesignSpike();
 
 const tabs = computed(() => [
   { label: 'Runde', icon: 'i-lucide-circle-play', value: 'runde' },
@@ -63,12 +66,18 @@ function deleteRound(): void {
 <template>
   <Head title="Rundenübersicht" />
 
-  <AppLayout title="Rundenübersicht">
+  <AppLayout>
     <div class="mx-auto w-full max-w-5xl space-y-6">
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
+      <UTabs
+        v-model="activeTab"
+        :items="tabs"
+        :content="false"
+        :variant="tabsVariant"
+        class="w-full"
+      />
 
       <section v-if="activeTab === 'runde'" class="space-y-6">
-        <div v-if="canChangeGames" class="flex justify-center">
+        <div v-if="canChangeGames" class="spike-game-action">
           <EnterGameModal
             :round-id="round.id"
             :last-game-id="round.lastGameId"

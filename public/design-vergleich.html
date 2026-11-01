@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- PROTOTYP #34, Wegwerf-Code: alle vier Varianten nebeneinander in Handy-Breite. -->
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>Design-Vergleich</title>
+    <style>
+      body { margin: 0; background: #000; color: #fde047; font: 14px sans-serif; }
+      nav { display: flex; gap: 12px; padding: 8px; align-items: center; }
+      a { color: inherit; }
+      main { display: flex; gap: 6px; height: calc(100vh - 36px); overflow-x: auto; }
+      iframe { flex: 0 0 390px; height: 100%; border: 0; }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="?pfad=/rounds/current">Runde</a>
+      <a href="?pfad=/liste">Ewige Liste</a>
+      <a href="?pfad=/">Startseite</a>
+      <form><input name="pfad" placeholder="/runde/91" /></form>
+    </nav>
+    <main></main>
+    <script>
+      const path = new URLSearchParams(location.search).get('pfad') ?? '/rounds/current';
+      for (const design of ['a', 'b', 'c', 'd']) {
+        const frame = document.createElement('iframe');
+        frame.src = `${path}?design=${design}`;
+        document.querySelector('main').append(frame);
+      }
+    </script>
+  </body>
+</html>

@@ -16,7 +16,7 @@ defineProps<{
       <article
         v-for="round in rounds"
         :key="round.id"
-        class="rounded border border-default bg-elevated p-3 shadow-sm"
+        class="spike-round-card rounded border border-default bg-elevated p-3 shadow-sm"
       >
         <h3 class="mb-2 font-semibold text-highlighted">{{ round.players }}</h3>
         <p class="mb-2 text-sm text-muted">Letztes Spiel: {{ round.lastGameAt ?? '-' }}</p>

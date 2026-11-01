@@ -43,6 +43,38 @@ export default defineConfig(async () => {
                             root: 'bg-elevated ring-accented shadow-xl',
                         },
                     },
+                    // PROTOTYP #34: Die Varianten hängen als `design-*` an den Komponenten.
+                    button: {
+                        slots: {
+                            base: 'design-b:uppercase design-b:tracking-wide design-c:rounded-full design-c:font-semibold design-d:font-bold',
+                        },
+                        compoundVariants: [
+                            {
+                                color: 'primary',
+                                variant: 'solid',
+                                class: 'design-b:bg-transparent design-b:text-primary design-b:ring design-b:ring-inset design-b:ring-primary design-b:hover:bg-primary/10 design-c:px-4 design-c:py-2.5',
+                            },
+                            {
+                                color: 'primary',
+                                variant: 'outline',
+                                class: 'design-d:ring-0 design-d:bg-primary/15',
+                            },
+                            {
+                                color: 'neutral',
+                                variant: 'outline',
+                                class: 'design-d:ring-0 design-d:bg-accented',
+                            },
+                        ],
+                    },
+                    tabs: {
+                        slots: {
+                            list: 'design-c:rounded-full',
+                            indicator: 'design-c:rounded-full',
+                            trigger: 'max-sm:data-[state=active]:shrink-0 design-b:uppercase design-b:tracking-wider design-b:text-xs design-c:rounded-full design-d:font-bold',
+                            // Am Handy trägt nur der aktive Tab Text, sonst schneidet Nuxt UI alle ab.
+                            label: 'max-sm:group-data-[state=inactive]:hidden',
+                        },
+                    },
                 },
             }),
         ],

@@ -36,7 +36,9 @@ function leaveGroup(): void {
     </div>
 
     <template v-if="hasPlayedGames">
-      <MembersTable :members="members" :highlight-player-id="authPlayerId" />
+      <div class="spike-card">
+        <MembersTable :members="members" :highlight-player-id="authPlayerId" />
+      </div>
       <p class="text-muted">{{ members.length }} Mitglieder</p>
     </template>
     <p v-else-if="onlyMember && onlyMember.id === authPlayerId" class="text-lg text-toned">

@@ -13,20 +13,20 @@ defineProps<HomeProps>();
 <template>
   <Head title="Startseite" />
 
-  <AppLayout title="Startseite">
+  <AppLayout>
     <CurrentRoundsSection :rounds="currentRounds" />
 
-    <section class="mb-8">
+    <section class="spike-card mb-8">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Rekorde</h2>
       <GroupStatisticsTable :rows="group.records" />
     </section>
 
-    <section class="mb-8">
+    <section class="spike-card mb-8">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Statistiken</h2>
       <GroupStatisticsTable :rows="group.stats" />
     </section>
 
-    <section>
+    <section class="spike-card">
       <h2 class="mb-4 text-xl font-semibold text-highlighted">Anzahl der Spiele</h2>
 
       <Deferred data="homeGamesChart">

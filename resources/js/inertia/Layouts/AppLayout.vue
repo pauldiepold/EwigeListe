@@ -33,6 +33,68 @@ const isAuthenticated = computed(() => page.props.auth.user !== null);
 const authPlayer = computed(() => page.props.auth.player);
 const canOpenCurrentRound = computed(() => page.props.navigation.showCurrentRound);
 
+const currentPath = computed(() => page.url.split(/[?#]/)[0]);
+
+const navItems = computed(() =>
+  isAuthenticated.value
+    ? [
+        {
+          to: home.url(),
+          icon: 'i-lucide-house',
+          label: 'Startseite',
+          active: ['/', '/home'].includes(currentPath.value),
+        },
+        ...(canOpenCurrentRound.value
+          ? [
+              {
+                to: currentRound.url(),
+                icon: 'i-lucide-circle-play',
+                label: 'Aktuelle Runde',
+                active: /^\/runde\/\d/.test(currentPath.value),
+              },
+            ]
+          : []),
+        {
+          to: createRound.url(),
+          icon: 'i-lucide-circle-plus',
+          label: 'Neue Runde',
+          active: currentPath.value === createRound.url(),
+        },
+        {
+          to: ewigeListe.url(),
+          icon: 'i-lucide-list',
+          label: 'Ewige Liste',
+          active: currentPath.value.startsWith('/liste'),
+        },
+        {
+          to: roundsIndex.url(),
+          icon: 'i-lucide-history',
+          label: 'Rundenarchiv',
+          active: currentPath.value.startsWith('/rundenarchiv'),
+        },
+      ]
+    : [
+        {
+          to: home.url(),
+          icon: 'i-lucide-house',
+          label: 'Startseite',
+          active: ['/', '/home'].includes(currentPath.value),
+        },
+        {
+          to: login.url(),
+          icon: 'i-lucide-log-in',
+          label: 'Login',
+          active: currentPath.value === login.url(),
+        },
+        {
+          to: register.url(),
+          icon: 'i-lucide-user-plus',
+          label: 'Registrieren',
+          active: currentPath.value === register.url(),
+        },
+      ],
+);
+
 function applyColorMode(mode: InertiaColorMode): void {
   colorMode.value = mode;
   const root = document.documentElement;
@@ -61,7 +123,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-default text-highlighted">
+  <!-- `isolate`: Stehende Tabellenköpfe und die Aktionsleiste bleiben so unter Dialogen. -->
+  <div class="isolate flex min-h-screen flex-col bg-default text-highlighted">
     <header class="shrink-0">
       <div class="bg-blue-dark py-2 text-center">
         <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
@@ -70,87 +133,41 @@ onMounted(() => {
       </div>
 
       <nav class="bg-blue">
-        <UContainer class="max-w-md px-1 py-2">
+        <UContainer class="max-w-md px-1 py-1 sm:max-w-3xl">
           <div class="flex items-center justify-around">
             <UButton
-              :to="home.url()"
+              v-for="item in navItems"
+              :key="item.to"
+              :to="item.to"
               color="neutral"
               variant="ghost"
+              size="xl"
               class="text-white hover:bg-white/15"
-              icon="i-lucide-house"
-              aria-label="Startseite"
-            />
-
-            <template v-if="isAuthenticated">
-              <UButton
-                v-if="canOpenCurrentRound"
-                :to="currentRound.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-circle-play"
-                aria-label="Aktuelle Runde"
-              />
-              <UButton
-                :to="createRound.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-circle-plus"
-                aria-label="Neue Runde"
-              />
-              <UButton
-                :to="ewigeListe.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-list"
-                aria-label="Ewige Liste"
-              />
-              <UButton
-                :to="roundsIndex.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-history"
-                aria-label="Rundenarchiv"
-              />
-            </template>
-
-            <template v-else>
-              <UButton
-                :to="login.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-log-in"
-                aria-label="Login"
-              />
-              <UButton
-                :to="register.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-user-plus"
-                aria-label="Registrieren"
-              />
-            </template>
+              :class="{ 'spike-nav-active': item.active }"
+              :icon="item.icon"
+              :aria-label="item.label"
+              :aria-current="item.active ? 'page' : undefined"
+            >
+              <span class="hidden text-sm whitespace-nowrap sm:inline">{{ item.label }}</span>
+            </UButton>
           </div>
         </UContainer>
       </nav>
     </header>
 
     <UPage as="main" class="flex-1">
-      <UContainer class="w-full max-w-4xl py-8">
+      <UContainer class="w-full max-w-4xl py-4 sm:py-8">
         <UPageHeader
           v-if="title"
           :title="title"
           :ui="{
-            root: 'relative border-b border-default py-4 sm:py-5',
-            title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
+            root: 'relative border-b border-default py-4 sm:py-5 design-b:border-b-0 design-b:text-center design-c:border-b-0 design-c:pt-2 design-d:border-b-0 design-d:py-2',
+            wrapper: 'design-b:lg:justify-center',
+            title:
+              'text-xl sm:text-2xl text-pretty font-semibold text-highlighted design-b:text-sm design-b:sm:text-sm design-b:font-bold design-b:uppercase design-b:tracking-[5px] design-c:text-3xl design-c:sm:text-3xl design-c:font-bold design-d:font-extrabold',
           }"
         />
-        <UPageBody>
+        <UPageBody class="mt-2 pb-8 sm:mt-4">
           <slot />
         </UPageBody>
       </UContainer>

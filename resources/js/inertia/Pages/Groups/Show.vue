@@ -13,9 +13,12 @@ import { useRoundArchiveVisit } from '@/composables/useRoundArchiveVisit';
 import { EWIGE_LISTE } from '@/composables/useRoundListSelection';
 import { useTabInUrlHash } from '@/composables/useTabInUrlHash';
 import { index as groupsIndex, show as showGroup } from '@/routes/groups';
+import { useDesignSpike } from '@/prototype/designSpike';
 import type { GroupShowProps } from '@/types/groups-show';
 
 const props = defineProps<GroupShowProps>();
+
+const { tabsVariant } = useDesignSpike();
 
 const title = computed(() =>
   props.group.id === EWIGE_LISTE.id ? props.group.name : `Liste - ${props.group.name}`,
@@ -64,7 +67,13 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
         />
       </div>
 
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
+      <UTabs
+        v-model="activeTab"
+        :items="tabs"
+        :content="false"
+        :variant="tabsVariant"
+        class="w-full"
+      />
 
       <GroupMembersPanel
         v-if="activeTab === 'mitglieder'"
@@ -75,17 +84,17 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
       />
 
       <section v-else-if="activeTab === 'statistiken'" class="space-y-8">
-        <div>
+        <div class="spike-card">
           <h2 class="mb-4 text-xl font-semibold text-highlighted">Rekorde</h2>
           <GroupStatisticsTable :rows="statistics.records" />
         </div>
 
-        <div>
+        <div class="spike-card">
           <h2 class="mb-4 text-xl font-semibold text-highlighted">Statistiken</h2>
           <GroupStatisticsTable :rows="statistics.stats" />
         </div>
 
-        <div v-if="hasGamesChart">
+        <div v-if="hasGamesChart" class="spike-card">
           <h2 class="mb-4 text-xl font-semibold text-highlighted">Anzahl der Spiele</h2>
           <WhenVisible data="gamesChart">
             <template #fallback>
