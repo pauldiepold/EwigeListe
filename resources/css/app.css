@@ -9,6 +9,38 @@ layer(base);
 @import 'tailwindcss';
 @import '@nuxt/ui';
 
+/*
+  Nuxt UI nutzt für `primary` und `secondary` hell Stufe 500 und dunkel Stufe 400 und liest die
+  Skalen erst zur Laufzeit. `static` gibt deshalb alle Stufen aus, auch ohne passende Klasse im
+  Code; sonst fällt Nuxt UI auf die Tailwind-Farben zurück.
+*/
+@theme static {
+  --color-orange-50: #fdf4f1;
+  --color-orange-100: #fbe6df;
+  --color-orange-200: #f6ccbf;
+  --color-orange-300: #efab95;
+  --color-orange-400: #e58364;
+  --color-orange-500: #d16341;
+  --color-orange-600: #b94f30;
+  --color-orange-700: #9a3f27;
+  --color-orange-800: #7f3624;
+  --color-orange-900: #6a3022;
+  --color-orange-950: #39160f;
+
+  /* Aufgebaut aus den benannten Blautönen im nächsten Block. */
+  --color-blue-50: #eff9fd;
+  --color-blue-100: #cbe7f7;
+  --color-blue-200: #a3d8f5;
+  --color-blue-300: #6cc1e8;
+  --color-blue-400: #2fa8da;
+  --color-blue-500: #0692c6;
+  --color-blue-600: #0675a3;
+  --color-blue-700: #065a82;
+  --color-blue-800: #054b6d;
+  --color-blue-900: #0a3d59;
+  --color-blue-950: #06273b;
+}
+
 @theme {
   --breakpoint-lg: 1124px;
   --breakpoint-xl: 1480px;
@@ -23,34 +55,10 @@ layer(base);
   --color-gray-800: #424242;
   --color-gray-900: #2b2b2b;
 
-  /* Nuxt UI nutzt für `primary` hell Stufe 500 und dunkel Stufe 400, deshalb die ganze Skala. */
-  --color-orange-50: #fdf4f1;
-  --color-orange-100: #fbe6df;
-  --color-orange-200: #f6ccbf;
-  --color-orange-300: #efab95;
-  --color-orange-400: #e58364;
-  --color-orange-500: #d16341;
-  --color-orange-600: #b94f30;
-  --color-orange-700: #9a3f27;
-  --color-orange-800: #7f3624;
-  --color-orange-900: #6a3022;
-  --color-orange-950: #39160f;
   --color-orange-dark: rgb(176, 74, 67);
   --color-orange: #d16341;
   --color-orange-lighter: rgba(209, 99, 65, 0.18);
 
-  /* Skala für `secondary`, aufgebaut aus den benannten Blautönen darunter. */
-  --color-blue-50: #eff9fd;
-  --color-blue-100: #cbe7f7;
-  --color-blue-200: #a3d8f5;
-  --color-blue-300: #6cc1e8;
-  --color-blue-400: #2fa8da;
-  --color-blue-500: #0692c6;
-  --color-blue-600: #0675a3;
-  --color-blue-700: #065a82;
-  --color-blue-800: #054b6d;
-  --color-blue-900: #0a3d59;
-  --color-blue-950: #06273b;
   --color-blue-darker: #21295c;
   --color-blue-dark: rgb(5, 75, 109);
   --color-blue: #065a82;
