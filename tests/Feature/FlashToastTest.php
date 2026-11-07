@@ -48,7 +48,7 @@ class FlashToastTest extends TestCase
     }
 
     #[Test]
-    public function requesting_a_reset_link_flashes_a_success_toast(): void
+    public function requesting_a_reset_link_flashes_no_toast_because_the_page_confirms_it(): void
     {
         Notification::fake();
         $user = User::factory()->create();
@@ -56,11 +56,7 @@ class FlashToastTest extends TestCase
         $this->from(route('password.request'))
             ->post(route('password.email'), ['email' => $user->email])
             ->assertRedirect(route('password.request'))
-            ->assertSessionMissing('status')
-            ->assertInertiaFlash('toast', [
-                'type' => 'success',
-                'message' => trans(Password::RESET_LINK_SENT),
-            ]);
+            ->assertInertiaFlashMissing('toast');
     }
 
     #[Test]

@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Http\Responses\PasswordResetResponse;
-use App\Http\Responses\SuccessfulPasswordResetLinkRequestResponse;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -16,19 +15,18 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Contracts\PasswordResetResponse as PasswordResetResponseContract;
-use Laravel\Fortify\Contracts\SuccessfulPasswordResetLinkRequestResponse as SuccessfulPasswordResetLinkRequestResponseContract;
 use Laravel\Fortify\Fortify;
 
 /**
  * Aufgebaut wie im Vue-Starter-Kit (`docs/adr/0002-fortify-statt-laravel-ui.md`). Abweichung:
- * Meldungen erscheinen als Toast statt als Session-`status`.
+ * Nach dem Reset erscheint die Meldung als Toast statt als Session-`status`. Nach der
+ * Link-Anforderung bestätigt `Auth/ForgotPassword` selbst, das `status` bleibt dort ungenutzt.
  */
 class FortifyServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->bind(PasswordResetResponseContract::class, PasswordResetResponse::class);
-        $this->app->bind(SuccessfulPasswordResetLinkRequestResponseContract::class, SuccessfulPasswordResetLinkRequestResponse::class);
     }
 
     public function boot(): void

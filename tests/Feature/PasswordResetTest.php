@@ -13,7 +13,7 @@ use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
- * Toast-Meldungen nach Link-Anforderung und Reset deckt `FlashToastTest` ab.
+ * Toast nach dem Reset (und keinen nach der Link-Anforderung) deckt `FlashToastTest` ab.
  */
 class PasswordResetTest extends TestCase
 {
