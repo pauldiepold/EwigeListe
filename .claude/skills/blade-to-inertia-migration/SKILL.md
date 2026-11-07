@@ -18,7 +18,7 @@ Plan, Leitplanken und Routen-Matrix: `docs/migration.md`. Begriffe: `GLOSSARY.md
 7. **Grün.** Fertig ist die Seite, wenn alles grün ist:
    ```bash
    php artisan test --compact
-   npm run type-check && npm run lint && npm run format
+   npm run test:js && npm run type-check && npm run lint && npm run format
    ```
 
 Links auf noch nicht migrierte Seiten dürfen scheitern (Big Bang); dafür werden keine Brücken gebaut. Backend-Modernisierung, die die Seite nicht braucht, landet als Kommentar in #38 statt im PR.
@@ -62,6 +62,41 @@ public function a_group_requires_a_name(): void
 - Props aus einer Resource-Collection mit `->resolve(request())` liegen direkt unter dem Prop-Namen (`groups.0`), nicht unter `groups.data`.
 - reCAPTCHA: `NoCaptcha::shouldReceive('verifyResponse')->andReturn(true)`.
 - Vite ist in `Tests\TestCase` abgeschaltet; Tests brauchen kein `npm run build`.
+
+## Komponententests
+
+Vitest mit jsdom und Testing Library. Ein Komponententest entsteht **test-first** in zwei Fällen:
+
+- neues Verhalten rein im Client, das kein Feature-Test sieht: Dialog- und Formularlogik, lokaler Zustand, Reaktion auf Echtzeit-Updates, Live-Spiel;
+- ein Bug im Client: erst der Test, der den Bug _rot_ zeigt, dann der Fix.
+
+Bestehendes, abgenommenes Verhalten bleibt ohne nachgezogene Tests; Layout und Styling prüft Paul. Testet ein Test vorhandenes Verhalten (z. B. beim Bug-Fix ein Nachbarfall), zeigt eine kurze Mutation der Komponente, dass er _rot_ werden kann.
+
+Referenz: `Components/Rounds/__tests__/EnterGameModal.test.ts`.
+
+- **Ablage:** `__tests__/<Komponente>.test.ts` im Ordner der Komponente, Helfer in `resources/js/inertia/testing/`. Testnamen beschreiben Verhalten auf Deutsch (`schickt ohne gültige Auswahl nichts ab`).
+- **Rendern:** `renderWithUi(Component, props)` hängt Nuxt UI und `UApp` darum. Abfragen über `screen`, weil Modals und Toasts in `document.body` teleportieren. Neue Props per `await rerender({ … })`.
+- **Abfragen:** nach Rolle, Label und Text (`getByRole('button', { name: 'Speichern' })`), Zustand über ARIA (`aria-pressed`), Interaktion per `userEvent.setup()`. DOM-Matcher aus jest-dom sind nicht installiert: `textContent` und Attribute direkt prüfen.
+- **Requests:** `useForm` bleibt echt. `fakeVisits('post', { errors })` bzw. `fakeVisits('patch')` ersetzt nur den Versand und spielt die Router-Callbacks durch; der zurückgegebene Spy zeigt URL und Daten. Erwartete URLs als Literal (`'/rounds/7/games'`), nicht über Wayfinder nachgerechnet.
+- **Pages:** `usePage` und `<Head>` brauchen den Zustand, den nur `createInertiaApp` anlegt. Ein Page-Test ersetzt beide per Teil-Mock; `url` braucht `AppLayout`. Wird das Mock in einem zweiten Test gebraucht, wandert es als Helfer nach `testing/`:
+
+  ```ts
+  const page = vi.hoisted(() => ({
+    url: '/rounds/create',
+    props: { auth: { user: { id: 1 }, player: { id: 5, surname: 'Paul', name: 'Paul D.' } }, navigation: { showCurrentRound: false } },
+    flash: {},
+  }));
+  vi.mock('@inertiajs/vue3', async (importOriginal) => ({
+    ...(await importOriginal<typeof import('@inertiajs/vue3')>()),
+    usePage: () => page,
+    Head: { render: () => null },
+  }));
+  ```
+
+  `vi.hoisted`, weil `vi.mock` vor alle Imports gehoben wird. Flash aus einer Antwort kommt über `fakeVisits('post', { page: { flash: { … } } })` in `onSuccess`.
+- **jsdom-Lücken** wie `matchMedia` schließt `testing/setup.ts` für alle Tests.
+
+- **Wayfinder:** Tests importieren die generierten Dateien unter `@/routes/...`; sie entstehen per `npm run build`. Fehlen sie in einem frischen Checkout, zuerst bauen.
 
 ## Backend
 
