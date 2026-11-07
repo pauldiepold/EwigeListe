@@ -19,7 +19,7 @@ layer(base);
   --color-orange-100: #fbe6df;
   --color-orange-200: #f6ccbf;
   --color-orange-300: #efab95;
-  --color-orange-400: #e58364;
+  --color-orange-400: #fa8f3e; /* Dark-Mode-Primary: kräftiger als die übrige Skala, im Design-Spike gewählt. */
   --color-orange-500: #d16341;
   --color-orange-600: #b94f30;
   --color-orange-700: #9a3f27;
