@@ -14,7 +14,6 @@ class SocialiteUserResource extends JsonResource
         $nameParts = explode(' ', (string) $this->name, 2);
 
         return [
-            'id' => $this->id,
             'email' => $this->email,
             'provider' => $this->provider,
             'surname' => $nameParts[0] ?? '',

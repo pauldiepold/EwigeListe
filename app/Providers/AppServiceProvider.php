@@ -63,6 +63,12 @@ class AppServiceProvider extends ServiceProvider
             return back(303);
         }
 
+        if ($status === 429) {
+            Toast::error('Zu viele Versuche. Bitte warte kurz und versuche es dann noch einmal.');
+
+            return back(303);
+        }
+
         if ($status < 500) {
             return $response->render('Error', ['status' => $status])->withSharedData();
         }

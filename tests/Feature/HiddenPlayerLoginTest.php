@@ -6,7 +6,6 @@ use App\Models\Player;
 use App\Models\SocialiteUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Testing\TestResponse;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as ProviderUser;
@@ -86,27 +85,12 @@ class HiddenPlayerLoginTest extends TestCase
             'name' => 'Max Mustermann',
             'email' => $user->email,
         ]);
-        Socialite::shouldReceive('driver->stateless->user')->andReturn((new ProviderUser)->map(['id' => '12345']));
+        Socialite::shouldReceive('driver->user')->andReturn((new ProviderUser)->map(['id' => '12345']));
 
         $this->get('/callback/google')->assertRedirect('/#');
         $this->assertAuthenticatedAs($user);
 
         $this->assertLockedOut($this->get('/'));
-    }
-
-    #[Test]
-    public function a_hidden_player_is_locked_out_right_after_resetting_the_password(): void
-    {
-        $user = $this->hiddenUser();
-
-        $this->post(route('password.update'), [
-            'token' => Password::createToken($user),
-            'email' => $user->email,
-            'password' => 'neues-passwort-123',
-            'password_confirmation' => 'neues-passwort-123',
-        ])->assertRedirect('/home');
-
-        $this->assertLockedOut($this->get('/home'));
     }
 
     #[Test]

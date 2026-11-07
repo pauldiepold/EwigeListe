@@ -5,6 +5,8 @@ import type { EditUser } from '@/types/user-edit';
 
 const props = defineProps<{
   user: EditUser;
+  /** Der Admin ändert Passwörter ohne das alte. */
+  requiresCurrentPassword: boolean;
 }>();
 
 const form = useForm({
@@ -24,7 +26,12 @@ function submit(): void {
 
 <template>
   <form class="space-y-4" @submit.prevent="submit">
-    <UFormField label="Altes Passwort" :error="form.errors.current_password" required>
+    <UFormField
+      v-if="requiresCurrentPassword"
+      label="Altes Passwort"
+      :error="form.errors.current_password"
+      required
+    >
       <UInput
         v-model="form.current_password"
         type="password"

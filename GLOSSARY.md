@@ -20,6 +20,14 @@ Eine Runde am echten Tisch, deren Spiele von Hand eingetragen werden.
 **Live-Runde**:
 Eine Runde, die in der App gespielt wird; ihre Spiele entstehen automatisch.
 
+**Regeln**:
+Die Einstellungen, nach denen in einer Live-Runde gespielt wird (z. B. Super-Schwein, Karlchen, Königssolo). Sie werden beim Anlegen der Runde festgelegt, sind mit dem üblichen Standard vorbelegt und gelten danach unverändert für alle Spiele der Runde.
+_Avoid_: Sonderregeln, Einstellungen
+
+**Zuschauer**:
+Ein Benutzer, der eine Live-Runde ansieht, ohne im aktuellen Spiel mitzuspielen, etwa weil er aussetzt oder nicht zur Runde gehört. Er sieht keine Hände.
+_Avoid_: Beobachter, Gast
+
 **Geber**:
 Der Spieler, der im aktuellen Spiel gibt. Das Amt wandert nach jedem Spiel weiter, außer nach Soli und falsch bedienten Spielen.
 _Avoid_: Dealer

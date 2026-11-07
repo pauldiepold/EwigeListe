@@ -53,6 +53,34 @@ class AuthTest extends TestCase
     }
 
     #[Test]
+    public function registration_rejects_a_password_shorter_than_eight_characters(): void
+    {
+        $this->post('register', [...$this->registrationAttributes(), 'password' => 'kurz123', 'password_confirmation' => 'kurz123'])
+            ->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
+
+        $this->assertGuest();
+    }
+
+    #[Test]
+    public function registration_stores_the_email_in_lowercase(): void
+    {
+        NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);
+
+        $this->post('register', [...$this->registrationAttributes(), 'email' => 'Max.Mustermann@Example.com'])
+            ->assertRedirect('/');
+
+        $this->assertSame('max.mustermann@example.com', auth()->user()->email);
+    }
+
+    #[Test]
+    public function the_unused_password_confirmation_page_returns_404(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('password.confirm'))
+            ->assertNotFound();
+    }
+
+    #[Test]
     public function a_failed_user_creation_during_registration_leaves_no_player_behind(): void
     {
         NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);

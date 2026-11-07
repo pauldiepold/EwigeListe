@@ -2,48 +2,39 @@
 
 namespace App\Http\Requests;
 
+use App\Concerns\PasswordValidationRules;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
+/**
+ * Wie `PasswordUpdateRequest` im Vue-Starter-Kit. Der Admin ändert Passwörter (auch fremde) ohne
+ * das alte; `Users/Edit` blendet ihm das Feld deshalb aus.
+ */
 class UpdatePassword extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    use PasswordValidationRules;
+
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            'current_password' => [
-                'required',
-                'min:6',
-                function ($attribute, $value, $fail) {
-                    if (! Hash::check($value, Auth::user()->password) && ! Auth::user()->isAdmin()) {
-                        $fail('Das alte Passwort stimmt nicht!');
-                    }
-                },
-            ],
-            'password' => 'required|min:6|confirmed',
+            'current_password' => $this->user()->isAdmin() ? [] : $this->currentPasswordRules(),
+            'password' => $this->passwordRules(),
         ];
     }
 
-    public function attributes()
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
     {
-        return [
-            'current_password' => 'Das alte Passwort',
-            'password' => 'Neues Passwort',
-        ];
+        return [...$this->passwordMessages(), ...$this->currentPasswordMessages()];
     }
 }

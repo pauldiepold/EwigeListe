@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Notifications\MyOwnResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,11 +55,6 @@ class User extends Authenticatable
     public function getAvatarPathAttribute($avatar)
     {
         return $avatar ? '/storage/avatars/'.$avatar : null;
-    }
-
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify((new MyOwnResetPassword($token))->locale('de'));
     }
 
     public function player()

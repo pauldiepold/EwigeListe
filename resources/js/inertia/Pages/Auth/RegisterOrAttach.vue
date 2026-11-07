@@ -18,14 +18,12 @@ const registerForm = useForm({
   email: props.socialiteUser.email,
   surname: props.socialiteUser.surname,
   name: props.socialiteUser.name,
-  socialiteUserId: props.socialiteUser.id,
 });
 
 const loginForm = useForm({
   email: props.existingUserEmail ?? '',
   password: '',
   remember: true,
-  socialiteUserId: props.socialiteUser.id,
 });
 
 function submitRegister(): void {
@@ -110,8 +108,14 @@ function submitLogin(): void {
               />
             </UFormField>
 
-            <UFormField label="E-Mail" :error="registerForm.errors.email">
-              <UInput v-model="registerForm.email" type="email" name="email" disabled />
+            <UFormField label="E-Mail" :error="registerForm.errors.email" required>
+              <UInput
+                v-model="registerForm.email"
+                type="email"
+                name="email"
+                autocomplete="email"
+                :disabled="registerForm.processing"
+              />
             </UFormField>
 
             <UButton

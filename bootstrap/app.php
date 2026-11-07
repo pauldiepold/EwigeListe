@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => Admin::class,
         ]);
 
-        $middleware->redirectUsersTo('/home');
+        $middleware->redirectUsersTo('/');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
