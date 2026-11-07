@@ -10,23 +10,23 @@ import nuxtUiOptions from './nuxt-ui.config.mjs';
  * automatisch importiert.
  */
 export default defineConfig(async () => {
-  const { default: ui } = await import('@nuxt/ui/vite');
+    const { default: ui } = await import('@nuxt/ui/vite');
 
-  return {
-    plugins: [
-      vue({ template: { compilerOptions: { whitespace: 'preserve' } } }),
-      ui(nuxtUiOptions),
-    ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./resources/js/inertia', import.meta.url)),
-      },
-    },
-    test: {
-      environment: 'jsdom',
-      include: ['resources/js/inertia/**/__tests__/*.test.ts'],
-      setupFiles: ['resources/js/inertia/testing/setup.ts'],
-      restoreMocks: true,
-    },
-  };
+    return {
+        plugins: [
+            vue({ template: { compilerOptions: { whitespace: 'preserve' } } }),
+            ui(nuxtUiOptions),
+        ],
+        resolve: {
+            alias: {
+                '@': fileURLToPath(new URL('./resources/js/inertia', import.meta.url)),
+            },
+        },
+        test: {
+            environment: 'jsdom',
+            include: ['resources/js/inertia/**/__tests__/*.test.ts'],
+            setupFiles: ['resources/js/inertia/testing/setup.ts'],
+            restoreMocks: true,
+        },
+    };
 });

@@ -41,7 +41,7 @@ describe('EnterGameModal', () => {
     );
   });
 
-  it('schickt ohne gültige Auswahl nichts ab', async () => {
+  it('schickt ohne Gewinner nichts ab', async () => {
     const post = fakeVisits('post');
     const user = userEvent.setup();
     renderModal();
@@ -49,7 +49,17 @@ describe('EnterGameModal', () => {
     await user.click(screen.getByRole('button', { name: 'Spiel eintragen' }));
     await user.click(await screen.findByRole('button', { name: 'Speichern' }));
 
-    await user.click(screen.getByRole('button', { name: /Anna/ }));
+    expect(post).not.toHaveBeenCalled();
+    expect(screen.getByRole('alert').textContent).toContain('mindestens eine');
+  });
+
+  it('schickt bei „Falsch bedient“ nur mit genau drei Gewinnern ab', async () => {
+    const post = fakeVisits('post');
+    const user = userEvent.setup();
+    renderModal();
+
+    await user.click(screen.getByRole('button', { name: 'Spiel eintragen' }));
+    await user.click(await screen.findByRole('button', { name: /Anna/ }));
     await user.click(screen.getByRole('switch', { name: 'Falsch bedient' }));
     await user.click(screen.getByRole('button', { name: 'Speichern' }));
 
@@ -66,7 +76,7 @@ describe('EnterGameModal', () => {
     await user.click(await screen.findByRole('button', { name: /Bernd/ }));
     await user.click(screen.getByRole('button', { name: 'Speichern' }));
 
-    expect(await screen.findByText('Die Punkte sind ungültig.')).toBeTruthy();
+    await screen.findByText('Die Punkte sind ungültig.');
     expect(screen.getByRole('button', { name: /Bernd/ }).getAttribute('aria-pressed')).toBe('true');
   });
 
@@ -78,7 +88,7 @@ describe('EnterGameModal', () => {
     await screen.findByRole('dialog');
     await rerender({ lastGameId: 101 });
 
-    expect(await screen.findByText('Inzwischen wurde ein Spiel eingetragen')).toBeTruthy();
+    await screen.findByText('Inzwischen wurde ein Spiel eingetragen');
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 });

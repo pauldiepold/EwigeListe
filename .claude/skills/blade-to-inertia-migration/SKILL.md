@@ -76,9 +76,9 @@ Referenz: `Components/Rounds/__tests__/EnterGameModal.test.ts`.
 
 - **Ablage:** `__tests__/<Komponente>.test.ts` im Ordner der Komponente, Helfer in `resources/js/inertia/testing/`. Testnamen beschreiben Verhalten auf Deutsch (`schickt ohne gültige Auswahl nichts ab`).
 - **Rendern:** `renderWithUi(Component, props)` hängt Nuxt UI und `UApp` darum. Abfragen über `screen`, weil Modals und Toasts in `document.body` teleportieren. Neue Props per `await rerender({ … })`.
-- **Abfragen:** nach Rolle, Label und Text (`getByRole('button', { name: 'Speichern' })`), Zustand über ARIA (`aria-pressed`), Interaktion per `userEvent.setup()`. DOM-Matcher aus jest-dom sind nicht installiert: `textContent` und Attribute direkt prüfen.
+- **Abfragen:** nach Rolle, Label und Text (`getByRole('button', { name: 'Speichern' })`) statt über Klassen, die sich beim nächsten Redesign ändern; Zustand über ARIA (`aria-pressed`), Interaktion per `userEvent.setup()`. DOM-Matcher aus jest-dom sind nicht installiert: `textContent` und Attribute direkt prüfen.
 - **Requests:** `useForm` bleibt echt. `fakeVisits('post', { errors })` bzw. `fakeVisits('patch')` ersetzt nur den Versand und spielt die Router-Callbacks durch; der zurückgegebene Spy zeigt URL und Daten. Erwartete URLs als Literal (`'/rounds/7/games'`), nicht über Wayfinder nachgerechnet.
-- **Pages:** `usePage` und `<Head>` brauchen den Zustand, den nur `createInertiaApp` anlegt. Ein Page-Test ersetzt beide per Teil-Mock; `url` braucht `AppLayout`. Wird das Mock in einem zweiten Test gebraucht, wandert es als Helfer nach `testing/`:
+- **Pages:** `usePage` und `<Head>` brauchen den Zustand, den nur `createInertiaApp` anlegt. Ein Page-Test ersetzt beide per Teil-Mock; `url` braucht `AppLayout`. Mit dem ersten Page-Test wandert das Mock als Helfer nach `testing/`:
 
   ```ts
   const page = vi.hoisted(() => ({
@@ -95,7 +95,6 @@ Referenz: `Components/Rounds/__tests__/EnterGameModal.test.ts`.
 
   `vi.hoisted`, weil `vi.mock` vor alle Imports gehoben wird. Flash aus einer Antwort kommt über `fakeVisits('post', { page: { flash: { … } } })` in `onSuccess`.
 - **jsdom-Lücken** wie `matchMedia` schließt `testing/setup.ts` für alle Tests.
-
 - **Wayfinder:** Tests importieren die generierten Dateien unter `@/routes/...`; sie entstehen per `npm run build`. Fehlen sie in einem frischen Checkout, zuerst bauen.
 
 ## Backend

@@ -17,8 +17,8 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 ## Befehle
 
 - `php artisan test --compact` (Tests), `npm run build`, `vendor/bin/pint --test` (PHP-Formatierung)
-- Nach Frontend-Änderungen: `npm run type-check && npm run lint` (Prettier, `php -l` und Pint laufen per Hook nach jedem Edit, `.claude/hooks/post-edit.mjs`)
-- Komponententests: `npm run test:js`, einzelne Datei mit `npm run test:js -- EnterGameModal`. Wann und wie: Skill `blade-to-inertia-migration`, Abschnitt „Komponententests“
+- Nach Frontend-Änderungen: `npm run test:js && npm run type-check && npm run lint` (Prettier, `php -l` und Pint laufen per Hook nach jedem Edit, `.claude/hooks/post-edit.mjs`)
+- Komponententests einzeln: `npm run test:js -- EnterGameModal`. Wann und wie: Skill `blade-to-inertia-migration`, Abschnitt „Komponententests“
 - `php artisan queue:listen --tries=1` im eigenen Terminal-Tab: Lokal läuft die Queue über `database`. Ohne Worker werden Statistiken erst berechnet, sobald er wieder läuft. Bei geteilter Datenbank nur einen Worker für alle Workspaces starten.
 
 ## Struktur-Hinweise

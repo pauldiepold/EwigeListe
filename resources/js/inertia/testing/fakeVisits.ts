@@ -14,10 +14,7 @@ type FakeVisitResult = { errors: Errors } | { page?: Partial<SuccessPage> };
  * in `onSuccess` (z. B. mit `flash`). Der Spy zeigt, ob und wohin gesendet wurde:
  * `expect(post).toHaveBeenCalledWith(url, data, expect.anything())`.
  */
-export function fakeVisits(
-  method: 'post' | 'put' | 'patch',
-  result: FakeVisitResult = { page: {} },
-) {
+export function fakeVisits(method: 'post' | 'patch', result: FakeVisitResult = { page: {} }) {
   return vi
     .spyOn(router, method)
     .mockImplementation(async (_url, _data, options: VisitOptions = {}) => {

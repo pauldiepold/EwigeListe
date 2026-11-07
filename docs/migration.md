@@ -185,5 +185,3 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - `WhenVisible` lädt pro Komponenten-Instanz nur einmal. Bleibt der State bei einem Listenwechsel erhalten (`preserveState`), braucht die Komponente einen `key` je Liste, sonst bleibt das Chart leer (#31).
 - `php artisan wayfinder:generate` ohne `--path` schreibt nach `resources/js/` statt nach `resources/js/inertia/`. Generiert wird über `npm run build`, das Vite-Plugin kennt den richtigen Pfad (#32).
 - Das Inertia-Layout hat kein `csrf-token`-Meta-Tag. Echo braucht für Presence-Channels deshalb den Token aus dem `XSRF-TOKEN`-Cookie als `X-XSRF-TOKEN`-Header (`useRoundUpdates`, #32).
-- Unter Vitest läuft Vite im Serve-Modus: `laravel-vite-plugin` bricht dort ab, sobald `CI` gesetzt ist („should not run the Vite HMR server in CI“). Deshalb hat `vitest.config.mts` keine Laravel- und Wayfinder-Plugins; die Wayfinder-Dateien müssen vorher per `npm run build` erzeugt sein (#63).
-- Ohne `@testing-library/jest-dom` gibt es keine DOM-Matcher wie `toHaveTextContent`. Stattdessen `textContent` oder Attribute direkt prüfen (#63).
