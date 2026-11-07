@@ -178,11 +178,7 @@ if (initialPlayer) {
               class="flex w-full cursor-pointer items-center gap-3 px-3 py-1.5 text-left transition hover:bg-elevated"
               @click="addPlayer(player)"
             >
-              <UAvatar
-                :src="player.avatarPath ?? undefined"
-                :alt="player.fullName"
-                size="sm"
-              />
+              <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="sm" />
               <span class="truncate">{{ player.fullName }}</span>
             </button>
             <p v-if="filteredPlayers.length === 0" class="px-3 py-2 text-sm text-muted">
@@ -231,11 +227,7 @@ if (initialPlayer) {
             >
               <UIcon name="i-lucide-grip-vertical" class="size-4" />
             </span>
-            <UAvatar
-              :src="player.avatarPath ?? undefined"
-              :alt="player.fullName"
-              size="sm"
-            />
+            <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="sm" />
             <span class="min-w-0 flex-1 truncate font-medium text-highlighted">
               {{ player.fullName }}
             </span>
