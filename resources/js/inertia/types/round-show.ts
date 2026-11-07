@@ -44,7 +44,7 @@ export type RoundGame = {
 
 export type RoundInfo = {
   gamesCount: number;
-  averageGameDuration: string | null;
+  averageGameMinutes: number | null;
   startedBy: string;
   startedAt: string;
   lastGameBy: string | null;

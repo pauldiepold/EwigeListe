@@ -237,7 +237,7 @@ class RoundShowTest extends TestCase
 
         $this->get(route('rounds.show', $round))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('round.info.averageGameDuration', '15 Minuten und 0 Sekunden')
+                ->where('round.info.averageGameMinutes', 15)
             );
     }
 
@@ -249,7 +249,7 @@ class RoundShowTest extends TestCase
 
         $this->get(route('rounds.show', $round))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('round.info.averageGameDuration', '20 Minuten und 0 Sekunden')
+                ->where('round.info.averageGameMinutes', 20)
             );
     }
 
@@ -264,7 +264,36 @@ class RoundShowTest extends TestCase
         $round = $this->roundWithGamesAt($times);
 
         $this->get(route('rounds.show', $round))
-            ->assertInertia(fn (Assert $page) => $page->where('round.info.averageGameDuration', null));
+            ->assertInertia(fn (Assert $page) => $page->where('round.info.averageGameMinutes', null));
+    }
+
+    #[Test]
+    #[DataProvider('shortTimestamps')]
+    public function the_info_shows_short_timestamps(string $startedAt, string $lastGameAt, string $expectedStart, string $expectedLastGame): void
+    {
+        Carbon::setTestNow('2026-10-31 20:00:00');
+        $round = $this->roundWithPlayers($this->otherPlayers(4));
+        Round::whereKey($round->id)->update(['created_at' => $startedAt]);
+        $game = $round->addNewGame([$round->players[0]->id, $round->players[1]->id], 1);
+        Game::whereKey($game->id)->update(['created_at' => $lastGameAt]);
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('round.info.startedAt', $expectedStart)
+                ->where('round.info.lastGameAt', $expectedLastGame)
+            );
+    }
+
+    /**
+     * @return array<string, array{string, string, string, string}>
+     */
+    public static function shortTimestamps(): array
+    {
+        return [
+            'heute, letztes Spiel am selben Tag nur mit Uhrzeit' => ['2026-10-31 18:05:00', '2026-10-31 19:42:00', 'heute 18:05', '19:42'],
+            'gestern bis heute' => ['2026-10-30 23:30:00', '2026-10-31 00:40:00', 'gestern 23:30', 'heute 00:40'],
+            'älter' => ['2026-10-03 14:00:00', '2026-10-03 16:30:00', '3.10.2026 14:00', '16:30'],
+        ];
     }
 
     /**

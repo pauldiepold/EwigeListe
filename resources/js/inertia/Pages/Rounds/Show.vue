@@ -63,7 +63,7 @@ function deleteRound(): void {
 <template>
   <Head title="Rundenübersicht" />
 
-  <AppLayout>
+  <AppLayout fill-height>
     <template v-if="canChangeGames && activeTab === 'runde'" #floatingAction>
       <EnterGameModal
         :round-id="round.id"
@@ -74,10 +74,11 @@ function deleteRound(): void {
       />
     </template>
 
-    <div class="mx-auto w-full max-w-5xl">
+    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
       <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full" />
 
-      <section v-if="activeTab === 'runde'" class="space-y-6">
+      <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
+      <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
         <RoundTable
           :players="round.players"
           :games="round.games"
@@ -108,15 +109,28 @@ function deleteRound(): void {
           />
         </div>
 
-        <RoundInfo :info="round.info" />
+        <UEmpty
+          v-if="round.info.gamesCount === 0 && pendingGame !== 'new'"
+          class="flex-1"
+          variant="naked"
+          icon="i-lucide-spade"
+          title="Noch kein Spiel eingetragen"
+          :description="
+            canChangeGames ? 'Über das + unten rechts trägst du das erste Spiel ein.' : undefined
+          "
+        >
+          <template v-if="round.canUpdate" #actions>
+            <ConfirmAction
+              variant="ghost"
+              label="Runde löschen"
+              confirm-label="Runde wirklich löschen?"
+              @confirm="deleteRound"
+            />
+          </template>
+        </UEmpty>
 
-        <div v-if="round.canUpdate && round.info.gamesCount === 0" class="flex justify-center">
-          <ConfirmAction
-            label="Runde löschen"
-            confirm-label="Runde wirklich löschen?"
-            @confirm="deleteRound"
-          />
-        </div>
+        <!-- Rechts bleibt Platz für den schwebenden Plus-Button. -->
+        <RoundInfo :info="round.info" class="mt-auto" :class="{ 'pr-20': canChangeGames }" />
       </section>
 
       <UAlert

@@ -142,7 +142,7 @@ class RoundShowResource extends JsonResource
     }
 
     /**
-     * @return array{gamesCount: int, averageGameDuration: ?string, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string}
+     * @return array{gamesCount: int, averageGameMinutes: ?int, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string}
      */
     private function info(): array
     {
@@ -150,19 +150,37 @@ class RoundShowResource extends JsonResource
 
         return [
             'gamesCount' => $this->games->count(),
-            'averageGameDuration' => $this->averageGameDuration(),
+            'averageGameMinutes' => $this->averageGameMinutes(),
             'startedBy' => $this->createdBy->surname,
-            'startedAt' => printDate($this->created_at),
+            'startedAt' => $this->shortTimestamp($this->created_at),
             'lastGameBy' => $lastGame?->createdBy?->surname,
-            'lastGameAt' => $lastGame ? printDate($lastGame->created_at) : null,
+            'lastGameAt' => $lastGame
+                ? ($lastGame->created_at->isSameDay($this->created_at)
+                    ? $lastGame->created_at->format('H:i')
+                    : $this->shortTimestamp($lastGame->created_at))
+                : null,
         ];
+    }
+
+    /**
+     * „heute 14:00“, „gestern 14:00“ oder „3.11.2026 14:00“.
+     */
+    private function shortTimestamp(Carbon $timestamp): string
+    {
+        $day = match (true) {
+            $timestamp->isToday() => 'heute',
+            $timestamp->isYesterday() => 'gestern',
+            default => $timestamp->format('j.n.Y'),
+        };
+
+        return $day.' '.$timestamp->format('H:i');
     }
 
     /**
      * Solange die Runde läuft, zählt die Zeit bis jetzt mit. Unplausible Werte (Runde über mehrere
      * Tage, nachträglich eingetragene Spiele) werden nicht gezeigt.
      */
-    private function averageGameDuration(): ?string
+    private function averageGameMinutes(): ?int
     {
         $gamesCount = $this->games->count();
 
@@ -182,9 +200,7 @@ class RoundShowResource extends JsonResource
             return null;
         }
 
-        $roundedSeconds = (int) round($seconds);
-
-        return intdiv($roundedSeconds, 60).' Minuten und '.($roundedSeconds % 60).' Sekunden';
+        return (int) round($seconds / 60);
     }
 
     /**

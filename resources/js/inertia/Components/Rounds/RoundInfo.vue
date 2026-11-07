@@ -7,14 +7,24 @@ defineProps<{
 </script>
 
 <template>
-  <div class="space-y-1 text-center text-sm text-muted">
-    <p v-if="info.gamesCount > 0">Anzahl Spiele: {{ info.gamesCount }}</p>
-    <p v-if="info.averageGameDuration">
-      Durchschnittliche Spieldauer: {{ info.averageGameDuration }}
+  <div class="space-y-0.5 text-xs text-muted">
+    <p v-if="info.gamesCount > 0">
+      {{ info.gamesCount }} {{ info.gamesCount === 1 ? 'Spiel' : 'Spiele' }}
+      <template v-if="info.averageGameMinutes !== null">
+        &middot; Ø {{ info.averageGameMinutes }} Min. pro Spiel
+      </template>
     </p>
-    <p>Runde gestartet von {{ info.startedBy }} {{ info.startedAt }}.</p>
-    <p v-if="info.lastGameBy">
-      Letztes Spiel eingetragen von {{ info.lastGameBy }} {{ info.lastGameAt }}.
+    <!-- Am Handy steht das letzte Spiel in einer eigenen Zeile, sonst bricht die Zeile mittendrin um. -->
+    <p class="flex flex-col sm:flex-row sm:gap-1">
+      <span>Gestartet von {{ info.startedBy }}, {{ info.startedAt }}</span>
+      <template v-if="info.lastGameAt">
+        <span class="hidden sm:inline" aria-hidden="true">&middot;</span>
+        <span>
+          Letztes Spiel<template v-if="info.lastGameBy"> von {{ info.lastGameBy }}</template
+          >,
+          {{ info.lastGameAt }}
+        </span>
+      </template>
     </p>
   </div>
 </template>
