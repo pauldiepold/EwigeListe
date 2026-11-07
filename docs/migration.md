@@ -100,7 +100,9 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Legacy pro Seite löschen, nicht vorab | Blade/Legacy-Vue sind bis zur Migration die Spezifikation |
 | 2026-10-28 | Tests sind Pflicht, Arbeit per TDD | Sicherheitsnetz für umfangreiche, teils autonome Umbauten |
 | 2026-10-28 | Live-Spiel bleibt im Umfang, kommt aber nach Design | Live-UI wird direkt im neuen Design gebaut statt zweimal |
-| 2026-10-28 | Design-Spikes bleiben innerhalb von Nuxt UI | kein Framework-Wechsel; Varianten unterscheiden sich in Theme und Layout |
+| 2026-10-28 | Design-Spikes bleiben innerhalb von Nuxt UI | kein Framework-Wechsel |
+| 2026-11-01 | Die Spikes sind vier Ausprägungen derselben Identität: Farben, Schriften und Navigationskonzept bleiben fest, variabel sind Buttons, Tabs, Überschriften, Flächen und Spieltabelle. Maßstab ist der Dark Mode am Handy. Der Freundeskreis gibt Rückmeldung je Element, Paul entscheidet, auch als Mischung. Statistik-Visuals und andere Detailarbeit an einzelnen Seiten gehören nicht zu Phase 4 | Look and Feel soll der alten App sehr ähnlich bleiben, bei so ähnlichen Varianten trägt eine Gesamtabstimmung wenig (#34) |
+| 2026-11-01 | Orange und Blau haben eine vollständige Skala aus den alten Farben (`#d16341`, `#065a82`), `primary` und `secondary` nutzen sie auch im Dark Mode | Bisher war nur Orange 500 gesetzt: Der Dark Mode zeigte Tailwind-Orange, `secondary` Tailwind-Blau (#34) |
 | 2026-10-28 | Claude Code als einziges Agent-Tooling; `.cursor/` wird aufgelöst | eine Quelle für Regeln und Skills |
 | 2026-10-28 | Test-/Report-Routen streichen, Neuberechnung als Artisan-Befehl | Testseiten ungenutzt; ein Befehl wird ohnehin für den Rollback gebraucht |
 | 2026-10-31 | Alle Routen sind benannt (`live.games.*`, `live.rounds.start`, `rounds.fetchData`, `auth.socialite.callback`; Pfade unverändert) und nutzen `[Controller::class, 'method']`. Der `$namespace` im `RouteServiceProvider` entfällt. Mutierende GET-Routen gibt es nicht mehr (#40, #41, #43) | Einheitliche Routen-Definition, Namen für `route()` und Wayfinder; kein eigener Test, die Suite löst jede Controller-Referenz auf |
