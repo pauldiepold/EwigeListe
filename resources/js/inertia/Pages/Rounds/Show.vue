@@ -18,7 +18,8 @@ import type { RoundShowProps } from '@/types/round-show';
 
 const props = defineProps<RoundShowProps>();
 
-const { tabsVariant } = useDesignSpike();
+const { current: currentDesign, tabsVariant } = useDesignSpike();
+const actionsInBar = computed(() => currentDesign.value === 'g');
 
 const tabs = computed(() => [
   { label: 'Runde', icon: 'i-lucide-circle-play', value: 'runde' },
@@ -73,11 +74,22 @@ function deleteRound(): void {
         :items="tabs"
         :content="false"
         :variant="tabsVariant"
-        class="w-full"
+        class="spike-round-tabs w-full"
       />
 
       <section v-if="activeTab === 'runde'" class="space-y-6">
         <div v-if="canChangeGames" class="spike-game-action">
+          <!-- PROTOTYP #34, Variante G: Bearbeiten und Löschen sitzen mit in der Leiste. -->
+          <span v-if="actionsInBar && round.lastGameId !== null" class="spike-bar-side">
+            <EnterGameModal
+              :round-id="round.id"
+              :last-game-id="round.lastGameId"
+              :active-players="round.activePlayers"
+              :viewer-is-active="round.viewerIsActive"
+              :edited-game="round.lastGame"
+              @pending="pendingGame = $event"
+            />
+          </span>
           <EnterGameModal
             :round-id="round.id"
             :last-game-id="round.lastGameId"
@@ -85,6 +97,16 @@ function deleteRound(): void {
             :viewer-is-active="round.viewerIsActive"
             @pending="pendingGame = $event"
           />
+          <span v-if="actionsInBar && round.lastGameId !== null" class="spike-bar-side">
+            <ConfirmAction
+              :key="round.lastGameId"
+              icon="i-lucide-trash-2"
+              label="Letztes Spiel löschen"
+              confirm-label="Wirklich löschen?"
+              :loading="deleting"
+              @confirm="deleteLastGame"
+            />
+          </span>
         </div>
 
         <RoundTable
@@ -95,7 +117,7 @@ function deleteRound(): void {
         />
 
         <div
-          v-if="canChangeGames && round.lastGameId !== null"
+          v-if="canChangeGames && round.lastGameId !== null && !actionsInBar"
           class="flex flex-wrap items-center justify-center gap-3"
         >
           <EnterGameModal

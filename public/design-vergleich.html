@@ -21,8 +21,10 @@
     </nav>
     <main></main>
     <script>
-      const path = new URLSearchParams(location.search).get('pfad') ?? '/rounds/current';
-      for (const design of ['a', 'b', 'c', 'd']) {
+      const params = new URLSearchParams(location.search);
+      const path = params.get('pfad') ?? '/rounds/current';
+      // ?varianten=abcdefg zeigt andere Varianten, Standard ist A gegen Runde 2.
+      for (const design of (params.get('varianten') ?? 'aeh').split('')) {
         const frame = document.createElement('iframe');
         frame.src = `${path}?design=${design}`;
         document.querySelector('main').append(frame);

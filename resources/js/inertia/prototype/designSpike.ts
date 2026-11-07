@@ -1,5 +1,5 @@
 /**
- * PROTOTYP #34, Wegwerf-Code: vier Design-Varianten, umschaltbar per `?design=a` und über den
+ * PROTOTYP #34, Wegwerf-Code: Design-Varianten (A bis D, Runde 2: E bis H), umschaltbar per `?design=a` und über den
  * DesignSwitcher. Die Wahl steht als `data-design` an `<html>` und übersteht Seitenwechsel per
  * localStorage. Dieser Branch wird nie gemergt, der Gewinner wird in #35 sauber neu umgesetzt.
  */
@@ -10,7 +10,14 @@ export const designs = [
   { key: 'b', name: 'Alte Liste' },
   { key: 'c', name: 'Spieltisch' },
   { key: 'd', name: 'Flach' },
+  { key: 'e', name: 'Plus' },
+  { key: 'f', name: 'Schmale Leiste' },
+  { key: 'g', name: 'Aktionsleiste' },
+  { key: 'h', name: 'Plus 2' },
 ] as const;
+
+/** Runde 2: setzt Pauls Rückmeldung zu A bis D um (Kopf mit Bild, volle Breite, ohne Box). */
+const SECOND_ROUND: readonly string[] = ['e', 'f', 'g', 'h'];
 
 export type DesignKey = (typeof designs)[number]['key'];
 
@@ -54,6 +61,7 @@ export function useDesignSpike() {
     current,
     cycle,
     currentDesign: computed(() => designs.find((design) => design.key === current.value)!),
+    isSecondRound: computed(() => SECOND_ROUND.includes(current.value)),
     tabsVariant: computed(() =>
       current.value === 'b' || current.value === 'd' ? ('link' as const) : ('pill' as const),
     ),

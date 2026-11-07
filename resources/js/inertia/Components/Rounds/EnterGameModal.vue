@@ -191,8 +191,8 @@ watch(
 <template>
   <UModal
     v-model:open="open"
-    :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Welche Personen haben gewonnen?'"
-    description="Wähle die Gewinner und trage die Punkte ein."
+    :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Wer hat gewonnen?'"
+    description="Wähle die Gewinnerinnen und trage die Punkte ein."
     :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
   >
     <UButton

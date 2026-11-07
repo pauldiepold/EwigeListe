@@ -133,8 +133,8 @@ onMounted(() => {
       </div>
 
       <nav class="bg-blue">
-        <UContainer class="max-w-md px-1 py-1 sm:max-w-3xl">
-          <div class="flex items-center justify-around">
+        <UContainer class="max-w-md px-1 py-1 sm:max-w-4xl">
+          <div class="flex items-center justify-around sm:gap-3">
             <UButton
               v-for="item in navItems"
               :key="item.to"

@@ -2,6 +2,9 @@
 import { onUnmounted, ref, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import type { RoundGame, RoundPlayer } from '@/types/round-show';
+import { useDesignSpike } from '@/prototype/designSpike';
+
+const { isSecondRound } = useDesignSpike();
 
 const HIGHLIGHT_MILLISECONDS = 2000;
 
@@ -92,7 +95,49 @@ function rowBackground(game: RoundGame): string {
   <!-- `overflow-x-clip` statt `-auto`: Ein Scroll-Container hielte die Namen nicht am Seitenrand. -->
   <div class="spike-card spike-round-table mx-auto max-w-3xl overflow-x-clip">
     <table class="w-full table-fixed text-center tabular-nums">
-      <thead>
+      <!-- PROTOTYP #34, Runde 2: Bild und Name in einer Zelle, die als Ganzes stehen bleibt und verlinkt. -->
+      <thead v-if="isSecondRound">
+        <tr>
+          <th
+            v-for="player in players"
+            :key="player.id"
+            class="spike-sticky-head sticky top-0 z-10 px-0.5 pt-1.5 pb-2 align-bottom font-normal"
+            :class="stickyHeadBorder"
+          >
+            <component
+              :is="player.path ? Link : 'span'"
+              :href="player.path ?? undefined"
+              class="flex flex-col items-center gap-1 rounded-md px-0.5 pt-1.5 pb-1 no-underline"
+            >
+              <UAvatar
+                :src="player.avatarPath ?? undefined"
+                :alt="player.surname"
+                :class="{
+                  'opacity-40': sitsOut(player),
+                  'shadow-[0_0_10px_2px] shadow-success/60': onlinePlayerIds.includes(player.id),
+                }"
+              />
+              <span
+                class="block w-full truncate text-sm leading-4 font-semibold"
+                :class="[
+                  player.isDealer ? 'text-primary' : 'text-highlighted',
+                  { 'opacity-40': sitsOut(player) },
+                ]"
+              >
+                {{ player.surname }}
+              </span>
+            </component>
+          </th>
+          <th
+            class="spike-sticky-head sticky top-0 z-10 px-0.5 pt-2 pb-3 align-bottom text-sm font-semibold text-highlighted"
+            :class="stickyHeadBorder"
+          >
+            <span class="sm:hidden">Pkt.</span>
+            <span class="hidden sm:inline">Punkte</span>
+          </th>
+        </tr>
+      </thead>
+      <thead v-else>
         <tr>
           <th
             v-for="player in players"
@@ -128,15 +173,17 @@ function rowBackground(game: RoundGame): string {
             class="spike-sticky-head sticky top-0 z-10 px-0.5 py-1 design-c:top-11"
             :class="stickyHeadBorder"
           >
-            <span
-              class="block truncate font-semibold"
+            <component
+              :is="player.path ? Link : 'span'"
+              :href="player.path ?? undefined"
+              class="block truncate font-semibold no-underline"
               :class="[
                 player.isDealer ? 'text-primary' : 'text-highlighted',
                 { 'opacity-40': sitsOut(player) },
               ]"
             >
               {{ player.surname }}
-            </span>
+            </component>
           </th>
           <th
             class="spike-sticky-head sticky top-0 z-10 px-0.5 py-1 font-semibold text-highlighted design-c:top-11"

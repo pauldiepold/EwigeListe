@@ -210,6 +210,7 @@ html:not(.dark)[data-design="c"] .spike-card {
   inset-inline: 0;
   bottom: 0;
   z-index: 20;
+  margin: 0;
   padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
   background: var(--ui-bg);
   border-top: 1px solid var(--ui-border-accented);
@@ -228,6 +229,7 @@ html:not(.dark)[data-design="c"] .spike-card {
   right: 1rem;
   bottom: calc(1rem + env(safe-area-inset-bottom));
   z-index: 20;
+  margin: 0;
 }
 
 [data-design="c"] .spike-game-action > button {
@@ -249,6 +251,160 @@ html:not(.dark)[data-design="c"] .spike-card {
 /* Die feste Aktion darf das Seitenende nicht verdecken. */
 html[data-design="b"]:has(.spike-game-action) footer,
 html[data-design="c"]:has(.spike-game-action) footer,
-html[data-design="d"]:has(.spike-game-action) footer {
+html[data-design="d"]:has(.spike-game-action) footer,
+html[data-design="e"]:has(.spike-game-action) footer,
+html[data-design="f"]:has(.spike-game-action) footer,
+html:is([data-design="g"], [data-design="h"]):has(.spike-game-action) footer {
   padding-bottom: 5.5rem;
+}
+
+/* =============================================
+   Runde 2 (E, F, G): Pauls Rückmeldung zu A bis D
+   - Flächen wie A (E, G) bzw. B ohne Karten (F)
+   - Navigation mit orangem Balken, Tabs und Buttons wie A
+   - Spieltabelle ohne Box über die ganze Breite, Kopf mit Bild bleibt stehen
+   - Je Variante ein anderes Orange im Dark Mode, zwischen #e58364 und dem alten Tailwind-Orange
+   ============================================= */
+
+html[data-design="f"]:not(.dark) {
+  --ui-color-neutral-50: #fafaf9;
+  --ui-color-neutral-100: #f5f5f4;
+  --ui-color-neutral-200: #e7e5e4;
+  --ui-color-neutral-300: #d6d3d1;
+  --ui-color-neutral-400: #a8a29e;
+  --ui-color-neutral-500: #78716c;
+  --ui-color-neutral-600: #57534e;
+  --ui-color-neutral-700: #44403c;
+  --ui-color-neutral-800: #292524;
+  --ui-color-neutral-900: #1c1917;
+  --ui-color-neutral-950: #0c0a09;
+  --ui-bg: #f1f1ef;
+  --ui-bg-elevated: #e7e5e4;
+}
+
+html.dark[data-design="e"] {
+  --ui-color-primary-400: #ef7d52;
+}
+
+html.dark[data-design="f"] {
+  --ui-color-primary-400: #f5874a;
+}
+
+html.dark:is([data-design="g"], [data-design="h"]) {
+  --ui-color-primary-400: #fa8f3e;
+}
+
+[data-design="e"] .spike-nav-active,
+[data-design="f"] .spike-nav-active,
+:is([data-design="g"], [data-design="h"]) .spike-nav-active {
+  border-radius: 0;
+  box-shadow: inset 0 -3px 0 var(--ui-color-primary-400);
+}
+
+/* Am Handy bis an den Rand: hebt Container- und Seiten-Padding (zusammen 1,5rem) auf. */
+[data-design="e"] .spike-round-table,
+[data-design="f"] .spike-round-table,
+:is([data-design="g"], [data-design="h"]) .spike-round-table {
+  margin-inline: -1.5rem;
+  max-width: none;
+}
+
+/* Gegen das alte `td, th { vertical-align: middle !important }` aus app.css. */
+.spike-round-table thead th.align-bottom {
+  vertical-align: bottom !important;
+}
+
+[data-design="e"] .spike-round-table :is(td, th):first-child,
+[data-design="f"] .spike-round-table :is(td, th):first-child,
+:is([data-design="g"], [data-design="h"]) .spike-round-table :is(td, th):first-child {
+  padding-left: 0.5rem;
+}
+
+[data-design="e"] .spike-round-table :is(td, th):last-child,
+[data-design="f"] .spike-round-table :is(td, th):last-child,
+:is([data-design="g"], [data-design="h"]) .spike-round-table :is(td, th):last-child {
+  padding-right: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  [data-design="e"] .spike-round-table,
+  [data-design="f"] .spike-round-table,
+  :is([data-design="g"], [data-design="h"]) .spike-round-table {
+    margin-inline: 0;
+  }
+}
+
+/* E und H: runder Plus-Button unten rechts, Icon exakt mittig. */
+:is([data-design="e"], [data-design="h"]) .spike-game-action {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 20;
+  margin: 0;
+}
+
+:is([data-design="e"], [data-design="h"]) .spike-game-action > button {
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  border-radius: 9999px;
+  box-shadow: 0 6px 18px hsla(0, 0%, 0%, 0.45);
+}
+
+:is([data-design="e"], [data-design="h"]) .spike-game-action > button [data-slot="label"] {
+  display: none;
+}
+
+:is([data-design="e"], [data-design="h"]) .spike-game-action > button svg {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+/* F und G: schmale Leiste, halbtransparent über dem Inhalt. */
+[data-design="f"] .spike-game-action,
+[data-design="g"] .spike-game-action {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 20;
+  margin: 0;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom));
+  background: color-mix(in oklab, var(--ui-bg) 85%, transparent);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--ui-border);
+}
+
+[data-design="f"] .spike-game-action > button {
+  width: 100%;
+  max-width: 20rem;
+  justify-content: center;
+}
+
+/* G: Bearbeiten und Löschen als Icons links und rechts vom Eintragen. */
+[data-design="g"] .spike-game-action > button {
+  flex: 1;
+  max-width: 20rem;
+  justify-content: center;
+}
+
+[data-design="g"] .spike-bar-side > button {
+  padding: 0.5rem;
+}
+
+[data-design="g"] .spike-bar-side > button [data-slot="label"] {
+  display: none;
+}
+
+/* Beim Bestätigen des Löschens bleibt nur die Rückfrage in der Leiste. */
+[data-design="g"] .spike-game-action:has(.spike-bar-side > div) > :not(.spike-bar-side:has(> div)) {
+  display: none;
+}
+
+/* H: weniger Abstand zwischen Tabs und Tabelle. */
+[data-design="h"] .spike-round-tabs {
+  margin-block-end: 0.75rem;
 }
