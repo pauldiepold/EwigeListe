@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { useSortable } from '@vueuse/integrations/useSortable';
 import QuickRegisterModal from '@/Components/Rounds/QuickRegisterModal.vue';
 import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -10,6 +11,9 @@ import type { CreateRoundPlayer } from '@/types/round-create';
 
 const MIN_PLAYERS = 4;
 const MAX_PLAYERS = 7;
+
+/** So lange hält man eine Zeile auf dem Touchscreen, bevor sie sich ziehen lässt; kürzer scrollt. */
+const TOUCH_HOLD_DELAY_MS = 150;
 
 const props = defineProps<{
   players: CreateRoundPlayer[];
@@ -37,6 +41,14 @@ const {
 
 const canAddPlayers = computed(() => selectedPlayers.value.length < MAX_PLAYERS);
 const canStart = computed(() => selectedPlayers.value.length >= MIN_PLAYERS);
+
+/** Färbt den Hinweis unter dem Button rot, sobald jemand mit zu wenigen Personen starten wollte. */
+const hasTriedToStart = ref(false);
+
+const missingPlayersHint = computed(() => {
+  const missing = MIN_PLAYERS - selectedPlayers.value.length;
+  return missing === 1 ? 'Noch eine Person fehlt.' : `Noch ${missing} Personen fehlen.`;
+});
 
 /**
  * Validierungsfehler der Seite. Kein Feld des Formulars hat ein eigenes Eingabefeld
@@ -70,16 +82,41 @@ function addPlayerById(playerId: number): void {
   }
 }
 
-/** Auf dem Handy bleibt so die Trefferliste über der Bildschirmtastatur sichtbar. */
-function scrollSearchIntoView(event: FocusEvent): void {
-  (event.target as HTMLElement | null)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-
 function removePlayer(playerId: number): void {
   selectedPlayers.value = selectedPlayers.value.filter((player) => player.id !== playerId);
 }
 
-function movePlayer(fromIndex: number, toIndex: number): void {
+/**
+ * Sitzreihenfolge per Ziehen, nur senkrecht: Statt einer frei schwebenden Kopie (ausgeblendet)
+ * wandert die Zeile selbst durch die Liste. Am Griff startet das Ziehen sofort, an der übrigen
+ * Zeile erst nach kurzem Halten, damit Wischen auf dem Handy weiter scrollt.
+ */
+const seatList = useTemplateRef<HTMLElement>('seatList');
+const seatSortable = useSortable(seatList, selectedPlayers, {
+  watchElement: true,
+  animation: 150,
+  direction: 'vertical',
+  forceFallback: true,
+  fallbackOnBody: true,
+  fallbackClass: 'opacity-0!',
+  ghostClass: 'bg-elevated',
+  chosenClass: 'bg-elevated',
+  delay: TOUCH_HOLD_DELAY_MS,
+  delayOnTouchOnly: true,
+  // Etwas Zittern beim Halten erlaubt; sonst wird am Handy fast jedes Halten zum Scrollen.
+  touchStartThreshold: 5,
+  filter: '[data-no-drag]',
+  preventOnFilter: false,
+});
+
+/** Läuft vor Sortable (Capture-Phase), damit die Verzögerung schon für diesen Druck gilt. */
+function chooseDragDelay(event: PointerEvent): void {
+  const onHandle = (event.target as HTMLElement | null)?.closest('[data-drag-handle]');
+  seatSortable.option('delay', onHandle ? 0 : TOUCH_HOLD_DELAY_MS);
+}
+
+/** Ohne Zeiger: Pfeiltasten am Griff. Der Fokus folgt dem Griff an seinen neuen Platz. */
+async function movePlayer(fromIndex: number, toIndex: number): Promise<void> {
   if (toIndex < 0 || toIndex >= selectedPlayers.value.length) {
     return;
   }
@@ -87,9 +124,13 @@ function movePlayer(fromIndex: number, toIndex: number): void {
   const [moved] = next.splice(fromIndex, 1);
   next.splice(toIndex, 0, moved);
   selectedPlayers.value = next;
+
+  await nextTick();
+  seatList.value?.querySelector<HTMLElement>(`[data-drag-handle="${moved.id}"]`)?.focus();
 }
 
 function submitRound(): void {
+  hasTriedToStart.value = true;
   if (!canStart.value || form.processing) {
     return;
   }
@@ -110,53 +151,31 @@ if (initialPlayer) {
   <Head title="Neue Runde starten" />
 
   <AppLayout title="Neue Runde starten">
-    <div class="mx-auto w-full max-w-2xl space-y-6">
-      <UAlert
-        v-if="validationError"
-        color="error"
-        variant="soft"
-        icon="i-lucide-circle-alert"
-        :title="validationError"
-      />
-
-      <UCard>
-        <template #header>
-          <h2 class="text-lg font-semibold">Spieler hinzufügen</h2>
-        </template>
-
-        <div class="space-y-4">
-          <UAlert
-            v-if="!canAddPlayers"
-            color="neutral"
-            variant="soft"
-            icon="i-lucide-users"
-            :title="`Maximal ${MAX_PLAYERS} Spieler pro Runde.`"
+    <div class="mx-auto w-full max-w-md space-y-8">
+      <section class="space-y-3">
+        <!-- Ein Kasten: Suche oben, darunter die Spieler mit den meisten Spielen zuerst. Die
+             angeschnittene fünfte Zeile zeigt, dass die Liste scrollt. -->
+        <div
+          v-if="canAddPlayers"
+          class="overflow-hidden rounded-lg border border-default bg-default"
+        >
+          <UInput
+            v-model="searchTerm"
+            icon="i-lucide-search"
+            placeholder="Bitte Namen eingeben"
+            aria-label="Spieler suchen"
+            variant="none"
+            size="lg"
+            class="w-full border-b border-default"
+            @keyup.enter="filteredPlayers.length === 1 ? addPlayer(filteredPlayers[0]) : null"
           />
 
-          <UFormField
-            v-if="canAddPlayers"
-            label="Suche nach Name"
-            help="Mit Enter hinzufügen, wenn nur ein Treffer bleibt."
-          >
-            <UInput
-              v-model="searchTerm"
-              icon="i-lucide-search"
-              placeholder="Bitte Namen eingeben"
-              :ui="{ base: 'scroll-mt-16' }"
-              @focus="scrollSearchIntoView"
-              @keyup.enter="filteredPlayers.length === 1 ? addPlayer(filteredPlayers[0]) : null"
-            />
-          </UFormField>
-
-          <div
-            v-if="canAddPlayers"
-            class="max-h-56 space-y-2 overflow-auto rounded-md border border-default p-2"
-          >
+          <div class="max-h-45 overflow-y-auto py-1">
             <button
               v-for="player in filteredPlayers"
               :key="player.id"
               type="button"
-              class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition hover:bg-muted"
+              class="flex w-full cursor-pointer items-center gap-3 px-3 py-1.5 text-left transition hover:bg-elevated"
               @click="addPlayer(player)"
             >
               <UAvatar
@@ -164,81 +183,127 @@ if (initialPlayer) {
                 :alt="`${player.surname} ${player.name}`"
                 size="sm"
               />
-              <span>{{ player.surname }} {{ player.name }}</span>
+              <span class="truncate">{{ player.surname }} {{ player.name }}</span>
             </button>
-            <p v-if="filteredPlayers.length === 0" class="px-2 py-1 text-sm text-muted">
+            <p v-if="filteredPlayers.length === 0" class="px-3 py-2 text-sm text-muted">
               Person wurde nicht gefunden.
             </p>
           </div>
-
-          <QuickRegisterModal v-if="canAddPlayers" @registered="addPlayerById" />
         </div>
-      </UCard>
+        <p v-else class="text-center text-sm text-muted">
+          Maximal {{ MAX_PLAYERS }} Personen pro Runde.
+        </p>
 
-      <UCard v-if="selectedPlayers.length">
-        <template #header>
-          <h2 class="text-lg font-semibold">
-            {{ selectedPlayers.length }} {{ selectedPlayers.length === 1 ? 'Person' : 'Personen' }}
+        <div v-if="canAddPlayers" class="flex justify-center">
+          <QuickRegisterModal @registered="addPlayerById" />
+        </div>
+      </section>
+
+      <section v-if="selectedPlayers.length" class="space-y-2">
+        <div class="text-center">
+          <h2 class="text-muted">
+            {{ selectedPlayers.length }}
+            {{ selectedPlayers.length === 1 ? 'Person' : 'Personen' }}:
           </h2>
-        </template>
+          <p v-if="selectedPlayers.length > 1" class="text-xs text-dimmed">
+            Sitzreihenfolge, der Erste gibt zuerst. Zum Ändern ziehen.
+          </p>
+        </div>
 
-        <div class="space-y-2">
-          <div
+        <ul
+          ref="seatList"
+          class="divide-y divide-default rounded-lg border border-default bg-default"
+          @pointerdown.capture="chooseDragDelay"
+        >
+          <li
             v-for="(player, index) in selectedPlayers"
             :key="player.id"
-            class="flex items-center justify-between rounded-md border border-default px-3 py-2"
+            class="flex min-h-12 cursor-grab items-center gap-2 py-1.5 pr-1 pl-1 select-none active:cursor-grabbing"
           >
-            <div class="flex items-center gap-3">
-              <UAvatar
-                :src="player.avatar_path ?? undefined"
-                :alt="`${player.surname} ${player.name}`"
-                size="sm"
-              />
-              <span class="font-medium">{{ player.surname }} {{ player.name }}</span>
-            </div>
+            <span
+              :data-drag-handle="player.id"
+              role="button"
+              tabindex="0"
+              :aria-label="`Platz von ${player.surname} ${player.name} ändern, mit Pfeiltasten`"
+              class="grid h-9 w-7 shrink-0 touch-none place-items-center rounded text-dimmed focus-visible:outline-2 focus-visible:outline-primary"
+              @keydown.up.prevent="movePlayer(index, index - 1)"
+              @keydown.down.prevent="movePlayer(index, index + 1)"
+            >
+              <UIcon name="i-lucide-grip-vertical" class="size-4" />
+            </span>
+            <UAvatar
+              :src="player.avatar_path ?? undefined"
+              :alt="`${player.surname} ${player.name}`"
+              size="sm"
+            />
+            <span class="min-w-0 flex-1 truncate font-medium text-highlighted">
+              {{ player.surname }} {{ player.name }}
+            </span>
+            <!-- Die eigene Person bleibt immer dabei; unsichtbar statt entfernt hält die Zeilen bündig. -->
+            <UButton
+              data-no-drag
+              icon="i-lucide-x"
+              size="sm"
+              color="neutral"
+              variant="ghost"
+              :aria-label="`${player.surname} ${player.name} entfernen`"
+              :class="{ invisible: player.id === authPlayerId }"
+              @click="removePlayer(player.id)"
+            />
+          </li>
+        </ul>
+      </section>
 
-            <div class="flex items-center gap-2">
-              <UButton
-                icon="i-lucide-arrow-up"
-                size="xs"
-                color="neutral"
-                variant="ghost"
-                :disabled="index === 0"
-                @click="movePlayer(index, index - 1)"
-              />
-              <UButton
-                icon="i-lucide-arrow-down"
-                size="xs"
-                color="neutral"
-                variant="ghost"
-                :disabled="index === selectedPlayers.length - 1"
-                @click="movePlayer(index, index + 1)"
-              />
-              <UButton
-                icon="i-lucide-trash-2"
-                size="xs"
-                color="error"
-                variant="ghost"
-                :disabled="player.id === authPlayerId"
-                @click="removePlayer(player.id)"
-              />
-            </div>
-          </div>
+      <section class="flex flex-col items-center gap-4">
+        <div class="flex items-center gap-3 text-lg">
+          <button
+            type="button"
+            class="cursor-pointer"
+            :class="form.liveGame ? 'text-dimmed' : 'font-medium text-highlighted'"
+            @click="form.liveGame = false"
+          >
+            Offline
+          </button>
+          <USwitch v-model="form.liveGame" color="primary" size="lg" aria-label="Online-Runde" />
+          <button
+            type="button"
+            class="cursor-pointer"
+            :class="form.liveGame ? 'font-medium text-highlighted' : 'text-dimmed'"
+            @click="form.liveGame = true"
+          >
+            Online
+          </button>
         </div>
-      </UCard>
 
-      <UCard>
-        <template #header>
-          <h2 class="text-lg font-semibold">Modus</h2>
-        </template>
-
-        <USwitch
-          v-model="form.liveGame"
-          color="primary"
-          label="Online-Runde"
-          description="Aktiviert die Live-Runden-Funktionen direkt nach dem Start."
+        <UAlert
+          v-if="validationError"
+          color="error"
+          variant="subtle"
+          icon="i-lucide-circle-alert"
+          :title="validationError"
         />
-      </UCard>
+
+        <div class="flex flex-col items-center gap-2">
+          <UButton
+            :loading="form.processing"
+            size="lg"
+            color="primary"
+            type="button"
+            icon="i-lucide-play"
+            label="Neue Runde starten"
+            @click="submitRound"
+          />
+          <!-- Bei genug Personen unsichtbar statt entfernt: Der Platz bleibt, die Höhe springt nicht. -->
+          <p
+            class="text-center text-xs"
+            :class="[hasTriedToStart ? 'text-error' : 'text-dimmed', { invisible: canStart }]"
+            :role="hasTriedToStart && !canStart ? 'alert' : undefined"
+            :aria-hidden="canStart"
+          >
+            {{ missingPlayersHint }}
+          </p>
+        </div>
+      </section>
 
       <RoundListSelection
         v-if="selectedPlayers.length"
@@ -248,20 +313,6 @@ if (initialPlayer) {
         :selected-count="selectedListIds.length"
         @toggle="setSelected"
       />
-
-      <div class="space-y-3 text-center">
-        <UButton
-          :loading="form.processing"
-          :disabled="!canStart"
-          size="lg"
-          color="primary"
-          type="button"
-          icon="i-lucide-play"
-          @click="submitRound"
-        >
-          Neue Runde starten
-        </UButton>
-      </div>
     </div>
   </AppLayout>
 </template>
