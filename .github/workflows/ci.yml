@@ -54,6 +54,7 @@ jobs:
       - name: Build (erzeugt Wayfinder-Routen sowie auto-imports.d.ts und components.d.ts)
         run: npm run build
 
+      - run: npm run test:js
       - run: npm run type-check
       - run: npm run lint
       - run: npm run format
