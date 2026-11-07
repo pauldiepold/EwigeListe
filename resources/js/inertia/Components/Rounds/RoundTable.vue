@@ -17,6 +17,8 @@ const props = defineProps<{
   onlinePlayerIds: number[];
   /** Eine gerade gespeicherte Änderung, deren Antwort noch aussteht: Die Zeile zeigt ein Skeleton. */
   pendingGame?: 'new' | 'edited' | null;
+  /** Zum Löschen vorgemerkt, solange die Rückfrage offen ist: Die Zeile ist rot getönt. */
+  markedGameId?: number | null;
 }>();
 
 function sitsOut(player: RoundPlayer): boolean {
@@ -71,6 +73,9 @@ function isPendingRow(game: RoundGame): boolean {
 }
 
 function rowBackground(game: RoundGame): string {
+  if (game.id === props.markedGameId) {
+    return 'bg-error/40';
+  }
   const highlight = highlightedGames.value[game.id];
   if (highlight === 'new') {
     return 'bg-success/30';

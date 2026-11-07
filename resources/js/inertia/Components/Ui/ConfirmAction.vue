@@ -20,11 +20,6 @@ function confirm(): void {
 }
 </script>
 
-<!--
-  Ohne Wrapper: Die Buttons der Rückfrage reihen sich direkt in den umgebenden Container ein,
-  z. B. in eine `UFieldGroup`, deren Rundungen an `:first-child`/`:last-child` hängen.
-  Eigene Abstände braucht dieser deshalb selbst (`gap-*`).
--->
 <template>
   <UButton
     v-if="!confirming"
@@ -35,8 +30,8 @@ function confirm(): void {
     :loading="loading"
     @click="confirming = true"
   />
-  <template v-else>
+  <div v-else class="flex flex-wrap justify-center gap-2">
     <UButton color="neutral" variant="outline" label="Abbrechen" @click="confirming = false" />
     <UButton color="error" :label="confirmLabel" @click="confirm" />
-  </template>
+  </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChartLoading from '@/Components/Groups/GamesChartLoading.vue';
@@ -38,11 +38,23 @@ const { onlinePlayerIds } = useRoundUpdates(props.round.id, refresh);
 const deleting = ref(false);
 const pendingGame = ref<'new' | 'edited' | null>(null);
 
+/** Offen, solange die Rückfrage zum Löschen steht; die Tabelle tönt die Zeile dann rot. */
+const confirmingDelete = ref(false);
+
+// Ist ein anderes Spiel das letzte geworden, gilt die Rückfrage nicht mehr.
+watch(
+  () => props.round.lastGameId,
+  () => {
+    confirmingDelete.value = false;
+  },
+);
+
 function deleteLastGame(): void {
   if (props.round.lastGameId === null) {
     return;
   }
 
+  confirmingDelete.value = false;
   router.delete(destroyGame.url(props.round.lastGameId), {
     preserveState: true,
     preserveScroll: true,
@@ -96,37 +108,8 @@ function deleteRound(): void {
           :games="round.games"
           :online-player-ids="onlinePlayerIds"
           :pending-game="pendingGame"
+          :marked-game-id="confirmingDelete ? round.lastGameId : null"
         />
-
-        <div
-          v-if="canChangeGames && round.lastGameId !== null"
-          role="group"
-          aria-label="Letztes Spiel"
-          class="flex flex-col items-center gap-1.5"
-        >
-          <span class="text-xs font-medium tracking-wide text-muted uppercase" aria-hidden="true">
-            Letztes Spiel
-          </span>
-          <UFieldGroup size="sm">
-            <EnterGameModal
-              :round-id="round.id"
-              :last-game-id="round.lastGameId"
-              :active-players="round.activePlayers"
-              :viewer-is-active="round.viewerIsActive"
-              :edited-game="round.lastGame"
-              @pending="pendingGame = $event"
-            />
-            <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
-            <ConfirmAction
-              :key="round.lastGameId"
-              icon="i-lucide-trash-2"
-              label="Löschen"
-              confirm-label="Wirklich löschen?"
-              :loading="deleting"
-              @confirm="deleteLastGame"
-            />
-          </UFieldGroup>
-        </div>
 
         <UEmpty
           v-if="round.info.gamesCount === 0 && pendingGame !== 'new'"
@@ -158,7 +141,41 @@ function deleteRound(): void {
           :info="round.info"
           class="mt-auto mb-[env(safe-area-inset-bottom)] self-start"
           :class="{ 'mr-20 lg:mr-0': canChangeGames }"
-        />
+        >
+          <template v-if="canChangeGames && round.lastGameId !== null" #lastGameActions>
+            <!-- Rückfrage in der Kachel statt als Overlay, damit die rot getönte Zeile sichtbar bleibt. -->
+            <div v-if="confirmingDelete" class="flex items-center gap-2">
+              <span class="text-highlighted">Spiel {{ round.info.gamesCount }} löschen?</span>
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="xs"
+                label="Abbrechen"
+                @click="confirmingDelete = false"
+              />
+              <UButton color="error" size="xs" label="Löschen" @click="deleteLastGame" />
+            </div>
+            <UFieldGroup v-else size="xs" role="group" aria-label="Letztes Spiel">
+              <EnterGameModal
+                :round-id="round.id"
+                :last-game-id="round.lastGameId"
+                :active-players="round.activePlayers"
+                :viewer-is-active="round.viewerIsActive"
+                :edited-game="round.lastGame"
+                @pending="pendingGame = $event"
+              />
+              <UButton
+                color="neutral"
+                variant="outline"
+                icon="i-lucide-trash-2"
+                aria-label="Letztes Spiel löschen"
+                title="Letztes Spiel löschen"
+                :loading="deleting"
+                @click="confirmingDelete = true"
+              />
+            </UFieldGroup>
+          </template>
+        </RoundInfo>
       </section>
 
       <UAlert

@@ -201,9 +201,9 @@ watch(
       v-if="isEditing"
       color="neutral"
       variant="outline"
-      size="sm"
       icon="i-lucide-pencil"
-      label="Bearbeiten"
+      aria-label="Letztes Spiel bearbeiten"
+      title="Letztes Spiel bearbeiten"
     />
     <!-- Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. -->
     <UButton
