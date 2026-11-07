@@ -336,7 +336,7 @@ watch(
           </p>
         </div>
 
-        <div class="flex flex-col items-center pt-4">
+        <div class="flex flex-col items-center">
           <UCheckbox v-model="form.misplayed" name="misplayed" label="Falsch bedient?" />
           <p v-if="form.misplayed" class="mt-2 text-center text-sm text-muted">
             Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die
