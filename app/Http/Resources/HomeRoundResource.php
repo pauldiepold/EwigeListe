@@ -19,7 +19,7 @@ class HomeRoundResource extends JsonResource
      * `points` ist der Punktestand in dieser Runde (`round_points` lädt der HomeController per Unterabfrage).
      * Die Zeit des letzten Spiels kommt als ISO-Zeitstempel, damit der Browser sie relativ („vor 5 Min.“) anzeigen kann.
      *
-     * @return array{id: int, players: list<array{id: int, name: string, avatarPath: ?string, points: int}>, gamesCount: int, lastGameAt: ?string, isLive: bool, isOwn: bool}
+     * @return array{id: int, players: list<array{id: int, firstName: string, avatarPath: ?string, points: int}>, gamesCount: int, lastGameAt: ?string, isLive: bool, isOwn: bool}
      */
     public function toArray(Request $request): array
     {
@@ -27,7 +27,7 @@ class HomeRoundResource extends JsonResource
             'id' => $this->id,
             'players' => $this->players->map(fn (Player $player): array => [
                 'id' => $player->id,
-                'name' => $player->surname,
+                'firstName' => $player->first_name,
                 'avatarPath' => $player->avatar_path,
                 'points' => (int) $player->round_points,
             ])->values()->all(),

@@ -43,12 +43,12 @@ class HiddenPlayerLoginTest extends TestCase
 
         $this->actingAs($user)
             ->withHeader('X-Inertia', 'true')
-            ->patch(route('users.updateName', $user), ['surname' => 'Neu', 'name' => 'Name'])
+            ->patch(route('users.updateName', $user), ['first_name' => 'Neu', 'last_name' => 'Name'])
             ->assertStatus(303)
             ->assertRedirect(route('login'));
 
         $this->assertGuest();
-        $this->assertNotSame('Neu', $user->player->fresh()->surname);
+        $this->assertNotSame('Neu', $user->player->fresh()->first_name);
     }
 
     #[Test]

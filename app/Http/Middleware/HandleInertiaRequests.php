@@ -60,7 +60,7 @@ class HandleInertiaRequests extends Middleware
     /**
      * Jeder Benutzer gehört genau einem Spieler; fehlt er, ist das ein Datenfehler.
      *
-     * @return array{id: int, surname: string, name: string}|null
+     * @return array{id: int, firstName: string, lastName: string}|null
      */
     private function authPlayerPayload(Request $request): ?array
     {
@@ -74,8 +74,8 @@ class HandleInertiaRequests extends Middleware
 
         return [
             'id' => (int) $player->id,
-            'surname' => $player->surname,
-            'name' => $player->name,
+            'firstName' => $player->first_name,
+            'lastName' => $player->last_name,
         ];
     }
 }

@@ -22,8 +22,8 @@ class TablesSeeder extends Seeder
         foreach ($rows as $row) {
             DB::table('players')->insert([
                 'id' => $row->id,
-                'surname' => $row->surname,
-                'name' => $row->name,
+                'first_name' => $row->surname,
+                'last_name' => $row->name,
                 'hide' => $row->hide,
                 'created_at' => $row->created_at,
                 'updated_at' => $row->updated_at,

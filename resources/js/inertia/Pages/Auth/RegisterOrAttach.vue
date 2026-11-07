@@ -16,8 +16,8 @@ const providerLabel =
 
 const registerForm = useForm({
   email: props.socialiteUser.email,
-  surname: props.socialiteUser.surname,
-  name: props.socialiteUser.name,
+  first_name: props.socialiteUser.firstName,
+  last_name: props.socialiteUser.lastName,
 });
 
 const loginForm = useForm({
@@ -89,20 +89,20 @@ function submitLogin(): void {
           </template>
 
           <form class="space-y-4" @submit.prevent="submitRegister">
-            <UFormField label="Vorname" :error="registerForm.errors.surname" required>
+            <UFormField label="Vorname" :error="registerForm.errors.first_name" required>
               <UInput
-                v-model="registerForm.surname"
-                name="surname"
+                v-model="registerForm.first_name"
+                name="first_name"
                 autocomplete="given-name"
                 autofocus
                 :disabled="registerForm.processing"
               />
             </UFormField>
 
-            <UFormField label="Nachname" :error="registerForm.errors.name" required>
+            <UFormField label="Nachname" :error="registerForm.errors.last_name" required>
               <UInput
-                v-model="registerForm.name"
-                name="name"
+                v-model="registerForm.last_name"
+                name="last_name"
                 autocomplete="family-name"
                 :disabled="registerForm.processing"
               />

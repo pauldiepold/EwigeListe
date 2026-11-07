@@ -20,8 +20,8 @@ declare global {
 export type SocialiteUserData = {
   email: string;
   provider: string;
-  surname: string;
-  name: string;
+  firstName: string;
+  lastName: string;
 };
 
 export type ResetPasswordProps = {

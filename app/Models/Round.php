@@ -71,7 +71,7 @@ class Round extends Model
 
     public function getPlayersStringAttribute()
     {
-        return nice_count($this->players->pluck('surname')->toArray());
+        return nice_count($this->players->pluck('first_name')->toArray());
     }
 
     public function getPathAttribute()

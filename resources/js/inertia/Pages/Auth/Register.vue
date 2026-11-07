@@ -41,8 +41,8 @@ const captchaWidgetId = ref<number | null>(null);
 const captchaContainer = ref<HTMLDivElement | null>(null);
 
 const form = useForm({
-  surname: '',
-  name: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
   password_confirmation: '',
@@ -122,20 +122,20 @@ function renderCaptcha(): void {
           <USeparator label="Oder mit E-Mail registrieren" />
 
           <form class="space-y-4" @submit.prevent="submit">
-            <UFormField label="Vorname" :error="form.errors.surname" required>
+            <UFormField label="Vorname" :error="form.errors.first_name" required>
               <UInput
-                v-model="form.surname"
-                name="surname"
+                v-model="form.first_name"
+                name="first_name"
                 autocomplete="given-name"
                 autofocus
                 :disabled="form.processing"
               />
             </UFormField>
 
-            <UFormField label="Nachname" :error="form.errors.name" required>
+            <UFormField label="Nachname" :error="form.errors.last_name" required>
               <UInput
-                v-model="form.name"
-                name="name"
+                v-model="form.last_name"
+                name="last_name"
                 autocomplete="family-name"
                 :disabled="form.processing"
               />

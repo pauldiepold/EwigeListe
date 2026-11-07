@@ -38,8 +38,8 @@ class UserController extends Controller
         $validatedData = $request->validated();
 
         $player = $user->player;
-        $player->surname = $validatedData['vorname'];
-        $player->name = $validatedData['nachname'];
+        $player->first_name = $validatedData['first_name'];
+        $player->last_name = $validatedData['last_name'];
         $player->save();
 
         Toast::success('Name wurde erfolgreich gespeichert!');

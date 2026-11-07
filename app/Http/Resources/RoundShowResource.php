@@ -47,7 +47,7 @@ class RoundShowResource extends JsonResource
             'lastGameId' => $this->games->last()?->id,
             'players' => $this->players->map(fn (Player $player): array => [
                 'id' => $player->id,
-                'surname' => $player->surname,
+                'firstName' => $player->first_name,
                 'path' => $player->pathFor($viewer),
                 'avatarPath' => $player->avatar_path,
                 'isDealer' => (int) $player->pivot->index === $dealerIndex,
@@ -63,13 +63,13 @@ class RoundShowResource extends JsonResource
 
     /**
      * @param  Collection<int, Player>  $players
-     * @return list<array{id: int, name: string, avatarPath: ?string}>
+     * @return list<array{id: int, displayName: string, avatarPath: ?string}>
      */
     private function activePlayerOptions(Collection $players): array
     {
         return $players->map(fn (Player $player): array => [
             'id' => $player->id,
-            'name' => $this->shortName($player, $players),
+            'displayName' => $this->displayName($player, $players),
             'avatarPath' => $player->avatar_path,
         ])->values()->all();
     }
@@ -80,35 +80,35 @@ class RoundShowResource extends JsonResource
      *
      * @param  Collection<int, Player>  $players
      */
-    private function shortName(Player $player, Collection $players): string
+    private function displayName(Player $player, Collection $players): string
     {
         $otherLastNames = $players
-            ->filter(fn (Player $other): bool => $other->id !== $player->id && mb_strtolower($other->surname) === mb_strtolower($player->surname))
-            ->map(fn (Player $other): string => mb_strtolower($other->name));
+            ->filter(fn (Player $other): bool => $other->id !== $player->id && mb_strtolower($other->first_name) === mb_strtolower($player->first_name))
+            ->map(fn (Player $other): string => mb_strtolower($other->last_name));
 
         if ($otherLastNames->isEmpty()) {
-            return $player->surname;
+            return $player->first_name;
         }
 
-        $lastName = mb_strtolower($player->name);
-        $length = mb_strlen($player->name);
+        $lastName = mb_strtolower($player->last_name);
+        $length = mb_strlen($player->last_name);
 
         for ($prefixLength = 1; $prefixLength < $length; $prefixLength++) {
             $prefix = mb_substr($lastName, 0, $prefixLength);
 
             if ($otherLastNames->every(fn (string $other): bool => ! str_starts_with($other, $prefix))) {
-                return $player->surname.' '.mb_substr($player->name, 0, $prefixLength).'.';
+                return $player->first_name.' '.mb_substr($player->last_name, 0, $prefixLength).'.';
             }
         }
 
-        return "{$player->surname} {$player->name}";
+        return $player->full_name;
     }
 
     /**
      * Vorbelegung für das Bearbeiten: Das letzte Spiel wurde mit den Spielern seiner Zeit gespielt, nicht mit denen des nächsten.
      * Die Signatur ändert sich mit jeder inhaltlichen Änderung und lässt einen offenen Dialog veralten.
      *
-     * @return ?array{id: int, points: int, isMisplay: bool, winnerIds: list<int>, signature: string, viewerIsActive: bool, activePlayers: list<array{id: int, name: string, avatarPath: ?string}>}
+     * @return ?array{id: int, points: int, isMisplay: bool, winnerIds: list<int>, signature: string, viewerIsActive: bool, activePlayers: list<array{id: int, displayName: string, avatarPath: ?string}>}
      */
     private function lastGame(User $viewer): ?array
     {
@@ -181,9 +181,9 @@ class RoundShowResource extends JsonResource
         return [
             'gamesCount' => $this->games->count(),
             'averageGameMinutes' => $this->averageGameMinutes(),
-            'startedBy' => $this->createdBy->surname,
+            'startedBy' => $this->createdBy->first_name,
             'startedAt' => $this->shortTimestamp($this->created_at),
-            'lastGameBy' => $lastGame?->createdBy?->surname,
+            'lastGameBy' => $lastGame?->createdBy?->first_name,
             'lastGameAt' => $lastGame
                 ? ($lastGame->created_at->isSameDay($this->created_at)
                     ? $lastGame->created_at->format('H:i')

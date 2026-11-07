@@ -39,8 +39,8 @@ class SocialiteLoginTest extends TestCase
                 ->where('socialiteUser', [
                     'email' => 'neu@example.com',
                     'provider' => 'google',
-                    'surname' => 'Max',
-                    'name' => 'Mustermann',
+                    'firstName' => 'Max',
+                    'lastName' => 'Mustermann',
                 ])
             );
     }
@@ -119,8 +119,8 @@ class SocialiteLoginTest extends TestCase
         $socialiteUser = $this->rememberUnknownIdentity('neu@example.com');
 
         $this->post(route('register'), [
-            'surname' => 'Max',
-            'name' => 'Mustermann',
+            'first_name' => 'Max',
+            'last_name' => 'Mustermann',
             'email' => 'neu@example.com',
         ])->assertSessionHasNoErrors()->assertRedirect('/');
 
@@ -135,8 +135,8 @@ class SocialiteLoginTest extends TestCase
         $socialiteUser = $this->socialiteUser('fremd@example.com');
 
         $this->post(route('register'), [
-            'surname' => 'Max',
-            'name' => 'Mustermann',
+            'first_name' => 'Max',
+            'last_name' => 'Mustermann',
             'email' => 'bot@example.com',
             'socialiteUserId' => $socialiteUser->id,
         ])->assertSessionHasErrors(['password', 'g-recaptcha-response']);

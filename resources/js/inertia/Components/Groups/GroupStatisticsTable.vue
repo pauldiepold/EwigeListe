@@ -26,7 +26,7 @@ function holderSeparator(index: number, count: number): string {
           <td class="w-24 py-2 pr-4 font-semibold text-highlighted">{{ row.value }}</td>
           <td v-if="'holders' in row" class="py-2 text-muted">
             <template v-for="(holder, index) in row.holders" :key="index">
-              <ProfileLink :href="holder.path">{{ holder.name }}</ProfileLink
+              <ProfileLink :href="holder.path">{{ holder.firstName }}</ProfileLink
               >{{ holderSeparator(index, row.holders.length) }}
             </template>
           </td>

@@ -29,7 +29,7 @@ class RoundChartSeries
         });
 
         return [
-            'names' => $round->players->pluck('surname')->all(),
+            'names' => $round->players->pluck('first_name')->all(),
             'points' => array_values($series),
         ];
     }

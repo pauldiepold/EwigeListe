@@ -11,8 +11,7 @@ export type CreateRoundProfile = {
 
 export type CreateRoundPlayer = {
   id: number;
-  surname: string;
-  name: string;
+  fullName: string;
   avatar_path: string | null;
   groups: CreateRoundList[];
   profiles: CreateRoundProfile[];

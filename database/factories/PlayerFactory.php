@@ -22,8 +22,8 @@ class PlayerFactory extends Factory
     public function definition()
     {
         return [
-            'surname' => $this->faker->firstName,
-            'name' => $this->faker->lastName,
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
         ];
     }
 

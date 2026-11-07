@@ -76,8 +76,8 @@ class ManageUsersTest extends TestCase
                     'id' => $user->id,
                     'player_id' => $user->player_id,
                     'email' => $user->email,
-                    'surname' => $user->player->surname,
-                    'name' => $user->player->name,
+                    'firstName' => $user->player->first_name,
+                    'lastName' => $user->player->last_name,
                     'avatar_path' => null,
                 ])
                 ->where('profiles', fn ($profiles) => collect($profiles)->keyBy('name')->map(
@@ -108,11 +108,11 @@ class ManageUsersTest extends TestCase
     {
         $user = $this->signInRegularUser();
 
-        $this->patch(route('users.updateName', $user), ['vorname' => 'Anna', 'nachname' => 'Müller'])
+        $this->patch(route('users.updateName', $user), ['first_name' => 'Anna', 'last_name' => 'Müller'])
             ->assertRedirect(route('users.edit', $user))
             ->assertInertiaFlash('toast', ['type' => 'success', 'message' => 'Name wurde erfolgreich gespeichert!']);
 
-        $this->assertDatabaseHas('players', ['id' => $user->player_id, 'surname' => 'Anna', 'name' => 'Müller']);
+        $this->assertDatabaseHas('players', ['id' => $user->player_id, 'first_name' => 'Anna', 'last_name' => 'Müller']);
     }
 
     #[Test]
@@ -120,8 +120,8 @@ class ManageUsersTest extends TestCase
     {
         $user = $this->signInRegularUser();
 
-        $this->patch(route('users.updateName', $user), ['vorname' => '', 'nachname' => 'M'])
-            ->assertSessionHasErrors(['vorname', 'nachname']);
+        $this->patch(route('users.updateName', $user), ['first_name' => '', 'last_name' => 'M'])
+            ->assertSessionHasErrors(['first_name', 'last_name']);
     }
 
     #[Test]
@@ -270,7 +270,7 @@ class ManageUsersTest extends TestCase
 
         $this->assertTrue(Hash::check('test', $otherUser->fresh()->password));
         $this->assertSame('andere@example.com', $otherUser->fresh()->email);
-        $this->assertNotSame('Anna', $otherUser->player->fresh()->surname);
+        $this->assertNotSame('Anna', $otherUser->player->fresh()->first_name);
     }
 
     /**
@@ -279,7 +279,7 @@ class ManageUsersTest extends TestCase
     public static function userMutations(): array
     {
         return [
-            'Name' => ['users.updateName', ['vorname' => 'Anna', 'nachname' => 'Müller']],
+            'Name' => ['users.updateName', ['first_name' => 'Anna', 'last_name' => 'Müller']],
             'E-Mail' => ['users.updateMail', ['email' => 'neu@example.com']],
             'Passwort' => ['users.updatePassword', [
                 'current_password' => 'testtest',

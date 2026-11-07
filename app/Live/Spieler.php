@@ -47,7 +47,7 @@ class Spieler
     {
         if ($player) {
             $this->id = $player->id;
-            $this->name = $player->surname.' '.$player->name;
+            $this->name = $player->full_name;
             $this->index = $player->pivot->index;
             $this->ai = $player->is_ai ? new AI($player) : null;
         } else {

@@ -43,12 +43,12 @@ class AuthTest extends TestCase
     }
 
     #[Test]
-    public function registration_names_the_missing_surname_and_name(): void
+    public function registration_names_the_missing_first_and_last_name(): void
     {
-        $this->post('register', [...$this->registrationAttributes(), 'surname' => '', 'name' => ''])
+        $this->post('register', [...$this->registrationAttributes(), 'first_name' => '', 'last_name' => ''])
             ->assertSessionHasErrors([
-                'surname' => 'Es muss ein Vorname angegeben werden!',
-                'name' => 'Es muss ein Nachname angegeben werden!',
+                'first_name' => 'Es muss ein Vorname angegeben werden!',
+                'last_name' => 'Es muss ein Nachname angegeben werden!',
             ]);
     }
 
@@ -89,7 +89,7 @@ class AuthTest extends TestCase
 
         $this->post('register', $attributes)->assertServerError();
 
-        $this->assertDatabaseMissing('players', ['surname' => $attributes['surname'], 'name' => $attributes['name']]);
+        $this->assertDatabaseMissing('players', ['first_name' => $attributes['first_name'], 'last_name' => $attributes['last_name']]);
         $this->assertGuest();
     }
 
@@ -99,8 +99,8 @@ class AuthTest extends TestCase
     private function registrationAttributes(): array
     {
         return [
-            'surname' => $this->faker->firstName,
-            'name' => $this->faker->lastName,
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
             'email' => $this->faker->unique()->safeEmail,
             'password' => 'geheim123',
             'password_confirmation' => 'geheim123',

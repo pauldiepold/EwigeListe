@@ -22,8 +22,8 @@ class EditUserResource extends JsonResource
             'id' => $this->id,
             'player_id' => $this->player_id,
             'email' => $this->email,
-            'surname' => $this->player->surname,
-            'name' => $this->player->name,
+            'firstName' => $this->player->first_name,
+            'lastName' => $this->player->last_name,
             'avatar_path' => $this->avatar_path,
         ];
     }

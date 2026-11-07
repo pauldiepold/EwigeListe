@@ -19,7 +19,7 @@ class Player extends Model
         'is_ai',
     ];
 
-    protected $fillable = ['surname', 'name'];
+    protected $fillable = ['first_name', 'last_name'];
 
     public function getPathAttribute()
     {
@@ -39,6 +39,11 @@ class Player extends Model
     public function getAvatarPathAttribute()
     {
         return $this->user?->avatar_path;
+    }
+
+    public function getFullNameAttribute(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 
     public function getIsAiAttribute()

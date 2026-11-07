@@ -58,7 +58,7 @@ function submit(): void {
     <div class="flex justify-center">
       <UAvatar
         :src="form.avatar || user.avatar_path || undefined"
-        :alt="`${user.surname} ${user.name}`"
+        :alt="`${user.firstName} ${user.lastName}`"
         class="size-48 text-5xl"
       />
     </div>

@@ -14,13 +14,13 @@ class PlayerShowResource extends JsonResource
     public static $wrap = null;
 
     /**
-     * @return array{id: int, name: string, avatarPath: ?string, editableUserId: ?int}
+     * @return array{id: int, fullName: string, avatarPath: ?string, editableUserId: ?int}
      */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id,
-            'name' => "{$this->surname} {$this->name}",
+            'fullName' => $this->full_name,
             'avatarPath' => $this->avatar_path,
             'editableUserId' => $request->user()->can('update', $this->user) ? $this->user->id : null,
         ];

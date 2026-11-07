@@ -35,7 +35,7 @@ class QuickRegisterTest extends TestCase
         $this->post(route('register.quick.store'), $this->attributes())
             ->assertRedirect(route('rounds.create'));
 
-        $player = Player::where('surname', 'Max')->where('name', 'Mustermann')->sole();
+        $player = Player::where('first_name', 'Max')->where('last_name', 'Mustermann')->sole();
         $this->assertNotNull($player->user);
         $this->assertTrue(Group::find(Group::EWIGE_LISTE_ID)->players->contains($player));
     }
@@ -46,9 +46,9 @@ class QuickRegisterTest extends TestCase
         $this->actingAs(User::factory()->create());
 
         $this->post(route('register.quick.store'), $this->attributes());
-        $this->post(route('register.quick.store'), $this->attributes(['surname' => 'Erika']));
+        $this->post(route('register.quick.store'), $this->attributes(['first_name' => 'Erika']));
 
-        $emails = User::whereHas('player', fn ($query) => $query->where('name', 'Mustermann'))
+        $emails = User::whereHas('player', fn ($query) => $query->where('last_name', 'Mustermann'))
             ->pluck('email');
 
         $this->assertCount(2, $emails->unique());
@@ -62,22 +62,22 @@ class QuickRegisterTest extends TestCase
 
         $response = $this->post(route('register.quick.store'), $this->attributes());
 
-        $player = Player::where('surname', 'Max')->where('name', 'Mustermann')->sole();
+        $player = Player::where('first_name', 'Max')->where('last_name', 'Mustermann')->sole();
         $response->assertInertiaFlash('addedPlayerId', $player->id);
     }
 
     #[Test]
-    public function surname_and_name_are_required(): void
+    public function first_and_last_name_are_required(): void
     {
         $this->actingAs(User::factory()->create());
         $playerCount = Player::count();
 
         $this->from(route('rounds.create'))
-            ->post(route('register.quick.store'), ['surname' => '', 'name' => ''])
+            ->post(route('register.quick.store'), ['first_name' => '', 'last_name' => ''])
             ->assertRedirect(route('rounds.create'))
             ->assertSessionHasErrors([
-                'surname' => 'Es muss ein Vorname angegeben werden!',
-                'name' => 'Es muss ein Nachname angegeben werden!',
+                'first_name' => 'Es muss ein Vorname angegeben werden!',
+                'last_name' => 'Es muss ein Nachname angegeben werden!',
             ]);
 
         $this->assertSame($playerCount, Player::count());
@@ -108,11 +108,11 @@ class QuickRegisterTest extends TestCase
     }
 
     /**
-     * @param  array{surname?: string, name?: string}  $overrides
-     * @return array{surname: string, name: string}
+     * @param  array{first_name?: string, last_name?: string}  $overrides
+     * @return array{first_name: string, last_name: string}
      */
     private function attributes(array $overrides = []): array
     {
-        return [...['surname' => 'Max', 'name' => 'Mustermann'], ...$overrides];
+        return [...['first_name' => 'Max', 'last_name' => 'Mustermann'], ...$overrides];
     }
 }

@@ -33,14 +33,14 @@ class QuickRegisterController extends Controller
         $this->validator($request->all())->validate();
 
         $player = $playerRegistration->register(
-            surname: $request->surname,
-            name: $request->name,
+            firstName: $request->first_name,
+            lastName: $request->last_name,
             email: $this->placeholderEmail(),
             password: Str::random(14),
         )->player;
 
         Inertia::flash('addedPlayerId', $player->id);
-        Toast::success('Spieler '.$player->surname.' '.$player->name.' wurde erfolgreich erstellt!');
+        Toast::success("Spieler {$player->full_name} wurde erfolgreich erstellt!");
 
         return redirect()->route('rounds.create');
     }
@@ -60,13 +60,13 @@ class QuickRegisterController extends Controller
     protected function validator(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $messages = [
-            'surname.required' => 'Es muss ein Vorname angegeben werden!',
-            'name.required' => 'Es muss ein Nachname angegeben werden!',
+            'first_name.required' => 'Es muss ein Vorname angegeben werden!',
+            'last_name.required' => 'Es muss ein Nachname angegeben werden!',
         ];
 
         return Validator::make($data, [
-            'surname' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
         ], $messages);
     }
 }

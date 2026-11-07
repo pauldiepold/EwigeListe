@@ -15,7 +15,7 @@ export type ProfileChartPayload = GamesChartPayload & {
 export type PlayerShowProps = {
   player: {
     id: number;
-    name: string;
+    fullName: string;
     avatarPath: string | null;
     editableUserId: number | null;
   };

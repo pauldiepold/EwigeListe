@@ -20,8 +20,7 @@ class CreateRoundPlayerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surname' => $this->surname,
-            'name' => $this->name,
+            'fullName' => $this->full_name,
             'avatar_path' => $this->avatar_path,
             'groups' => $this->whenLoaded('groups', function () {
                 return $this->groups->map(function ($group) {

@@ -234,7 +234,7 @@ onMounted(() => {
               :class="footerLinkClass"
             >
               <UIcon name="i-lucide-user-round" class="size-4 shrink-0" />
-              <span class="truncate">{{ authPlayer.surname }} {{ authPlayer.name }}</span>
+              <span class="truncate">{{ authPlayer.firstName }} {{ authPlayer.lastName }}</span>
             </Link>
             <UButton
               color="neutral"

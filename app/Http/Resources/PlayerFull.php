@@ -17,8 +17,9 @@ class PlayerFull extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surname' => $this->surname,
-            'name' => $this->name,
+            // Alte Schlüssel für die Legacy-Komponenten hinter `fetchData`; fallen mit dem Live-Spiel (#36) weg.
+            'surname' => $this->first_name,
+            'name' => $this->last_name,
             'path' => $this->path,
             'avatar_path' => $this->avatar_path,
             'online' => false,

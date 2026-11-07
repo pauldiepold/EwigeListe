@@ -12,7 +12,7 @@ declare module '@inertiajs/core' {
     sharedPageProps: {
       auth: {
         user: { id: number } | null;
-        player: { id: number; surname: string; name: string } | null;
+        player: { id: number; firstName: string; lastName: string } | null;
       };
       navigation: { showCurrentRound: boolean };
     };

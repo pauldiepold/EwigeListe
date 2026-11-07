@@ -234,7 +234,7 @@ class RoundShowTest extends TestCase
     {
         $names = [['Paul', 'Diepold'], ['Paul', 'Dörr'], ['Paul', 'Meier'], ['Anna', 'Schmidt']];
         $players = $this->otherPlayers(4)->each(function (Player $player, int $seat) use ($names): void {
-            $player->forceFill(['surname' => $names[$seat][0], 'name' => $names[$seat][1]])->save();
+            $player->forceFill(['first_name' => $names[$seat][0], 'last_name' => $names[$seat][1]])->save();
         });
         $round = $this->roundWithPlayers($players);
 
@@ -247,7 +247,7 @@ class RoundShowTest extends TestCase
 
         $this->get(route('rounds.show', $round))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('round.activePlayers', fn ($active) => collect($active)->pluck('name', 'id')->all() == $expectedNames)
+                ->where('round.activePlayers', fn ($active) => collect($active)->pluck('displayName', 'id')->all() == $expectedNames)
             );
     }
 
@@ -333,7 +333,7 @@ class RoundShowTest extends TestCase
     #[Test]
     public function the_info_names_who_started_the_round_and_who_entered_the_last_game(): void
     {
-        $starter = Player::factory()->create(['surname' => 'Anna']);
+        $starter = Player::factory()->create(['first_name' => 'Anna']);
         $round = $this->roundWithPlayers($this->otherPlayers(4));
         $round->created_by = $starter->id;
         $round->save();
@@ -348,7 +348,7 @@ class RoundShowTest extends TestCase
 
         $this->get(route('rounds.show', $round))
             ->assertInertia(fn (Assert $page) => $page
-                ->where('round.info.lastGameBy', $this->viewer->player->surname)
+                ->where('round.info.lastGameBy', $this->viewer->player->first_name)
                 ->where('round.lastGameId', $round->games()->sole()->id)
             );
     }
@@ -446,7 +446,7 @@ class RoundShowTest extends TestCase
                 ->where('round.hasChart', true)
                 ->missing('roundChart')
                 ->reloadOnly('roundChart', fn (Assert $reload) => $reload
-                    ->where('roundChart.names', $players->pluck('surname')->all())
+                    ->where('roundChart.names', $players->pluck('first_name')->all())
                     ->where('roundChart.points.0', [0, 1, 2, 3, 5])
                     ->where('roundChart.points.3', [0, -1, -2, -3, -5])
                 )

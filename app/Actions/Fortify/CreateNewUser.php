@@ -32,14 +32,14 @@ class CreateNewUser implements CreatesNewUsers
         $viaSocialite = $this->pendingSocialiteLink->socialiteUser() !== null;
 
         Validator::make($input, [
-            'surname' => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => $viaSocialite ? [] : $this->passwordRules(),
             'g-recaptcha-response' => $viaSocialite ? [] : ['required', 'captcha'],
         ], [
-            'surname.required' => 'Es muss ein Vorname angegeben werden!',
-            'name.required' => 'Es muss ein Nachname angegeben werden!',
+            'first_name.required' => 'Es muss ein Vorname angegeben werden!',
+            'last_name.required' => 'Es muss ein Nachname angegeben werden!',
             'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
             'g-recaptcha-response.required' => 'Bitte bestätige, dass du kein Roboter bist.',
             'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder kontaktiere den Administrator.',
@@ -47,8 +47,8 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         return $this->playerRegistration->register(
-            surname: $input['surname'],
-            name: $input['name'],
+            firstName: $input['first_name'],
+            lastName: $input['last_name'],
             email: $input['email'],
             password: $viaSocialite ? Str::random(14) : $input['password'],
         );

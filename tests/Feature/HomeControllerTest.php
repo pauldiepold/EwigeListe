@@ -77,7 +77,7 @@ class HomeControllerTest extends TestCase
 
         $round = $this->roundWithGameAt(now()->subHour());
         $earlierGame = Game::factory()->create(['round_id' => $round->id, 'created_at' => now()->subHours(2)]);
-        $anna = Player::factory()->create(['surname' => 'Anna']);
+        $anna = Player::factory()->create(['first_name' => 'Anna']);
         $round->players()->attach($anna, ['index' => 0]);
         $round->players()->attach($user->player, ['index' => 1]);
         $this->scoreGame($round->games->first(), [$anna->id => 3, $user->player->id => -3]);
@@ -89,8 +89,8 @@ class HomeControllerTest extends TestCase
                 ->has('currentRounds.0', fn (Assert $currentRound) => $currentRound
                     ->where('id', $round->id)
                     ->where('players', [
-                        ['id' => $anna->id, 'name' => 'Anna', 'avatarPath' => null, 'points' => 5],
-                        ['id' => $user->player->id, 'name' => $user->player->surname, 'avatarPath' => $user->avatar_path, 'points' => -5],
+                        ['id' => $anna->id, 'firstName' => 'Anna', 'avatarPath' => null, 'points' => 5],
+                        ['id' => $user->player->id, 'firstName' => $user->player->first_name, 'avatarPath' => $user->avatar_path, 'points' => -5],
                     ])
                     ->where('gamesCount', 2)
                     ->where('lastGameAt', now()->subHour()->toIso8601String())

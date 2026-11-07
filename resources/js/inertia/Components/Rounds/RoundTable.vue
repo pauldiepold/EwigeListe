@@ -156,7 +156,7 @@ function rowBackground(game: RoundGame): string {
             >
               <UAvatar
                 :src="player.avatarPath ?? undefined"
-                :alt="player.surname"
+                :alt="player.firstName"
                 :class="{
                   'opacity-40': sitsOut(player),
                   'shadow-[0_0_10px_2px] shadow-success/60': onlinePlayerIds.includes(player.id),
@@ -169,7 +169,7 @@ function rowBackground(game: RoundGame): string {
                   { 'opacity-40': sitsOut(player) },
                 ]"
               >
-                {{ player.surname }}
+                {{ player.firstName }}
               </span>
             </component>
           </th>

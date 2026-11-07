@@ -41,7 +41,7 @@ function lastGameLabel(isoDate: string): string {
 }
 
 function playerNames(round: HomeRound): string {
-  return round.players.map((player) => player.name).join(', ');
+  return round.players.map((player) => player.firstName).join(', ');
 }
 
 /** Alle mit dem höchsten Punktestand; bei Gleichstand mehrere. Ohne Plus-Punkte gibt es niemanden vorn. */
@@ -52,7 +52,7 @@ function leaderOf(round: HomeRound): { names: string; points: number } | null {
   }
   const names = round.players
     .filter((player) => player.points === points)
-    .map((player) => player.name)
+    .map((player) => player.firstName)
     .join(' & ');
   return { names, points };
 }
@@ -107,7 +107,7 @@ const cards = computed(() => props.rounds.map((round) => ({ round, leader: leade
                 v-for="player in round.players"
                 :key="player.id"
                 :src="player.avatarPath ?? undefined"
-                :alt="player.name"
+                :alt="player.firstName"
               />
             </UAvatarGroup>
             <p class="min-w-0 font-semibold text-pretty text-highlighted">

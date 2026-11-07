@@ -17,8 +17,9 @@ class Player extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surname' => $this->surname,
-            'name' => $this->name,
+            // Alte Schlüssel für die Legacy-Komponenten hinter `fetchData`; fallen mit dem Live-Spiel (#36) weg.
+            'surname' => $this->first_name,
+            'name' => $this->last_name,
             'is_ai' => $this->is_ai,
             'won' => $this->whenPivotLoaded('game_player', fn () => $this->pivot->won),
             'points' => $this->whenPivotLoaded('game_player', fn () => $this->pivot->points),
