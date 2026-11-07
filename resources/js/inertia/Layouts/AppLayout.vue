@@ -5,6 +5,7 @@ import {
   datenschutz,
   ewigeListe,
   impressum,
+  home as homeAlias,
   index as home,
   login,
   logout as logoutRoute,
@@ -47,7 +48,7 @@ const navItems = computed<NavItem[]>(() => {
     to: home.url(),
     icon: 'i-lucide-house',
     label: 'Startseite',
-    active: [home.url(), '/home'].includes(currentPath.value),
+    active: [home.url(), homeAlias.url()].includes(currentPath.value),
   };
 
   if (!isAuthenticated.value) {
@@ -76,6 +77,7 @@ const navItems = computed<NavItem[]>(() => {
             to: currentRound.url(),
             icon: 'i-lucide-circle-play',
             label: 'Aktuelle Runde',
+            // Jede geöffnete Runde zählt als Runden-Ansicht, auch eine aus dem Archiv.
             active: /^\/runde\/\d/.test(currentPath.value),
           },
         ]
@@ -90,6 +92,7 @@ const navItems = computed<NavItem[]>(() => {
       to: ewigeListe.url(),
       icon: 'i-lucide-list',
       label: 'Ewige Liste',
+      // Gewollt per Präfix: auch `/listen`, `/liste/erstellen` und jede andere Liste.
       active: currentPath.value.startsWith(ewigeListe.url()),
     },
     {
