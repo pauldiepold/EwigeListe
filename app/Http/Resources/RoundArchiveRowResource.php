@@ -21,7 +21,7 @@ class RoundArchiveRowResource extends JsonResource
         return [
             'id' => $this->id,
             'path' => route('rounds.show', ['round' => $this->id], false),
-            'date' => $this->updated_at->format('d.m.Y'),
+            'date' => $this->updated_at->format('d.m.y'),
             'games_count' => $this->games_count,
             'has_live_round' => (bool) $this->liveRound,
             'player_ids' => $this->players->pluck('id')->values()->all(),

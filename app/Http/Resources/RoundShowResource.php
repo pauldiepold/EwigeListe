@@ -69,9 +69,39 @@ class RoundShowResource extends JsonResource
     {
         return $players->map(fn (Player $player): array => [
             'id' => $player->id,
-            'name' => "{$player->surname} {$player->name}",
+            'name' => $this->shortName($player, $players),
             'avatarPath' => $player->avatar_path,
         ])->values()->all();
+    }
+
+    /**
+     * Der Vorname genügt, solange ihn am Tisch niemand teilt. Sonst folgt der Nachname, gekürzt auf so viele Buchstaben,
+     * bis er sich von denen mit gleichem Vornamen unterscheidet („Paul Di.“, „Paul Dö.“).
+     *
+     * @param  Collection<int, Player>  $players
+     */
+    private function shortName(Player $player, Collection $players): string
+    {
+        $otherLastNames = $players
+            ->filter(fn (Player $other): bool => $other->id !== $player->id && mb_strtolower($other->surname) === mb_strtolower($player->surname))
+            ->map(fn (Player $other): string => mb_strtolower($other->name));
+
+        if ($otherLastNames->isEmpty()) {
+            return $player->surname;
+        }
+
+        $lastName = mb_strtolower($player->name);
+        $length = mb_strlen($player->name);
+
+        for ($prefixLength = 1; $prefixLength < $length; $prefixLength++) {
+            $prefix = mb_substr($lastName, 0, $prefixLength);
+
+            if ($otherLastNames->every(fn (string $other): bool => ! str_starts_with($other, $prefix))) {
+                return $player->surname.' '.mb_substr($player->name, 0, $prefixLength).'.';
+            }
+        }
+
+        return "{$player->surname} {$player->name}";
     }
 
     /**
@@ -142,7 +172,7 @@ class RoundShowResource extends JsonResource
     }
 
     /**
-     * @return array{gamesCount: int, averageGameDuration: ?string, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string}
+     * @return array{gamesCount: int, averageGameMinutes: ?int, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string}
      */
     private function info(): array
     {
@@ -150,19 +180,37 @@ class RoundShowResource extends JsonResource
 
         return [
             'gamesCount' => $this->games->count(),
-            'averageGameDuration' => $this->averageGameDuration(),
+            'averageGameMinutes' => $this->averageGameMinutes(),
             'startedBy' => $this->createdBy->surname,
-            'startedAt' => printDate($this->created_at),
+            'startedAt' => $this->shortTimestamp($this->created_at),
             'lastGameBy' => $lastGame?->createdBy?->surname,
-            'lastGameAt' => $lastGame ? printDate($lastGame->created_at) : null,
+            'lastGameAt' => $lastGame
+                ? ($lastGame->created_at->isSameDay($this->created_at)
+                    ? $lastGame->created_at->format('H:i')
+                    : $this->shortTimestamp($lastGame->created_at))
+                : null,
         ];
+    }
+
+    /**
+     * „heute 14:00“, „gestern 14:00“ oder „3.11.2026 14:00“.
+     */
+    private function shortTimestamp(Carbon $timestamp): string
+    {
+        $day = match (true) {
+            $timestamp->isToday() => 'heute',
+            $timestamp->isYesterday() => 'gestern',
+            default => $timestamp->format('j.n.Y'),
+        };
+
+        return $day.' '.$timestamp->format('H:i');
     }
 
     /**
      * Solange die Runde läuft, zählt die Zeit bis jetzt mit. Unplausible Werte (Runde über mehrere
      * Tage, nachträglich eingetragene Spiele) werden nicht gezeigt.
      */
-    private function averageGameDuration(): ?string
+    private function averageGameMinutes(): ?int
     {
         $gamesCount = $this->games->count();
 
@@ -182,9 +230,7 @@ class RoundShowResource extends JsonResource
             return null;
         }
 
-        $roundedSeconds = (int) round($seconds);
-
-        return intdiv($roundedSeconds, 60).' Minuten und '.($roundedSeconds % 60).' Sekunden';
+        return (int) round($seconds / 60);
     }
 
     /**

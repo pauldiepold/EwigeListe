@@ -49,6 +49,7 @@ function close(): void {
     <UButton
       color="secondary"
       variant="outline"
+      size="sm"
       icon="i-lucide-user-plus"
       label="Neue Person registrieren"
     />

@@ -9,7 +9,7 @@ import StaticArticle from '@/Components/Static/StaticArticle.vue';
 
   <AppLayout title="Doppelkopf Regeln">
     <StaticArticle>
-      <div id="regeln" class="text-left">
+      <div>
         <h3>Spielfindung</h3>
         <p>
           Vor dem Spiel und vor Abhandlung der Vorbehalte müssen diese angekündigt werden. Sollte

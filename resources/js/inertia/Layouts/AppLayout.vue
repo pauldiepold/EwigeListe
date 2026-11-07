@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref } from 'vue';
+import type { ButtonProps } from '@nuxt/ui';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
   datenschutz,
@@ -22,6 +23,10 @@ import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inerti
 
 defineProps<{
   title?: string;
+  /** Knöpfe rechts neben dem Titel, auch am Handy in derselben Zeile. */
+  headerLinks?: ButtonProps[];
+  /** Inhalt als Flex-Spalte über die volle Höhe, z. B. um etwas ans untere Ende zu schieben. */
+  fillHeight?: boolean;
 }>();
 
 const colorMode = ref<InertiaColorMode>('light');
@@ -104,6 +109,14 @@ const navItems = computed<NavItem[]>(() => {
   ];
 });
 
+const footerLinkClass = 'text-muted no-underline hover:text-highlighted hover:underline';
+
+const legalLinks = [
+  { href: regeln.url(), label: 'Regeln' },
+  { href: impressum.url(), label: 'Impressum' },
+  { href: datenschutz.url(), label: 'Datenschutz' },
+];
+
 function applyColorMode(mode: InertiaColorMode): void {
   colorMode.value = mode;
   const root = document.documentElement;
@@ -133,131 +146,131 @@ onMounted(() => {
 
 <template>
   <!-- `isolate`: Stehende Tabellenköpfe und der schwebende Button bleiben so unter Dialogen. -->
-  <div class="isolate flex min-h-screen flex-col bg-default text-highlighted">
-    <header class="shrink-0">
-      <div class="bg-blue-dark py-2 text-center">
-        <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
-          >Ewige Liste</Link
+  <div class="isolate bg-default text-highlighted">
+    <!-- Kopf und Inhalt füllen den Bildschirm, der Footer folgt erst nach dem Scrollen. -->
+    <div class="flex min-h-dvh flex-col">
+      <header class="shrink-0">
+        <div class="bg-blue-800 py-2 text-center">
+          <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
+            >Ewige Liste</Link
+          >
+        </div>
+
+        <nav class="bg-blue-700">
+          <!-- Beschriftungen erst ab `lg`, darunter passen sie nicht in eine Zeile. -->
+          <UContainer class="max-w-md px-1 py-1 lg:max-w-4xl">
+            <div class="flex items-center justify-around lg:gap-3">
+              <UButton
+                v-for="item in navItems"
+                :key="item.to"
+                :to="item.to"
+                color="neutral"
+                variant="ghost"
+                size="xl"
+                class="text-blue-100 hover:bg-white/15 hover:text-blue-200"
+                :class="{
+                  'rounded-none shadow-[inset_0_-3px_0_var(--ui-color-primary-400)]': item.active,
+                }"
+                :icon="item.icon"
+                :aria-label="item.label"
+                :aria-current="item.active ? 'page' : undefined"
+              >
+                <span class="hidden text-sm whitespace-nowrap lg:inline">{{ item.label }}</span>
+              </UButton>
+            </div>
+          </UContainer>
+        </nav>
+      </header>
+
+      <main class="flex flex-1 flex-col">
+        <!-- Mit `fillHeight` unten nur 1rem Abstand, so viel wie unter dem schwebenden Button. -->
+        <UContainer
+          class="flex w-full max-w-4xl flex-1 flex-col pt-4 sm:pt-8"
+          :class="fillHeight ? 'pb-4' : 'pb-4 sm:pb-8'"
         >
-      </div>
-
-      <nav class="bg-blue">
-        <UContainer class="max-w-md px-1 py-1 sm:max-w-4xl">
-          <div class="flex items-center justify-around sm:gap-3">
-            <UButton
-              v-for="item in navItems"
-              :key="item.to"
-              :to="item.to"
-              color="neutral"
-              variant="ghost"
-              size="xl"
-              class="text-white hover:bg-white/15"
-              :class="{
-                'rounded-none shadow-[inset_0_-3px_0_var(--ui-color-primary-400)]': item.active,
-              }"
-              :icon="item.icon"
-              :aria-label="item.label"
-              :aria-current="item.active ? 'page' : undefined"
-            >
-              <span class="hidden text-sm whitespace-nowrap sm:inline">{{ item.label }}</span>
-            </UButton>
-          </div>
+          <UPageHeader
+            v-if="title"
+            :title="title"
+            :links="headerLinks"
+            :ui="{
+              root: 'relative border-none py-4 sm:py-5',
+              wrapper: 'flex flex-row items-center justify-between gap-2',
+              links: 'shrink-0',
+              title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
+            }"
+          />
+          <UPageBody
+            class="mt-2 flex-1 sm:mt-4"
+            :class="fillHeight ? 'flex flex-col pb-0' : 'pb-8'"
+          >
+            <slot />
+          </UPageBody>
         </UContainer>
-      </nav>
-    </header>
+      </main>
 
-    <UPage as="main" class="flex-1">
-      <UContainer class="w-full max-w-4xl py-4 sm:py-8">
-        <UPageHeader
-          v-if="title"
-          :title="title"
-          :ui="{
-            root: 'relative border-b border-default py-4 sm:py-5',
-            title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
-          }"
-        />
-        <UPageBody class="mt-2 pb-8 sm:mt-4">
-          <slot />
-        </UPageBody>
-      </UContainer>
-    </UPage>
-
-    <!-- Außerhalb von `UPageBody`: Dessen `space-y-*` gäbe dem Button sonst einen Außenabstand. -->
-    <div
-      v-if="$slots.floatingAction"
-      class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20"
-    >
-      <slot name="floatingAction" />
+      <!--
+        Schwebender Button: Die Leiste ohne Höhe klebt am unteren Bildschirmrand, aber nur so weit,
+        wie Kopf und Inhalt reichen. Ab dem Footer bleibt sie am Inhaltsende stehen, der Button
+        ragt nach oben in den Inhalt. Außerhalb von `UPageBody`, dessen `space-y-*` gäbe ihr sonst
+        einen Außenabstand. Nur für Handy und Tablet; am Desktop bietet die Seite selbst einen
+        Button mit Text an.
+      -->
+      <div v-if="$slots.floatingAction" class="sticky bottom-0 z-20 h-0 shrink-0 lg:hidden">
+        <div class="absolute right-5 bottom-[calc(1rem+env(safe-area-inset-bottom))]">
+          <slot name="floatingAction" />
+        </div>
+      </div>
     </div>
 
-    <!-- Mit schwebendem Button bleibt unter dem Seitenende Platz, damit er nichts verdeckt. -->
-    <footer
-      class="shrink-0 border-t border-default bg-elevated"
-      :class="{ 'pb-22': $slots.floatingAction }"
-    >
-      <UContainer
-        class="flex w-full max-w-4xl flex-col gap-3 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
-          <template v-if="authPlayer">
-            <span class="text-muted">
-              Angemeldet:
-              <Link
-                :href="showPlayer.url({ player: authPlayer.id })"
-                class="text-muted no-underline hover:text-highlighted hover:underline"
-                >{{ authPlayer.surname }} {{ authPlayer.name }}</Link
-              >
-            </span>
-            <span class="text-muted" aria-hidden="true">&bull;</span>
-          </template>
-          <Link
-            :href="regeln.url()"
-            class="text-muted no-underline hover:text-highlighted hover:underline"
-          >
-            Regeln
-          </Link>
-          <span class="text-muted" aria-hidden="true">&bull;</span>
-          <Link
-            :href="impressum.url()"
-            class="text-muted no-underline hover:text-highlighted hover:underline"
-          >
-            Impressum
-          </Link>
-          <span class="text-muted" aria-hidden="true">&bull;</span>
-          <Link
-            :href="datenschutz.url()"
-            class="text-muted no-underline hover:text-highlighted hover:underline"
-          >
-            Datenschutz
-          </Link>
+    <footer class="shrink-0 border-t border-default bg-elevated">
+      <!-- Handy: Konto, Rechtliches, Copyright untereinander. Ab `sm`: Rechtliches links, Konto rechts. -->
+      <UContainer class="grid w-full max-w-4xl gap-3 py-4 text-sm sm:grid-cols-[1fr_auto]">
+        <div class="flex items-center justify-between gap-4 sm:order-2 sm:justify-end">
           <template v-if="isAuthenticated">
-            <span class="text-muted" aria-hidden="true">&bull;</span>
-            <button
-              type="button"
-              class="text-muted hover:text-highlighted hover:underline"
-              @click="logout"
+            <Link
+              v-if="authPlayer"
+              :href="showPlayer.url({ player: authPlayer.id })"
+              class="flex min-w-0 items-center gap-1.5"
+              :class="footerLinkClass"
             >
-              Logout
-            </button>
+              <UIcon name="i-lucide-user-round" class="size-4 shrink-0" />
+              <span class="truncate">{{ authPlayer.surname }} {{ authPlayer.name }}</span>
+            </Link>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              icon="i-lucide-log-out"
+              label="Logout"
+              @click="logout"
+            />
           </template>
           <template v-else>
-            <span class="text-muted" aria-hidden="true">&bull;</span>
-            <Link
-              :href="login.url()"
-              class="text-muted no-underline hover:text-highlighted hover:underline"
-            >
-              Login
-            </Link>
+            <Link :href="register.url()" :class="footerLinkClass">Registrieren</Link>
+            <UButton
+              :to="login.url()"
+              color="neutral"
+              variant="outline"
+              size="sm"
+              icon="i-lucide-log-in"
+              label="Login"
+            />
           </template>
         </div>
-        <div class="flex items-center justify-center gap-4 sm:justify-end">
-          <span class="text-muted"
-            >&copy; Paul Diepold <span class="text-muted" aria-hidden="true">&bull;</span>
-            {{ new Date().getFullYear() }}</span
-          >
+
+        <nav aria-label="Rechtliches" class="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <template v-for="(item, index) in legalLinks" :key="item.href">
+            <span v-if="index > 0" class="text-muted" aria-hidden="true">&middot;</span>
+            <Link :href="item.href" :class="footerLinkClass">{{ item.label }}</Link>
+          </template>
+        </nav>
+
+        <div class="flex items-center justify-between gap-4 sm:order-3 sm:col-span-2">
+          <span class="text-muted">&copy; {{ new Date().getFullYear() }} Paul Diepold</span>
           <UButton
             color="neutral"
-            variant="ghost"
+            variant="outline"
+            size="sm"
             :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
             :label="isDark ? 'Hell' : 'Dunkel'"
             @click="toggleColorMode"

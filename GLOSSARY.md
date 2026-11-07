@@ -28,6 +28,10 @@ _Avoid_: Dealer
 Jeder Spieler einer Runde hat einmal gegeben. Am Tisch heißt das oft ebenfalls „Runde“; hier ist damit immer der ganze Abend gemeint.
 _Avoid_: Runde (für den Umlauf)
 
+**Sitzreihenfolge**:
+Die Reihenfolge, in der die Spieler einer Runde am Tisch sitzen. Sie wird beim Erstellen der Runde festgelegt: Der Erste gibt zuerst, danach wandert das Amt des Gebers in dieser Reihenfolge weiter.
+_Avoid_: Spielerreihenfolge
+
 **Aussetzen**:
 Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus. Bei fünf Spielern setzt der Geber aus.
 

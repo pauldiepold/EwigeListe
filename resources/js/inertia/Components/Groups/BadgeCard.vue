@@ -20,11 +20,11 @@ const typeLabel = computed(() => (props.type === 'points' ? 'Meiste Punkte' : 'M
     <div class="flex flex-1 flex-col items-center">
       <UIcon name="i-lucide-crown" class="size-5" aria-hidden="true" />
       <span class="text-3xl font-bold">{{ badge.value }}</span>
-      <span class="text-xs text-gray-700">{{ typeLabel }}</span>
+      <span class="text-xs text-black/60">{{ typeLabel }}</span>
     </div>
     <div class="flex flex-2 flex-col items-center">
       <span class="text-2xl">{{ badge.name }}</span>
-      <span class="text-xs text-gray-700">{{ badge.date }}</span>
+      <span class="text-xs text-black/60">{{ badge.date }}</span>
     </div>
   </component>
 </template>

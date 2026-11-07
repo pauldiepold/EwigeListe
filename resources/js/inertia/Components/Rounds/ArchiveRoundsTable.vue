@@ -2,7 +2,8 @@
 import type { Component } from 'vue';
 import { computed, h, resolveComponent } from 'vue';
 import { Link } from '@inertiajs/vue3';
-import type { Column, ColumnDef, Row, SortingState } from '@tanstack/vue-table';
+import type { ColumnDef, Row, SortingState } from '@tanstack/vue-table';
+import { sortIcon, sortIconClass } from '@/composables/tableSorting';
 import type { ArchiveSortColumn, RoundArchiveRow } from '@/types/rounds-index';
 
 const props = defineProps<{
@@ -21,17 +22,6 @@ const tableSorting = computed<SortingState>({
   get: () => [{ id: props.sortColumn, desc: props.sortDirection === 'desc' }],
   set: () => {},
 });
-
-function sortIcon(column: Column<RoundArchiveRow, unknown>): string {
-  const state = column.getIsSorted();
-  if (state === 'asc') {
-    return 'i-lucide-arrow-up-narrow-wide';
-  }
-  if (state === 'desc') {
-    return 'i-lucide-arrow-down-narrow-wide';
-  }
-  return 'i-lucide-arrow-up-down';
-}
 
 function onSortHeaderClick(columnId: ArchiveSortColumn): void {
   if (props.sortColumn === columnId) {
@@ -56,20 +46,15 @@ const columns: ColumnDef<RoundArchiveRow>[] = [
     id: 'online',
     accessorKey: 'has_live_round',
     header: 'Online',
-    meta: {
-      class: {
-        td: 'text-center align-middle',
-      },
-    },
     cell: ({ row }) => {
       if (!row.original.has_live_round) {
         return null;
       }
       const UIcon = resolveComponent('UIcon') as Component;
       return h(UIcon, {
-        name: 'i-lucide-dice-5',
-        class: 'size-6 shrink-0 align-middle text-primary',
-        'aria-hidden': true,
+        name: 'i-lucide-wifi',
+        class: 'size-5 shrink-0 align-middle text-primary',
+        'aria-label': 'Online',
       });
     },
   },
@@ -85,14 +70,15 @@ const tableMeta = computed(() => ({
   class: {
     tr: (row: Row<RoundArchiveRow>) =>
       props.highlightPlayerId !== null && row.original.player_ids.includes(props.highlightPlayerId)
-        ? 'bg-primary-light'
+        ? 'bg-primary/15'
         : '',
   },
 }));
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <!-- Am Handy bis an den Rand wie die Spieltabelle: hebt das Seiten-Padding auf. -->
+  <div class="-mx-4 overflow-x-auto sm:mx-0">
     <UTable
       v-model:sorting="tableSorting"
       :sorting-options="{ manualSorting: true }"
@@ -100,7 +86,11 @@ const tableMeta = computed(() => ({
       :columns="columns"
       :meta="tableMeta"
       :get-row-id="(row: RoundArchiveRow) => String(row.id)"
-      class="w-full max-w-5xl md:max-w-7xl"
+      :ui="{
+        th: 'px-2 py-2',
+        td: 'px-2 py-2.5 tabular-nums last:w-full last:whitespace-normal',
+      }"
+      class="w-full"
     >
       <template #date-header="{ column }">
         <UButton
@@ -109,6 +99,7 @@ const tableMeta = computed(() => ({
           class="-mx-2.5"
           label="Datum"
           :trailing-icon="sortIcon(column)"
+          :ui="{ trailingIcon: sortIconClass(column) }"
           @click="onSortHeaderClick('date')"
         />
       </template>
@@ -120,6 +111,7 @@ const tableMeta = computed(() => ({
           class="-mx-2.5"
           label="Spiele"
           :trailing-icon="sortIcon(column)"
+          :ui="{ trailingIcon: sortIconClass(column) }"
           @click="onSortHeaderClick('games')"
         />
       </template>
@@ -129,8 +121,10 @@ const tableMeta = computed(() => ({
           color="neutral"
           variant="ghost"
           class="-mx-2.5"
-          label="Online"
+          icon="i-lucide-wifi"
+          aria-label="Online"
           :trailing-icon="sortIcon(column)"
+          :ui="{ trailingIcon: sortIconClass(column) }"
           @click="onSortHeaderClick('online')"
         />
       </template>

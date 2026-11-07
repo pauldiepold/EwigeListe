@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChartLoading from '@/Components/Groups/GamesChartLoading.vue';
@@ -35,22 +35,37 @@ function refresh(): void {
 
 const { onlinePlayerIds } = useRoundUpdates(props.round.id, refresh);
 
-const deleting = ref(false);
 const pendingGame = ref<'new' | 'edited' | null>(null);
+
+/** Das Spiel, dessen Löschen noch aussteht: Seine Zeile zeigt ein Skeleton wie beim Eintragen. */
+const deletingGameId = ref<number | null>(null);
+
+/** Offen, solange die Rückfrage zum Löschen steht; die Tabelle tönt die Zeile dann rot. */
+const confirmingDelete = ref(false);
+
+// Ist ein anderes Spiel das letzte geworden, gilt die Rückfrage nicht mehr.
+watch(
+  () => props.round.lastGameId,
+  () => {
+    confirmingDelete.value = false;
+  },
+);
 
 function deleteLastGame(): void {
   if (props.round.lastGameId === null) {
     return;
   }
 
-  router.delete(destroyGame.url(props.round.lastGameId), {
+  const gameId = props.round.lastGameId;
+  confirmingDelete.value = false;
+  router.delete(destroyGame.url(gameId), {
     preserveState: true,
     preserveScroll: true,
     onStart: () => {
-      deleting.value = true;
+      deletingGameId.value = gameId;
     },
     onFinish: () => {
-      deleting.value = false;
+      deletingGameId.value = null;
     },
   });
 }
@@ -63,9 +78,10 @@ function deleteRound(): void {
 <template>
   <Head title="Rundenübersicht" />
 
-  <AppLayout>
+  <AppLayout fill-height>
     <template v-if="canChangeGames && activeTab === 'runde'" #floatingAction>
       <EnterGameModal
+        floating
         :round-id="round.id"
         :last-game-id="round.lastGameId"
         :active-players="round.activePlayers"
@@ -74,49 +90,104 @@ function deleteRound(): void {
       />
     </template>
 
-    <div class="mx-auto w-full max-w-5xl">
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full" />
+    <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
+      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mt-2 mb-6 w-full" />
 
-      <section v-if="activeTab === 'runde'" class="space-y-6">
-        <RoundTable
-          :players="round.players"
-          :games="round.games"
-          :online-player-ids="onlinePlayerIds"
-          :pending-game="pendingGame"
-        />
-
-        <div
-          v-if="canChangeGames && round.lastGameId !== null"
-          class="flex flex-wrap items-center justify-center gap-3"
-        >
+      <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
+      <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
+        <!-- Am Desktop ein Button mit Text, darunter schwebt der Plus-Button (siehe `AppLayout`). -->
+        <div v-if="canChangeGames" class="hidden justify-center lg:flex">
           <EnterGameModal
             :round-id="round.id"
             :last-game-id="round.lastGameId"
             :active-players="round.activePlayers"
             :viewer-is-active="round.viewerIsActive"
-            :edited-game="round.lastGame"
             @pending="pendingGame = $event"
           />
-          <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
-          <ConfirmAction
-            :key="round.lastGameId"
-            icon="i-lucide-trash-2"
-            label="Letztes Spiel löschen"
-            confirm-label="Letztes Spiel wirklich löschen?"
-            :loading="deleting"
-            @confirm="deleteLastGame"
-          />
         </div>
 
-        <RoundInfo :info="round.info" />
+        <RoundTable
+          :players="round.players"
+          :games="round.games"
+          :online-player-ids="onlinePlayerIds"
+          :pending-game="pendingGame"
+          :marked-game-id="confirmingDelete ? round.lastGameId : deletingGameId"
+          :deleting-game-id="deletingGameId"
+        />
 
-        <div v-if="round.canUpdate && round.info.gamesCount === 0" class="flex justify-center">
-          <ConfirmAction
-            label="Runde löschen"
-            confirm-label="Runde wirklich löschen?"
-            @confirm="deleteRound"
-          />
-        </div>
+        <!--
+          `pb-20` hebt den Hinweis etwas an: Kachel und Plus-Button machen den unteren Teil schwer.
+          Kreuz aus Tabler statt Lucide: Lucides `club` liest sich klein wie Pik.
+        -->
+        <UEmpty
+          v-if="round.info.gamesCount === 0 && pendingGame !== 'new'"
+          class="flex-1 pb-20"
+          variant="naked"
+          icon="i-tabler-clubs"
+          title="Noch kein Spiel eingetragen"
+        >
+          <template v-if="canChangeGames" #description>
+            <span class="lg:hidden">Über das + unten rechts trägst du das erste Spiel ein.</span>
+            <span class="hidden lg:inline">
+              Über „Spiel eintragen“ oben trägst du das erste Spiel ein.
+            </span>
+          </template>
+          <template v-if="round.canUpdate" #actions>
+            <ConfirmAction
+              label="Runde löschen"
+              confirm-label="Runde wirklich löschen?"
+              @confirm="deleteRound"
+            />
+          </template>
+        </UEmpty>
+
+        <!--
+          Mindestens so hoch wie der Plus-Button und mit demselben Abstand nach unten: Kachel und
+          Button bilden eine Leiste, rechts bleibt Platz für ihn.
+        -->
+        <RoundInfo
+          :info="round.info"
+          class="mt-auto mb-[env(safe-area-inset-bottom)] self-start"
+          :class="{ 'mr-20 lg:mr-0': canChangeGames }"
+        >
+          <template v-if="canChangeGames && round.lastGameId !== null" #lastGameActions>
+            <!-- Rückfrage in der Kachel statt als Overlay, damit die rot getönte Zeile sichtbar bleibt. -->
+            <div v-if="confirmingDelete" class="col-span-2 flex items-center gap-2">
+              <span class="mr-auto text-highlighted">
+                Spiel {{ round.info.gamesCount }} löschen?
+              </span>
+              <UButton
+                color="neutral"
+                variant="outline"
+                size="xs"
+                label="Abbrechen"
+                @click="confirmingDelete = false"
+              />
+              <UButton color="error" size="xs" label="Löschen" @click="deleteLastGame" />
+            </div>
+            <UFieldGroup v-else size="xs" class="-my-[3px]" role="group" aria-label="Letztes Spiel">
+              <EnterGameModal
+                :round-id="round.id"
+                :last-game-id="round.lastGameId"
+                :active-players="round.activePlayers"
+                :viewer-is-active="round.viewerIsActive"
+                :edited-game="round.lastGame"
+                @pending="pendingGame = $event"
+              />
+              <UButton
+                color="neutral"
+                variant="outline"
+                icon="i-lucide-trash-2"
+                class="px-3"
+                :ui="{ leadingIcon: 'size-3.5' }"
+                aria-label="Letztes Spiel löschen"
+                title="Letztes Spiel löschen"
+                :loading="deletingGameId !== null"
+                @click="confirmingDelete = true"
+              />
+            </UFieldGroup>
+          </template>
+        </RoundInfo>
       </section>
 
       <UAlert

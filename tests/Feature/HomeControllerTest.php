@@ -69,22 +69,48 @@ class HomeControllerTest extends TestCase
     }
 
     #[Test]
-    public function a_current_round_shows_its_players_and_last_game(): void
+    public function a_current_round_shows_its_players_games_and_last_game(): void
     {
         $this->travelTo(Carbon::parse('2026-10-30 14:00:00'));
-        $this->actingAs(User::factory()->create());
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
         $round = $this->roundWithGameAt(now()->subHour());
-        $players = Player::factory()->count(2)->sequence(['surname' => 'Anna'], ['surname' => 'Ben'])->create();
-        $players->each(fn (Player $player, int $index) => $round->players()->attach($player, ['index' => $index]));
+        $earlierGame = Game::factory()->create(['round_id' => $round->id, 'created_at' => now()->subHours(2)]);
+        $anna = Player::factory()->create(['surname' => 'Anna']);
+        $round->players()->attach($anna, ['index' => 0]);
+        $round->players()->attach($user->player, ['index' => 1]);
+        $this->scoreGame($round->games->first(), [$anna->id => 3, $user->player->id => -3]);
+        $this->scoreGame($earlierGame, [$anna->id => 2, $user->player->id => -2]);
+        $this->scoreGame(Game::factory()->create(['created_at' => now()->subWeek()]), [$anna->id => 50]);
 
         $this->get(route('index'))
             ->assertInertia(fn (Assert $page) => $page
                 ->has('currentRounds.0', fn (Assert $currentRound) => $currentRound
                     ->where('id', $round->id)
-                    ->where('players', 'Anna - Ben')
-                    ->where('lastGameAt', 'heute  um 13:00 Uhr')
+                    ->where('players', [
+                        ['id' => $anna->id, 'name' => 'Anna', 'avatarPath' => null, 'points' => 5],
+                        ['id' => $user->player->id, 'name' => $user->player->surname, 'avatarPath' => $user->avatar_path, 'points' => -5],
+                    ])
+                    ->where('gamesCount', 2)
+                    ->where('lastGameAt', now()->subHour()->toIso8601String())
+                    ->where('isLive', false)
+                    ->where('isOwn', true)
                 )
+            );
+    }
+
+    #[Test]
+    public function a_current_round_without_the_viewer_is_not_their_own(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $round = $this->roundWithGameAt(now()->subHour());
+        $round->players()->attach(Player::factory()->create(), ['index' => 0]);
+
+        $this->get(route('index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('currentRounds.0.isOwn', false)
             );
     }
 
@@ -113,5 +139,20 @@ class HomeControllerTest extends TestCase
         ]);
 
         return $round->refresh();
+    }
+
+    /**
+     * @param  array<int, int>  $pointsByPlayerId
+     */
+    private function scoreGame(Game $game, array $pointsByPlayerId): void
+    {
+        foreach ($pointsByPlayerId as $playerId => $points) {
+            $game->players()->attach($playerId, [
+                'points' => $points,
+                'won' => $points > 0,
+                'soloist' => false,
+                'misplayed' => false,
+            ]);
+        }
     }
 }
