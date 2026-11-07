@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-withDefaults(
-  defineProps<{
-    label: string;
-    confirmLabel: string;
-    loading?: boolean;
-    icon?: string;
-    variant?: 'outline' | 'ghost';
-  }>(),
-  { variant: 'outline' },
-);
+defineProps<{
+  label: string;
+  confirmLabel: string;
+  loading?: boolean;
+  icon?: string;
+}>();
 
 const emit = defineEmits<{
   confirm: [];
@@ -28,7 +24,7 @@ function confirm(): void {
   <UButton
     v-if="!confirming"
     color="neutral"
-    :variant="variant"
+    variant="outline"
     :label="label"
     :icon="icon"
     :loading="loading"

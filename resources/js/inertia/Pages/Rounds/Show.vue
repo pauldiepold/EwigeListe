@@ -66,6 +66,7 @@ function deleteRound(): void {
   <AppLayout fill-height>
     <template v-if="canChangeGames && activeTab === 'runde'" #floatingAction>
       <EnterGameModal
+        floating
         :round-id="round.id"
         :last-game-id="round.lastGameId"
         :active-players="round.activePlayers"
@@ -79,6 +80,17 @@ function deleteRound(): void {
 
       <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
       <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
+        <!-- Am Desktop ein Button mit Text, darunter schwebt der Plus-Button (siehe `AppLayout`). -->
+        <div v-if="canChangeGames" class="hidden justify-center lg:flex">
+          <EnterGameModal
+            :round-id="round.id"
+            :last-game-id="round.lastGameId"
+            :active-players="round.activePlayers"
+            :viewer-is-active="round.viewerIsActive"
+            @pending="pendingGame = $event"
+          />
+        </div>
+
         <RoundTable
           :players="round.players"
           :games="round.games"
@@ -113,15 +125,17 @@ function deleteRound(): void {
           v-if="round.info.gamesCount === 0 && pendingGame !== 'new'"
           class="flex-1"
           variant="naked"
-          icon="i-lucide-spade"
+          icon="i-lucide-club"
           title="Noch kein Spiel eingetragen"
-          :description="
-            canChangeGames ? 'Über das + unten rechts trägst du das erste Spiel ein.' : undefined
-          "
         >
+          <template v-if="canChangeGames" #description>
+            <span class="lg:hidden">Über das + unten rechts trägst du das erste Spiel ein.</span>
+            <span class="hidden lg:inline">
+              Über „Spiel eintragen“ oben trägst du das erste Spiel ein.
+            </span>
+          </template>
           <template v-if="round.canUpdate" #actions>
             <ConfirmAction
-              variant="ghost"
               label="Runde löschen"
               confirm-label="Runde wirklich löschen?"
               @confirm="deleteRound"
@@ -129,8 +143,15 @@ function deleteRound(): void {
           </template>
         </UEmpty>
 
-        <!-- Rechts bleibt Platz für den schwebenden Plus-Button. -->
-        <RoundInfo :info="round.info" class="mt-auto" :class="{ 'pr-20': canChangeGames }" />
+        <!--
+          So hoch wie der Plus-Button und mit demselben Abstand nach unten: Der Text steht auf
+          Höhe seiner Mitte, rechts bleibt Platz für ihn.
+        -->
+        <RoundInfo
+          :info="round.info"
+          class="mt-auto mb-[env(safe-area-inset-bottom)] flex min-h-14 flex-col justify-center"
+          :class="{ 'pr-20 lg:pr-0': canChangeGames }"
+        />
       </section>
 
       <UAlert

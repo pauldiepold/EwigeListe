@@ -14,6 +14,8 @@ const props = defineProps<{
   viewerIsActive: boolean;
   /** Gesetzt, wenn statt eines neuen Spiels dieses letzte Spiel bearbeitet wird. */
   editedGame?: RoundLastGame | null;
+  /** Runder Plus-Button, der unten rechts über der Seite schwebt, statt eines Buttons mit Text. */
+  floating?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -204,7 +206,7 @@ watch(
     />
     <!-- Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. -->
     <UButton
-      v-else
+      v-else-if="floating"
       color="primary"
       icon="i-lucide-plus"
       aria-label="Spiel eintragen"
@@ -212,6 +214,7 @@ watch(
       class="size-14 justify-center rounded-full shadow-[0_6px_18px_hsl(0_0%_0%/0.45)]"
       :ui="{ leadingIcon: 'size-7' }"
     />
+    <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
 
     <template #body>
       <form id="enter-game-form" class="space-y-6" @submit.prevent="submit">

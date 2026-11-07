@@ -154,8 +154,9 @@ onMounted(() => {
         </div>
 
         <nav class="bg-blue">
-          <UContainer class="max-w-md px-1 py-1 sm:max-w-4xl">
-            <div class="flex items-center justify-around sm:gap-3">
+          <!-- Beschriftungen erst ab `lg`, darunter passen sie nicht in eine Zeile. -->
+          <UContainer class="max-w-md px-1 py-1 lg:max-w-4xl">
+            <div class="flex items-center justify-around lg:gap-3">
               <UButton
                 v-for="item in navItems"
                 :key="item.to"
@@ -171,7 +172,7 @@ onMounted(() => {
                 :aria-label="item.label"
                 :aria-current="item.active ? 'page' : undefined"
               >
-                <span class="hidden text-sm whitespace-nowrap sm:inline">{{ item.label }}</span>
+                <span class="hidden text-sm whitespace-nowrap lg:inline">{{ item.label }}</span>
               </UButton>
             </div>
           </UContainer>
@@ -179,7 +180,11 @@ onMounted(() => {
       </header>
 
       <main class="flex flex-1 flex-col">
-        <UContainer class="flex w-full max-w-4xl flex-1 flex-col py-4 sm:py-8">
+        <!-- Mit `fillHeight` unten nur 1rem Abstand, so viel wie unter dem schwebenden Button. -->
+        <UContainer
+          class="flex w-full max-w-4xl flex-1 flex-col pt-4 sm:pt-8"
+          :class="fillHeight ? 'pb-4' : 'pb-4 sm:pb-8'"
+        >
           <UPageHeader
             v-if="title"
             :title="title"
@@ -188,17 +193,23 @@ onMounted(() => {
               title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
             }"
           />
-          <UPageBody class="mt-2 flex-1 pb-8 sm:mt-4" :class="{ 'flex flex-col': fillHeight }">
+          <UPageBody
+            class="mt-2 flex-1 sm:mt-4"
+            :class="fillHeight ? 'flex flex-col pb-0' : 'pb-8'"
+          >
             <slot />
           </UPageBody>
         </UContainer>
       </main>
     </div>
 
-    <!-- Außerhalb von `UPageBody`: Dessen `space-y-*` gäbe dem Button sonst einen Außenabstand. -->
+    <!--
+      Außerhalb von `UPageBody`: Dessen `space-y-*` gäbe dem Button sonst einen Außenabstand.
+      Nur für Handy und Tablet; am Desktop bietet die Seite selbst einen Button mit Text an.
+    -->
     <div
       v-if="$slots.floatingAction"
-      class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20"
+      class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 lg:hidden"
     >
       <slot name="floatingAction" />
     </div>
@@ -206,7 +217,7 @@ onMounted(() => {
     <!-- Mit schwebendem Button bleibt unter dem Seitenende Platz, damit er nichts verdeckt. -->
     <footer
       class="shrink-0 border-t border-default bg-elevated"
-      :class="{ 'pb-22': $slots.floatingAction }"
+      :class="{ 'pb-22 lg:pb-0': $slots.floatingAction }"
     >
       <!-- Handy: Konto, Rechtliches, Copyright untereinander. Ab `sm`: Rechtliches links, Konto rechts. -->
       <UContainer class="grid w-full max-w-4xl gap-3 py-4 text-sm sm:grid-cols-[1fr_auto]">
@@ -221,11 +232,25 @@ onMounted(() => {
               <UIcon name="i-lucide-user-round" class="size-4 shrink-0" />
               <span class="truncate">{{ authPlayer.surname }} {{ authPlayer.name }}</span>
             </Link>
-            <button type="button" :class="footerLinkClass" @click="logout">Logout</button>
+            <UButton
+              color="neutral"
+              variant="outline"
+              size="sm"
+              icon="i-lucide-log-out"
+              label="Logout"
+              @click="logout"
+            />
           </template>
           <template v-else>
-            <Link :href="login.url()" :class="footerLinkClass">Login</Link>
             <Link :href="register.url()" :class="footerLinkClass">Registrieren</Link>
+            <UButton
+              :to="login.url()"
+              color="neutral"
+              variant="outline"
+              size="sm"
+              icon="i-lucide-log-in"
+              label="Login"
+            />
           </template>
         </div>
 
@@ -241,10 +266,10 @@ onMounted(() => {
           <span class="text-muted">&copy; {{ new Date().getFullYear() }} Paul Diepold</span>
           <UButton
             color="neutral"
-            variant="ghost"
+            variant="outline"
             size="sm"
             :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
-            :aria-label="isDark ? 'Helles Design' : 'Dunkles Design'"
+            :label="isDark ? 'Hell' : 'Dunkel'"
             @click="toggleColorMode"
           />
         </div>
