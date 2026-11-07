@@ -6,7 +6,6 @@ defineProps<{
   confirmLabel: string;
   loading?: boolean;
   icon?: string;
-  size?: 'sm' | 'md';
 }>();
 
 const emit = defineEmits<{
@@ -21,25 +20,23 @@ function confirm(): void {
 }
 </script>
 
+<!--
+  Ohne Wrapper: Die Buttons der Rückfrage reihen sich direkt in den umgebenden Container ein,
+  z. B. in eine `UFieldGroup`, deren Rundungen an `:first-child`/`:last-child` hängen.
+  Eigene Abstände braucht dieser deshalb selbst (`gap-*`).
+-->
 <template>
   <UButton
     v-if="!confirming"
     color="neutral"
     variant="outline"
-    :size="size"
     :label="label"
     :icon="icon"
     :loading="loading"
     @click="confirming = true"
   />
-  <div v-else class="flex flex-wrap justify-center gap-2">
-    <UButton
-      color="neutral"
-      variant="outline"
-      :size="size"
-      label="Abbrechen"
-      @click="confirming = false"
-    />
-    <UButton color="error" :size="size" :label="confirmLabel" @click="confirm" />
-  </div>
+  <template v-else>
+    <UButton color="neutral" variant="outline" label="Abbrechen" @click="confirming = false" />
+    <UButton color="error" :label="confirmLabel" @click="confirm" />
+  </template>
 </template>

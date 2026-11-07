@@ -76,7 +76,7 @@ function deleteRound(): void {
     </template>
 
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full lg:mb-6" />
+      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mt-2 mb-6 w-full" />
 
       <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
       <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
@@ -102,27 +102,30 @@ function deleteRound(): void {
           v-if="canChangeGames && round.lastGameId !== null"
           role="group"
           aria-label="Letztes Spiel"
-          class="flex flex-wrap items-center justify-center gap-2"
+          class="flex flex-col items-center gap-1.5"
         >
-          <span class="text-sm text-muted" aria-hidden="true">Letztes Spiel</span>
-          <EnterGameModal
-            :round-id="round.id"
-            :last-game-id="round.lastGameId"
-            :active-players="round.activePlayers"
-            :viewer-is-active="round.viewerIsActive"
-            :edited-game="round.lastGame"
-            @pending="pendingGame = $event"
-          />
-          <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
-          <ConfirmAction
-            :key="round.lastGameId"
-            icon="i-lucide-trash-2"
-            size="sm"
-            label="Löschen"
-            confirm-label="Wirklich löschen?"
-            :loading="deleting"
-            @confirm="deleteLastGame"
-          />
+          <span class="text-xs font-medium tracking-wide text-muted uppercase" aria-hidden="true">
+            Letztes Spiel
+          </span>
+          <UFieldGroup size="sm">
+            <EnterGameModal
+              :round-id="round.id"
+              :last-game-id="round.lastGameId"
+              :active-players="round.activePlayers"
+              :viewer-is-active="round.viewerIsActive"
+              :edited-game="round.lastGame"
+              @pending="pendingGame = $event"
+            />
+            <!-- Der `key` bricht eine Bestätigung ab, sobald ein anderes Spiel das letzte ist. -->
+            <ConfirmAction
+              :key="round.lastGameId"
+              icon="i-lucide-trash-2"
+              label="Löschen"
+              confirm-label="Wirklich löschen?"
+              :loading="deleting"
+              @confirm="deleteLastGame"
+            />
+          </UFieldGroup>
         </div>
 
         <UEmpty
@@ -148,13 +151,13 @@ function deleteRound(): void {
         </UEmpty>
 
         <!--
-          So hoch wie der Plus-Button und mit demselben Abstand nach unten: Der Text steht auf
-          Höhe seiner Mitte, rechts bleibt Platz für ihn.
+          Mindestens so hoch wie der Plus-Button und mit demselben Abstand nach unten: Kachel und
+          Button bilden eine Leiste, rechts bleibt Platz für ihn.
         -->
         <RoundInfo
           :info="round.info"
-          class="mt-auto mb-[env(safe-area-inset-bottom)] flex min-h-14 flex-col justify-center"
-          :class="{ 'pr-20 lg:pr-0': canChangeGames }"
+          class="mt-auto mb-[env(safe-area-inset-bottom)] self-start"
+          :class="{ 'mr-20 lg:mr-0': canChangeGames }"
         />
       </section>
 
