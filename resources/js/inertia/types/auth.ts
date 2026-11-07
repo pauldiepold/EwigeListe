@@ -18,7 +18,6 @@ declare global {
 }
 
 export type SocialiteUserData = {
-  id: number;
   email: string;
   provider: string;
   surname: string;

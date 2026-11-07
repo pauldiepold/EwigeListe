@@ -86,7 +86,7 @@ class HiddenPlayerLoginTest extends TestCase
             'name' => 'Max Mustermann',
             'email' => $user->email,
         ]);
-        Socialite::shouldReceive('driver->stateless->user')->andReturn((new ProviderUser)->map(['id' => '12345']));
+        Socialite::shouldReceive('driver->user')->andReturn((new ProviderUser)->map(['id' => '12345']));
 
         $this->get('/callback/google')->assertRedirect('/#');
         $this->assertAuthenticatedAs($user);

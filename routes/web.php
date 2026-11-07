@@ -103,7 +103,7 @@ Route::get('/regeln/', [StaticPageController::class, 'regeln'])->name('regeln');
 /* *********** AUTH ************** */
 Route::get('auth/redirect/{provider}', [SocialiteController::class, 'redirect'])->name('auth.socialite');
 Route::get('callback/{provider}', [SocialiteController::class, 'callback'])->name('auth.socialite.callback');
-Route::get('login/social/{socialiteUser}', [SocialiteController::class, 'showView'])->name('auth.registerOrAttach');
+Route::get('login/social', [SocialiteController::class, 'showView'])->name('auth.registerOrAttach');
 
 /* *********** Quick Register ************** */
 Route::middleware('auth')->group(function () {

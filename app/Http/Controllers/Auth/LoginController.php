@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\SocialiteUser;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -44,26 +42,5 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
-    }
-
-    protected function authenticated(Request $request, $user)
-    {
-        $socialiteUserId = $request->input('socialiteUserId');
-        if ($socialiteUserId) {
-            $socialiteUser = SocialiteUser::find($socialiteUserId);
-            if ($socialiteUser->user_id == null) {
-                $socialiteUser->user_id = $user->id;
-                $socialiteUser->save();
-            }
-        }
-    }
-
-    protected function validateLogin(Request $request): void
-    {
-        $request->validate([
-            $this->username() => 'required|string',
-            'password' => 'required|string',
-            'socialiteUserId' => ['nullable', 'exists:socialite_users,id'],
-        ]);
     }
 }

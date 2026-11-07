@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\SocialiteUser;
 use App\Models\User;
+use App\Services\PendingSocialiteLink;
 use App\Services\PlayerRegistration;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
@@ -41,8 +41,10 @@ class RegisterController extends Controller
      *
      * @return void
      */
-    public function __construct(private PlayerRegistration $playerRegistration)
-    {
+    public function __construct(
+        private PlayerRegistration $playerRegistration,
+        private PendingSocialiteLink $pendingSocialiteLink,
+    ) {
         $this->middleware('guest');
     }
 
@@ -71,43 +73,40 @@ class RegisterController extends Controller
             'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder kontaktiere den Administrator.',
         ];
 
+        $viaSocialite = $this->registersViaSocialite();
+
         return Validator::make($data, [
             'surname' => 'required|string|max:255',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required_without:socialiteUserId|string|min:6|confirmed',
-            'socialiteUserId' => 'exists:socialite_users,id',
-            'g-recaptcha-response' => 'required_without:socialiteUserId|captcha',
+            'password' => $viaSocialite ? [] : 'required|string|min:6|confirmed',
+            'g-recaptcha-response' => $viaSocialite ? [] : 'required|captcha',
         ], $messages);
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Mit gemerkter Google- oder Facebook-Identität bekommt der Benutzer ein Zufallspasswort; die
+     * Verknüpfung übernimmt der Login direkt danach (`LinkPendingSocialiteUser`).
      *
-     * @return User
+     * @param  array<string, mixed>  $data
      */
-    protected function create(array $data)
+    protected function create(array $data): User
     {
-        $socialiteUserId = isset($data['socialiteUserId']) ? $data['socialiteUserId'] : null;
-
-        $password = $socialiteUserId ? Str::random(14) : $data['password'];
-
-        $user = $this->playerRegistration->register(
+        return $this->playerRegistration->register(
             surname: $data['surname'],
             name: $data['name'],
             email: $data['email'],
-            password: $password,
+            password: $this->registersViaSocialite() ? Str::random(14) : $data['password'],
         );
+    }
 
-        if ($socialiteUserId) {
-            $socialiteUser = SocialiteUser::find($socialiteUserId);
-            if ($socialiteUser->user_id == null) {
-                $socialiteUser->user_id = $user->id;
-                $socialiteUser->save();
-            }
-        }
-
-        return $user;
+    /**
+     * Captcha und Passwort entfallen nur, wenn der OAuth-Callback eine Identität in der Session
+     * hinterlegt hat; sie lässt sich nicht per Formular vortäuschen.
+     */
+    private function registersViaSocialite(): bool
+    {
+        return $this->pendingSocialiteLink->socialiteUser() !== null;
     }
 
     protected function registered(Request $request, $user) {}
