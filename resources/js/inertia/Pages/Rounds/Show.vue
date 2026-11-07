@@ -115,11 +115,15 @@ function deleteRound(): void {
           :deleting-game-id="deletingGameId"
         />
 
+        <!--
+          `pb-20` hebt den Hinweis etwas an: Kachel und Plus-Button machen den unteren Teil schwer.
+          Kreuz aus Tabler statt Lucide: Lucides `club` liest sich klein wie Pik.
+        -->
         <UEmpty
           v-if="round.info.gamesCount === 0 && pendingGame !== 'new'"
-          class="flex-1"
+          class="flex-1 pb-20"
           variant="naked"
-          icon="i-lucide-club"
+          icon="i-tabler-clubs"
           title="Noch kein Spiel eingetragen"
         >
           <template v-if="canChangeGames" #description>
