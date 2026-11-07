@@ -72,24 +72,29 @@ function isPendingRow(game: RoundGame): boolean {
   return props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id;
 }
 
+/**
+ * Hervorhebungen blenden schnell ein und langsam aus: Die Dauer gilt beim Wechsel in den
+ * jeweiligen Zustand. Neue Zeilen starten per `starting:` transparent, sonst stünde ihr Grün
+ * sofort da, weil es keinen vorherigen Zustand gibt, von dem aus überblendet würde.
+ */
 function rowBackground(game: RoundGame): string {
   if (game.id === props.markedGameId) {
-    return 'bg-error/40';
+    return 'bg-error/40 duration-300';
   }
   const highlight = highlightedGames.value[game.id];
   if (highlight === 'new') {
-    return 'bg-success/30';
+    return 'bg-success/30 duration-300 starting:bg-transparent';
   }
   if (highlight === 'edited') {
-    return 'bg-warning/30';
+    return 'bg-warning/30 duration-300';
   }
   if (game.isMisplay) {
-    return 'bg-error/15';
+    return 'bg-error/15 duration-1000';
   }
   if (game.isSolo) {
-    return 'bg-elevated';
+    return 'bg-elevated duration-1000';
   }
-  return '';
+  return 'duration-1000';
 }
 </script>
 
@@ -147,7 +152,7 @@ function rowBackground(game: RoundGame): string {
         <tr
           v-for="game in games"
           :key="game.id"
-          class="transition-colors duration-1000"
+          class="transition-colors"
           :class="[
             rowBackground(game),
             game.endsDealerCycle

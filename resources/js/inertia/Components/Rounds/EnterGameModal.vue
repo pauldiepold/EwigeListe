@@ -98,6 +98,26 @@ watch(open, (isOpen) => {
   form.reset();
 });
 
+/**
+ * Mittig liegen die häufig getippten Buttons gut erreichbar. Öffnet das Punktefeld am
+ * Touch-Gerät die Bildschirmtastatur, rutscht der Dialog nach oben, damit sie Feld und Speichern
+ * nicht verdeckt, und bleibt dort bis zum Schließen: Spränge er beim Zuklappen der Tastatur
+ * zurück, lägen die Buttons plötzlich woanders als unter dem Finger.
+ */
+const movedUpForKeyboard = ref(false);
+
+function moveUpForKeyboard(): void {
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    movedUpForKeyboard.value = true;
+  }
+}
+
+watch(open, (isOpen) => {
+  if (!isOpen) {
+    movedUpForKeyboard.value = false;
+  }
+});
+
 /** Solange gesetzt, ändern Schließen und Wiederöffnen den Formularstand nicht. */
 let keepsFormState = false;
 
@@ -195,7 +215,12 @@ watch(
     v-model:open="open"
     :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Wer hat gewonnen?'"
     description="Wähle die Gewinnerinnen und trage die Punkte ein."
-    :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
+    :ui="{
+      content: [
+        'transition-[top,translate] duration-200',
+        movedUpForKeyboard ? 'top-4 translate-y-0 sm:top-16' : '',
+      ].join(' '),
+    }"
   >
     <UButton
       v-if="isEditing"
@@ -250,7 +275,7 @@ watch(
         </div>
 
         <div class="flex flex-col items-center gap-1.5 pt-4">
-          <div class="flex items-center justify-center gap-2">
+          <div class="flex items-center justify-center gap-2" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
               variant="outline"

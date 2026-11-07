@@ -58,6 +58,17 @@ function deleteLastGame(): void {
   router.delete(destroyGame.url(props.round.lastGameId), {
     preserveState: true,
     preserveScroll: true,
+    /**
+     * Die Zeile verschwindet sofort, der Rest (Geber, Punkte, Rundendaten) folgt mit der Antwort.
+     * Schlägt das Löschen fehl, setzt Inertia die Tabelle zurück.
+     */
+    optimistic: () => ({
+      round: {
+        ...props.round,
+        games: props.round.games.slice(0, -1),
+        info: { ...props.round.info, gamesCount: props.round.info.gamesCount - 1 },
+      },
+    }),
     onStart: () => {
       deleting.value = true;
     },
