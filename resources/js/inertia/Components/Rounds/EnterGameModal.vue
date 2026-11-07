@@ -53,8 +53,13 @@ const isViewerActive = computed(() => props.editedGame?.viewerIsActive ?? props.
  * den vier Aktiven; der nächste aktive Sitz steht dann unten links.
  *
  * Jeder Platz belegt zwei halbe Zeilen. Links und rechts stehen um eine halbe Zeile versetzt
- * zwischen oben und unten; so ist die Raute nur zwei Plätze hoch statt drei.
+ * zwischen oben und unten; so ist die Raute nur zwei Plätze hoch statt drei. Ohne eigenen Platz
+ * genügen zwei schmale Spalten, sonst klafft in der Mitte eine Lücke.
  */
+const seatGridClass = computed(() =>
+  isViewerActive.value ? 'max-w-72 grid-cols-3' : 'max-w-56 grid-cols-2',
+);
+
 const seatClasses = computed(() =>
   isViewerActive.value
     ? [
@@ -66,8 +71,8 @@ const seatClasses = computed(() =>
     : [
         'col-start-1 row-start-3',
         'col-start-1 row-start-1',
-        'col-start-3 row-start-1',
-        'col-start-3 row-start-3',
+        'col-start-2 row-start-1',
+        'col-start-2 row-start-3',
       ],
 );
 
@@ -257,7 +262,7 @@ watch(
         movedUpForKeyboard ? 'top-4 translate-y-0 sm:top-16' : '',
       ].join(' '),
       header: 'min-h-0 justify-center pt-4 pb-0',
-      body: 'pt-7 sm:pt-7',
+      body: 'pt-8 sm:pt-8',
       wrapper: 'text-center',
       title: 'text-lg font-medium tracking-wide',
       description: 'sr-only',
@@ -286,7 +291,7 @@ watch(
     <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
 
     <template #body>
-      <form id="enter-game-form" class="space-y-7" @submit.prevent="submit">
+      <form id="enter-game-form" class="space-y-8" @submit.prevent="submit">
         <UAlert
           v-if="validationError"
           color="error"
@@ -297,7 +302,7 @@ watch(
 
         <!-- Keine Boxen: Gewählt sind Bild mit grünem Ring und Haken-Plakette, in einem gedeckten
              Grün, das im Dark Mode nicht blendet. -->
-        <div class="grid grid-cols-3 grid-rows-4 gap-x-2 gap-y-5">
+        <div class="mx-auto grid w-full grid-rows-4 gap-x-2 gap-y-6" :class="seatGridClass">
           <button
             v-for="(player, seat) in players"
             :key="player.id"
@@ -332,8 +337,8 @@ watch(
           </button>
         </div>
 
-        <!-- Ohne eigenen Abstand: Die Spieler stehen gleich weit von Frage und Punkten. -->
-        <div class="flex flex-col items-center gap-1.5">
+        <!-- Etwas mehr Luft über den Punkten als zwischen den übrigen Bereichen. -->
+        <div class="flex flex-col items-center gap-1.5 pt-2">
           <div class="flex items-center justify-center gap-6" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
