@@ -202,7 +202,7 @@ watch(
       color="neutral"
       variant="outline"
       icon="i-lucide-pencil"
-      class="px-3"
+      class="px-3 py-[5px]"
       aria-label="Letztes Spiel bearbeiten"
       title="Letztes Spiel bearbeiten"
     />

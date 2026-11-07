@@ -41,9 +41,8 @@ defineSlots<{
           {{ info.lastGameAt }}
         </span>
       </p>
-      <div v-if="$slots.lastGameActions" class="ml-auto">
-        <slot name="lastGameActions" />
-      </div>
+      <!-- Ohne Wrapper: Der Slot-Inhalt ordnet sich selbst ein (`ml-auto` oder `basis-full`). -->
+      <slot name="lastGameActions" />
     </div>
   </div>
 </template>

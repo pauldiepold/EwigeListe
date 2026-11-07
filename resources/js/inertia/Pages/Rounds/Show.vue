@@ -144,8 +144,10 @@ function deleteRound(): void {
         >
           <template v-if="canChangeGames && round.lastGameId !== null" #lastGameActions>
             <!-- Rückfrage in der Kachel statt als Overlay, damit die rot getönte Zeile sichtbar bleibt. -->
-            <div v-if="confirmingDelete" class="flex items-center gap-2">
-              <span class="text-highlighted">Spiel {{ round.info.gamesCount }} löschen?</span>
+            <div v-if="confirmingDelete" class="flex basis-full items-center gap-2">
+              <span class="mr-auto text-highlighted">
+                Spiel {{ round.info.gamesCount }} löschen?
+              </span>
               <UButton
                 color="neutral"
                 variant="outline"
@@ -155,7 +157,7 @@ function deleteRound(): void {
               />
               <UButton color="error" size="xs" label="Löschen" @click="deleteLastGame" />
             </div>
-            <UFieldGroup v-else size="xs" role="group" aria-label="Letztes Spiel">
+            <UFieldGroup v-else size="xs" class="ml-auto" role="group" aria-label="Letztes Spiel">
               <EnterGameModal
                 :round-id="round.id"
                 :last-game-id="round.lastGameId"
@@ -168,7 +170,7 @@ function deleteRound(): void {
                 color="neutral"
                 variant="outline"
                 icon="i-lucide-trash-2"
-                class="px-3"
+                class="px-3 py-[5px]"
                 aria-label="Letztes Spiel löschen"
                 title="Letztes Spiel löschen"
                 :loading="deleting"
