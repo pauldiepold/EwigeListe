@@ -38,6 +38,11 @@ jobs:
             echo "=== Bootstrap-Cache leeren ==="
             rm -f bootstrap/cache/*.php
 
+            # Vor `artisan down`: Die Config des neuen Stands kann Klassen neuer Pakete brauchen
+            # (z. B. `Laravel\Fortify\Features` in `config/fortify.php`).
+            echo "=== Composer Install ==="
+            composer install --optimize-autoloader
+
             echo "=== Maintenance ON ==="
             php artisan down
 
@@ -45,9 +50,6 @@ jobs:
             echo "=== Caches leeren ==="
             php artisan route:clear
             php artisan config:clear
-
-            echo "=== Composer Install ==="
-            composer install --optimize-autoloader
 
             echo "=== NPM Build ==="
             export NVM_DIR="$HOME/.nvm"
