@@ -47,17 +47,20 @@ function goToPage(targetPage: number): void {
       @update:sort="(column, direction) => emit('update:sort', column, direction)"
     />
 
-    <p class="text-muted">{{ rounds.total }} Runden</p>
-
+    <!-- Erste und letzte Seite stehen per `show-edges` schon als Zahl da, die Doppelpfeile sparen am Handy Platz. -->
     <UPagination
       v-if="rounds.last_page > 1"
       :page="rounds.current_page"
       :total="rounds.total"
       :items-per-page="rounds.per_page"
+      :sibling-count="1"
       show-edges
+      :ui="{ first: 'hidden', last: 'hidden' }"
       class="flex justify-center"
       @update:page="goToPage"
     />
+
+    <p class="text-center text-muted">{{ rounds.total }} Runden</p>
   </div>
 
   <p v-else class="text-lg text-toned">Bisher wurden keine Runden gespielt.</p>

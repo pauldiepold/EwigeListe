@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, ref } from 'vue';
+import type { ButtonProps } from '@nuxt/ui';
 import { Link, router, usePage } from '@inertiajs/vue3';
 import {
   datenschutz,
@@ -22,6 +23,8 @@ import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inerti
 
 defineProps<{
   title?: string;
+  /** Knöpfe rechts neben dem Titel, auch am Handy in derselben Zeile. */
+  headerLinks?: ButtonProps[];
   /** Inhalt als Flex-Spalte über die volle Höhe, z. B. um etwas ans untere Ende zu schieben. */
   fillHeight?: boolean;
 }>();
@@ -147,13 +150,13 @@ onMounted(() => {
     <!-- Kopf und Inhalt füllen den Bildschirm, der Footer folgt erst nach dem Scrollen. -->
     <div class="flex min-h-dvh flex-col">
       <header class="shrink-0">
-        <div class="bg-blue-dark py-2 text-center">
+        <div class="bg-blue-800 py-2 text-center">
           <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
             >Ewige Liste</Link
           >
         </div>
 
-        <nav class="bg-blue">
+        <nav class="bg-blue-700">
           <!-- Beschriftungen erst ab `lg`, darunter passen sie nicht in eine Zeile. -->
           <UContainer class="max-w-md px-1 py-1 lg:max-w-4xl">
             <div class="flex items-center justify-around lg:gap-3">
@@ -164,7 +167,7 @@ onMounted(() => {
                 color="neutral"
                 variant="ghost"
                 size="xl"
-                class="text-white hover:bg-white/15"
+                class="text-blue-100 hover:bg-white/15 hover:text-blue-200"
                 :class="{
                   'rounded-none shadow-[inset_0_-3px_0_var(--ui-color-primary-400)]': item.active,
                 }"
@@ -188,8 +191,11 @@ onMounted(() => {
           <UPageHeader
             v-if="title"
             :title="title"
+            :links="headerLinks"
             :ui="{
-              root: 'relative border-b border-default py-4 sm:py-5',
+              root: 'relative border-none py-4 sm:py-5',
+              wrapper: 'flex flex-row items-center justify-between gap-2',
+              links: 'shrink-0',
               title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
             }"
           />
@@ -201,24 +207,22 @@ onMounted(() => {
           </UPageBody>
         </UContainer>
       </main>
+
+      <!--
+        Schwebender Button: Die Leiste ohne Höhe klebt am unteren Bildschirmrand, aber nur so weit,
+        wie Kopf und Inhalt reichen. Ab dem Footer bleibt sie am Inhaltsende stehen, der Button
+        ragt nach oben in den Inhalt. Außerhalb von `UPageBody`, dessen `space-y-*` gäbe ihr sonst
+        einen Außenabstand. Nur für Handy und Tablet; am Desktop bietet die Seite selbst einen
+        Button mit Text an.
+      -->
+      <div v-if="$slots.floatingAction" class="sticky bottom-0 z-20 h-0 shrink-0 lg:hidden">
+        <div class="absolute right-5 bottom-[calc(1rem+env(safe-area-inset-bottom))]">
+          <slot name="floatingAction" />
+        </div>
+      </div>
     </div>
 
-    <!--
-      Außerhalb von `UPageBody`: Dessen `space-y-*` gäbe dem Button sonst einen Außenabstand.
-      Nur für Handy und Tablet; am Desktop bietet die Seite selbst einen Button mit Text an.
-    -->
-    <div
-      v-if="$slots.floatingAction"
-      class="fixed right-5 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 lg:hidden"
-    >
-      <slot name="floatingAction" />
-    </div>
-
-    <!-- Mit schwebendem Button bleibt unter dem Seitenende Platz, damit er nichts verdeckt. -->
-    <footer
-      class="shrink-0 border-t border-default bg-elevated"
-      :class="{ 'pb-22 lg:pb-0': $slots.floatingAction }"
-    >
+    <footer class="shrink-0 border-t border-default bg-elevated">
       <!-- Handy: Konto, Rechtliches, Copyright untereinander. Ab `sm`: Rechtliches links, Konto rechts. -->
       <UContainer class="grid w-full max-w-4xl gap-3 py-4 text-sm sm:grid-cols-[1fr_auto]">
         <div class="flex items-center justify-between gap-4 sm:order-2 sm:justify-end">
@@ -254,13 +258,12 @@ onMounted(() => {
           </template>
         </div>
 
-        <!-- Kein `nav`: Die Legacy-Regel `nav a` in `app.css` färbt Links sonst hellblau (bis #37). -->
-        <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <nav aria-label="Rechtliches" class="flex flex-wrap items-center gap-x-2 gap-y-1">
           <template v-for="(item, index) in legalLinks" :key="item.href">
             <span v-if="index > 0" class="text-muted" aria-hidden="true">&middot;</span>
             <Link :href="item.href" :class="footerLinkClass">{{ item.label }}</Link>
           </template>
-        </div>
+        </nav>
 
         <div class="flex items-center justify-between gap-4 sm:order-3 sm:col-span-2">
           <span class="text-muted">&copy; {{ new Date().getFullYear() }} Paul Diepold</span>

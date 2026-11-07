@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Head, WhenVisible } from '@inertiajs/vue3';
+import type { ButtonProps } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChart from '@/Components/Groups/GamesChart.vue';
 import GamesChartLoading from '@/Components/Groups/GamesChartLoading.vue';
@@ -20,6 +21,17 @@ const props = defineProps<GroupShowProps>();
 const title = computed(() =>
   props.group.id === EWIGE_LISTE.id ? props.group.name : `Liste - ${props.group.name}`,
 );
+
+const headerLinks: ButtonProps[] = [
+  {
+    to: groupsIndex.url(),
+    label: 'Liste wechseln',
+    icon: 'i-lucide-arrow-left-right',
+    color: 'neutral',
+    variant: 'subtle',
+    size: 'sm',
+  },
+];
 
 const tabs = computed(() => [
   { label: 'Mitglieder', icon: 'i-lucide-users', value: 'mitglieder' },
@@ -44,25 +56,15 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
 <template>
   <Head :title="title" />
 
-  <AppLayout :title="title">
-    <div class="mx-auto w-full max-w-5xl space-y-6">
-      <div class="flex items-center justify-between gap-2">
-        <UBadge
-          v-if="group.closed"
-          color="neutral"
-          variant="subtle"
-          icon="i-lucide-lock"
-          label="Geschlossen"
-        />
-        <UButton
-          :to="groupsIndex.url()"
-          color="neutral"
-          variant="ghost"
-          icon="i-lucide-list"
-          label="Alle Listen"
-          class="ml-auto"
-        />
-      </div>
+  <AppLayout :title="title" :header-links="headerLinks">
+    <div class="mx-auto w-full max-w-5xl space-y-4">
+      <UBadge
+        v-if="group.closed"
+        color="neutral"
+        variant="subtle"
+        icon="i-lucide-lock"
+        label="Geschlossen"
+      />
 
       <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
 

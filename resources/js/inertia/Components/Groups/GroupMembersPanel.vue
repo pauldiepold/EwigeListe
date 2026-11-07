@@ -37,7 +37,7 @@ function leaveGroup(): void {
 
     <template v-if="hasPlayedGames">
       <MembersTable :members="members" :highlight-player-id="authPlayerId" />
-      <p class="text-muted">{{ members.length }} Mitglieder</p>
+      <p class="text-center text-muted">{{ members.length }} Mitglieder</p>
     </template>
     <p v-else-if="onlyMember && onlyMember.id === authPlayerId" class="text-lg text-toned">
       Nur du bist bisher Mitglied dieser Liste.

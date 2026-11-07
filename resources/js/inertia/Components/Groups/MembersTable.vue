@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Component } from 'vue';
 import { computed, h, ref, resolveComponent } from 'vue';
-import type { Column, ColumnDef, Row, SortingState } from '@tanstack/vue-table';
+import type { ColumnDef, Row, SortingState } from '@tanstack/vue-table';
 import ProfileLink from '@/Components/Ui/ProfileLink.vue';
+import { sortIcon, sortIconClass } from '@/composables/tableSorting';
 import type { GroupMember } from '@/types/groups-show';
 
 const props = defineProps<{
@@ -12,31 +13,21 @@ const props = defineProps<{
 
 const sorting = ref<SortingState>([{ id: 'games', desc: true }]);
 
-function sortIcon(column: Column<GroupMember, unknown>): string {
-  const state = column.getIsSorted();
-  if (state === 'asc') {
-    return 'i-lucide-arrow-up-narrow-wide';
-  }
-  if (state === 'desc') {
-    return 'i-lucide-arrow-down-narrow-wide';
-  }
-  return 'i-lucide-arrow-up-down';
-}
-
 function sortableHeader(label: string): ColumnDef<GroupMember>['header'] {
   return ({ column }) =>
     h(resolveComponent('UButton') as Component, {
       color: 'neutral',
       variant: 'ghost',
+      size: 'sm',
       class: '-mx-2.5',
       label,
       trailingIcon: sortIcon(column),
+      ui: { trailingIcon: sortIconClass(column) },
       onClick: column.getToggleSortingHandler(),
     });
 }
 
 const columns: ColumnDef<GroupMember>[] = [
-  { id: 'avatar', header: '', enableSorting: false },
   { id: 'name', accessorKey: 'name', header: sortableHeader('Name') },
   { id: 'games', accessorKey: 'games', header: sortableHeader('Spiele') },
   { id: 'points', accessorKey: 'points', header: sortableHeader('Punkte') },
@@ -52,34 +43,36 @@ const columns: ColumnDef<GroupMember>[] = [
 const tableMeta = computed(() => ({
   class: {
     tr: (row: Row<GroupMember>) =>
-      row.original.id === props.highlightPlayerId ? 'bg-primary-light' : '',
+      row.original.id === props.highlightPlayerId ? 'bg-primary/15' : '',
   },
 }));
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <!-- Am Handy bis an den Rand wie die Spieltabelle: hebt das Seiten-Padding auf. -->
+  <div class="-mx-4 overflow-x-auto sm:mx-0">
     <UTable
       v-model:sorting="sorting"
       :data="members"
       :columns="columns"
       :meta="tableMeta"
       :get-row-id="(member: GroupMember) => String(member.id)"
+      :ui="{
+        th: 'px-2 py-2 last:pr-2.5',
+        td: 'px-2 py-2 tabular-nums',
+      }"
       class="w-full"
     >
-      <template #avatar-cell="{ row }">
-        <ProfileLink :href="row.original.path">
+      <template #name-cell="{ row }">
+        <ProfileLink :href="row.original.path" class="flex items-center gap-2">
           <UAvatar
             :src="row.original.avatarPath ?? undefined"
             :alt="row.original.name"
             loading="lazy"
-            size="md"
+            size="sm"
           />
+          <span class="whitespace-normal">{{ row.original.name }}</span>
         </ProfileLink>
-      </template>
-
-      <template #name-cell="{ row }">
-        <ProfileLink :href="row.original.path">{{ row.original.name }}</ProfileLink>
       </template>
     </UTable>
   </div>
