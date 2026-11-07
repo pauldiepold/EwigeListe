@@ -278,14 +278,17 @@ watch(
       aria-label="Letztes Spiel bearbeiten"
       title="Letztes Spiel bearbeiten"
     />
-    <!-- Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. -->
+    <!--
+      Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. Beim
+      Hovern dunkler statt halb durchsichtig, sonst schiene der Inhalt darunter durch.
+    -->
     <UButton
       v-else-if="floating"
       color="primary"
       icon="i-lucide-plus"
       aria-label="Spiel eintragen"
       square
-      class="size-14 justify-center rounded-full shadow-[0_6px_18px_hsl(0_0%_0%/0.45)]"
+      class="size-14 justify-center rounded-full shadow-[0_6px_18px_hsl(0_0%_0%/0.45)] hover:bg-(--ui-color-primary-600) active:bg-(--ui-color-primary-600) dark:hover:bg-(--ui-color-primary-500) dark:active:bg-(--ui-color-primary-500)"
       :ui="{ leadingIcon: 'size-7' }"
     />
     <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />

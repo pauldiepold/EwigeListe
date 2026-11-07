@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onUnmounted, ref, watch } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import type { RoundGame, RoundPlayer } from '@/types/round-show';
 
@@ -10,6 +10,9 @@ const DIM_SITTING_OUT_FROM_PLAYERS = 5;
 
 const HEAD_CELL_CLASSES =
   'sticky top-0 z-10 bg-default align-bottom shadow-[inset_0_-2px_0_var(--ui-color-neutral-400)] dark:shadow-[inset_0_-2px_0_var(--ui-color-neutral-600)]';
+
+/** Oben Platz für den stehenden Kopf, unten (nur Handy und Tablet) für den Plus-Button. */
+const ROW_SCROLL_MARGIN_CLASSES = 'scroll-mt-24 scroll-mb-24 lg:scroll-mb-4';
 
 const props = defineProps<{
   players: RoundPlayer[];
@@ -26,6 +29,30 @@ const props = defineProps<{
 function sitsOut(player: RoundPlayer): boolean {
   return props.players.length >= DIM_SITTING_OUT_FROM_PLAYERS && !player.isActive;
 }
+
+const tableWrapper = ref<HTMLElement | null>(null);
+
+/**
+ * Holt eine neue oder geänderte Zeile ins Bild, auch wenn sie von jemand anderem kommt. Schon
+ * sichtbare Zeilen bleiben stehen (`nearest`). Die Scroll-Abstände der Zeilen halten sie frei
+ * vom stehenden Tabellenkopf und vom schwebenden Plus-Button.
+ */
+async function scrollToRow(selector: string): Promise<void> {
+  await nextTick();
+  tableWrapper.value
+    ?.querySelector(selector)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Schon beim Absenden: Das Skeleton des neuen Spiels zeigt, wo es gleich erscheint.
+watch(
+  () => props.pendingGame,
+  (pendingGame) => {
+    if (pendingGame === 'new') {
+      scrollToRow('[data-pending-game]');
+    }
+  },
+);
 
 const highlightedGames = ref<Record<number, 'new' | 'edited'>>({});
 const highlightTimers = new Set<ReturnType<typeof setTimeout>>();
@@ -54,6 +81,7 @@ watch(
     }
 
     highlightedGames.value = { ...highlightedGames.value, ...changes };
+    scrollToRow(`[data-game-id="${changedGameIds.at(-1)}"]`);
     const timer = setTimeout(() => {
       highlightTimers.delete(timer);
       highlightedGames.value = Object.fromEntries(
@@ -109,6 +137,7 @@ function rowBackground(game: RoundGame): string {
     Scroll-Container hielte den stehenden Kopf nicht am oberen Rand.
   -->
   <div
+    ref="tableWrapper"
     class="-mx-4 overflow-x-clip sm:mx-0 [&_:is(td,th):first-child]:pl-2 [&_:is(td,th):last-child]:pr-2"
   >
     <table class="w-full table-fixed text-center tabular-nums">
@@ -157,8 +186,10 @@ function rowBackground(game: RoundGame): string {
         <tr
           v-for="game in games"
           :key="game.id"
+          :data-game-id="game.id"
           class="transition-colors"
           :class="[
+            ROW_SCROLL_MARGIN_CLASSES,
             rowBackground(game),
             game.endsDealerCycle
               ? 'border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)'
@@ -179,7 +210,12 @@ function rowBackground(game: RoundGame): string {
             <template v-else>{{ game.points }}</template>
           </td>
         </tr>
-        <tr v-if="pendingGame === 'new'" class="border-b border-accented/70">
+        <tr
+          v-if="pendingGame === 'new'"
+          data-pending-game
+          class="border-b border-accented/70"
+          :class="ROW_SCROLL_MARGIN_CLASSES"
+        >
           <td v-for="player in players" :key="player.id" class="px-1 py-1.5">
             <USkeleton class="mx-auto h-5 w-8" />
           </td>
