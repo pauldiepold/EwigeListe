@@ -3,11 +3,13 @@
 layer(base);
 
 @import '@fortawesome/fontawesome-free/css/all.css' layer(base);
-@import './bootstrap-compat.css';
 @import './cards.css' layer(base);
 
 @import 'tailwindcss';
 @import '@nuxt/ui';
+
+/* Die Nuxt-UI-Konfiguration setzt eigene Klassen an Komponenten. */
+@source '../../vite.config.js';
 
 /*
   Nuxt UI nutzt für `primary` und `secondary` hell Stufe 500 und dunkel Stufe 400 und liest die
@@ -274,10 +276,6 @@ input[type=number] {
 .table-borderless tr,
 .table-borderless td {
     border: none !important;
-}
-
-td, th {
-    vertical-align: middle !important;
 }
 
 .border-bottom-thick td,

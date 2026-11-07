@@ -191,8 +191,8 @@ watch(
 <template>
   <UModal
     v-model:open="open"
-    :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Welche Personen haben gewonnen?'"
-    description="Wähle die Gewinner und trage die Punkte ein."
+    :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Wer hat gewonnen?'"
+    description="Wähle die Gewinnerinnen und trage die Punkte ein."
     :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
   >
     <UButton
@@ -202,7 +202,16 @@ watch(
       icon="i-lucide-pencil"
       label="Letztes Spiel bearbeiten"
     />
-    <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
+    <!-- Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. -->
+    <UButton
+      v-else
+      color="primary"
+      icon="i-lucide-plus"
+      aria-label="Spiel eintragen"
+      square
+      class="size-14 justify-center rounded-full shadow-[0_6px_18px_hsl(0_0%_0%/0.45)]"
+      :ui="{ leadingIcon: 'size-7' }"
+    />
 
     <template #body>
       <form id="enter-game-form" class="space-y-6" @submit.prevent="submit">
