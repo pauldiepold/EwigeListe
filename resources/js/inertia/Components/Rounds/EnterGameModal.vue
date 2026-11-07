@@ -202,6 +202,7 @@ watch(
       color="neutral"
       variant="outline"
       icon="i-lucide-pencil"
+      class="px-3"
       aria-label="Letztes Spiel bearbeiten"
       title="Letztes Spiel bearbeiten"
     />

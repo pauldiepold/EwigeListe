@@ -168,6 +168,7 @@ function deleteRound(): void {
                 color="neutral"
                 variant="outline"
                 icon="i-lucide-trash-2"
+                class="px-3"
                 aria-label="Letztes Spiel löschen"
                 title="Letztes Spiel löschen"
                 :loading="deleting"
