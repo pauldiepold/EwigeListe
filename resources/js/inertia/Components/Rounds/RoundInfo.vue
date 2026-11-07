@@ -14,7 +14,7 @@ defineSlots<{
 <!-- Icons ersetzen die Labels; für Screenreader stehen sie als `sr-only`-Text daneben. -->
 <template>
   <div
-    class="flex min-h-14 flex-col justify-center gap-0.5 rounded-lg bg-elevated/60 px-3 py-1.5 text-xs text-muted"
+    class="flex min-h-14 flex-col justify-center gap-1 rounded-lg bg-elevated/60 px-3 py-2 text-xs text-muted"
   >
     <p v-if="info.gamesCount > 0" class="flex items-center gap-1.5">
       <UIcon name="i-lucide-hash" class="size-3.5 shrink-0" aria-hidden="true" />
@@ -32,7 +32,11 @@ defineSlots<{
       <span>{{ info.startedAt }}</span>
     </p>
     <!-- Als einzige bedienbare Zeile mit Text: Die Aktionen beziehen sich auf das letzte Spiel. -->
-    <div v-if="info.lastGameAt" class="flex flex-wrap items-center gap-x-3 gap-y-1">
+    <!--
+      Grid statt umbrechendem Flex: Dessen Wunschbreite zählte Text und Rückfrage nebeneinander,
+      die Kachel würde breiter als nötig.
+    -->
+    <div v-if="info.lastGameAt" class="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1">
       <p class="flex items-center gap-1.5">
         <UIcon name="i-lucide-history" class="size-3.5 shrink-0" aria-hidden="true" />
         <span>
@@ -41,7 +45,7 @@ defineSlots<{
           {{ info.lastGameAt }}
         </span>
       </p>
-      <!-- Ohne Wrapper: Der Slot-Inhalt ordnet sich selbst ein (`ml-auto` oder `basis-full`). -->
+      <!-- Ohne Wrapper: Der Slot-Inhalt ordnet sich selbst ins Grid ein (z. B. `col-span-2`). -->
       <slot name="lastGameActions" />
     </div>
   </div>

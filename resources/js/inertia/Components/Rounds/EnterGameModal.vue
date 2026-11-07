@@ -202,7 +202,8 @@ watch(
       color="neutral"
       variant="outline"
       icon="i-lucide-pencil"
-      class="px-3 py-[5px]"
+      class="px-3"
+      :ui="{ leadingIcon: 'size-3.5' }"
       aria-label="Letztes Spiel bearbeiten"
       title="Letztes Spiel bearbeiten"
     />
