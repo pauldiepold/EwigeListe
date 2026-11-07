@@ -6,6 +6,7 @@ defineProps<{
   confirmLabel: string;
   loading?: boolean;
   icon?: string;
+  size?: 'sm' | 'md';
 }>();
 
 const emit = defineEmits<{
@@ -25,13 +26,20 @@ function confirm(): void {
     v-if="!confirming"
     color="neutral"
     variant="outline"
+    :size="size"
     :label="label"
     :icon="icon"
     :loading="loading"
     @click="confirming = true"
   />
   <div v-else class="flex flex-wrap justify-center gap-2">
-    <UButton color="neutral" variant="outline" label="Abbrechen" @click="confirming = false" />
-    <UButton color="error" :label="confirmLabel" @click="confirm" />
+    <UButton
+      color="neutral"
+      variant="outline"
+      :size="size"
+      label="Abbrechen"
+      @click="confirming = false"
+    />
+    <UButton color="error" :size="size" :label="confirmLabel" @click="confirm" />
   </div>
 </template>

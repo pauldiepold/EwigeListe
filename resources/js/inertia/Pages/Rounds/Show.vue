@@ -76,7 +76,7 @@ function deleteRound(): void {
     </template>
 
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full" />
+      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full lg:mb-6" />
 
       <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
       <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
@@ -100,8 +100,11 @@ function deleteRound(): void {
 
         <div
           v-if="canChangeGames && round.lastGameId !== null"
-          class="flex flex-wrap items-center justify-center gap-3"
+          role="group"
+          aria-label="Letztes Spiel"
+          class="flex flex-wrap items-center justify-center gap-2"
         >
+          <span class="text-sm text-muted" aria-hidden="true">Letztes Spiel</span>
           <EnterGameModal
             :round-id="round.id"
             :last-game-id="round.lastGameId"
@@ -114,8 +117,9 @@ function deleteRound(): void {
           <ConfirmAction
             :key="round.lastGameId"
             icon="i-lucide-trash-2"
-            label="Letztes Spiel löschen"
-            confirm-label="Letztes Spiel wirklich löschen?"
+            size="sm"
+            label="Löschen"
+            confirm-label="Wirklich löschen?"
             :loading="deleting"
             @confirm="deleteLastGame"
           />
