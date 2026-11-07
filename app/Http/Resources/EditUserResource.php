@@ -20,11 +20,11 @@ class EditUserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'player_id' => $this->player_id,
+            'playerId' => $this->player_id,
             'email' => $this->email,
             'firstName' => $this->player->first_name,
             'lastName' => $this->player->last_name,
-            'avatar_path' => $this->avatar_path,
+            'avatarPath' => $this->avatar_path,
         ];
     }
 }

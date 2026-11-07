@@ -24,8 +24,8 @@ class UpdateName extends FormRequest
     public function rules()
     {
         return [
-            'first_name' => 'required|string|min:2',
-            'last_name' => 'required|string|min:2',
+            'first_name' => 'required|string|min:2|max:255',
+            'last_name' => 'required|string|min:2|max:255',
         ];
     }
 

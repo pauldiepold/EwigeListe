@@ -179,7 +179,7 @@ if (initialPlayer) {
               @click="addPlayer(player)"
             >
               <UAvatar
-                :src="player.avatar_path ?? undefined"
+                :src="player.avatarPath ?? undefined"
                 :alt="player.fullName"
                 size="sm"
               />
@@ -232,7 +232,7 @@ if (initialPlayer) {
               <UIcon name="i-lucide-grip-vertical" class="size-4" />
             </span>
             <UAvatar
-              :src="player.avatar_path ?? undefined"
+              :src="player.avatarPath ?? undefined"
               :alt="player.fullName"
               size="sm"
             />

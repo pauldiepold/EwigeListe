@@ -74,11 +74,11 @@ class ManageUsersTest extends TestCase
                 ->component('Users/Edit')
                 ->where('user', [
                     'id' => $user->id,
-                    'player_id' => $user->player_id,
+                    'playerId' => $user->player_id,
                     'email' => $user->email,
                     'firstName' => $user->player->first_name,
                     'lastName' => $user->player->last_name,
-                    'avatar_path' => null,
+                    'avatarPath' => null,
                 ])
                 ->where('profiles', fn ($profiles) => collect($profiles)->keyBy('name')->map(
                     fn ($profile) => [$profile['default'], $profile['selectable']]

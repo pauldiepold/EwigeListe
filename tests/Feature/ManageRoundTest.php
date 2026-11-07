@@ -57,7 +57,7 @@ class ManageRoundTest extends TestCase
                     return $own['fullName'] === "{$players[0]->first_name} {$players[0]->last_name}"
                         && collect($own['groups'])->contains('id', $list->id)
                         && collect($own['profiles'])->contains(
-                            fn ($profile) => $profile['group_id'] === $list->id && $profile['default'] === true
+                            fn ($profile) => $profile['groupId'] === $list->id && $profile['default'] === true
                         );
                 })
             );

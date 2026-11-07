@@ -13,11 +13,14 @@ class PlayerFull extends JsonResource
         parent::__construct($resource);
     }
 
+    /**
+     * Liefert für die Legacy-Komponenten hinter `fetchData` noch die alten Schlüssel `surname` (Vorname)
+     * und `name` (Nachname); bis zum Live-Spiel (#36).
+     */
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            // Alte Schlüssel für die Legacy-Komponenten hinter `fetchData`; fallen mit dem Live-Spiel (#36) weg.
             'surname' => $this->first_name,
             'name' => $this->last_name,
             'path' => $this->path,

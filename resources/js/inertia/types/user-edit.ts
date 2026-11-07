@@ -1,10 +1,10 @@
 export type EditUser = {
   id: number;
-  player_id: number;
+  playerId: number;
   email: string;
   firstName: string;
   lastName: string;
-  avatar_path: string | null;
+  avatarPath: string | null;
 };
 
 export type EditUserProfile = {
