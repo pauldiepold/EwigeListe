@@ -55,15 +55,17 @@ const canSubmit = computed(() => {
 
 const validationError = computed(() => Object.values(form.errors)[0]);
 
-/** Erst nach einem Speichern-Versuch sichtbar, damit der Dialog nicht gleich mit Fehlern öffnet. */
+/** Färbt den Hinweis zur Auswahl rot, sobald jemand mit ungültiger Auswahl speichern wollte. */
 const hasTriedToSubmit = ref(false);
+
+/** Steht grau da, solange die Auswahl nicht passt; kurz genug für eine Zeile. */
 const winnersHint = computed(() => {
-  if (!hasTriedToSubmit.value || canSubmit.value) {
-    return null;
+  if (form.misplayed) {
+    return 'Wähle genau drei Personen aus.';
   }
 
-  return form.misplayed
-    ? 'Bei „Falsch bedient?“ müssen genau drei Personen ausgewählt sein.'
+  return form.winners.length > 3
+    ? 'Höchstens drei Personen können gewinnen.'
     : 'Wähle mindestens eine Person aus.';
 });
 
@@ -323,7 +325,13 @@ watch(
             label="Speichern"
             :loading="form.processing"
           />
-          <p v-if="winnersHint" class="text-center text-xs text-error" role="alert">
+          <!-- Bei gültiger Auswahl unsichtbar statt entfernt: Der Platz bleibt, die Höhe springt nicht. -->
+          <p
+            class="text-center text-xs"
+            :class="[hasTriedToSubmit ? 'text-error' : 'text-dimmed', { invisible: canSubmit }]"
+            :role="hasTriedToSubmit && !canSubmit ? 'alert' : undefined"
+            :aria-hidden="canSubmit"
+          >
             {{ winnersHint }}
           </p>
         </div>

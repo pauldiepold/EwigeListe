@@ -111,7 +111,7 @@ function deleteRound(): void {
           :games="round.games"
           :online-player-ids="onlinePlayerIds"
           :pending-game="pendingGame"
-          :marked-game-id="confirmingDelete ? round.lastGameId : null"
+          :marked-game-id="confirmingDelete ? round.lastGameId : deletingGameId"
           :deleting-game-id="deletingGameId"
         />
 

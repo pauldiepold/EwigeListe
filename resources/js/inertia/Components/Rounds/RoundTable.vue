@@ -17,7 +17,7 @@ const props = defineProps<{
   onlinePlayerIds: number[];
   /** Eine gerade gespeicherte Änderung, deren Antwort noch aussteht: Die Zeile zeigt ein Skeleton. */
   pendingGame?: 'new' | 'edited' | null;
-  /** Zum Löschen vorgemerkt, solange die Rückfrage offen ist: Die Zeile ist rot getönt. */
+  /** Zum Löschen vorgemerkt (Rückfrage offen oder Löschen läuft): Die Zeile ist rot getönt. */
   markedGameId?: number | null;
   /** Ausstehendes Löschen: Die Zeile zeigt bis zur Antwort ein Skeleton, danach ist sie weg. */
   deletingGameId?: number | null;
@@ -148,7 +148,7 @@ function rowBackground(game: RoundGame): string {
             class="px-0.5 pt-2 pb-3 text-sm font-semibold text-highlighted"
             :class="HEAD_CELL_CLASSES"
           >
-            <span class="sm:hidden">Pkt.</span>
+            <span class="sm:hidden">Punkte</span>
             <span class="hidden sm:inline">Punkte</span>
           </th>
         </tr>
