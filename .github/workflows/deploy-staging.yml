@@ -11,10 +11,19 @@ on:
         options:
           - 'yes'
           - 'no'
+  push:
+    branches:
+      - inertia-migration
+
+# Nie zwei Deploys gleichzeitig: ein neuer wartet, bis der laufende fertig ist.
+# Laufende Deploys werden nicht abgebrochen (sonst bleibt Staging im Wartungsmodus).
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Deploy via SSH
@@ -35,8 +44,18 @@ jobs:
             git checkout ${{ github.ref_name }}
             git reset --hard origin/${{ github.ref_name }}
 
+            # Zwischengespeicherte Provider- und Config-Listen des alten Stands verweisen auf gelöschte Klassen;
+            # schon `artisan down` würde daran scheitern.
+            echo "=== Bootstrap-Cache leeren ==="
+            rm -f bootstrap/cache/*.php
+
             echo "=== Maintenance ON ==="
             php artisan down
+
+            # Wayfinder liest beim Build die Routen; ein alter Cache würde neue Routen verschweigen.
+            echo "=== Caches leeren ==="
+            php artisan route:clear
+            php artisan config:clear
 
             echo "=== Composer Install ==="
             composer install --optimize-autoloader
@@ -47,7 +66,8 @@ jobs:
             npm ci
             npm run prod
 
-            if [ "${{ github.event.inputs.sync_db }}" = "yes" ]; then
+            # Beim Push gibt es keine Inputs: dann immer mit frischem Prod-Dump.
+            if [ "${{ github.event.inputs.sync_db || 'yes' }}" = "yes" ]; then
               echo "=== DB Sync: neuesten Dump suchen ==="
               LATEST_DUMP=$(ls -t ${{ secrets.BACKUP_DUMP_PATH }}/*.sql.gz | head -1)
               echo "Verwende Dump: $LATEST_DUMP"
@@ -71,3 +91,9 @@ jobs:
 
             echo "=== Maintenance OFF ==="
             php artisan up
+
+            # Der Prod-Dump kennt die Listenstatistik noch nicht in den neuen Spalten.
+            if [ "${{ github.event.inputs.sync_db || 'yes' }}" = "yes" ]; then
+              echo "=== Statistiken neu berechnen ==="
+              php artisan stats:recalculate
+            fi

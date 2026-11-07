@@ -16,10 +16,9 @@ class Stich
 
     public static function create($input)
     {
-        if (isset($input))
-        {
-            $stich = new self();
-            //dd($input);
+        if (isset($input)) {
+            $stich = new self;
+            // dd($input);
             $stich->stecher = $input->stecher;
 
             $karten = collect($input->karten)->map(function ($item, $key) {
@@ -28,9 +27,8 @@ class Stich
             $stich->karten = $karten;
 
             return $stich;
-        } else
-        {
-            return new self();
+        } else {
+            return new self;
         }
     }
 
@@ -47,8 +45,7 @@ class Stich
     public function punkteZaehlen()
     {
         $punkte = 0;
-        foreach ($this->karten as $karte)
-        {
+        foreach ($this->karten as $karte) {
             $punkte += $karte->punkte;
         }
 
@@ -62,6 +59,6 @@ class Stich
 
     public function getAIString()
     {
-        return $this->karten->map(fn($card) => $card->getAIString());
+        return $this->karten->map(fn ($card) => $card->getAIString());
     }
 }

@@ -2,18 +2,19 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Game as GameResource;
+use App\Http\Resources\Group as GroupResource;
 use App\Http\Resources\Player as PlayerResource;
 use App\Http\Resources\PlayerFull as PlayerFullResource;
-use App\Http\Resources\Group as GroupResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class Round extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)
@@ -40,9 +41,9 @@ class Round extends JsonResource
             'players' => PlayerFullResource::collection($this->players),
             'groups' => GroupResource::collection($this->groups),
             'live_round' => new LiveRound($this->liveRound),
-            'current_live_game' => $this->when($this->liveRound && $this->liveRound->currentLiveGame(), fn() => new LiveGame($this->liveRound->currentLiveGame())),
-            'last_live_game' => $this->when($this->liveRound && $this->liveRound->lastLiveGame(), fn() => new LiveGame($this->liveRound->lastLiveGame())),
-            'ich' => $this->when($this->active_players->pluck('id')->contains(auth()->id()) && $this->liveRound && $this->liveRound->currentLiveGame(), fn() => $this->liveRound->currentLiveGame()->getSpieler(auth()->id(), false)),
+            'current_live_game' => $this->when($this->liveRound && $this->liveRound->currentLiveGame(), fn () => new LiveGame($this->liveRound->currentLiveGame())),
+            'last_live_game' => $this->when($this->liveRound && $this->liveRound->lastLiveGame(), fn () => new LiveGame($this->liveRound->lastLiveGame())),
+            'ich' => $this->when($this->active_players->pluck('id')->contains(auth()->id()) && $this->liveRound && $this->liveRound->currentLiveGame(), fn () => $this->liveRound->currentLiveGame()->getSpieler(auth()->id(), false)),
         ];
     }
 }

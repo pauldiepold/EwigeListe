@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Live;
-
 
 class Deck
 {
@@ -68,9 +66,8 @@ class Deck
         $this->deck = $this->deck->split(4);
     }
 
-    public function getKarten ($i) {
+    public function getKarten($i)
+    {
         return $this->deck->get($i);
     }
-
-
 }

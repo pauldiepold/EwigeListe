@@ -2,44 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Round as RoundResource;
-use App\Http\Requests\UpdateRound;
-use App\Live\Deck;
-use App\LiveRound;
-use App\Profile;
-use App\Round;
-use App\Player;
-use App\Group;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use App\Http\Requests\StoreRound;
+use App\Http\Requests\UpdateRound;
+use App\Http\Resources\CreateRoundPlayerResource;
+use App\Http\Resources\GroupOptionResource;
+use App\Http\Resources\Round as RoundResource;
+use App\Http\Resources\RoundShowResource;
+use App\Http\Toast;
+use App\Models\Group;
+use App\Models\Player;
+use App\Models\Profile;
+use App\Models\Round;
+use App\Services\RoundArchive;
+use App\Services\RoundChartSeries;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RoundController extends Controller
 {
-
-    public function index(Group $group = null)
+    public function index(Request $request, RoundArchive $roundArchive, ?Group $group = null): Response
     {
-        $selectedGroup = isset($group) ? $group : Group::find(1);
+        $selectedGroup = $group ?? Group::findOrFail(Group::EWIGE_LISTE_ID);
 
-        $groups = Group::all();
+        $groups = Group::query()->orderBy('name')->get();
 
-        $rounds_count = Round::whereHas('groups', function (Builder $query) use ($selectedGroup) {
-            $query->where('groups.id', '=', $selectedGroup->id);
-        })
-            ->count();
-
-        return view('rounds.index', compact('rounds_count', 'groups', 'selectedGroup'));
+        return Inertia::render('Rounds/Index', [
+            'groupOptions' => array_values(GroupOptionResource::collection($groups)->resolve($request)),
+            'selectedGroup' => (new GroupOptionResource($selectedGroup))->resolve($request),
+            ...$roundArchive->forGroup($selectedGroup, $request),
+        ]);
     }
 
-    public function show(Round $round)
+    public function show(Request $request, RoundChartSeries $roundChartSeries, Round $round): Response
     {
-        $roundResource = new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
+        $round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user', 'createdBy']);
 
-        return view('rounds.show', compact('round', 'roundResource'));
+        return Inertia::render('Rounds/Show', [
+            'round' => (new RoundShowResource($round))->resolve($request),
+            ...($round->games->count() >= RoundChartSeries::MINIMUM_GAMES
+                ? ['roundChart' => Inertia::optional(fn (): array => $roundChartSeries->forRound($round))]
+                : []),
+        ]);
     }
 
     public function fetchData(Round $round)
@@ -47,19 +52,16 @@ class RoundController extends Controller
         return new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
     }
 
-    public function current()
+    public function current(): RedirectResponse
     {
         $lastRound = auth()->user()->player->rounds()->latest()->first();
-        if ($lastRound)
-        {
-            return redirect($lastRound->path());
-        } else
-        {
-            return redirect()->route('rounds.create');
-        }
+
+        return $lastRound
+            ? redirect()->route('rounds.show', $lastRound)
+            : redirect()->route('rounds.create');
     }
 
-    public function create()
+    public function create(): Response
     {
         $allPlayers = Player::where('hide', '=', '0')
             ->with(['groups', 'profiles:id,player_id,group_id,default', 'user'])
@@ -67,7 +69,9 @@ class RoundController extends Controller
             ->orderByRaw('game_players_count desc')
             ->get();
 
-        return view('rounds.create', compact('allPlayers'));
+        return Inertia::render('Rounds/Create', [
+            'players' => CreateRoundPlayerResource::collection($allPlayers)->resolve(request()),
+        ]);
     }
 
     public function store(StoreRound $request)
@@ -75,138 +79,62 @@ class RoundController extends Controller
         $validated = collect($request->validated());
 
         $groups = Group::find(
-            $validated->get('groups')
+            collect($validated->get('groups', []))->push(Group::EWIGE_LISTE_ID)->unique()
         );
 
         $round = Round::create();
 
-        foreach ($validated->get('players') as $key => $playerID)
-        {
+        foreach ($validated->get('players') as $key => $playerID) {
             $round->players()->attach($playerID, [
-                'index' => $key
+                'index' => $key,
             ]);
         }
 
         $round->groups()->saveMany($groups);
 
-        foreach ($groups as $group)
-        {
+        foreach ($groups as $group) {
             $group->addPlayers($round->players);
         }
 
-        if ($validated->get('liveGame'))
-        {
+        if ($validated->get('liveGame')) {
             $round->createLiveRound();
         }
 
-        return $round->path();
+        return redirect()->route('rounds.show', $round);
     }
 
-    public function update(UpdateRound $request, Round $round)
+    public function update(UpdateRound $request, Round $round): RedirectResponse
     {
-        $this->authorize('update', $round);
+        $previousGroups = $round->groups;
+        $groups = Group::findMany($request->groupIds());
 
-        $validated = collect($request->validated());
+        $round->groups()->sync($groups);
 
-        $groups = Group::find(
-            $validated->get('groups')
-        );
-
-        $players = $round->players;
-
-        $round->groups()->detach();
-        $round->groups()->saveMany($groups);
-
-        foreach ($groups as $group)
-        {
-            $group->addPlayers($players);
+        foreach ($groups->diff($previousGroups) as $addedGroup) {
+            $addedGroup->addPlayers($round->players);
         }
 
-        Profile::updateManyStats($round->profiles());
-        Group::updateManyStats($groups, $round->updated_at);
+        $affectedGroups = $previousGroups->merge($groups);
+        Profile::updateManyStats($round->profilesIn($affectedGroups));
+        Group::updateManyStats($affectedGroups, $round->updated_at);
 
-        return 'success';
+        return redirect()->route('rounds.show', $round);
     }
 
-    public function destroy(Round $round)
+    public function destroy(Round $round): RedirectResponse
     {
         $this->authorize('update', $round);
 
-        if ($round->games->count() != 0)
-        {
-            return Redirect::back()->with('deleteError', 'Du kannst nur eine Runde ohne Spiele löschen!');
+        if ($round->games->isNotEmpty()) {
+            Toast::error('Du kannst nur eine Runde ohne Spiele löschen!');
+
+            return back();
         }
 
         $round->delete();
 
+        Toast::success('Die Runde wurde gelöscht.');
+
         return redirect()->route('rounds.create');
     }
-
-    public function changeDates(Round $round, Request $request)
-    {
-        $request->validate([
-            'date' => 'required|date'
-        ]);
-
-        $dateDiff = Carbon::create($request->input('date'))->diffInDays($round->created_at, false);
-
-        if ($dateDiff > 0)
-        {
-            $case = 'subDays';
-        } elseif ($dateDiff < 0)
-        {
-            $case = 'addDays';
-            $dateDiff = abs($dateDiff) + 1;
-        } else
-        {
-            return 'false';
-        }
-
-        $round->created_at = $round->created_at->$case($dateDiff);
-        $round->save();
-
-        foreach ($round->games as $game)
-        {
-            $game->created_at = $game->created_at->$case($dateDiff);
-            $game->save();
-        }
-
-        return 'success';
-    }
-
-    public function archiveTable(Group $group, Player $player = null)
-    {
-        $roundsQuery = Round::whereHas('groups', function (Builder $query) use ($group) {
-            $query->where('groups.id', '=', $group->id);
-        });
-
-        if (isset($player))
-        {
-            $roundsQuery->whereHas('players', function (Builder $query) use ($player) {
-                $query->where('players.id', '=', $player->id);
-            });
-        }
-
-        $rounds = $roundsQuery
-            ->with('players', 'liveRound')
-            ->withCount(['games', 'groups']);
-
-        return Datatables::of($rounds)
-            ->addColumn('players', function ($round) {
-                return '<a href="' . $round->path . '">' . $round->players_string . '</a>';
-            })
-            ->addColumn('date', function ($round) {
-                return $round->updated_at->format('d.m.Y');
-            })
-            ->addColumn('playerIDs', function ($round) {
-                return $round->players->pluck('id');
-            })
-            ->addColumn('liveRound', function ($round) {
-                return $round->liveRound ? '<i class="fas fa-dice tw-text-gray-800"></i>' : '';
-            })
-            ->escapeColumns([''])
-            ->orderColumn('date', 'updated_at $1')
-            ->make(true);
-    }
-
 }

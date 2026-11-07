@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Schedule;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,8 @@ use Illuminate\Foundation\Inspiring;
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->describe('Display an inspiring quote');
+
+Schedule::command('telescope:prune')->dailyAt('03:55');
+
+// Zum Monatswechsel, sonst zeigen Profile ohne neues Spiel weiter „Punkte in diesem Monat“ des Vormonats.
+Schedule::command('stats:recalculate')->monthlyOn(1, '04:10');

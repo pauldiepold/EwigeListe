@@ -1,12 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateGroupsTable extends Migration
 {
-
     /**
      * Run the migrations.
      *
@@ -14,8 +13,7 @@ class CreateGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('groups', function (Blueprint $table)
-        {
+        Schema::create('groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->unsignedInteger('created_by');
@@ -39,8 +37,8 @@ class CreateGroupsTable extends Migration
             $table->text('mostGamesDay')->nullable();
             $table->text('mostGamesMonth')->nullable();
             $table->integer('totalGames')->nullable();
-            $table->float('pointsPerGame',3,1)->nullable();
-            $table->float('gamesPerRound',3,1)->nullable();
+            $table->float('pointsPerGame', 3, 1)->nullable();
+            $table->float('gamesPerRound', 3, 1)->nullable();
 
             $table->timestamps();
 
@@ -49,8 +47,7 @@ class CreateGroupsTable extends Migration
                 ->on('players');
         });
 
-        Schema::create('profiles', function (Blueprint $table)
-        {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('player_id');
             $table->unsignedInteger('group_id');
@@ -109,8 +106,7 @@ class CreateGroupsTable extends Migration
                 ->on('groups');
         });
 
-        Schema::create('group_round', function (Blueprint $table)
-        {
+        Schema::create('group_round', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('round_id');
             $table->unsignedInteger('group_id');

@@ -1,11 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-class CreateProfilesTable extends Migration {
-
+class CreateProfilesTable extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -13,8 +13,7 @@ class CreateProfilesTable extends Migration {
      */
     public function up()
     {
-        Schema::create('profiles', function (Blueprint $table)
-        {
+        Schema::create('profiles', function (Blueprint $table) {
             $table->increments('id');
 
             $table->unsignedInteger('player_id')->nullable();
@@ -56,7 +55,6 @@ class CreateProfilesTable extends Migration {
             $table->integer('loseStreak')->nullable();
             $table->timestamp('loseStreakStart')->nullable();
             $table->timestamp('loseStreakEnd')->nullable();
-
 
             $table->timestamps();
         });

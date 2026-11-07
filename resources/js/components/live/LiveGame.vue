@@ -1,38 +1,38 @@
-<template>
+﻿<template>
     <div class="playingCards">
 
         <!-- ******** Buttons links ********* -->
         <div
-            class="tw-absolute live-overlay lg:tw-p-3 tw-p-2 tw-m-2 tw-left-0 xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-flex tw-flex-col"
+            class="absolute live-overlay lg:p-3 p-2 m-2 left-0 xl:text-4xl lg:text-3xl text-2xl flex flex-col"
             style="top: 50%; transform: translate(0, -50%);">
-            <div v-if="zuschauerEingeblendet && round.watching_players.length !== 0" class="tw-border-b-2 tw-mb-3">
+            <div v-if="zuschauerEingeblendet && round.watching_players.length !== 0" class="border-b-2 mb-3">
                 <div v-for="player in round.watching_players"
-                     class="tw-mb-2">
+                     class="mb-2">
                     <img :src="player.avatar_path" :title="player.name"
-                         class="tw-mx-auto xl:tw-h-12 xl:tw-w-12 lg:tw-h-10 lg:tw-w-10 tw-h-8 tw-w-8 tw-rounded-full">
+                         class="mx-auto xl:h-12 xl:w-12 lg:h-10 lg:w-10 h-8 w-8 rounded-full">
                 </div>
             </div>
-            <!--<i class="fas fa-users tw-cursor-pointer"
-               :class="{'tw-text-orange-500': zuschauerEingeblendet}"
+            <!--<i class="fas fa-users cursor-pointer"
+               :class="{'text-orange-500': zuschauerEingeblendet}"
                @click="zuschauerEingeblendet = !zuschauerEingeblendet"></i>-->
-            <i class="fas fa-history tw-cursor-pointer" title="letzten Stich einblenden"
-               :class="{'tw-text-orange-500': letzterStichEingeblendet}"
+            <i class="fas fa-history cursor-pointer" title="letzten Stich einblenden"
+               :class="{'text-orange-500': letzterStichEingeblendet}"
                @click="letzterStich"></i>
-            <i class="fas fa-info-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               :class="{'tw-text-orange-500': infoEingeblendet}" title="Infos einblenden"
+            <i class="fas fa-info-circle cursor-pointer lg:mt-4 mt-3"
+               :class="{'text-orange-500': infoEingeblendet}" title="Infos einblenden"
                @click="infoEingeblendet = !infoEingeblendet"></i>
-            <i class="fas fa-sync tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
-               :class="{'fa-spin tw-text-orange-500': reloadingData}"
+            <i class="fas fa-sync cursor-pointer lg:mt-4 mt-3"
+               :class="{'fa-spin text-orange-500': reloadingData}"
                @click="reloadData"
                title="Daten neu laden"></i>
-<!--            <i class="fas fa-plus-circle tw-cursor-pointer lg:tw-mt-4 tw-mt-3"
+<!--            <i class="fas fa-plus-circle cursor-pointer lg:mt-4 mt-3"
                @click="$emit('neues-spiel-starten')"></i>-->
 
             <!-- ******** An- und Absagen ********* -->
             <div
                 v-if="aktiv && liveGame.phase === 4 && (liveGame.dran === round.auth_id || (liveGame.stichNr === 1 && liveGame.aktuellerStich.karten.length === 0)) && ich.moeglicheAnAbsage"
-                class="tw-border-t-2 tw-mt-3 tw-mb-0">
-                <button class="btn btn-primary btn-sm tw-mb-0"
+                class="border-t-2 mt-3 mb-0">
+                <button class="btn btn-primary btn-sm mb-0"
                         :disabled="ansageDeaktiviert"
                         @click="ansage(ich.moeglicheAnAbsage)"
                         v-text="ich.moeglicheAnAbsage">
@@ -42,14 +42,14 @@
 
         <!-- ******** Messages ********* -->
         <div v-if="infoEingeblendet"
-             class="tw-absolute live-overlay tw-px-3 tw-pt-2 tw-pb-1 tw-m-2 lg:tw-text-sm tw-text-xs tw-flex tw-flex-col tw-w-1/5 tw-text-left tw-h-40 tw-overflow-y-auto"
+             class="absolute live-overlay px-3 pt-2 pb-1 m-2 lg:text-sm text-xs flex flex-col w-1/5 text-left h-40 overflow-y-auto"
              style="top: 50%; right:0; transform: translate(0, -50%);">
-            <ul class="tw-mb-0">
+            <ul class="mb-0">
                 <li v-for="(message, index) in liveGame.messages"
                     :key="message"
                     :id="index === liveGame.messages.length - 1 ? 'lastMessage' : ''"
                     v-html="message"
-                    class="tw-mb-1"/>
+                    class="mb-1"/>
             </ul>
         </div>
 
@@ -58,8 +58,8 @@
 
         <!-- ******** Hand ********* -->
         <div v-if="aktiv" style="position: absolute; left: 31%; bottom: 0; transform: translate(-50%);"
-             class="tw--mb-12">
-            <hand class="tw-mb-0 tw-mt-3"
+             class="-mb-12">
+            <hand class="mb-0 mt-3"
                   v-if="ich.hand !== '' && liveGame.phase > 0"
                   :karten="ich.hand"
                   :armut="binIchDran && (istPhase(3) || istPhase(33))"
@@ -81,56 +81,56 @@
             </div>
         </div>
 
-        <!--<div v-if="error !== ''" v-text="error" class="center-absolute tw-text-gray-200 tw-bg-white tw-bg-opacity-50 tw-rounded-xl tw-p-6 tw-z-50"/>-->
+        <!--<div v-if="error !== ''" v-text="error" class="center-absolute text-gray-200 bg-white/50 rounded-xl p-6 z-50"/>-->
 
         <!-- ******** Vorbehalte ********* -->
         <div v-if="round.inactive_players.map(v => v.id).includes(round.auth_id) && istPhase(2)"
-             class="center-absolute live-overlay tw-py-3 tw-px-4 tw-font-bold">
+             class="center-absolute live-overlay py-3 px-4 font-bold">
             Du setzt dieses Spiel aus!
         </div>
-        <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay lg:tw-px-4 lg:tw-py-3 tw-p-2 tw-pt-1">
-            <div v-if="istPhase(2) && ich.vorbehalt != null" class="tw-font-bold">
+        <div v-if="aktiv && istPhase(2)" class="center-absolute live-overlay lg:px-4 lg:py-3 p-2 pt-1">
+            <div v-if="istPhase(2) && ich.vorbehalt != null" class="font-bold">
                 Bitte warte, bis alle Personen ihren Vorbehalt bestimmt haben.
             </div>
 
             <div v-if="istPhase(2) && ich.vorbehalt == null"
-                 class="tw-flex tw-flex-col tw-justify-between tw-items-center">
+                 class="flex flex-col justify-between items-center">
 
-                <p v-if="binIchDran" class="tw-font-bold lg:tw-mb-2 tw-mb-1">Wähle deinen Vorbehalt:</p>
-                <p v-else class="tw-font-bold lg:tw-mb-2 tw-mb-1">Mögliche Vorbehalte:</p>
+                <p v-if="binIchDran" class="font-bold lg:mb-2 mb-1">Wähle deinen Vorbehalt:</p>
+                <p v-else class="font-bold lg:mb-2 mb-1">Mögliche Vorbehalte:</p>
 
-                <div class="tw-flex tw-items-center">
-                    <button class="btn btn-primary tw-mr-6 tw-max-w-4xs"
+                <div class="flex items-center">
+                    <button class="btn btn-primary mr-6 max-w-4xs"
                             :disabled="!binIchDran"
                             :class="{'btn-sm': mobile}"
                             v-if="!ich.moeglicheVorbehalte.includes('Hochzeit')"
                             @click="vorbehaltSenden('Gesund')">
                         Gesund
                     </button>
-                    <div class="tw-flex tw-flex-col">
-                        <button class="btn btn-primary tw-my-1 tw-mr-6"
+                    <div class="flex flex-col">
+                        <button class="btn btn-primary my-1 mr-6"
                                 :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in moeglicheVorbehalte"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
                                 :disabled="!binIchDran"/>
                     </div>
-                    <div class="tw-flex tw-flex-col tw-max-w-4xs">
-                        <button class="btn btn-primary tw-my-1 tw-mr-6"
+                    <div class="flex flex-col max-w-4xs">
+                        <button class="btn btn-primary my-1 mr-6"
                                 :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in moeglicheSoli"
                                 @click="vorbehaltSenden(vorbehalt)"
                                 v-text="vorbehalt"
                                 :disabled="!binIchDran"/>
                     </div>
-                    <div class="tw-flex tw-flex-col tw-max-w-2xs">
-                        <button class="btn btn-primary tw-my-1"
+                    <div class="flex flex-col max-w-2xs">
+                        <button class="btn btn-primary my-1"
                                 :class="{'btn-sm': mobile}"
                                 @click="farbsoliAnzeigen = true"
                                 v-text="'Farbsolo'"
                                 v-if="!farbsoliAnzeigen"
                                 :disabled="!binIchDran"/>
-                        <button class="btn btn-primary tw-my-1"
+                        <button class="btn btn-primary my-1"
                                 :class="{'btn-sm': mobile}"
                                 v-for="vorbehalt in moeglicheFarbsoli"
                                 @click="vorbehaltSenden(vorbehalt)"
@@ -145,7 +145,7 @@
 
         <!-- ******** Armut ********* -->
         <div v-if="aktiv && ((istPhase(3) || ((istPhase(32) || istPhase(33)))))"
-             class="live-overlay tw-p-3"
+             class="live-overlay p-3"
              style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
             <div v-if="istPhase(3) && !binIchDran">
                 Die Armut wählt Ihre Karten.
@@ -153,8 +153,8 @@
 
             <div v-if="istPhase(3) && binIchDran">
                 <div>Wähle aus, welche Karten du abgeben möchtest!</div>
-                <div v-if="armutError" class="tw-font-bold tw-text-red-600">Du musst all deinen Trumpf abgeben!</div>
-                <hand class="tw-mb-0 tw-mt-6" style="margin-left: 26.2%;"
+                <div v-if="armutError" class="font-bold text-red-600">Du musst all deinen Trumpf abgeben!</div>
+                <hand class="mb-0 mt-6" style="margin-left: 26.2%;"
                       v-if="armutKarten.length > 0"
                       :karten="armutKarten"
                       :armut="true"
@@ -167,14 +167,14 @@
             </div>
 
             <div v-if="istPhase(32) && binIchDran">
-                <p class="tw-font-bold">
+                <p class="font-bold">
                     Willst du die Armut mitnehmen?
                 </p>
-                <button class="btn btn-primary tw-mr-6"
+                <button class="btn btn-primary mr-6"
                         @click="armutMitnehmen(true)">
                     Ja!
                 </button>
-                <button class="btn btn-primary tw-ml-6"
+                <button class="btn btn-primary ml-6"
                         @click="armutMitnehmen(false)">
                     Nein!
                 </button>
@@ -185,7 +185,7 @@
 
             <div v-if="istPhase(33) && binIchDran">
                 Wähle aus, welche Karten du zurückgeben möchtest!
-                <hand class="tw-mb-0 tw-mt-3" style="margin-left: 28.5%;"
+                <hand class="mb-0 mt-3" style="margin-left: 28.5%;"
                       v-if="armutKarten.length > 0"
                       :karten="armutKarten"
                       :armut="true"
@@ -198,7 +198,7 @@
             </div>
         </div>
 
-        <!--<div class="tw-flex-1" v-if="!aktiv">
+        <!--<div class="flex-1" v-if="!aktiv">
             Du setzt dieses Spiel aus!
         </div>-->
     </div>

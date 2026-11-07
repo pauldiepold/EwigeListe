@@ -2,14 +2,13 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
-use App\Player;
 use App\Http\Resources\Group as GroupResource;
+use App\Models\Player;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class PlayerFull extends JsonResource
 {
-
-    function __construct(Player $resource)
+    public function __construct(Player $resource)
     {
         parent::__construct($resource);
     }
@@ -25,7 +24,7 @@ class PlayerFull extends JsonResource
             'online' => false,
             'is_ai' => $this->is_ai,
             'groups' => GroupResource::collection($this->groups),
-            'index' => $this->whenPivotLoaded('player_round', fn() => $this->pivot->index),
+            'index' => $this->whenPivotLoaded('player_round', fn () => $this->pivot->index),
         ];
     }
 }

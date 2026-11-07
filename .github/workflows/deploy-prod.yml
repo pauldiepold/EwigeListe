@@ -5,9 +5,15 @@ on:
     branches:
       - master
 
+# Nie zwei Deploys gleichzeitig: ein neuer wartet, bis der laufende fertig ist.
+# Laufende Deploys werden nicht abgebrochen (sonst bleibt Prod im Wartungsmodus).
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Deploy via SSH
@@ -27,8 +33,18 @@ jobs:
             git fetch origin
             git reset --hard origin/master
 
+            # Zwischengespeicherte Provider- und Config-Listen des alten Stands verweisen auf gelöschte Klassen;
+            # schon `artisan down` würde daran scheitern.
+            echo "=== Bootstrap-Cache leeren ==="
+            rm -f bootstrap/cache/*.php
+
             echo "=== Maintenance ON ==="
             php artisan down
+
+            # Wayfinder liest beim Build die Routen; ein alter Cache würde neue Routen verschweigen.
+            echo "=== Caches leeren ==="
+            php artisan route:clear
+            php artisan config:clear
 
             echo "=== Composer Install ==="
             composer install --optimize-autoloader

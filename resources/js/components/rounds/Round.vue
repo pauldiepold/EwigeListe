@@ -11,50 +11,50 @@
 
             <tab v-if="round.live_round !== null" name="Live" icon="fa-dice" :selected="false"
                  @clicked="alert('test')">
-                <div id="fullscreen" class="tw-w-100 tw-relative tw-pt-50p">
+                <div id="fullscreen" class="w-100 relative pt-50p">
                     <div
-                        class="tw-absolute tw-bottom-0 tw-top-0 tw-left-0 tw-right-0 tw-overflow-hidden"
-                        :class="{'tw-rounded-xl tw-shadow-xl': !fullscreen}"
+                        class="absolute bottom-0 top-0 left-0 right-0 overflow-hidden"
+                        :class="{'rounded-xl shadow-xl': !fullscreen}"
                         style="background-image: url('/img/wood.jpg');">
-                        <div class="tw-relative tw-h-full tw-w-full">
+                        <div class="relative h-full w-full">
 
                             <!-- Fullscreen ausschalten -->
-                            <div class="tw-absolute tw-m-2 tw-top-0 tw-right-0">
+                            <div class="absolute m-2 top-0 right-0">
                                 <i v-if="fullscreen"
-                                   class="fas fa-compress xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-text-gray-300"
+                                   class="fas fa-compress xl:text-4xl lg:text-3xl text-2xl text-gray-300"
                                    @click="fullscreenOff"></i>
                             </div>
 
                             <!-- Fullscreen einschalten -->
-                            <div class="tw-absolute tw-m-2 tw-top-0 tw-right-0">
+                            <div class="absolute m-2 top-0 right-0">
                                 <i v-if="!fullscreen"
-                                   class="fas fa-expand xl:tw-text-4xl lg:tw-text-3xl tw-text-2xl tw-text-gray-300"
+                                   class="fas fa-expand xl:text-4xl lg:text-3xl text-2xl text-gray-300"
                                    @click="fullscreenOn"></i>
                             </div>
 
                             <!-- Fullscreen? -->
                             <div v-if="mobile && !fullscreen"
-                                 class="center-absolute live-overlay tw-p-2 tw-w-48">
+                                 class="center-absolute live-overlay p-2 w-48">
                                 <p> Bitte aktiviere den Fullscreen-Modus! </p>
-                                <i class="fas fa-expand tw-text-4xl" @click="fullscreenOn"></i>
+                                <i class="fas fa-expand text-4xl" @click="fullscreenOn"></i>
                             </div>
 
                             <!-- Landscape Modus? -->
                             <div v-if="mobile && !landscape && fullscreen"
-                                 class="center-absolute live-overlay tw-w-48 tw-p-4">
-                                <p class="tw-mb-2">Bitte drehe dein Gerät in den Landscape Modus!</p>
-                                <i class="fas fa-sync tw-text-4xl"></i>
+                                 class="center-absolute live-overlay w-48 p-4">
+                                <p class="mb-2">Bitte drehe dein Gerät in den Landscape Modus!</p>
+                                <i class="fas fa-sync text-4xl"></i>
                             </div>
 
                             <!-- Spieler Online? -->
                             <div v-if="!allPlayersOnline && (!mobile || (landscape && fullscreen))"
-                                 class="center-absolute live-overlay tw-p-4">
+                                 class="center-absolute live-overlay p-4">
                                 <p>Bitte warte, bis alle Personen online sind:</p>
-                                <div class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                <div class="grid grid-cols-2 gap-2">
                                     <div v-for="player in round.active_players">
                                         <img :src="player.avatar_path"
-                                             class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                             :class="{ 'tw-shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
+                                             class="mx-auto my-1 md:h-10 md:w-10 h-7 w-7 rounded-full"
+                                             :class="{ 'shadow-green' : round.online_players.map(o => o['id']).includes(player.id)}">
                                         {{ player.surname }}
                                     </div>
                                 </div>
@@ -63,13 +63,13 @@
                             <!-- Spieler bereit? -->
                             <div
                                 v-if="allPlayersOnline && !round.current_live_game && (!mobile || (landscape && fullscreen))"
-                                class="center-absolute live-overlay tw-p-4 tw-flex tw-content-center tw-justify-around tw-w-1/3"
-                                :class="{'tw-w-3/4': round.last_live_game || aktiv && !allPlayersReady && round.games.length === 0}">
+                                class="center-absolute live-overlay p-4 flex content-center justify-around w-1/3"
+                                :class="{'w-3/4': round.last_live_game || aktiv && !allPlayersReady && round.games.length === 0}">
 
                                 <!-- Regeln vor dem ersten Spiel ändern -->
-                                <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
+                                <div class="mr-6 flex flex-col justify-center"
                                      v-if="aktiv && !allPlayersReady && round.games.length === 0">
-                                    <div class="tw-mb-4">
+                                    <div class="mb-4">
                                         <button @click="$refs.tabs.selectTabByName('Einstellungen');"
                                                 class="btn btn-primary">Regeln anpassen
                                         </button>
@@ -77,48 +77,51 @@
                                     Die Regeln können nur vor Beginn des ersten Spiels angepasst werden.
                                 </div>
                                 <!-- Wertung anzeigen -->
-                                <div class="tw-mr-6 tw-flex tw-flex-col tw-justify-center"
+                                <div class="mr-6 flex flex-col justify-center"
                                      v-if="round.last_live_game">
-                                    <div class="tw-font-bold"
+                                    <div class="font-bold"
                                          v-if="round.games[round.games.length - 1].players.map(o => o['id']).includes(round.auth_id)">
                                         <span v-if="round.last_live_game.winners.includes(round.auth_id)">
                                             Du hast gewonnen!
                                         </span>
                                         <span v-else>Du hast verloren!</span>
                                     </div>
-                                    <div class="tw-flex tw-justify-around tw-my-2">
+                                    <div class="flex justify-around my-2">
                                         <div>Re: {{ round.last_live_game.reAugen }}</div>
                                         <div>Kontra: {{ round.last_live_game.kontraAugen }}</div>
                                     </div>
-                                    <table class="tw-w-full">
-                                        <tr v-for="(item, index) in round.last_live_game.wertung"
-                                            class="tw-border-0"
-                                            :class="{'tw-border-b-2': index === round.last_live_game.wertung.length - 1}">
-                                            <td class="tw-text-left">{{ item[0] }}</td>
-                                            <td>{{ item[1] }}</td>
-                                        </tr>
-                                        <tr class="tw-border-0">
-                                            <td></td>
-                                            <td>
-                                                {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
-                                                    round.last_live_game.wertungsPunkte < 0 ? '-' : ''
-                                                }}{{
-                                                    round.last_live_game.wertungsPunkte
-                                                }}
-                                            </td>
-                                        </tr>
+                                    <table class="w-full">
+                                        <tbody>
+                                            <tr v-for="(item, index) in round.last_live_game.wertung"
+                                                class="border-0"
+                                                :key="index"
+                                                :class="{'border-b-2': index === round.last_live_game.wertung.length - 1}">
+                                                <td class="text-left">{{ item[0] }}</td>
+                                                <td>{{ item[1] }}</td>
+                                            </tr>
+                                            <tr class="border-0">
+                                                <td></td>
+                                                <td>
+                                                    {{ round.last_live_game.wertungsPunkte > 0 ? '+' : '' }}{{
+                                                        round.last_live_game.wertungsPunkte < 0 ? '-' : ''
+                                                    }}{{
+                                                        round.last_live_game.wertungsPunkte
+                                                    }}
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
-                                    <div class="tw-flex tw-justify-around tw-my-2">
+                                    <div class="flex justify-around my-2">
                                         <template v-for="player in round.players">
                                             <div v-if="round.last_live_game.winners.includes(player.id)">
                                                 <img :src="player.avatar_path"
-                                                     class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
+                                                     class="mx-auto my-1 md:h-10 md:w-10 h-7 w-7 rounded-full"
                                                      alt="">
                                                 {{ player.surname }}
                                             </div>
                                         </template>
                                     </div>
-                                    <div class=" tw-mb-2">
+                                    <div class=" mb-2">
                                         <b>{{ round.last_live_game.gewinntRe ? 'Re' : 'Kontra' }}</b> gewinnt mit
                                         {{ round.last_live_game.wertungsPunkte }} Punkten!
                                     </div>
@@ -126,15 +129,15 @@
                                 </div>
 
                                 <!-- Ready Check -->
-                                <div class="tw-flex tw-flex-col tw-justify-center">
+                                <div class="flex flex-col justify-center">
                                     <div
                                         v-if="aktiv && !allPlayersReady && !round.ready_players.includes(round.auth_id)"
-                                        class="tw-mb-3">
+                                        class="mb-3">
                                         <button class="btn btn-primary" @click="whisperReady">
                                             Bereit?
                                         </button>
                                     </div>
-                                    <div v-if="aktiv && !allPlayersReady" class="tw-mb-2">
+                                    <div v-if="aktiv && !allPlayersReady" class="mb-2">
                                         <p v-if="round.games.length === 0">
                                             Das erste Spiel startet, sobald alle Personen bereit sind:
                                         </p>
@@ -143,11 +146,11 @@
                                         </p>
                                     </div>
                                     <div v-if="aktiv && !allPlayersReady"
-                                         class="tw-grid tw-grid-cols-2 tw-gap-2">
+                                         class="grid grid-cols-2 gap-2">
                                         <div v-for="player in round.active_players">
                                             <img :src="player.avatar_path"
-                                                 class="tw-mx-auto tw-my-1 md:tw-h-10 md:tw-w-10 tw-h-7 tw-w-7 tw-rounded-full"
-                                                 :class="{ 'tw-shadow-green' : round.ready_players.includes(player.id)}">
+                                                 class="mx-auto my-1 md:h-10 md:w-10 h-7 w-7 rounded-full"
+                                                 :class="{ 'shadow-green' : round.ready_players.includes(player.id)}">
                                             {{ player.surname }}
                                         </div>
                                     </div>

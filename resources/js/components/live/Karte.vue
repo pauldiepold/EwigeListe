@@ -1,17 +1,17 @@
-<template>
+﻿<template>
     <div v-if="karte === 'unsichtbar'"
-         class="card-live back tw-invisible">
+         class="card-live back invisible">
         *
     </div>
     <div v-else-if="armut"
-         class="card-live card-clickable tw-cursor-pointer"
+         class="card-live card-clickable cursor-pointer"
          :class="[wert_klasse, farbe, karte.armut_zurueck ? 'armut-karte' : '']"
          @click="$emit('armut', karte)">
         <span class="rank" v-html="wert"></span>
         <span class="suit" v-html="'&' + farbe + ';'"></span>
     </div>
     <div v-else-if="karte.spielbar"
-         class="card-live card-clickable tw-cursor-pointer"
+         class="card-live card-clickable cursor-pointer"
          :class="[wert_klasse, farbe]"
          @click="$emit('karteSpielen', karte)">
         <span class="rank" v-html="wert"></span>
