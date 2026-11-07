@@ -284,12 +284,19 @@ watch(
         </div>
 
         <div class="flex flex-col items-center gap-1.5 pt-4">
-          <div class="flex items-center justify-center gap-2" @focusin="moveUpForKeyboard">
+          <!--
+            ± sind die meistgetippten Ziele: groß, rund und gefüllt. `neutral`/`solid` füllt hell
+            dunkel und im Dark Mode hell, sticht also hervor, ohne mit dem orangen Speichern zu
+            konkurrieren.
+          -->
+          <div class="flex items-center justify-center gap-4" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
-              variant="outline"
+              variant="solid"
               icon="i-lucide-minus"
               aria-label="Weniger Punkte"
+              class="size-12 justify-center rounded-full"
+              :ui="{ leadingIcon: 'size-6' }"
               :disabled="form.points <= MIN_POINTS"
               @mousedown.prevent
               @click="form.points -= 1"
@@ -297,18 +304,21 @@ watch(
             <UInputNumber
               v-model="form.points"
               name="points"
+              size="xl"
               :min="MIN_POINTS"
               :max="MAX_POINTS"
               :increment="false"
               :decrement="false"
               class="w-20"
-              :ui="{ base: 'text-center' }"
+              :ui="{ base: 'text-center text-lg font-semibold' }"
             />
             <UButton
               color="neutral"
-              variant="outline"
+              variant="solid"
               icon="i-lucide-plus"
               aria-label="Mehr Punkte"
+              class="size-12 justify-center rounded-full"
+              :ui="{ leadingIcon: 'size-6' }"
               :disabled="form.points >= MAX_POINTS"
               @mousedown.prevent
               @click="form.points += 1"
