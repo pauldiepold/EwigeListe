@@ -230,6 +230,28 @@ class RoundShowTest extends TestCase
     }
 
     #[Test]
+    public function the_active_players_show_their_first_name_and_as_much_of_the_last_name_as_tells_them_apart(): void
+    {
+        $names = [['Paul', 'Diepold'], ['Paul', 'Dörr'], ['Paul', 'Meier'], ['Anna', 'Schmidt']];
+        $players = $this->otherPlayers(4)->each(function (Player $player, int $seat) use ($names): void {
+            $player->forceFill(['surname' => $names[$seat][0], 'name' => $names[$seat][1]])->save();
+        });
+        $round = $this->roundWithPlayers($players);
+
+        $expectedNames = [
+            $players[0]->id => 'Paul Di.',
+            $players[1]->id => 'Paul Dö.',
+            $players[2]->id => 'Paul M.',
+            $players[3]->id => 'Anna',
+        ];
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('round.activePlayers', fn ($active) => collect($active)->pluck('name', 'id')->all() == $expectedNames)
+            );
+    }
+
+    #[Test]
     public function the_average_game_duration_counts_up_to_now_while_the_round_is_running(): void
     {
         Carbon::setTestNow('2026-10-31 20:00:00');

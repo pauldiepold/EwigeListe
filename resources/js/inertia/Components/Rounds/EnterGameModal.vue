@@ -51,11 +51,24 @@ const isViewerActive = computed(() => props.editedGame?.viewerIsActive ?? props.
  * Die Anordnung entspricht dem Blick vom eigenen Platz: Wer mitspielt, steht unten, der nächste
  * Sitz links, gegenüber oben, der letzte rechts. Wer aussetzt, sitzt gedanklich unten zwischen
  * den vier Aktiven; der nächste aktive Sitz steht dann unten links.
+ *
+ * Jeder Platz belegt zwei halbe Zeilen. Links und rechts stehen um eine halbe Zeile versetzt
+ * zwischen oben und unten; so ist die Raute nur zwei Plätze hoch statt drei.
  */
 const seatClasses = computed(() =>
   isViewerActive.value
-    ? ['order-4 col-start-2', 'order-2 col-start-1', 'order-1 col-start-2', 'order-3 col-start-3']
-    : ['order-3 col-start-1', 'order-1 col-start-1', 'order-2 col-start-3', 'order-4 col-start-3'],
+    ? [
+        'col-start-2 row-start-3',
+        'col-start-1 row-start-2',
+        'col-start-2 row-start-1',
+        'col-start-3 row-start-2',
+      ]
+    : [
+        'col-start-1 row-start-3',
+        'col-start-1 row-start-1',
+        'col-start-3 row-start-1',
+        'col-start-3 row-start-3',
+      ],
 );
 
 const canSubmit = computed(() => {
@@ -87,7 +100,7 @@ function toggleWinner(playerId: number): void {
 }
 
 /**
- * Auch X, Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr.
+ * Auch Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr.
  * Beim Bearbeiten beginnt er mit den Werten des Spiels.
  */
 watch(open, (isOpen) => {
@@ -231,15 +244,23 @@ watch(
 </script>
 
 <template>
+  <!-- Ohne X und Footer: Klick daneben und Escape schließen; das spart Platz. Die Beschreibung
+       bleibt nur für Screenreader, der Titel sagt genug. -->
   <UModal
     v-model:open="open"
     :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Wer hat gewonnen?'"
-    description="Wähle die Gewinnerinnen und trage die Punkte ein."
+    description="Wähle, wer gewonnen hat, und trage die Punkte ein."
+    :close="false"
     :ui="{
       content: [
-        'transition-[top,translate] duration-200',
+        'divide-y-0 transition-[top,translate] duration-200',
         movedUpForKeyboard ? 'top-4 translate-y-0 sm:top-16' : '',
       ].join(' '),
+      header: 'min-h-0 justify-center pt-4 pb-0',
+      body: 'pt-7 sm:pt-7',
+      wrapper: 'text-center',
+      title: 'text-lg font-medium tracking-wide',
+      description: 'sr-only',
     }"
   >
     <UButton
@@ -265,7 +286,7 @@ watch(
     <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
 
     <template #body>
-      <form id="enter-game-form" class="space-y-6" @submit.prevent="submit">
+      <form id="enter-game-form" class="space-y-7" @submit.prevent="submit">
         <UAlert
           v-if="validationError"
           color="error"
@@ -274,27 +295,45 @@ watch(
           :title="validationError"
         />
 
-        <div class="grid grid-cols-4 gap-3">
+        <!-- Keine Boxen: Gewählt sind Bild mit grünem Ring und Haken-Plakette, in einem gedeckten
+             Grün, das im Dark Mode nicht blendet. -->
+        <div class="grid grid-cols-3 grid-rows-4 gap-x-2 gap-y-5">
           <button
             v-for="(player, seat) in players"
             :key="player.id"
             type="button"
-            class="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-2 py-1.5 font-semibold"
-            :class="[
-              seatClasses[seat],
-              form.winners.includes(player.id)
-                ? 'border-transparent ring-2 ring-success'
-                : 'border-accented',
-            ]"
+            class="row-span-2 flex min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-lg py-1 focus-visible:outline-2 focus-visible:outline-primary"
+            :class="seatClasses[seat]"
             :aria-pressed="form.winners.includes(player.id)"
             @click="toggleWinner(player.id)"
           >
-            <UAvatar :src="player.avatarPath ?? undefined" :alt="player.name" size="sm" />
-            {{ player.name }}
+            <span class="relative">
+              <UAvatar
+                :src="player.avatarPath ?? undefined"
+                :alt="player.name"
+                size="2xl"
+                class="ring-offset-2 ring-offset-(--ui-bg) transition-shadow"
+                :class="
+                  form.winners.includes(player.id)
+                    ? 'ring-2 ring-(--ui-color-success-600) dark:ring-(--ui-color-success-700)'
+                    : ''
+                "
+              />
+              <span
+                v-if="form.winners.includes(player.id)"
+                class="absolute -end-1 -bottom-1 grid size-5 place-items-center rounded-full bg-(--ui-color-success-600) text-white ring-2 ring-(--ui-bg) dark:bg-(--ui-color-success-700)"
+              >
+                <UIcon name="i-lucide-check" class="size-3.5" />
+              </span>
+            </span>
+            <span class="max-w-full truncate text-sm font-medium text-highlighted">
+              {{ player.name }}
+            </span>
           </button>
         </div>
 
-        <div class="flex flex-col items-center gap-1.5 pt-4">
+        <!-- Ohne eigenen Abstand: Die Spieler stehen gleich weit von Frage und Punkten. -->
+        <div class="flex flex-col items-center gap-1.5">
           <div class="flex items-center justify-center gap-6" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
@@ -353,19 +392,13 @@ watch(
         </div>
 
         <div class="flex flex-col items-center">
-          <UCheckbox v-model="form.misplayed" name="misplayed" label="Falsch bedient?" />
+          <USwitch v-model="form.misplayed" name="misplayed" label="Falsch bedient" />
           <p v-if="form.misplayed" class="mt-2 text-center text-sm text-muted">
-            Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die
-            getätigten Ansagen gewertet. Dieses Ergebnis wird oben eingetragen.
+            Zählt als verlorenes Solo: Trage 2 Punkte plus Ansagen ein und wähle die drei, die
+            richtig bedient haben.
           </p>
         </div>
       </form>
-    </template>
-
-    <template #footer>
-      <div class="flex w-full justify-center">
-        <UButton color="neutral" variant="link" label="Schließen" @click="open = false" />
-      </div>
     </template>
   </UModal>
 </template>

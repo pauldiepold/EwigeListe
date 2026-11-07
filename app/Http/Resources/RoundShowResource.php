@@ -69,9 +69,39 @@ class RoundShowResource extends JsonResource
     {
         return $players->map(fn (Player $player): array => [
             'id' => $player->id,
-            'name' => "{$player->surname} {$player->name}",
+            'name' => $this->shortName($player, $players),
             'avatarPath' => $player->avatar_path,
         ])->values()->all();
+    }
+
+    /**
+     * Der Vorname genügt, solange ihn am Tisch niemand teilt. Sonst folgt der Nachname, gekürzt auf so viele Buchstaben,
+     * bis er sich von denen mit gleichem Vornamen unterscheidet („Paul Di.“, „Paul Dö.“).
+     *
+     * @param  Collection<int, Player>  $players
+     */
+    private function shortName(Player $player, Collection $players): string
+    {
+        $otherLastNames = $players
+            ->filter(fn (Player $other): bool => $other->id !== $player->id && mb_strtolower($other->surname) === mb_strtolower($player->surname))
+            ->map(fn (Player $other): string => mb_strtolower($other->name));
+
+        if ($otherLastNames->isEmpty()) {
+            return $player->surname;
+        }
+
+        $lastName = mb_strtolower($player->name);
+        $length = mb_strlen($player->name);
+
+        for ($prefixLength = 1; $prefixLength < $length; $prefixLength++) {
+            $prefix = mb_substr($lastName, 0, $prefixLength);
+
+            if ($otherLastNames->every(fn (string $other): bool => ! str_starts_with($other, $prefix))) {
+                return $player->surname.' '.mb_substr($player->name, 0, $prefixLength).'.';
+            }
+        }
+
+        return "{$player->surname} {$player->name}";
     }
 
     /**
