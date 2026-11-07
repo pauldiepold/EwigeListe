@@ -19,6 +19,8 @@ const props = defineProps<{
   pendingGame?: 'new' | 'edited' | null;
   /** Zum Löschen vorgemerkt, solange die Rückfrage offen ist: Die Zeile ist rot getönt. */
   markedGameId?: number | null;
+  /** Ausstehendes Löschen: Die Zeile zeigt bis zur Antwort ein Skeleton, danach ist sie weg. */
+  deletingGameId?: number | null;
 }>();
 
 function sitsOut(player: RoundPlayer): boolean {
@@ -69,7 +71,10 @@ onUnmounted(() => {
 });
 
 function isPendingRow(game: RoundGame): boolean {
-  return props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id;
+  return (
+    game.id === props.deletingGameId ||
+    (props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id)
+  );
 }
 
 /**

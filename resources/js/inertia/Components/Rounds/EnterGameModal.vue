@@ -113,8 +113,15 @@ function moveUpForKeyboard(): void {
 }
 
 watch(open, (isOpen) => {
-  if (!isOpen) {
-    movedUpForKeyboard.value = false;
+  if (isOpen) {
+    return;
+  }
+
+  movedUpForKeyboard.value = false;
+  // Fokus vor dem Schließen abgeben: Sonst holt die Fokusfalle des Dialogs ihn beim Schließen aufs
+  // Punktefeld zurück, und die Tastatur blitzt kurz auf. Ein `blur()` ohne Ziel ignoriert sie.
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
   }
 });
 

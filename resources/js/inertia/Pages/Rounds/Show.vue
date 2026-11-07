@@ -35,8 +35,10 @@ function refresh(): void {
 
 const { onlinePlayerIds } = useRoundUpdates(props.round.id, refresh);
 
-const deleting = ref(false);
 const pendingGame = ref<'new' | 'edited' | null>(null);
+
+/** Das Spiel, dessen Löschen noch aussteht: Seine Zeile zeigt ein Skeleton wie beim Eintragen. */
+const deletingGameId = ref<number | null>(null);
 
 /** Offen, solange die Rückfrage zum Löschen steht; die Tabelle tönt die Zeile dann rot. */
 const confirmingDelete = ref(false);
@@ -54,26 +56,16 @@ function deleteLastGame(): void {
     return;
   }
 
+  const gameId = props.round.lastGameId;
   confirmingDelete.value = false;
-  router.delete(destroyGame.url(props.round.lastGameId), {
+  router.delete(destroyGame.url(gameId), {
     preserveState: true,
     preserveScroll: true,
-    /**
-     * Die Zeile verschwindet sofort, der Rest (Geber, Punkte, Rundendaten) folgt mit der Antwort.
-     * Schlägt das Löschen fehl, setzt Inertia die Tabelle zurück.
-     */
-    optimistic: () => ({
-      round: {
-        ...props.round,
-        games: props.round.games.slice(0, -1),
-        info: { ...props.round.info, gamesCount: props.round.info.gamesCount - 1 },
-      },
-    }),
     onStart: () => {
-      deleting.value = true;
+      deletingGameId.value = gameId;
     },
     onFinish: () => {
-      deleting.value = false;
+      deletingGameId.value = null;
     },
   });
 }
@@ -120,6 +112,7 @@ function deleteRound(): void {
           :online-player-ids="onlinePlayerIds"
           :pending-game="pendingGame"
           :marked-game-id="confirmingDelete ? round.lastGameId : null"
+          :deleting-game-id="deletingGameId"
         />
 
         <UEmpty
@@ -185,7 +178,7 @@ function deleteRound(): void {
                 :ui="{ leadingIcon: 'size-3.5' }"
                 aria-label="Letztes Spiel löschen"
                 title="Letztes Spiel löschen"
-                :loading="deleting"
+                :loading="deletingGameId !== null"
                 @click="confirmingDelete = true"
               />
             </UFieldGroup>

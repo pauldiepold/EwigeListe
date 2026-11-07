@@ -209,7 +209,7 @@ onMounted(() => {
     -->
     <div
       v-if="$slots.floatingAction"
-      class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 lg:hidden"
+      class="fixed right-5 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20 lg:hidden"
     >
       <slot name="floatingAction" />
     </div>
