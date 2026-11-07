@@ -35,6 +35,6 @@ class UpdatePassword extends FormRequest
      */
     public function messages(): array
     {
-        return $this->passwordMessages();
+        return [...$this->passwordMessages(), ...$this->currentPasswordMessages()];
     }
 }

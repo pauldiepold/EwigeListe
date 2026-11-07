@@ -6,7 +6,7 @@ Login, Registrierung und Passwort-Reset liefen über die Traits aus `laravel/ui`
 
 ## Konsequenzen
 
-- Socialite gehört nicht zu Fortify und bleibt ein eigener Controller. Die Verknüpfung einer Socialite-Identität läuft über die Session und Listener auf die Framework-Events `Login`/`Registered`, nicht über Formularfelder (#56). Damit hängt sie nicht an Fortify.
+- Socialite gehört nicht zu Fortify und bleibt ein eigener Controller. Die Verknüpfung einer Socialite-Identität läuft über die Session und einen Listener auf das Framework-Event `Login` (Fortify loggt auch nach der Registrierung ein), nicht über Formularfelder (#56). Damit hängt sie nicht an Fortify.
 - Das Captcha prüft die Action `CreateNewUser`.
 - Abweichung vom Kit: Meldungen nach Link-Anforderung und Reset erscheinen als Toast (eigene Response-Klassen) statt als `status`-Prop, wie überall sonst in der App.
 - Passwort ändern bleibt wie im Kit ein eigener Controller (`users.updatePassword`), weil der Admin dort auch fremde Passwörter ohne das alte ändert.

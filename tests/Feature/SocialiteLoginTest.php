@@ -59,10 +59,30 @@ class SocialiteLoginTest extends TestCase
     #[Test]
     public function the_attach_page_redirects_to_login_without_a_remembered_identity(): void
     {
-        $this->socialiteUser('fremd@example.com');
+        $this->get(route('auth.registerOrAttach'))->assertRedirect(route('login'));
+    }
+
+    #[Test]
+    public function the_attach_page_cannot_be_opened_by_id(): void
+    {
+        $socialiteUser = $this->socialiteUser('fremd@example.com');
+
+        $this->get('login/social/'.$socialiteUser->id)->assertNotFound();
+    }
+
+    #[Test]
+    public function a_remembered_identity_expires_after_ten_minutes(): void
+    {
+        $user = User::factory()->create();
+        $socialiteUser = $this->rememberUnknownIdentity('neu@example.com');
+
+        $this->travel(11)->minutes();
 
         $this->get(route('auth.registerOrAttach'))->assertRedirect(route('login'));
-        $this->get('login/social/1')->assertNotFound();
+        $this->post(route('login'), ['email' => $user->email, 'password' => 'test'])
+            ->assertRedirect('/');
+
+        $this->assertNull($socialiteUser->fresh()->user_id);
     }
 
     #[Test]

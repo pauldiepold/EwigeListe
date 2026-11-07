@@ -73,6 +73,14 @@ class AuthTest extends TestCase
     }
 
     #[Test]
+    public function the_unused_password_confirmation_page_returns_404(): void
+    {
+        $this->actingAs(User::factory()->create())
+            ->get(route('password.confirm'))
+            ->assertNotFound();
+    }
+
+    #[Test]
     public function a_failed_user_creation_during_registration_leaves_no_player_behind(): void
     {
         NoCaptcha::shouldReceive('verifyResponse')->once()->andReturn(true);

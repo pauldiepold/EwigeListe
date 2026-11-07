@@ -137,6 +137,17 @@ class ManageUsersTest extends TestCase
     }
 
     #[Test]
+    public function a_changed_email_is_stored_in_lowercase()
+    {
+        $user = $this->signInRegularUser();
+
+        $this->patch(route('users.updateMail', $user), ['email' => 'Max.Neu@Example.com'])
+            ->assertRedirect(route('users.edit', $user));
+
+        $this->assertSame('max.neu@example.com', $user->fresh()->email);
+    }
+
+    #[Test]
     public function a_user_can_save_his_unchanged_email()
     {
         $user = $this->signInRegularUser();
@@ -220,7 +231,7 @@ class ManageUsersTest extends TestCase
     }
 
     #[Test]
-    public function the_admin_changes_passwords_without_the_old_one()
+    public function the_admin_changes_the_password_of_another_user_without_the_old_one()
     {
         $admin = User::factory()->create();
         $user = $this->signInRegularUser();
@@ -231,12 +242,20 @@ class ManageUsersTest extends TestCase
             'password_confirmation' => 'neues-passwort',
         ])->assertRedirect(route('users.edit', $user));
 
+        $this->assertTrue(Hash::check('neues-passwort', $user->fresh()->password));
+    }
+
+    #[Test]
+    public function the_admin_changes_his_own_password_without_the_old_one()
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
         $this->patch(route('users.updatePassword', $admin), [
             'password' => 'eigenes-passwort',
             'password_confirmation' => 'eigenes-passwort',
         ])->assertRedirect(route('users.edit', $admin));
 
-        $this->assertTrue(Hash::check('neues-passwort', $user->fresh()->password));
         $this->assertTrue(Hash::check('eigenes-passwort', $admin->fresh()->password));
     }
 

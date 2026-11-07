@@ -5,9 +5,7 @@ namespace App\Providers;
 use App\Http\Toast;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -43,14 +41,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(fn (User $user) => $user->isAdmin() ? true : null);
 
         Inertia::handleExceptionsUsing(fn (ExceptionResponse $response) => $this->renderErrorPage($response));
-
-        ResetPassword::toMailUsing(fn (User $user, string $token): MailMessage => (new MailMessage)
-            ->greeting('Hallo!')
-            ->subject('Passwort zurücksetzen')
-            ->line('Um mit einem neuen Passwort weiterhin Doppelkopf zu spielen, setze dein Passwort zurück:')
-            ->action('Passwort zurücksetzen', route('password.reset', ['token' => $token, 'email' => $user->getEmailForPasswordReset()]))
-            ->line('Dieser Link ist '.config('auth.passwords.users.expire').' Minuten gültig.')
-            ->salutation('Beste Grüße, deine Ewige Liste.'));
     }
 
     /**

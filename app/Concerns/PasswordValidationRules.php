@@ -34,8 +34,17 @@ trait PasswordValidationRules
     {
         return [
             'password.required' => 'Es muss ein Passwort angegeben werden!',
-            'password.min' => 'Das Passwort muss mindestens 8 Zeichen haben!',
+            'password.min' => 'Das Passwort muss mindestens :min Zeichen haben!',
             'password.confirmed' => 'Die Passwörter stimmen nicht überein!',
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function currentPasswordMessages(): array
+    {
+        return [
             'current_password.required' => 'Das alte Passwort muss angegeben werden!',
             'current_password.current_password' => 'Das alte Passwort stimmt nicht!',
         ];
