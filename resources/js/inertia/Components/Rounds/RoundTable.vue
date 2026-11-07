@@ -17,6 +17,10 @@ const props = defineProps<{
   onlinePlayerIds: number[];
   /** Eine gerade gespeicherte Änderung, deren Antwort noch aussteht: Die Zeile zeigt ein Skeleton. */
   pendingGame?: 'new' | 'edited' | null;
+  /** Zum Löschen vorgemerkt (Rückfrage offen oder Löschen läuft): Die Zeile ist rot getönt. */
+  markedGameId?: number | null;
+  /** Ausstehendes Löschen: Die Zeile zeigt bis zur Antwort ein Skeleton, danach ist sie weg. */
+  deletingGameId?: number | null;
 }>();
 
 function sitsOut(player: RoundPlayer): boolean {
@@ -67,24 +71,35 @@ onUnmounted(() => {
 });
 
 function isPendingRow(game: RoundGame): boolean {
-  return props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id;
+  return (
+    game.id === props.deletingGameId ||
+    (props.pendingGame === 'edited' && game.id === props.games.at(-1)?.id)
+  );
 }
 
+/**
+ * Hervorhebungen blenden schnell ein und langsam aus: Die Dauer gilt beim Wechsel in den
+ * jeweiligen Zustand. Neue Zeilen starten per `starting:` transparent, sonst stünde ihr Grün
+ * sofort da, weil es keinen vorherigen Zustand gibt, von dem aus überblendet würde.
+ */
 function rowBackground(game: RoundGame): string {
+  if (game.id === props.markedGameId) {
+    return 'bg-error/40 duration-300';
+  }
   const highlight = highlightedGames.value[game.id];
   if (highlight === 'new') {
-    return 'bg-success/30';
+    return 'bg-success/30 duration-300 starting:bg-transparent';
   }
   if (highlight === 'edited') {
-    return 'bg-warning/30';
+    return 'bg-warning/30 duration-300';
   }
   if (game.isMisplay) {
-    return 'bg-error/15';
+    return 'bg-error/15 duration-1000';
   }
   if (game.isSolo) {
-    return 'bg-elevated';
+    return 'bg-elevated duration-1000';
   }
-  return '';
+  return 'duration-1000';
 }
 </script>
 
@@ -133,7 +148,7 @@ function rowBackground(game: RoundGame): string {
             class="px-0.5 pt-2 pb-3 text-sm font-semibold text-highlighted"
             :class="HEAD_CELL_CLASSES"
           >
-            <span class="sm:hidden">Pkt.</span>
+            <span class="sm:hidden">Punkte</span>
             <span class="hidden sm:inline">Punkte</span>
           </th>
         </tr>
@@ -142,7 +157,7 @@ function rowBackground(game: RoundGame): string {
         <tr
           v-for="game in games"
           :key="game.id"
-          class="transition-colors duration-1000"
+          class="transition-colors"
           :class="[
             rowBackground(game),
             game.endsDealerCycle

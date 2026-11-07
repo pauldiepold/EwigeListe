@@ -7,6 +7,17 @@ import type { RoundActivePlayer, RoundLastGame } from '@/types/round-show';
 const MIN_POINTS = -4;
 const MAX_POINTS = 16;
 
+/**
+ * ± sind die meistgetippten Ziele: rund, gefüllt und größer als normale Buttons. Die Füllung ist
+ * eine mittlere Slate-Stufe (hell dunkel, im Dark Mode hell), damit sie hervorsticht, ohne mit dem
+ * orangen Speichern zu konkurrieren.
+ */
+const STEPPER_BUTTON_CLASSES = [
+  'size-10 justify-center rounded-full',
+  'bg-(--ui-color-neutral-700) hover:bg-(--ui-color-neutral-800) disabled:bg-(--ui-color-neutral-700)',
+  'dark:bg-(--ui-color-neutral-400) dark:hover:bg-(--ui-color-neutral-300) dark:disabled:bg-(--ui-color-neutral-400)',
+].join(' ');
+
 const props = defineProps<{
   roundId: number;
   lastGameId: number | null;
@@ -14,6 +25,8 @@ const props = defineProps<{
   viewerIsActive: boolean;
   /** Gesetzt, wenn statt eines neuen Spiels dieses letzte Spiel bearbeitet wird. */
   editedGame?: RoundLastGame | null;
+  /** Runder Plus-Button, der unten rechts über der Seite schwebt, statt eines Buttons mit Text. */
+  floating?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -38,11 +51,29 @@ const isViewerActive = computed(() => props.editedGame?.viewerIsActive ?? props.
  * Die Anordnung entspricht dem Blick vom eigenen Platz: Wer mitspielt, steht unten, der nächste
  * Sitz links, gegenüber oben, der letzte rechts. Wer aussetzt, sitzt gedanklich unten zwischen
  * den vier Aktiven; der nächste aktive Sitz steht dann unten links.
+ *
+ * Jeder Platz belegt zwei halbe Zeilen. Links und rechts stehen um eine halbe Zeile versetzt
+ * zwischen oben und unten; so ist die Raute nur zwei Plätze hoch statt drei. Ohne eigenen Platz
+ * genügen zwei schmale Spalten, sonst klafft in der Mitte eine Lücke.
  */
+const seatGridClass = computed(() =>
+  isViewerActive.value ? 'max-w-72 grid-cols-3' : 'max-w-56 grid-cols-2',
+);
+
 const seatClasses = computed(() =>
   isViewerActive.value
-    ? ['order-4 col-start-2', 'order-2 col-start-1', 'order-1 col-start-2', 'order-3 col-start-3']
-    : ['order-3 col-start-1', 'order-1 col-start-1', 'order-2 col-start-3', 'order-4 col-start-3'],
+    ? [
+        'col-start-2 row-start-3',
+        'col-start-1 row-start-2',
+        'col-start-2 row-start-1',
+        'col-start-3 row-start-2',
+      ]
+    : [
+        'col-start-1 row-start-3',
+        'col-start-1 row-start-1',
+        'col-start-2 row-start-1',
+        'col-start-2 row-start-3',
+      ],
 );
 
 const canSubmit = computed(() => {
@@ -53,15 +84,17 @@ const canSubmit = computed(() => {
 
 const validationError = computed(() => Object.values(form.errors)[0]);
 
-/** Erst nach einem Speichern-Versuch sichtbar, damit der Dialog nicht gleich mit Fehlern öffnet. */
+/** Färbt den Hinweis zur Auswahl rot, sobald jemand mit ungültiger Auswahl speichern wollte. */
 const hasTriedToSubmit = ref(false);
+
+/** Steht grau da, solange die Auswahl nicht passt; kurz genug für eine Zeile. */
 const winnersHint = computed(() => {
-  if (!hasTriedToSubmit.value || canSubmit.value) {
-    return null;
+  if (form.misplayed) {
+    return 'Wähle genau drei Personen aus.';
   }
 
-  return form.misplayed
-    ? 'Bei „Falsch bedient?“ müssen genau drei Personen ausgewählt sein.'
+  return form.winners.length > 3
+    ? 'Höchstens drei Personen können gewinnen.'
     : 'Wähle mindestens eine Person aus.';
 });
 
@@ -72,7 +105,7 @@ function toggleWinner(playerId: number): void {
 }
 
 /**
- * Auch X, Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr.
+ * Auch Escape und Klick daneben leeren den Dialog: Eine alte Auswahl passt später oft nicht mehr.
  * Beim Bearbeiten beginnt er mit den Werten des Spiels.
  */
 watch(open, (isOpen) => {
@@ -94,6 +127,33 @@ watch(open, (isOpen) => {
   }
 
   form.reset();
+});
+
+/**
+ * Mittig liegen die häufig getippten Buttons gut erreichbar. Öffnet das Punktefeld am
+ * Touch-Gerät die Bildschirmtastatur, rutscht der Dialog nach oben, damit sie Feld und Speichern
+ * nicht verdeckt, und bleibt dort bis zum Schließen: Spränge er beim Zuklappen der Tastatur
+ * zurück, lägen die Buttons plötzlich woanders als unter dem Finger.
+ */
+const movedUpForKeyboard = ref(false);
+
+function moveUpForKeyboard(): void {
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    movedUpForKeyboard.value = true;
+  }
+}
+
+watch(open, (isOpen) => {
+  if (isOpen) {
+    return;
+  }
+
+  movedUpForKeyboard.value = false;
+  // Fokus vor dem Schließen abgeben: Sonst holt die Fokusfalle des Dialogs ihn beim Schließen aufs
+  // Punktefeld zurück, und die Tastatur blitzt kurz auf. Ein `blur()` ohne Ziel ignoriert sie.
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
 });
 
 /** Solange gesetzt, ändern Schließen und Wiederöffnen den Formularstand nicht. */
@@ -189,22 +249,38 @@ watch(
 </script>
 
 <template>
+  <!-- Ohne X und Footer: Klick daneben und Escape schließen; das spart Platz. Die Beschreibung
+       bleibt nur für Screenreader, der Titel sagt genug. -->
   <UModal
     v-model:open="open"
     :title="isEditing ? 'Letztes Spiel bearbeiten' : 'Wer hat gewonnen?'"
-    description="Wähle die Gewinnerinnen und trage die Punkte ein."
-    :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
+    description="Wähle, wer gewonnen hat, und trage die Punkte ein."
+    :close="false"
+    :ui="{
+      content: [
+        'divide-y-0 transition-[top,translate] duration-200',
+        movedUpForKeyboard ? 'top-4 translate-y-0 sm:top-16' : '',
+      ].join(' '),
+      header: 'min-h-0 justify-center pt-4 pb-0',
+      body: 'pt-8 sm:pt-8',
+      wrapper: 'text-center',
+      title: 'text-lg font-medium tracking-wide',
+      description: 'sr-only',
+    }"
   >
     <UButton
       v-if="isEditing"
       color="neutral"
       variant="outline"
       icon="i-lucide-pencil"
-      label="Letztes Spiel bearbeiten"
+      class="px-3"
+      :ui="{ leadingIcon: 'size-3.5' }"
+      aria-label="Letztes Spiel bearbeiten"
+      title="Letztes Spiel bearbeiten"
     />
     <!-- Rund und ohne Text, damit das Icon mittig sitzt; schwebt unten rechts über der Seite. -->
     <UButton
-      v-else
+      v-else-if="floating"
       color="primary"
       icon="i-lucide-plus"
       aria-label="Spiel eintragen"
@@ -212,9 +288,10 @@ watch(
       class="size-14 justify-center rounded-full shadow-[0_6px_18px_hsl(0_0%_0%/0.45)]"
       :ui="{ leadingIcon: 'size-7' }"
     />
+    <UButton v-else color="primary" icon="i-lucide-plus" label="Spiel eintragen" />
 
     <template #body>
-      <form id="enter-game-form" class="space-y-6" @submit.prevent="submit">
+      <form id="enter-game-form" class="space-y-8" @submit.prevent="submit">
         <UAlert
           v-if="validationError"
           color="error"
@@ -223,33 +300,53 @@ watch(
           :title="validationError"
         />
 
-        <div class="grid grid-cols-4 gap-3">
+        <!-- Keine Boxen: Gewählt sind Bild mit grünem Ring und Haken-Plakette, in einem gedeckten
+             Grün, das im Dark Mode nicht blendet. -->
+        <div class="mx-auto grid w-full grid-rows-4 gap-x-2 gap-y-6" :class="seatGridClass">
           <button
             v-for="(player, seat) in players"
             :key="player.id"
             type="button"
-            class="col-span-2 flex cursor-pointer items-center justify-center gap-2 rounded-lg border px-2 py-1.5 font-semibold"
-            :class="[
-              seatClasses[seat],
-              form.winners.includes(player.id)
-                ? 'border-transparent ring-2 ring-success'
-                : 'border-accented',
-            ]"
+            class="row-span-2 flex min-w-0 cursor-pointer flex-col items-center gap-1.5 rounded-lg py-1 focus-visible:outline-2 focus-visible:outline-primary"
+            :class="seatClasses[seat]"
             :aria-pressed="form.winners.includes(player.id)"
             @click="toggleWinner(player.id)"
           >
-            <UAvatar :src="player.avatarPath ?? undefined" :alt="player.name" size="sm" />
-            {{ player.name }}
+            <span class="relative">
+              <UAvatar
+                :src="player.avatarPath ?? undefined"
+                :alt="player.name"
+                size="2xl"
+                class="ring-offset-2 ring-offset-(--ui-bg) transition-shadow"
+                :class="
+                  form.winners.includes(player.id)
+                    ? 'ring-2 ring-(--ui-color-success-600) dark:ring-(--ui-color-success-700)'
+                    : ''
+                "
+              />
+              <span
+                v-if="form.winners.includes(player.id)"
+                class="absolute -end-1 -bottom-1 grid size-5 place-items-center rounded-full bg-(--ui-color-success-600) text-white ring-2 ring-(--ui-bg) dark:bg-(--ui-color-success-700)"
+              >
+                <UIcon name="i-lucide-check" class="size-3.5" />
+              </span>
+            </span>
+            <span class="max-w-full truncate text-sm font-medium text-highlighted">
+              {{ player.name }}
+            </span>
           </button>
         </div>
 
-        <div class="flex flex-col items-center gap-1.5 pt-4">
-          <div class="flex items-center justify-center gap-2">
+        <!-- Etwas mehr Luft über den Punkten als zwischen den übrigen Bereichen. -->
+        <div class="flex flex-col items-center gap-1.5 pt-2">
+          <div class="flex items-center justify-center gap-6" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
-              variant="outline"
+              variant="solid"
               icon="i-lucide-minus"
               aria-label="Weniger Punkte"
+              :class="STEPPER_BUTTON_CLASSES"
+              :ui="{ leadingIcon: 'size-5' }"
               :disabled="form.points <= MIN_POINTS"
               @mousedown.prevent
               @click="form.points -= 1"
@@ -257,18 +354,21 @@ watch(
             <UInputNumber
               v-model="form.points"
               name="points"
+              size="xl"
               :min="MIN_POINTS"
               :max="MAX_POINTS"
               :increment="false"
               :decrement="false"
               class="w-20"
-              :ui="{ base: 'text-center' }"
+              :ui="{ base: 'text-center text-lg font-semibold' }"
             />
             <UButton
               color="neutral"
-              variant="outline"
+              variant="solid"
               icon="i-lucide-plus"
               aria-label="Mehr Punkte"
+              :class="STEPPER_BUTTON_CLASSES"
+              :ui="{ leadingIcon: 'size-5' }"
               :disabled="form.points >= MAX_POINTS"
               @mousedown.prevent
               @click="form.points += 1"
@@ -285,25 +385,25 @@ watch(
             label="Speichern"
             :loading="form.processing"
           />
-          <p v-if="winnersHint" class="text-center text-xs text-error" role="alert">
+          <!-- Bei gültiger Auswahl unsichtbar statt entfernt: Der Platz bleibt, die Höhe springt nicht. -->
+          <p
+            class="text-center text-xs"
+            :class="[hasTriedToSubmit ? 'text-error' : 'text-dimmed', { invisible: canSubmit }]"
+            :role="hasTriedToSubmit && !canSubmit ? 'alert' : undefined"
+            :aria-hidden="canSubmit"
+          >
             {{ winnersHint }}
           </p>
         </div>
 
-        <div class="flex flex-col items-center pt-4">
-          <UCheckbox v-model="form.misplayed" name="misplayed" label="Falsch bedient?" />
+        <div class="flex flex-col items-center">
+          <USwitch v-model="form.misplayed" name="misplayed" label="Falsch bedient" />
           <p v-if="form.misplayed" class="mt-2 text-center text-sm text-muted">
-            Falls jemand falsch bedient, wird dies als verlorenes Solo mit 2 Punkten plus die
-            getätigten Ansagen gewertet. Dieses Ergebnis wird oben eingetragen.
+            Zählt als verlorenes Solo: Trage 2 Punkte plus Ansagen ein und wähle die drei, die
+            richtig bedient haben.
           </p>
         </div>
       </form>
-    </template>
-
-    <template #footer>
-      <div class="flex w-full justify-center">
-        <UButton color="neutral" variant="link" label="Schließen" @click="open = false" />
-      </div>
     </template>
   </UModal>
 </template>
