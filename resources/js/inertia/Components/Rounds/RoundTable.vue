@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import type { RoundGame, RoundPlayer } from '@/types/round-show';
 
 const HIGHLIGHT_MILLISECONDS = 2000;
 
-/** Erst ab 6 Spielern setzen mehrere aus, dann lohnt die Markierung der Aktiven. */
-const MARK_ACTIVE_FROM_PLAYERS = 6;
+/** Ab 5 Spielern setzt immer jemand aus, bei genau 5 der Geber. */
+const DIM_SITTING_OUT_FROM_PLAYERS = 5;
+
+const HEAD_CELL_CLASSES =
+  'sticky top-0 z-10 bg-default align-bottom shadow-[inset_0_-2px_0_var(--ui-color-neutral-400)] dark:shadow-[inset_0_-2px_0_var(--ui-color-neutral-600)]';
 
 const props = defineProps<{
   players: RoundPlayer[];
@@ -16,7 +19,9 @@ const props = defineProps<{
   pendingGame?: 'new' | 'edited' | null;
 }>();
 
-const marksActivePlayers = computed(() => props.players.length >= MARK_ACTIVE_FROM_PLAYERS);
+function sitsOut(player: RoundPlayer): boolean {
+  return props.players.length >= DIM_SITTING_OUT_FROM_PLAYERS && !player.isActive;
+}
 
 const highlightedGames = ref<Record<number, 'new' | 'edited'>>({});
 const highlightTimers = new Set<ReturnType<typeof setTimeout>>();
@@ -84,36 +89,52 @@ function rowBackground(game: RoundGame): string {
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl overflow-x-auto">
-    <table class="w-full text-center tabular-nums">
+  <!--
+    Am Handy bis an den Rand: hebt das Seiten-Padding auf. `overflow-x-clip` statt `-auto`, denn ein
+    Scroll-Container hielte den stehenden Kopf nicht am oberen Rand.
+  -->
+  <div
+    class="-mx-4 overflow-x-clip sm:mx-0 [&_:is(td,th):first-child]:pl-2 [&_:is(td,th):last-child]:pr-2"
+  >
+    <table class="w-full table-fixed text-center tabular-nums">
       <thead>
-        <tr class="border-b-2 border-(--ui-color-neutral-400) dark:border-(--ui-color-neutral-600)">
-          <th v-for="player in players" :key="player.id" class="px-1 py-2 font-normal">
+        <tr>
+          <th
+            v-for="player in players"
+            :key="player.id"
+            class="px-0.5 pt-1.5 pb-2 font-normal"
+            :class="HEAD_CELL_CLASSES"
+          >
             <component
               :is="player.path ? Link : 'span'"
               :href="player.path ?? undefined"
-              class="flex flex-col items-center gap-1"
+              class="flex flex-col items-center gap-1 rounded-md px-0.5 pt-1.5 pb-1 no-underline"
             >
               <UAvatar
                 :src="player.avatarPath ?? undefined"
                 :alt="player.surname"
                 :class="{
+                  'opacity-40': sitsOut(player),
                   'shadow-[0_0_10px_2px] shadow-success/60': onlinePlayerIds.includes(player.id),
                 }"
               />
               <span
-                class="rounded-lg px-1.5 py-0.5 font-semibold"
+                class="block w-full truncate text-sm leading-4 font-semibold"
                 :class="[
                   player.isDealer ? 'text-primary' : 'text-highlighted',
-                  { 'bg-primary/15': marksActivePlayers && player.isActive },
+                  { 'opacity-40': sitsOut(player) },
                 ]"
               >
                 {{ player.surname }}
               </span>
             </component>
           </th>
-          <th class="px-1 py-2 align-bottom font-semibold text-highlighted">
-            <span class="px-1.5 py-0.5">Punkte</span>
+          <th
+            class="px-0.5 pt-2 pb-3 text-sm font-semibold text-highlighted"
+            :class="HEAD_CELL_CLASSES"
+          >
+            <span class="sm:hidden">Pkt.</span>
+            <span class="hidden sm:inline">Punkte</span>
           </th>
         </tr>
       </thead>

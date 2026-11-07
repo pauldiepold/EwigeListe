@@ -13,7 +13,7 @@ defineProps<HomeProps>();
 <template>
   <Head title="Startseite" />
 
-  <AppLayout title="Startseite">
+  <AppLayout>
     <CurrentRoundsSection :rounds="currentRounds" />
 
     <section class="mb-8">

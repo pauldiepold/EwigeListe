@@ -33,6 +33,74 @@ const isAuthenticated = computed(() => page.props.auth.user !== null);
 const authPlayer = computed(() => page.props.auth.player);
 const canOpenCurrentRound = computed(() => page.props.navigation.showCurrentRound);
 
+const currentPath = computed(() => page.url.split(/[?#]/)[0]);
+
+interface NavItem {
+  to: string;
+  icon: string;
+  label: string;
+  active: boolean;
+}
+
+const navItems = computed<NavItem[]>(() => {
+  const homeItem: NavItem = {
+    to: home.url(),
+    icon: 'i-lucide-house',
+    label: 'Startseite',
+    active: [home.url(), '/home'].includes(currentPath.value),
+  };
+
+  if (!isAuthenticated.value) {
+    return [
+      homeItem,
+      {
+        to: login.url(),
+        icon: 'i-lucide-log-in',
+        label: 'Login',
+        active: currentPath.value === login.url(),
+      },
+      {
+        to: register.url(),
+        icon: 'i-lucide-user-plus',
+        label: 'Registrieren',
+        active: currentPath.value === register.url(),
+      },
+    ];
+  }
+
+  return [
+    homeItem,
+    ...(canOpenCurrentRound.value
+      ? [
+          {
+            to: currentRound.url(),
+            icon: 'i-lucide-circle-play',
+            label: 'Aktuelle Runde',
+            active: /^\/runde\/\d/.test(currentPath.value),
+          },
+        ]
+      : []),
+    {
+      to: createRound.url(),
+      icon: 'i-lucide-circle-plus',
+      label: 'Neue Runde',
+      active: currentPath.value === createRound.url(),
+    },
+    {
+      to: ewigeListe.url(),
+      icon: 'i-lucide-list',
+      label: 'Ewige Liste',
+      active: currentPath.value.startsWith(ewigeListe.url()),
+    },
+    {
+      to: roundsIndex.url(),
+      icon: 'i-lucide-history',
+      label: 'Rundenarchiv',
+      active: currentPath.value.startsWith(roundsIndex.url()),
+    },
+  ];
+});
+
 function applyColorMode(mode: InertiaColorMode): void {
   colorMode.value = mode;
   const root = document.documentElement;
@@ -61,7 +129,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex min-h-screen flex-col bg-default text-highlighted">
+  <!-- `isolate`: Stehende Tabellenköpfe und der schwebende Button bleiben so unter Dialogen. -->
+  <div class="isolate flex min-h-screen flex-col bg-default text-highlighted">
     <header class="shrink-0">
       <div class="bg-blue-dark py-2 text-center">
         <Link :href="home.url()" class="text-lg font-semibold text-white no-underline"
@@ -70,78 +139,32 @@ onMounted(() => {
       </div>
 
       <nav class="bg-blue">
-        <UContainer class="max-w-md px-1 py-2">
-          <div class="flex items-center justify-around">
+        <UContainer class="max-w-md px-1 py-1 sm:max-w-4xl">
+          <div class="flex items-center justify-around sm:gap-3">
             <UButton
-              :to="home.url()"
+              v-for="item in navItems"
+              :key="item.to"
+              :to="item.to"
               color="neutral"
               variant="ghost"
+              size="xl"
               class="text-white hover:bg-white/15"
-              icon="i-lucide-house"
-              aria-label="Startseite"
-            />
-
-            <template v-if="isAuthenticated">
-              <UButton
-                v-if="canOpenCurrentRound"
-                :to="currentRound.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-circle-play"
-                aria-label="Aktuelle Runde"
-              />
-              <UButton
-                :to="createRound.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-circle-plus"
-                aria-label="Neue Runde"
-              />
-              <UButton
-                :to="ewigeListe.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-list"
-                aria-label="Ewige Liste"
-              />
-              <UButton
-                :to="roundsIndex.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-history"
-                aria-label="Rundenarchiv"
-              />
-            </template>
-
-            <template v-else>
-              <UButton
-                :to="login.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-log-in"
-                aria-label="Login"
-              />
-              <UButton
-                :to="register.url()"
-                color="neutral"
-                variant="ghost"
-                class="text-white hover:bg-white/15"
-                icon="i-lucide-user-plus"
-                aria-label="Registrieren"
-              />
-            </template>
+              :class="{
+                'rounded-none shadow-[inset_0_-3px_0_var(--ui-color-primary-400)]': item.active,
+              }"
+              :icon="item.icon"
+              :aria-label="item.label"
+              :aria-current="item.active ? 'page' : undefined"
+            >
+              <span class="hidden text-sm whitespace-nowrap sm:inline">{{ item.label }}</span>
+            </UButton>
           </div>
         </UContainer>
       </nav>
     </header>
 
     <UPage as="main" class="flex-1">
-      <UContainer class="w-full max-w-4xl py-8">
+      <UContainer class="w-full max-w-4xl py-4 sm:py-8">
         <UPageHeader
           v-if="title"
           :title="title"
@@ -150,13 +173,25 @@ onMounted(() => {
             title: 'text-xl sm:text-2xl text-pretty font-semibold text-highlighted',
           }"
         />
-        <UPageBody>
+        <UPageBody class="mt-2 pb-8 sm:mt-4">
           <slot />
         </UPageBody>
       </UContainer>
     </UPage>
 
-    <footer class="shrink-0 border-t border-default bg-elevated">
+    <!-- Außerhalb von `UPageBody`: Dessen `space-y-*` gäbe dem Button sonst einen Außenabstand. -->
+    <div
+      v-if="$slots.floatingAction"
+      class="fixed right-4 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-20"
+    >
+      <slot name="floatingAction" />
+    </div>
+
+    <!-- Mit schwebendem Button bleibt unter dem Seitenende Platz, damit er nichts verdeckt. -->
+    <footer
+      class="shrink-0 border-t border-default bg-elevated"
+      :class="{ 'pb-22': $slots.floatingAction }"
+    >
       <UContainer
         class="flex w-full max-w-4xl flex-col gap-3 py-4 text-sm sm:flex-row sm:items-center sm:justify-between"
       >

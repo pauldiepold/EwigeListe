@@ -63,21 +63,21 @@ function deleteRound(): void {
 <template>
   <Head title="Rundenübersicht" />
 
-  <AppLayout title="Rundenübersicht">
-    <div class="mx-auto w-full max-w-5xl space-y-6">
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
+  <AppLayout>
+    <template v-if="canChangeGames && activeTab === 'runde'" #floatingAction>
+      <EnterGameModal
+        :round-id="round.id"
+        :last-game-id="round.lastGameId"
+        :active-players="round.activePlayers"
+        :viewer-is-active="round.viewerIsActive"
+        @pending="pendingGame = $event"
+      />
+    </template>
+
+    <div class="mx-auto w-full max-w-5xl">
+      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mb-3 w-full" />
 
       <section v-if="activeTab === 'runde'" class="space-y-6">
-        <div v-if="canChangeGames" class="flex justify-center">
-          <EnterGameModal
-            :round-id="round.id"
-            :last-game-id="round.lastGameId"
-            :active-players="round.activePlayers"
-            :viewer-is-active="round.viewerIsActive"
-            @pending="pendingGame = $event"
-          />
-        </div>
-
         <RoundTable
           :players="round.players"
           :games="round.games"

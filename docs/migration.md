@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 bis 3 erledigt, Phase 4 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 bis 4 erledigt, Phase 5 offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -40,7 +40,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 1 | Testsuite reparieren, Inertia-Testmuster, CI; Tooling-Entscheidungen (Boost-Update, Inertia v3, Wayfinder, Hooks, Larastan) | #27, #48 | ✅ |
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
-| 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | todo |
+| 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | ✅ |
 | 5 | Live-Spiel im neuen Design | #36 | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
@@ -103,6 +103,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-10-28 | Design-Spikes bleiben innerhalb von Nuxt UI | kein Framework-Wechsel |
 | 2026-11-01 | Die Spikes sind vier Ausprägungen derselben Identität: Farben, Schriften und Navigationskonzept bleiben fest, variabel sind Buttons, Tabs, Überschriften, Flächen und Spieltabelle. Maßstab ist der Dark Mode am Handy. Der Freundeskreis gibt Rückmeldung je Element, Paul entscheidet, auch als Mischung. Statistik-Visuals und andere Detailarbeit an einzelnen Seiten gehören nicht zu Phase 4 | Look and Feel soll der alten App sehr ähnlich bleiben, bei so ähnlichen Varianten trägt eine Gesamtabstimmung wenig (#34) |
 | 2026-11-01 | Orange und Blau haben eine vollständige Skala aus den alten Farben (`#d16341`, `#065a82`), `primary` und `secondary` nutzen sie auch im Dark Mode | Bisher war nur Orange 500 gesetzt: Der Dark Mode zeigte Tailwind-Orange, `secondary` Tailwind-Blau (#34) |
+| 2026-11-07 | Design H ist umgesetzt: Navigation mit orangem Balken unter der aktiven Seite, Spieltabelle ohne Box mit stehendem Kopf, runder Plus-Button zum Eintragen, keine Überschrift auf Start- und Rundenseite, am Handy trägt nur der aktive Tab Text. `bootstrap-compat.css` ist entfernt, die Tailwind-Abstände gelten wieder unverändert | Entscheidung in #34; die Inertia-Seiten nutzten keine Bootstrap-Klassen mehr, die Datei verbog nur noch Tailwind-Abstände auf die Bootstrap-Skala (#35) |
 | 2026-10-28 | Claude Code als einziges Agent-Tooling; `.cursor/` wird aufgelöst | eine Quelle für Regeln und Skills |
 | 2026-10-28 | Test-/Report-Routen streichen, Neuberechnung als Artisan-Befehl | Testseiten ungenutzt; ein Befehl wird ohnehin für den Rollback gebraucht |
 | 2026-10-31 | Alle Routen sind benannt (`live.games.*`, `live.rounds.start`, `rounds.fetchData`, `auth.socialite.callback`; Pfade unverändert) und nutzen `[Controller::class, 'method']`. Der `$namespace` im `RouteServiceProvider` entfällt. Mutierende GET-Routen gibt es nicht mehr (#40, #41, #43) | Einheitliche Routen-Definition, Namen für `route()` und Wayfinder; kein eigener Test, die Suite löst jede Controller-Referenz auf |
