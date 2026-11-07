@@ -27,6 +27,7 @@ class UserController extends Controller
         return Inertia::render('Users/Edit', [
             'user' => (new EditUserResource($user))->resolve(request()),
             'profiles' => EditUserProfileResource::collection($user->player->profiles)->resolve(request()),
+            'requiresCurrentPassword' => ! auth()->user()->isAdmin(),
         ]);
     }
 

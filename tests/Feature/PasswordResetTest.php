@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Notifications\MyOwnResetPassword;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -28,7 +28,7 @@ class PasswordResetTest extends TestCase
     }
 
     #[Test]
-    public function requesting_a_reset_link_sends_the_notification(): void
+    public function requesting_a_reset_link_mails_a_german_link_to_the_reset_page(): void
     {
         Notification::fake();
         $user = User::factory()->create();
@@ -36,7 +36,13 @@ class PasswordResetTest extends TestCase
         $this->post(route('password.email'), ['email' => $user->email])
             ->assertSessionHasNoErrors();
 
-        Notification::assertSentTo($user, MyOwnResetPassword::class);
+        Notification::assertSentTo($user, ResetPassword::class, function (ResetPassword $notification) use ($user): bool {
+            $mail = $notification->toMail($user);
+
+            return $mail->subject === 'Passwort zurücksetzen'
+                && $mail->actionText === 'Passwort zurücksetzen'
+                && $mail->actionUrl === route('password.reset', ['token' => $notification->token, 'email' => $user->email]);
+        });
     }
 
     #[Test]
@@ -52,7 +58,7 @@ class PasswordResetTest extends TestCase
     }
 
     #[Test]
-    public function resetting_changes_the_password(): void
+    public function resetting_changes_the_password_and_leads_to_the_login(): void
     {
         $user = User::factory()->create();
 
@@ -61,9 +67,24 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
             'password' => 'neuesPasswort123',
             'password_confirmation' => 'neuesPasswort123',
-        ])->assertSessionHasNoErrors()->assertRedirect('/home');
+        ])->assertSessionHasNoErrors()->assertRedirect(route('login'));
 
-        $this->assertAuthenticatedAs($user);
+        $this->assertGuest();
         $this->assertTrue(Hash::check('neuesPasswort123', $user->fresh()->password));
+    }
+
+    #[Test]
+    public function resetting_rejects_a_password_shorter_than_eight_characters(): void
+    {
+        $user = User::factory()->create();
+
+        $this->post(route('password.update'), [
+            'token' => Password::createToken($user),
+            'email' => $user->email,
+            'password' => 'kurz123',
+            'password_confirmation' => 'kurz123',
+        ])->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
+
+        $this->assertTrue(Hash::check('test', $user->fresh()->password));
     }
 }

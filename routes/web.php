@@ -27,7 +27,7 @@ PUT|PATCH     /users/{user}               update  users.update
 DELETE        /users/{user}               destroy users.destroy
 */
 
-Auth::routes();
+/* Login, Registrierung und Passwort-Reset registriert Fortify (`config/fortify.php`). */
 
 /* *********** Home ************** */
 Route::get('/', [HomeController::class, 'index'])->name('index');
@@ -38,7 +38,9 @@ Route::middleware('auth')->group(function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::patch('users/{user}/name', [UserController::class, 'updateName'])->name('users.updateName');
     Route::patch('users/{user}/mail', [UserController::class, 'updateMail'])->name('users.updateMail');
-    Route::patch('users/{user}/password', [UserController::class, 'updatePassword'])->name('users.updatePassword');
+    Route::patch('users/{user}/password', [UserController::class, 'updatePassword'])
+        ->middleware('throttle:6,1')
+        ->name('users.updatePassword');
     Route::patch('users/{user}/listen', [UserController::class, 'updateListen'])->name('users.updateListen');
     Route::post('users/{user}/avatar', [UserAvatarController::class, 'store'])->name('users.updateAvatar');
 

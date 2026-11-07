@@ -32,7 +32,10 @@ class ManageUsersTest extends TestCase
 
         $this->get(route('users.edit', [auth()->id()]))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->component('Users/Edit'));
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Users/Edit')
+                ->where('requiresCurrentPassword', true)
+            );
 
         $this->get('users/'.$users->last()->id.'/edit')
             ->assertForbidden();
@@ -48,7 +51,10 @@ class ManageUsersTest extends TestCase
         $this->actingAs($admin)
             ->get(route('users.edit', $user))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->where('user.id', $user->id));
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('user.id', $user->id)
+                ->where('requiresCurrentPassword', false)
+            );
     }
 
     #[Test]
@@ -178,37 +184,60 @@ class ManageUsersTest extends TestCase
             'current_password' => 'falsches-passwort',
             'password' => 'neues-passwort',
             'password_confirmation' => 'anderes-passwort',
-        ])->assertSessionHasErrors(['current_password', 'password']);
+        ])->assertSessionHasErrors([
+            'current_password' => 'Das alte Passwort stimmt nicht!',
+            'password' => 'Die Passwörter stimmen nicht überein!',
+        ]);
 
         $this->patch(route('users.updatePassword', $user), [
             'current_password' => 'testtest',
-            'password' => 'kurz',
-            'password_confirmation' => 'kurz',
-        ])->assertSessionHasErrors('password');
+            'password' => 'kurz123',
+            'password_confirmation' => 'kurz123',
+        ])->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
 
         $this->assertTrue(Hash::check('testtest', $user->fresh()->password));
     }
 
     #[Test]
-    public function the_admin_can_change_the_password_of_another_user_without_knowing_it()
+    public function changing_the_password_is_throttled_after_six_attempts()
+    {
+        $user = $this->signInRegularUser();
+
+        foreach (range(1, 6) as $attempt) {
+            $this->patch(route('users.updatePassword', $user), ['current_password' => 'falsch']);
+        }
+
+        $this->patch(route('users.updatePassword', $user), [
+            'current_password' => 'testtest',
+            'password' => 'neues-passwort',
+            'password_confirmation' => 'neues-passwort',
+        ])->assertInertiaFlash('toast', [
+            'type' => 'error',
+            'message' => 'Zu viele Versuche. Bitte warte kurz und versuche es dann noch einmal.',
+        ]);
+
+        $this->assertTrue(Hash::check('testtest', $user->fresh()->password));
+    }
+
+    #[Test]
+    public function the_admin_changes_passwords_without_the_old_one()
     {
         $admin = User::factory()->create();
         $user = $this->signInRegularUser();
         $this->actingAs($admin);
 
         $this->patch(route('users.updatePassword', $user), [
-            'current_password' => '',
-            'password' => 'neues-passwort',
-            'password_confirmation' => 'neues-passwort',
-        ])->assertSessionHasErrors('current_password');
-
-        $this->patch(route('users.updatePassword', $user), [
-            'current_password' => 'beliebig',
             'password' => 'neues-passwort',
             'password_confirmation' => 'neues-passwort',
         ])->assertRedirect(route('users.edit', $user));
 
+        $this->patch(route('users.updatePassword', $admin), [
+            'password' => 'eigenes-passwort',
+            'password_confirmation' => 'eigenes-passwort',
+        ])->assertRedirect(route('users.edit', $admin));
+
         $this->assertTrue(Hash::check('neues-passwort', $user->fresh()->password));
+        $this->assertTrue(Hash::check('eigenes-passwort', $admin->fresh()->password));
     }
 
     #[Test]

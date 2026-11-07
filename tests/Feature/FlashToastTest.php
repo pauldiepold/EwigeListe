@@ -75,7 +75,7 @@ class FlashToastTest extends TestCase
             'password' => 'neues-passwort-123',
             'password_confirmation' => 'neues-passwort-123',
         ])
-            ->assertRedirect('/home')
+            ->assertRedirect(route('login'))
             ->assertSessionMissing('status')
             ->assertInertiaFlash('toast', [
                 'type' => 'success',

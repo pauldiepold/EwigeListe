@@ -45,6 +45,26 @@ class LoginTest extends TestCase
     }
 
     #[Test]
+    public function too_many_attempts_return_to_the_form_with_a_toast(): void
+    {
+        $user = User::factory()->create();
+
+        foreach (range(1, 5) as $attempt) {
+            $this->post(route('login'), ['email' => $user->email, 'password' => 'falsch']);
+        }
+
+        $this->from(route('login'))
+            ->post(route('login'), ['email' => $user->email, 'password' => 'test'])
+            ->assertRedirect(route('login'))
+            ->assertInertiaFlash('toast', [
+                'type' => 'error',
+                'message' => 'Zu viele Versuche. Bitte warte kurz und versuche es dann noch einmal.',
+            ]);
+
+        $this->assertGuest();
+    }
+
+    #[Test]
     public function remember_sets_the_recaller_cookie(): void
     {
         $user = User::factory()->create();

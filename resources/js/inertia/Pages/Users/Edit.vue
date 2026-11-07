@@ -12,6 +12,7 @@ import type { EditUser, EditUserProfile } from '@/types/user-edit';
 defineProps<{
   user: EditUser;
   profiles: EditUserProfile[];
+  requiresCurrentPassword: boolean;
 }>();
 
 const tabs = [
@@ -54,7 +55,11 @@ const tabs = [
           </template>
 
           <template #passwort>
-            <UserPasswordForm :user="user" class="mt-4" />
+            <UserPasswordForm
+              :user="user"
+              :requires-current-password="requiresCurrentPassword"
+              class="mt-4"
+            />
           </template>
         </UTabs>
       </UCard>
