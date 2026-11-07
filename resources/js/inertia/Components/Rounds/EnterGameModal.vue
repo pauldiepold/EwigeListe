@@ -7,6 +7,17 @@ import type { RoundActivePlayer, RoundLastGame } from '@/types/round-show';
 const MIN_POINTS = -4;
 const MAX_POINTS = 16;
 
+/**
+ * ± sind die meistgetippten Ziele: rund, gefüllt und größer als normale Buttons. Die Füllung ist
+ * eine mittlere Slate-Stufe (hell dunkel, im Dark Mode hell), damit sie hervorsticht, ohne mit dem
+ * orangen Speichern zu konkurrieren.
+ */
+const STEPPER_BUTTON_CLASSES = [
+  'size-10 justify-center rounded-full',
+  'bg-(--ui-color-neutral-700) hover:bg-(--ui-color-neutral-800) disabled:bg-(--ui-color-neutral-700)',
+  'dark:bg-(--ui-color-neutral-400) dark:hover:bg-(--ui-color-neutral-300) dark:disabled:bg-(--ui-color-neutral-400)',
+].join(' ');
+
 const props = defineProps<{
   roundId: number;
   lastGameId: number | null;
@@ -284,19 +295,14 @@ watch(
         </div>
 
         <div class="flex flex-col items-center gap-1.5 pt-4">
-          <!--
-            ± sind die meistgetippten Ziele: groß, rund und gefüllt. `neutral`/`solid` füllt hell
-            dunkel und im Dark Mode hell, sticht also hervor, ohne mit dem orangen Speichern zu
-            konkurrieren.
-          -->
-          <div class="flex items-center justify-center gap-4" @focusin="moveUpForKeyboard">
+          <div class="flex items-center justify-center gap-6" @focusin="moveUpForKeyboard">
             <UButton
               color="neutral"
               variant="solid"
               icon="i-lucide-minus"
               aria-label="Weniger Punkte"
-              class="size-12 justify-center rounded-full"
-              :ui="{ leadingIcon: 'size-6' }"
+              :class="STEPPER_BUTTON_CLASSES"
+              :ui="{ leadingIcon: 'size-5' }"
               :disabled="form.points <= MIN_POINTS"
               @mousedown.prevent
               @click="form.points -= 1"
@@ -317,8 +323,8 @@ watch(
               variant="solid"
               icon="i-lucide-plus"
               aria-label="Mehr Punkte"
-              class="size-12 justify-center rounded-full"
-              :ui="{ leadingIcon: 'size-6' }"
+              :class="STEPPER_BUTTON_CLASSES"
+              :ui="{ leadingIcon: 'size-5' }"
               :disabled="form.points >= MAX_POINTS"
               @mousedown.prevent
               @click="form.points += 1"
