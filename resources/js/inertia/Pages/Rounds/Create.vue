@@ -96,7 +96,8 @@ function submitRound(): void {
 
   form.players = selectedPlayers.value.map((player) => player.id);
   form.groups = selectedListIds.value;
-  form.post(storeRound.url(), { preserveScroll: true });
+  // Nur bei Fehlern bleiben, wo man ist; die neue Runde öffnet oben.
+  form.post(storeRound.url(), { preserveScroll: 'errors' });
 }
 
 const initialPlayer = props.players.find((player) => player.id === authPlayerId);
