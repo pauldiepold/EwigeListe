@@ -28,7 +28,7 @@ class LiveRoundPageResource extends JsonResource
         return [
             'id' => $this->id,
             'path' => $this->path(),
-            'gamesCount' => $this->games->count(),
+            'gamesCount' => $this->games_count,
             'liveRoundId' => $this->liveRound->id,
             'rules' => $this->liveRound->only(array_keys(LiveRound::RULE_DEFAULTS)),
             'viewerPlayerId' => $request->user()->player_id,

@@ -74,7 +74,6 @@ Route::middleware('auth')->group(function () {
 
     /* *********** API ************** */
     Route::prefix('api')->group(function () {
-
         Route::middleware('can:update,liveRound')->group(function () {
             Route::post('live/{liveRound}/spielStarten', [LiveRoundController::class, 'starteNeuesSpiel'])->name('live.rounds.start');
         });
@@ -87,7 +86,6 @@ Route::middleware('auth')->group(function () {
             Route::post('live/{liveGame}/karteSpielen', [LiveGameController::class, 'karteSpielen'])->name('live.games.karteSpielen');
             Route::post('live/{liveGame}/ansage', [LiveGameController::class, 'ansage'])->name('live.games.ansage');
         });
-
     });
 
     /* *********** Admin ************** */

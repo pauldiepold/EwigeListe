@@ -21,7 +21,7 @@ class TableController extends Controller
     {
         abort_unless($round->isLive(), 404);
 
-        $round->load(['games', 'players.user', 'liveRound']);
+        $round->load(['players.user', 'liveRound'])->loadCount('games');
 
         $liveRound = $round->liveRound;
         $currentGame = $liveRound->currentLiveGame();

@@ -38,7 +38,7 @@ class LiveMessagesCast implements CastsAttributes
     public function set(Model $model, string $key, mixed $value, array $attributes): string
     {
         if (! $value instanceof Collection) {
-            throw new InvalidArgumentException('The given value is not an Collection instance.');
+            throw new InvalidArgumentException('The given value is not a Collection instance.');
         }
 
         return json_encode($value->values());
