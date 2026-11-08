@@ -17,6 +17,16 @@ function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
   return liveGame({ dran: 12, vorhand: 12, ...overrides });
 }
 
+/** Clara (12) schaut zu, niemand ist online. */
+function renderTable(props: { viewerPlayerId?: number; liveGame: LiveGameData | null }) {
+  return renderWithUi(LiveTable, {
+    players: fivePlayers,
+    viewerPlayerId: 12,
+    onlinePlayerIds: [],
+    ...props,
+  });
+}
+
 function seatNames(): string[] {
   return ['unten', 'links', 'oben', 'rechts'].map((position) => {
     const seat = screen.getByRole('group', { name: new RegExp(`, ${position}$`) });
@@ -27,47 +37,27 @@ function seatNames(): string[] {
 
 describe('LiveTable', () => {
   it('setzt mich unten und die Mitspieler links, oben und rechts', () => {
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 12,
-      onlinePlayerIds: [],
-      liveGame: game(),
-    });
+    renderTable({ liveGame: game() });
 
     expect(seatNames()).toEqual(['Clara', 'Dieter', 'Eva', 'Bernd']);
   });
 
   it('dreht auch dann auf meinen Platz, wenn ich aussetze', () => {
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 10,
-      onlinePlayerIds: [],
-      liveGame: game(),
-    });
+    renderTable({ viewerPlayerId: 10, liveGame: game() });
 
     expect(seatNames()).toEqual(['Bernd', 'Clara', 'Dieter', 'Eva']);
     expect(screen.getByText('Du setzt dieses Spiel aus!')).toBeTruthy();
   });
 
   it('zeigt Zuschauern die Sitzreihenfolge ohne Drehung und ohne Aussetzen-Hinweis', () => {
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 999,
-      onlinePlayerIds: [],
-      liveGame: game(),
-    });
+    renderTable({ viewerPlayerId: 999, liveGame: game() });
 
     expect(seatNames()).toEqual(['Bernd', 'Clara', 'Dieter', 'Eva']);
     expect(screen.queryByText('Du setzt dieses Spiel aus!')).toBeNull();
   });
 
   it('markiert nur den Spieler, der dran ist', () => {
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 12,
-      onlinePlayerIds: [],
-      liveGame: game({ dran: 13 }),
-    });
+    renderTable({ liveGame: game({ dran: 13 }) });
 
     const marked = screen.getAllByText('dran');
     expect(marked).toHaveLength(1);
@@ -79,12 +69,7 @@ describe('LiveTable', () => {
   it('zeigt Vorbehalt, Partei, Ansage und Spieltyp eines Spielers', () => {
     const state = game();
     state.spieler[13] = { ansage: 'Re', spieltyp: 'Hochzeit', partei: 'Re', vorbehalt: 'Hochzeit' };
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 12,
-      onlinePlayerIds: [],
-      liveGame: state,
-    });
+    renderTable({ liveGame: state });
 
     const seat = screen.getByRole('group', { name: 'Dieter, links' });
     expect(seat.textContent).toContain('Hochzeit');
@@ -92,12 +77,7 @@ describe('LiveTable', () => {
   });
 
   it('sagt „Vorhand“ nur in der Vorbehaltsphase', async () => {
-    const { rerender } = renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 12,
-      onlinePlayerIds: [],
-      liveGame: game({ phase: 2, vorhand: 13, dran: 13 }),
-    });
+    const { rerender } = renderTable({ liveGame: game({ phase: 2, vorhand: 13, dran: 13 }) });
 
     expect(
       within(screen.getByRole('group', { name: 'Dieter, links' })).getByText(/Vorhand/),
@@ -109,12 +89,7 @@ describe('LiveTable', () => {
   });
 
   it('zeigt vor dem ersten Spiel den Tisch ohne Markierung', () => {
-    renderWithUi(LiveTable, {
-      players: fivePlayers,
-      viewerPlayerId: 12,
-      onlinePlayerIds: [],
-      liveGame: null,
-    });
+    renderTable({ liveGame: null });
 
     expect(seatNames()).toEqual(['Clara', 'Dieter', 'Eva', 'Bernd']);
     expect(screen.queryByText('dran')).toBeNull();

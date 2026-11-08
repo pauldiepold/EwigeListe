@@ -36,8 +36,8 @@ class HandleInertiaRequests extends Middleware
                 'player' => $this->authPlayerPayload($request),
             ],
             'navigation' => [
-                /** Ziel von „Aktuelle Runde“ (`rounds.current`): die neueste Runde des Spielers. */
-                'currentRoundId' => fn (): ?int => $request->user()?->player->rounds()->latest()->value('rounds.id'),
+                /** Ziel von „Aktuelle Runde“ (`rounds.current`). */
+                'currentRoundId' => fn (): ?int => $request->user()?->player->latestRound()->value('rounds.id'),
             ],
         ]);
     }
