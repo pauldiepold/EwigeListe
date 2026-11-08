@@ -19,7 +19,11 @@ import {
   current as currentRound,
   index as roundsIndex,
 } from '@/routes/rounds';
-import { inertiaColorModeKey, type InertiaColorMode } from '@/composables/inertiaColorMode';
+import {
+  inertiaColorModeKey,
+  resolveColorMode,
+  type InertiaColorMode,
+} from '@/composables/inertiaColorMode';
 
 defineProps<{
   title?: string;
@@ -133,14 +137,7 @@ function logout(): void {
 }
 
 onMounted(() => {
-  const stored = localStorage.getItem('ui-color-mode');
-  if (stored === 'dark' || stored === 'light') {
-    applyColorMode(stored);
-    return;
-  }
-
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  applyColorMode(prefersDark ? 'dark' : 'light');
+  applyColorMode(resolveColorMode());
 });
 </script>
 
