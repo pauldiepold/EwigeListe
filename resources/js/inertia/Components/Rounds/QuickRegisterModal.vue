@@ -15,8 +15,8 @@ const emit = defineEmits<{
 const open = ref(false);
 
 const form = useForm({
-  surname: '',
-  name: '',
+  first_name: '',
+  last_name: '',
 });
 
 function submit(): void {
@@ -56,10 +56,10 @@ function close(): void {
 
     <template #body>
       <form id="quick-register-form" class="space-y-4" @submit.prevent="submit">
-        <UFormField label="Vorname" :error="form.errors.surname" required>
+        <UFormField label="Vorname" :error="form.errors.first_name" required>
           <UInput
-            v-model="form.surname"
-            name="surname"
+            v-model="form.first_name"
+            name="first_name"
             autocomplete="off"
             autofocus
             class="w-full"
@@ -67,10 +67,10 @@ function close(): void {
           />
         </UFormField>
 
-        <UFormField label="Nachname" :error="form.errors.name" required>
+        <UFormField label="Nachname" :error="form.errors.last_name" required>
           <UInput
-            v-model="form.name"
-            name="name"
+            v-model="form.last_name"
+            name="last_name"
             autocomplete="off"
             class="w-full"
             :disabled="form.processing"

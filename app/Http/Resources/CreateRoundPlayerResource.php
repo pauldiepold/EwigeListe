@@ -20,9 +20,8 @@ class CreateRoundPlayerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surname' => $this->surname,
-            'name' => $this->name,
-            'avatar_path' => $this->avatar_path,
+            'fullName' => $this->full_name,
+            'avatarPath' => $this->avatar_path,
             'groups' => $this->whenLoaded('groups', function () {
                 return $this->groups->map(function ($group) {
                     return [
@@ -35,7 +34,7 @@ class CreateRoundPlayerResource extends JsonResource
             'profiles' => $this->whenLoaded('profiles', function () {
                 return $this->profiles->map(function ($profile) {
                     return [
-                        'group_id' => $profile->group_id,
+                        'groupId' => $profile->group_id,
                         'default' => (bool) $profile->default,
                     ];
                 })->values();

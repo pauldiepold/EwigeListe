@@ -1,6 +1,6 @@
 export type RoundPlayer = {
   id: number;
-  surname: string;
+  firstName: string;
   /** `null`, wenn der Betrachter das Profil nicht sehen darf. */
   path: string | null;
   avatarPath: string | null;
@@ -11,7 +11,7 @@ export type RoundPlayer = {
 /** Aktiver Spieler im Eintragen-Dialog, bereits aus Sicht des Betrachters am Tisch sortiert. */
 export type RoundActivePlayer = {
   id: number;
-  name: string;
+  displayName: string;
   avatarPath: string | null;
 };
 

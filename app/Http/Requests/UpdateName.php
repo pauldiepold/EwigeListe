@@ -24,16 +24,16 @@ class UpdateName extends FormRequest
     public function rules()
     {
         return [
-            'vorname' => 'required|string|min:2',
-            'nachname' => 'required|string|min:2',
+            'first_name' => 'required|string|min:2|max:255',
+            'last_name' => 'required|string|min:2|max:255',
         ];
     }
 
     public function attributes()
     {
         return [
-            'vorname' => 'Vorname',
-            'nachname' => 'Nachname',
+            'first_name' => 'Vorname',
+            'last_name' => 'Nachname',
         ];
     }
 }

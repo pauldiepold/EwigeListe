@@ -57,8 +57,8 @@ function submit(): void {
   <form class="space-y-4" @submit.prevent="submit">
     <div class="flex justify-center">
       <UAvatar
-        :src="form.avatar || user.avatar_path || undefined"
-        :alt="`${user.surname} ${user.name}`"
+        :src="form.avatar || user.avatarPath || undefined"
+        :alt="`${user.firstName} ${user.lastName}`"
         class="size-48 text-5xl"
       />
     </div>

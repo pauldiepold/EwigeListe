@@ -44,7 +44,7 @@ function leaveGroup(): void {
     </p>
     <p v-else-if="onlyMember" class="text-lg text-toned">
       Bisher ist nur
-      <ProfileLink :href="onlyMember.path">{{ onlyMember.surname }}</ProfileLink>
+      <ProfileLink :href="onlyMember.path">{{ onlyMember.firstName }}</ProfileLink>
       Mitglied dieser Liste.
     </p>
     <p v-else class="text-lg text-toned">Bisher wurde keine Runde auf dieser Liste gespielt.</p>

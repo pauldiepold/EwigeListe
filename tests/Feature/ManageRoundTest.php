@@ -54,9 +54,10 @@ class ManageRoundTest extends TestCase
                 ->where('players', function ($props) use ($players, $list) {
                     $own = collect($props)->firstWhere('id', $players[0]->id);
 
-                    return collect($own['groups'])->contains('id', $list->id)
+                    return $own['fullName'] === "{$players[0]->first_name} {$players[0]->last_name}"
+                        && collect($own['groups'])->contains('id', $list->id)
                         && collect($own['profiles'])->contains(
-                            fn ($profile) => $profile['group_id'] === $list->id && $profile['default'] === true
+                            fn ($profile) => $profile['groupId'] === $list->id && $profile['default'] === true
                         );
                 })
             );

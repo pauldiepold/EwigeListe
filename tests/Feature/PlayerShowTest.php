@@ -44,7 +44,7 @@ class PlayerShowTest extends TestCase
     #[Test]
     public function without_a_list_the_profile_of_the_ewige_liste_is_shown(): void
     {
-        $player = $this->memberOfEwigeListe(['surname' => 'Anna', 'name' => 'Muster']);
+        $player = $this->memberOfEwigeListe(['first_name' => 'Anna', 'last_name' => 'Muster']);
         $otherList = Group::factory()->create(['name' => 'Andere Liste']);
         $otherList->addPlayer($player);
         Group::factory()->create(['name' => 'Fremde Liste']);
@@ -54,7 +54,7 @@ class PlayerShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Players/Show')
                 ->where('player.id', $player->id)
-                ->where('player.name', 'Anna Muster')
+                ->where('player.fullName', 'Anna Muster')
                 ->where('selectedGroupId', Group::EWIGE_LISTE_ID)
                 ->has('groupOptions', 2)
                 ->where('groupOptions', fn ($options) => collect($options)->pluck('name')->doesntContain('Fremde Liste'))
@@ -334,7 +334,7 @@ class PlayerShowTest extends TestCase
     #[Test]
     public function the_badges_of_the_selected_list_are_grouped_and_not_linked(): void
     {
-        $player = $this->memberOfEwigeListe(['surname' => 'Anna']);
+        $player = $this->memberOfEwigeListe(['first_name' => 'Anna']);
         $list = Group::factory()->create();
         $list->addPlayer($player);
         Badge::factory()->create(['player_id' => $player->id, 'group_id' => $list->id, 'type' => 'points', 'year' => 2024, 'month' => 7, 'value' => 42]);
@@ -349,7 +349,7 @@ class PlayerShowTest extends TestCase
                 ->where('badges.1.type', 'points')
                 ->where('badges.1.years.0', [
                     'year' => 2024,
-                    'badges' => [['name' => 'Anna', 'value' => 42, 'date' => 'Juli 2024', 'path' => null]],
+                    'badges' => [['firstName' => 'Anna', 'value' => 42, 'date' => 'Juli 2024', 'path' => null]],
                 ])
             );
     }

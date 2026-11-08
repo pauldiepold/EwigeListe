@@ -72,7 +72,7 @@ class AddAvatarTest extends TestCase
     {
         Storage::fake('public');
         $user = User::factory()->create([
-            'player_id' => Player::factory()->create(['surname' => 'Anna/Maria', 'name' => "O'Neil"])->id,
+            'player_id' => Player::factory()->create(['first_name' => 'Anna/Maria', 'last_name' => "O'Neil"])->id,
         ]);
         $this->actingAs($user);
 

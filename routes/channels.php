@@ -21,7 +21,7 @@ Broadcast::channel('round.{round}', function ($user, Round $round) { // Verbunde
     if ($user->id) {
         return [
             'id' => $user->player_id,
-            'name' => $user->player->surname.' '.$user->player->name,
+            'name' => $user->player->full_name,
             'avatar_path' => $user->avatar_path,
         ];
     }

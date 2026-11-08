@@ -6,10 +6,10 @@ import { fakeVisits } from '@/testing/fakeVisits';
 import { renderWithUi } from '@/testing/renderWithUi';
 
 const activePlayers = [
-  { id: 11, name: 'Anna', avatarPath: null },
-  { id: 12, name: 'Bernd', avatarPath: null },
-  { id: 13, name: 'Clara', avatarPath: null },
-  { id: 14, name: 'Dieter', avatarPath: null },
+  { id: 11, displayName: 'Anna', avatarPath: null },
+  { id: 12, displayName: 'Bernd', avatarPath: null },
+  { id: 13, displayName: 'Clara', avatarPath: null },
+  { id: 14, displayName: 'Dieter', avatarPath: null },
 ];
 
 function renderModal() {

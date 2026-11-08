@@ -80,13 +80,13 @@ class FlashToastTest extends TestCase
     }
 
     /**
-     * @return array{surname: string, name: string}
+     * @return array{first_name: string, last_name: string}
      */
     private function quickRegisterAttributes(): array
     {
         return [
-            'surname' => 'Max',
-            'name' => 'Mustermann',
+            'first_name' => 'Max',
+            'last_name' => 'Mustermann',
         ];
     }
 }

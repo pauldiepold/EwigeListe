@@ -28,7 +28,7 @@ function sortableHeader(label: string): ColumnDef<GroupMember>['header'] {
 }
 
 const columns: ColumnDef<GroupMember>[] = [
-  { id: 'name', accessorKey: 'name', header: sortableHeader('Name') },
+  { id: 'name', accessorKey: 'fullName', header: sortableHeader('Name') },
   { id: 'games', accessorKey: 'games', header: sortableHeader('Spiele') },
   { id: 'points', accessorKey: 'points', header: sortableHeader('Punkte') },
   {
@@ -67,11 +67,11 @@ const tableMeta = computed(() => ({
         <ProfileLink :href="row.original.path" class="flex items-center gap-2">
           <UAvatar
             :src="row.original.avatarPath ?? undefined"
-            :alt="row.original.name"
+            :alt="row.original.fullName"
             loading="lazy"
             size="sm"
           />
-          <span class="whitespace-normal">{{ row.original.name }}</span>
+          <span class="whitespace-normal">{{ row.original.fullName }}</span>
         </ProfileLink>
       </template>
     </UTable>

@@ -59,7 +59,7 @@ const validationError = computed(() => Object.values(form.errors)[0]);
 const filteredPlayers = computed(() => {
   const query = searchTerm.value.trim().toLowerCase();
   return props.players.filter((player) => {
-    const fullName = `${player.surname} ${player.name}`.toLowerCase();
+    const fullName = player.fullName.toLowerCase();
     const notSelected = !selectedPlayers.value.some((entry) => entry.id === player.id);
     return notSelected && fullName.includes(query);
   });
@@ -178,12 +178,8 @@ if (initialPlayer) {
               class="flex w-full cursor-pointer items-center gap-3 px-3 py-1.5 text-left transition hover:bg-elevated"
               @click="addPlayer(player)"
             >
-              <UAvatar
-                :src="player.avatar_path ?? undefined"
-                :alt="`${player.surname} ${player.name}`"
-                size="sm"
-              />
-              <span class="truncate">{{ player.surname }} {{ player.name }}</span>
+              <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="sm" />
+              <span class="truncate">{{ player.fullName }}</span>
             </button>
             <p v-if="filteredPlayers.length === 0" class="px-3 py-2 text-sm text-muted">
               Person wurde nicht gefunden.
@@ -224,20 +220,16 @@ if (initialPlayer) {
               :data-drag-handle="player.id"
               role="button"
               tabindex="0"
-              :aria-label="`Platz von ${player.surname} ${player.name} ändern, mit Pfeiltasten`"
+              :aria-label="`Platz von ${player.fullName} ändern, mit Pfeiltasten`"
               class="grid h-9 w-7 shrink-0 touch-none place-items-center rounded text-dimmed focus-visible:outline-2 focus-visible:outline-primary"
               @keydown.up.prevent="movePlayer(index, index - 1)"
               @keydown.down.prevent="movePlayer(index, index + 1)"
             >
               <UIcon name="i-lucide-grip-vertical" class="size-4" />
             </span>
-            <UAvatar
-              :src="player.avatar_path ?? undefined"
-              :alt="`${player.surname} ${player.name}`"
-              size="sm"
-            />
+            <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="sm" />
             <span class="min-w-0 flex-1 truncate font-medium text-highlighted">
-              {{ player.surname }} {{ player.name }}
+              {{ player.fullName }}
             </span>
             <!-- Die eigene Person bleibt immer dabei; unsichtbar statt entfernt hält die Zeilen bündig. -->
             <UButton
@@ -246,7 +238,7 @@ if (initialPlayer) {
               size="sm"
               color="neutral"
               variant="ghost"
-              :aria-label="`${player.surname} ${player.name} entfernen`"
+              :aria-label="`${player.fullName} entfernen`"
               :class="{ invisible: player.id === authPlayerId }"
               @click="removePlayer(player.id)"
             />

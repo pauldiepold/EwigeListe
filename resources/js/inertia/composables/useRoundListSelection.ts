@@ -4,7 +4,7 @@ import type { CreateRoundList, CreateRoundPlayer } from '@/types/round-create';
 export const EWIGE_LISTE: CreateRoundList = { id: 1, name: 'Ewige Liste', closed: false };
 
 function standardListIdsOf(player: CreateRoundPlayer): number[] {
-  return player.profiles.filter((profile) => profile.default).map((profile) => profile.group_id);
+  return player.profiles.filter((profile) => profile.default).map((profile) => profile.groupId);
 }
 
 /**

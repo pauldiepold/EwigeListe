@@ -8,7 +8,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class Player extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Liefert für die Legacy-Komponenten hinter `fetchData` noch die alten Schlüssel `surname` (Vorname)
+     * und `name` (Nachname); bis zum Live-Spiel (#36).
      *
      * @param  Request  $request
      * @return array
@@ -17,8 +18,8 @@ class Player extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surname' => $this->surname,
-            'name' => $this->name,
+            'surname' => $this->first_name,
+            'name' => $this->last_name,
             'is_ai' => $this->is_ai,
             'won' => $this->whenPivotLoaded('game_player', fn () => $this->pivot->won),
             'points' => $this->whenPivotLoaded('game_player', fn () => $this->pivot->points),

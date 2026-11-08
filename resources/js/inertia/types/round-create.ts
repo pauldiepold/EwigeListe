@@ -5,15 +5,14 @@ export type CreateRoundList = {
 };
 
 export type CreateRoundProfile = {
-  group_id: number;
+  groupId: number;
   default: boolean;
 };
 
 export type CreateRoundPlayer = {
   id: number;
-  surname: string;
-  name: string;
-  avatar_path: string | null;
+  fullName: string;
+  avatarPath: string | null;
   groups: CreateRoundList[];
   profiles: CreateRoundProfile[];
 };

@@ -29,7 +29,7 @@ class BadgesResource extends JsonResource
     }
 
     /**
-     * @return list<array{type: string, years: list<array{year: int, badges: list<array{name: string, value: int, date: string, path: ?string}>}>}>
+     * @return list<array{type: string, years: list<array{year: int, badges: list<array{firstName: string, value: int, date: string, path: ?string}>}>}>
      */
     public function toArray(Request $request): array
     {
@@ -42,7 +42,7 @@ class BadgesResource extends JsonResource
                     ->map(fn (Collection $badges, int $year): array => [
                         'year' => $year,
                         'badges' => $badges->map(fn (Badge $badge): array => [
-                            'name' => $badge->player->surname,
+                            'firstName' => $badge->player->first_name,
                             'value' => $badge->value,
                             'date' => $badge->date->isoFormat('MMMM YYYY'),
                             'path' => $this->linked ? $badge->playerPathFor($request->user()) : null,

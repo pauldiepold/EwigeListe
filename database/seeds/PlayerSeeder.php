@@ -24,49 +24,49 @@ class PlayerSeeder extends Seeder
         $date300 = Carbon::now()->subMinutes(60 * 24 * 300);
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Diepold', 'surname' => 'Paul'])->id;
+                return Player::factory()->create(['first_name' => 'Paul', 'last_name' => 'Diepold'])->id;
             },
             'email' => 'test1@test.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Monte', 'surname' => 'AI 1', 'ai_path' => 'lib_doko.so'])->id;
+                return Player::factory()->create(['first_name' => 'AI 1', 'last_name' => 'Monte', 'ai_path' => 'lib_doko.so'])->id;
             },
             'email' => '1@ai.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Carlo', 'surname' => 'AI 2', 'ai_path' => 'lib_doko.so'])->id;
+                return Player::factory()->create(['first_name' => 'AI 2', 'last_name' => 'Carlo', 'ai_path' => 'lib_doko.so'])->id;
             },
             'email' => '2@ai.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Leclerc', 'surname' => 'AI 3', 'ai_path' => 'lib_doko.so'])->id;
+                return Player::factory()->create(['first_name' => 'AI 3', 'last_name' => 'Leclerc', 'ai_path' => 'lib_doko.so'])->id;
             },
             'email' => '3@ai.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Haide', 'surname' => 'Isi'])->id;
+                return Player::factory()->create(['first_name' => 'Isi', 'last_name' => 'Haide'])->id;
             },
             'email' => 'test2@test.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Kuhn', 'surname' => 'Lina'])->id;
+                return Player::factory()->create(['first_name' => 'Lina', 'last_name' => 'Kuhn'])->id;
             },
             'email' => 'test3@test.de',
             'password' => Hash::make('test')]);
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['name' => 'Klauda', 'surname' => 'Chrissi'])->id;
+                return Player::factory()->create(['first_name' => 'Chrissi', 'last_name' => 'Klauda'])->id;
             },
             'email' => 'test4@test.de',
             'password' => Hash::make('test')]);

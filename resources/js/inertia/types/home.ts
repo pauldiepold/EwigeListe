@@ -2,7 +2,7 @@ import type { GamesChartPayload, GroupStatistics } from '@/types/groups-show';
 
 export type HomeRoundPlayer = {
   id: number;
-  name: string;
+  firstName: string;
   avatarPath: string | null;
   /** Punktestand in dieser Runde */
   points: number;

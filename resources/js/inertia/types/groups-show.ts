@@ -1,7 +1,7 @@
 import type { ArchiveSort, PaginatedRoundArchiveRows } from '@/types/rounds-index';
 
 export type RecordHolder = {
-  name: string;
+  firstName: string;
   path: string | null;
 };
 
@@ -29,8 +29,8 @@ export type GamesChartPayload = {
 
 export type GroupMember = {
   id: number;
-  name: string;
-  surname: string;
+  fullName: string;
+  firstName: string;
   path: string | null;
   avatarPath: string | null;
   games: number;
@@ -42,7 +42,7 @@ export type GroupMember = {
 export type BadgeType = 'points' | 'games';
 
 export type GroupBadge = {
-  name: string;
+  firstName: string;
   value: number;
   date: string;
   path: string | null;

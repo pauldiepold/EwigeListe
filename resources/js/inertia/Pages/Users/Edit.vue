@@ -29,7 +29,7 @@ const tabs = [
   <AppLayout title="Kontoeinstellungen">
     <div class="mx-auto w-full max-w-md space-y-6">
       <UButton
-        :to="showPlayer.url({ player: user.player_id })"
+        :to="showPlayer.url({ player: user.playerId })"
         color="neutral"
         variant="ghost"
         icon="i-lucide-arrow-left"

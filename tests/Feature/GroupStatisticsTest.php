@@ -29,8 +29,8 @@ class GroupStatisticsTest extends TestCase
                     'label' => 'Meiste Spiele:',
                     'value' => '12',
                     'holders' => [
-                        ['name' => 'Anna', 'path' => "/profil/{$anna->id}/1"],
-                        ['name' => 'Ben', 'path' => "/profil/{$ben->id}/1"],
+                        ['firstName' => 'Anna', 'path' => "/profil/{$anna->id}/1"],
+                        ['firstName' => 'Ben', 'path' => "/profil/{$ben->id}/1"],
                     ],
                 ])
             );
@@ -98,9 +98,9 @@ class GroupStatisticsTest extends TestCase
     /**
      * @param  array<string, int|float>  $statistics
      */
-    private function memberWith(string $surname, array $statistics): Player
+    private function memberWith(string $firstName, array $statistics): Player
     {
-        $player = Player::factory()->create(['surname' => $surname]);
+        $player = Player::factory()->create(['first_name' => $firstName]);
         Group::findOrFail(Group::EWIGE_LISTE_ID)->addPlayer($player);
 
         Profile::where('player_id', $player->id)->update($statistics);

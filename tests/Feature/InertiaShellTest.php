@@ -36,8 +36,7 @@ class InertiaShellTest extends TestCase
                 ->where('auth.user', ['id' => $user->id])
                 ->where('auth.player', [
                     'id' => $player->id,
-                    'surname' => $player->surname,
-                    'name' => $player->name,
+                    'fullName' => $player->full_name,
                 ]));
     }
 

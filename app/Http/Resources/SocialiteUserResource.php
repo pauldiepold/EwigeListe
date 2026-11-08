@@ -16,8 +16,8 @@ class SocialiteUserResource extends JsonResource
         return [
             'email' => $this->email,
             'provider' => $this->provider,
-            'surname' => $nameParts[0] ?? '',
-            'name' => $nameParts[1] ?? '',
+            'firstName' => $nameParts[0] ?? '',
+            'lastName' => $nameParts[1] ?? '',
         ];
     }
 }

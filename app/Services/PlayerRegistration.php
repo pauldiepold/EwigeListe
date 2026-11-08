@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Hash;
  */
 class PlayerRegistration
 {
-    public function register(string $surname, string $name, string $email, string $password): User
+    public function register(string $firstName, string $lastName, string $email, string $password): User
     {
-        return DB::transaction(function () use ($surname, $name, $email, $password): User {
+        return DB::transaction(function () use ($firstName, $lastName, $email, $password): User {
             $player = Player::create([
-                'surname' => $surname,
-                'name' => $name,
+                'first_name' => $firstName,
+                'last_name' => $lastName,
             ]);
 
             $user = User::create([

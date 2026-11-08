@@ -23,7 +23,7 @@ const typeLabel = computed(() => (props.type === 'points' ? 'Meiste Punkte' : 'M
       <span class="text-xs text-black/60">{{ typeLabel }}</span>
     </div>
     <div class="flex flex-2 flex-col items-center">
-      <span class="text-2xl">{{ badge.name }}</span>
+      <span class="text-2xl">{{ badge.firstName }}</span>
       <span class="text-xs text-black/60">{{ badge.date }}</span>
     </div>
   </component>

@@ -8,8 +8,8 @@ const props = defineProps<{
 }>();
 
 const form = useForm({
-  vorname: props.user.surname,
-  nachname: props.user.name,
+  first_name: props.user.firstName,
+  last_name: props.user.lastName,
 });
 
 function submit(): void {
@@ -22,20 +22,20 @@ function submit(): void {
 
 <template>
   <form class="space-y-4" @submit.prevent="submit">
-    <UFormField label="Vorname" :error="form.errors.vorname" required>
+    <UFormField label="Vorname" :error="form.errors.first_name" required>
       <UInput
-        v-model="form.vorname"
-        name="vorname"
+        v-model="form.first_name"
+        name="first_name"
         autocomplete="given-name"
         class="w-full"
         :disabled="form.processing"
       />
     </UFormField>
 
-    <UFormField label="Nachname" :error="form.errors.nachname" required>
+    <UFormField label="Nachname" :error="form.errors.last_name" required>
       <UInput
-        v-model="form.nachname"
-        name="nachname"
+        v-model="form.last_name"
+        name="last_name"
         autocomplete="family-name"
         class="w-full"
         :disabled="form.processing"

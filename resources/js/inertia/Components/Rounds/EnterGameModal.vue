@@ -318,7 +318,7 @@ watch(
             <span class="relative">
               <UAvatar
                 :src="player.avatarPath ?? undefined"
-                :alt="player.name"
+                :alt="player.displayName"
                 size="2xl"
                 class="ring-offset-2 ring-offset-(--ui-bg) transition-shadow"
                 :class="
@@ -335,7 +335,7 @@ watch(
               </span>
             </span>
             <span class="max-w-full truncate text-sm font-medium text-highlighted">
-              {{ player.name }}
+              {{ player.displayName }}
             </span>
           </button>
         </div>

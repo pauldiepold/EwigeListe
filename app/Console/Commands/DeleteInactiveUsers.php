@@ -50,12 +50,12 @@ class DeleteInactiveUsers extends Command
             ->withCount('profiles')
             ->having('profiles_count', '=', 1)
             ->where(function ($query) {
-                $query->whereNull('name')
-                    ->orWhereRaw('LOWER(name) NOT LIKE ?', ['%test%']);
+                $query->whereNull('last_name')
+                    ->orWhereRaw('LOWER(last_name) NOT LIKE ?', ['%test%']);
             })
             ->where(function ($query) {
-                $query->whereNull('surname')
-                    ->orWhereRaw('LOWER(surname) NOT LIKE ?', ['%test%']);
+                $query->whereNull('first_name')
+                    ->orWhereRaw('LOWER(first_name) NOT LIKE ?', ['%test%']);
             })
             ->get();
 

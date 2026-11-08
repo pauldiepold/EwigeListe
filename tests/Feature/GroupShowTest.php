@@ -64,8 +64,8 @@ class GroupShowTest extends TestCase
                 ->where('members.1.id', $rarely->id)
                 ->has('members.0', fn (Assert $member) => $member
                     ->where('id', $often->id)
-                    ->where('name', "{$often->surname} {$often->name}")
-                    ->where('surname', $often->surname)
+                    ->where('fullName', "{$often->first_name} {$often->last_name}")
+                    ->where('firstName', $often->first_name)
                     ->where('path', "/profil/{$often->id}/{$group->id}")
                     ->where('avatarPath', $often->avatar_path)
                     ->where('games', 9)
@@ -112,7 +112,7 @@ class GroupShowTest extends TestCase
                 ->where('badges.0.years.0.year', 2025)
                 ->where('badges.0.years.1.year', 2024)
                 ->where('badges.0.years.1.badges.0', [
-                    'name' => $player->surname,
+                    'firstName' => $player->first_name,
                     'value' => 42,
                     'date' => 'Juli 2024',
                     'path' => "/profil/{$player->id}/{$group->id}#abzeichen",

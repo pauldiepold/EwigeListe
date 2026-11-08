@@ -18,7 +18,7 @@ const props = defineProps<PlayerShowProps>();
 const page = usePage();
 const isOwnProfile = computed(() => page.props.auth.player?.id === props.player.id);
 
-const title = computed(() => `Profil von ${props.player.name}`);
+const title = computed(() => `Profil von ${props.player.fullName}`);
 
 const tabs = [
   { label: 'Statistiken', icon: 'i-lucide-user', value: 'statistiken' },
@@ -49,7 +49,7 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
   <AppLayout :title="title">
     <div class="mx-auto w-full max-w-5xl space-y-6">
       <div class="flex flex-col items-center gap-3">
-        <UAvatar :src="player.avatarPath ?? undefined" :alt="player.name" size="3xl" />
+        <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="3xl" />
         <UButton
           v-if="player.editableUserId !== null"
           :to="editUser.url(player.editableUserId)"
