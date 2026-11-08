@@ -89,6 +89,56 @@ class LivePovertyTest extends TestCase
     }
 
     #[Test]
+    public function giving_away_the_same_card_twice_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $cards = $this->cardsToGiveAway($game, $poverty)['karten'];
+
+        $this->actingAs($poverty)
+            ->postJson(route('live.games.armutAbgeben', $game), ['karten' => [$cards[0], $cards[0], $cards[1]]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.0.id');
+
+        $this->assertSame(3, $this->currentGame()->phase);
+    }
+
+    #[Test]
+    public function giving_away_a_card_without_an_id_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $cards = $this->cardsToGiveAway($game, $poverty)['karten'];
+
+        $this->actingAs($poverty)
+            ->postJson(route('live.games.armutAbgeben', $game), ['karten' => [$cards[0], $cards[1], ['name' => 'x']]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.2.id');
+    }
+
+    #[Test]
+    public function giving_back_the_same_card_twice_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $this->actingAs($poverty)
+            ->post(route('live.games.armutAbgeben', $game), $this->cardsToGiveAway($game, $poverty))
+            ->assertOk();
+        $taker = $this->userWhoseTurnItIs();
+        $this->actingAs($taker)
+            ->post(route('live.games.armutMitnehmen', $game), ['mitnehmen' => true])
+            ->assertOk();
+        $card = ['id' => $this->currentGame()->getSpieler($taker->player_id)->hand->first()->id];
+
+        $this->actingAs($taker)
+            ->postJson(route('live.games.armutZurueckgeben', $game), ['karten' => [$card, $card, $card]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.0.id');
+
+        $this->assertSame(33, $this->currentGame()->phase);
+    }
+
+    #[Test]
     public function giving_away_cards_while_keeping_trump_is_rejected(): void
     {
         $poverty = $this->startGameWithPoverty();

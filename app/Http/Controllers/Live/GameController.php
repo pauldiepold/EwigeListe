@@ -63,7 +63,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'karten' => 'required|array|size:3',
             'karten.*' => 'required|array',
-            'karte.*.id' => 'required|integer|between:0,47',
+            'karten.*.id' => 'required|integer|between:0,47|distinct',
         ]);
 
         $karten = collect();
@@ -127,7 +127,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'karten' => 'required|array|size:3',
             'karten.*' => 'required|array',
-            'karte.*.id' => 'required|integer|between:0,47',
+            'karten.*.id' => 'required|integer|between:0,47|distinct',
         ]);
 
         $karten = collect();
