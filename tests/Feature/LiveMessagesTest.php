@@ -2,66 +2,31 @@
 
 namespace Tests\Feature;
 
-use App\Models\Group;
 use App\Models\LiveGame;
-use App\Models\Player;
-use App\Models\Round;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Concerns\CreatesLiveRound;
 use Tests\TestCase;
 
 class LiveMessagesTest extends TestCase
 {
+    use CreatesLiveRound;
     use RefreshDatabase;
-
-    /** @var Collection<int, User> */
-    private Collection $users;
-
-    private Round $round;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Die Engine vergleicht die Benutzer-ID mit der Spieler-ID, deshalb sind beide hier gleich.
-        $this->users = Player::factory()->count(4)->create()->map(
-            fn (Player $player): User => User::factory()->create(['id' => $player->id, 'player_id' => $player->id]),
-        );
-        $this->round = Round::factory()->create();
-        foreach ($this->users->values() as $seat => $user) {
-            $this->round->players()->attach($user->player_id, ['index' => $seat]);
-        }
-        $ewigeListe = Group::findOrFail(Group::EWIGE_LISTE_ID);
-        $ewigeListe->addPlayers($this->users->map(fn (User $user): Player => $user->player));
-        $this->round->groups()->attach($ewigeListe);
-        $this->round->createLiveRound();
-    }
-
-    /**
-     * Die Kartenverteilung hängt am Seed (`Collection::shuffle`).
-     */
-    private function startGameWithSeed(int $seed): LiveGame
-    {
-        mt_srand($seed);
-        $this->round->fresh()->liveRound->starteNeuesSpiel();
-
-        return $this->currentGame();
-    }
-
-    private function currentGame(): LiveGame
-    {
-        return LiveGame::where('live_round_id', $this->round->fresh()->live_round_id)->latest('id')->firstOrFail();
+        $this->setUpLiveRound();
     }
 
     private function allReportHealthy(LiveGame $game): void
     {
         foreach ($this->users as $ignored) {
-            $user = $this->users->firstWhere('id', $this->currentGame()->dran);
-            $this->actingAs($user)
+            $this->actingAs($this->userWhoseTurnItIs())
                 ->post(route('live.games.vorbehalt', $game), ['vorbehalt' => 'Gesund'])
                 ->assertOk();
         }
@@ -77,7 +42,7 @@ class LiveMessagesTest extends TestCase
 
         foreach ($this->users as $ignored) {
             $dran = $this->currentGame()->dran;
-            $this->actingAs($this->users->firstWhere('id', $dran))
+            $this->actingAs($this->userOfPlayer($dran))
                 ->post(route('live.games.vorbehalt', $game), [
                     'vorbehalt' => $dran === $thrower->id ? 'Schmeißen' : 'Gesund',
                 ])
