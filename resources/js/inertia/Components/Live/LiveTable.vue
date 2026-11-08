@@ -11,14 +11,16 @@ const props = defineProps<{
   /** Alle Spieler der Runde in Sitzreihenfolge. */
   players: LivePlayer[];
   viewerPlayerId: number;
+  /** Spieler, die gerade am Tisch sind; ihr Avatar leuchtet grün. */
+  onlinePlayerIds: number[];
   /** Das laufende Spiel; `null` vor dem ersten und zwischen zwei Spielen. */
   liveGame: LiveGameData | null;
 }>();
 
 defineSlots<{
-  /** Zuschauer am Rand oben links. */
+  /** Zuschauer am Rand oben rechts. */
   spectators?: () => unknown;
-  /** Werkzeugleiste links (letzter Stich, Meldungen, Neu laden, Vollbild, …). */
+  /** Werkzeugleiste oben links (letzter Stich, Meldungen, Neu laden, Vollbild, …). */
   tools?: () => unknown;
   /** Platz für das Meldungsprotokoll rechts. */
   messages?: () => unknown;
@@ -64,6 +66,7 @@ const seats = computed(() =>
     position: TABLE_SEATS[index],
     display: props.liveGame?.spieler[player.id] ?? null,
     isTurn: props.liveGame?.dran === player.id,
+    isOnline: props.onlinePlayerIds.includes(player.id),
     isVorhand: props.liveGame?.phase === RESERVATION_PHASE && props.liveGame.vorhand === player.id,
   })),
 );
@@ -75,9 +78,10 @@ const viewerSitsOut = computed(() => {
   return props.liveGame !== null && viewer !== undefined && !viewer.isActive;
 });
 
+/** Links sitzt die Werkzeugleiste; mein Badge steht in einer Flucht mit dem des linken Spielers. */
 const SEAT_CLASSES: Record<TrickSeat, string> = {
-  unten: 'bottom-2 left-[8%]',
-  links: 'top-[24%] left-14',
+  unten: 'bottom-2 left-16',
+  links: 'top-[24%] left-16',
   oben: 'top-2 left-1/2 -translate-x-1/2',
   rechts: 'top-[24%] right-2',
 };
@@ -100,15 +104,16 @@ const SEAT_CLASSES: Record<TrickSeat, string> = {
         :position="seat.position"
         :display="seat.display"
         :is-turn="seat.isTurn"
+        :is-online="seat.isOnline"
         :is-vorhand="seat.isVorhand"
       />
     </div>
 
-    <div class="absolute top-2 left-2 z-20">
+    <div class="absolute top-2 right-2 z-20">
       <slot name="spectators" />
     </div>
 
-    <div class="absolute top-1/2 left-2 z-20 -translate-y-1/2">
+    <div class="absolute top-2 left-2 z-20">
       <slot name="tools" />
     </div>
 

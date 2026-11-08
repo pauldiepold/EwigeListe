@@ -27,20 +27,35 @@ function seatNames(): string[] {
 
 describe('LiveTable', () => {
   it('setzt mich unten und die Mitspieler links, oben und rechts', () => {
-    renderWithUi(LiveTable, { players: fivePlayers, viewerPlayerId: 12, liveGame: game() });
+    renderWithUi(LiveTable, {
+      players: fivePlayers,
+      viewerPlayerId: 12,
+      onlinePlayerIds: [],
+      liveGame: game(),
+    });
 
     expect(seatNames()).toEqual(['Clara', 'Dieter', 'Eva', 'Bernd']);
   });
 
   it('dreht auch dann auf meinen Platz, wenn ich aussetze', () => {
-    renderWithUi(LiveTable, { players: fivePlayers, viewerPlayerId: 10, liveGame: game() });
+    renderWithUi(LiveTable, {
+      players: fivePlayers,
+      viewerPlayerId: 10,
+      onlinePlayerIds: [],
+      liveGame: game(),
+    });
 
     expect(seatNames()).toEqual(['Bernd', 'Clara', 'Dieter', 'Eva']);
     expect(screen.getByText('Du setzt dieses Spiel aus!')).toBeTruthy();
   });
 
   it('zeigt Zuschauern die Sitzreihenfolge ohne Drehung und ohne Aussetzen-Hinweis', () => {
-    renderWithUi(LiveTable, { players: fivePlayers, viewerPlayerId: 999, liveGame: game() });
+    renderWithUi(LiveTable, {
+      players: fivePlayers,
+      viewerPlayerId: 999,
+      onlinePlayerIds: [],
+      liveGame: game(),
+    });
 
     expect(seatNames()).toEqual(['Bernd', 'Clara', 'Dieter', 'Eva']);
     expect(screen.queryByText('Du setzt dieses Spiel aus!')).toBeNull();
@@ -50,6 +65,7 @@ describe('LiveTable', () => {
     renderWithUi(LiveTable, {
       players: fivePlayers,
       viewerPlayerId: 12,
+      onlinePlayerIds: [],
       liveGame: game({ dran: 13 }),
     });
 
@@ -63,7 +79,12 @@ describe('LiveTable', () => {
   it('zeigt Vorbehalt, Partei, Ansage und Spieltyp eines Spielers', () => {
     const state = game();
     state.spieler[13] = { ansage: 'Re', spieltyp: 'Hochzeit', partei: 'Re', vorbehalt: 'Hochzeit' };
-    renderWithUi(LiveTable, { players: fivePlayers, viewerPlayerId: 12, liveGame: state });
+    renderWithUi(LiveTable, {
+      players: fivePlayers,
+      viewerPlayerId: 12,
+      onlinePlayerIds: [],
+      liveGame: state,
+    });
 
     const seat = screen.getByRole('group', { name: 'Dieter, links' });
     expect(seat.textContent).toContain('Hochzeit');
@@ -74,6 +95,7 @@ describe('LiveTable', () => {
     const { rerender } = renderWithUi(LiveTable, {
       players: fivePlayers,
       viewerPlayerId: 12,
+      onlinePlayerIds: [],
       liveGame: game({ phase: 2, vorhand: 13, dran: 13 }),
     });
 
@@ -87,7 +109,12 @@ describe('LiveTable', () => {
   });
 
   it('zeigt vor dem ersten Spiel den Tisch ohne Markierung', () => {
-    renderWithUi(LiveTable, { players: fivePlayers, viewerPlayerId: 12, liveGame: null });
+    renderWithUi(LiveTable, {
+      players: fivePlayers,
+      viewerPlayerId: 12,
+      onlinePlayerIds: [],
+      liveGame: null,
+    });
 
     expect(seatNames()).toEqual(['Clara', 'Dieter', 'Eva', 'Bernd']);
     expect(screen.queryByText('dran')).toBeNull();

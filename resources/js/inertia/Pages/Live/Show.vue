@@ -227,6 +227,7 @@ const messagesOpen = ref(false);
       class="portrait:hidden"
       :players="tablePlayers"
       :viewer-player-id="round.viewerPlayerId"
+      :online-player-ids="onlinePlayerIds"
       :live-game="tableGame"
     >
       <template #spectators>

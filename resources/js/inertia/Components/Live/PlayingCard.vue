@@ -75,9 +75,13 @@ function press() {
 </script>
 
 <template>
+  <!--
+    Leerer Platz. Die Plätze im Stich überlappen sich; der Tischhintergrund deckt die Ränder der
+    darunterliegenden ab, sonst ergeben zwei gestrichelte Ränder übereinander eine durchgezogene Linie.
+  -->
   <div
     v-if="!card"
-    class="aspect-[5/7] w-full min-w-0 rounded-[6.4%/4.6%] border-2 border-dashed border-(--ui-border-accented)"
+    class="aspect-[5/7] w-full min-w-0 rounded-[6.4%/4.6%] border-2 border-dashed border-(--ui-border-accented) bg-elevated"
     aria-hidden="true"
   />
   <component
@@ -103,23 +107,27 @@ function press() {
         stroke="var(--card-edge)"
         stroke-width="2"
       />
-      <image :href="cardFaceUrl(card)" x="46" y="58" width="196" height="275" />
-      <text
-        x="14"
-        y="82"
-        :fill="color"
-        :textLength="index === '10' ? 80 : undefined"
-        lengthAdjust="spacingAndGlyphs"
-        font-family="'Arial Narrow', 'Roboto Condensed', 'Liberation Sans Narrow', Arial, sans-serif"
-        font-stretch="condensed"
-        font-size="88"
-        font-weight="700"
-      >
-        {{ index }}
-      </text>
-      <svg x="12" y="94" width="74" height="74" viewBox="-600 -600 1200 1200">
-        <path :d="cardSuitPath(card)" :fill="color" />
-      </svg>
+      <image :href="cardFaceUrl(card)" x="43" y="60" width="164" height="230" />
+      <!-- Eckzeichen oben links und um 180° gedreht unten rechts, wie auf echten Karten. -->
+      <g v-for="rotation in [0, 180]" :key="rotation" :transform="`rotate(${rotation} 125 175)`">
+        <text
+          x="40"
+          y="62"
+          text-anchor="middle"
+          :fill="color"
+          :textLength="index === '10' ? 54 : undefined"
+          lengthAdjust="spacingAndGlyphs"
+          font-family="'Arial Narrow', 'Roboto Condensed', 'Liberation Sans Narrow', Arial, sans-serif"
+          font-stretch="condensed"
+          font-size="60"
+          font-weight="700"
+        >
+          {{ index }}
+        </text>
+        <svg x="20" y="70" width="40" height="40" viewBox="-600 -600 1200 1200">
+          <path :d="cardSuitPath(card)" :fill="color" />
+        </svg>
+      </g>
       <path
         v-if="received"
         d="M1 17 A16 16 0 0 1 17 1 H233 A16 16 0 0 1 249 17 V19 H1 Z"
