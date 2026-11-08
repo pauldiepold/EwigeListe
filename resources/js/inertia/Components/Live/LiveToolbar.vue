@@ -31,7 +31,7 @@ const infoOpen = ref(false);
 </script>
 
 <template>
-  <div class="flex flex-col items-start gap-2">
+  <div class="flex flex-col gap-2">
     <div
       class="flex flex-col gap-2 rounded-lg bg-default/90 p-1.5 ring ring-default"
       role="toolbar"
@@ -100,6 +100,9 @@ const infoOpen = ref(false);
         </template>
       </UModal>
     </div>
-    <slot />
+    <!-- Trägt nichts zur Breite bei: Aktionen sind mindestens so breit wie die Leiste und dürfen überstehen. -->
+    <div class="w-0 min-w-full">
+      <slot />
+    </div>
   </div>
 </template>

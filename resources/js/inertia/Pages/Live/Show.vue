@@ -247,6 +247,7 @@ const messagesOpen = ref(false);
             v-if="play.announcement.value"
             :label="play.announcement.value.label"
             size="sm"
+            class="w-max min-w-full justify-center"
             :disabled="play.announcementLocked.value"
             @click="play.announce"
           />
