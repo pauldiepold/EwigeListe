@@ -47,7 +47,7 @@ const pointsLabel = computed(() => (points.value > 0 ? `+${points.value}` : Stri
       </tbody>
     </table>
 
-    <ul aria-label="Gewinner" class="flex justify-around gap-3">
+    <ul aria-label="Gewonnen haben" class="flex justify-around gap-3">
       <li
         v-for="winner in winners"
         :key="winner.id"

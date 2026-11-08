@@ -40,7 +40,7 @@ class QuickRegisterController extends Controller
         )->player;
 
         Inertia::flash('addedPlayerId', $player->id);
-        Toast::success("Spieler {$player->full_name} wurde erfolgreich erstellt!");
+        Toast::success("{$player->full_name} wurde erfolgreich angelegt!");
 
         return redirect()->route('rounds.create');
     }

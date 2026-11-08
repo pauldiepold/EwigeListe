@@ -81,7 +81,7 @@ describe('LiveScoring', () => {
   it('zeigt die Gewinner und wer gewinnt', () => {
     renderScoring(11);
 
-    const winners = screen.getByRole('list', { name: 'Gewinner' });
+    const winners = screen.getByRole('list', { name: 'Gewonnen haben' });
     expect(
       within(winners)
         .getAllByRole('listitem')

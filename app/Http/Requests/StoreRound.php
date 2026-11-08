@@ -40,7 +40,7 @@ class StoreRound extends FormRequest
     {
         $validator->after(function ($validator) {
             if (collect($this->input('players'))->unique()->count() != collect($this->input('players'))->count()) {
-                $validator->errors()->add('players', 'Es darf kein Spieler doppelt ausgewählt werden!');
+                $validator->errors()->add('players', 'Jede Person darf nur einmal ausgewählt werden!');
             }
 
             if (! collect($this->input('players'))->contains(auth()->user()->player->id)) {
@@ -68,7 +68,7 @@ class StoreRound extends FormRequest
             if ($group->closed) {
                 $validator->errors()->add('groups', "Die Liste {$group->name} ist geschlossen.");
             } elseif (! $group->hasAnyPlayer($playerIds)) {
-                $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
+                $validator->errors()->add('groups', "Niemand aus der Runde ist Mitglied der Liste {$group->name}.");
             }
         }
     }
@@ -86,7 +86,7 @@ class StoreRound extends FormRequest
     public function messages()
     {
         return [
-            'players.between' => 'Eine Runde braucht 4 bis 7 Spieler.',
+            'players.between' => 'Eine Runde braucht 4 bis 7 Personen.',
         ];
     }
 }

@@ -44,7 +44,7 @@ class UpdateRound extends FormRequest
                 if ($group->closed) {
                     $validator->errors()->add('groups', "Die Liste {$group->name} ist geschlossen.");
                 } elseif (! $group->hasAnyPlayer($playerIds)) {
-                    $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
+                    $validator->errors()->add('groups', "Niemand aus der Runde ist Mitglied der Liste {$group->name}.");
                 }
             }
         });

@@ -126,7 +126,7 @@ class HiddenPlayerLoginTest extends TestCase
             ->assertRedirect(route('login'))
             ->assertInertiaFlash('toast', [
                 'type' => 'error',
-                'message' => 'Dein Konto ist gesperrt. Wende dich bitte an den Administrator.',
+                'message' => 'Dein Konto ist gesperrt. Wende dich bitte an die Administration.',
             ]);
 
         $this->assertGuest();

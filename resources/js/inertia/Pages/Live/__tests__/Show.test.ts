@@ -139,7 +139,7 @@ describe('Live-Seite: Warten auf Spieler', () => {
     renderShow(12);
     setOnline(...activeMembers, member(10, 'Anna'), member(99, 'Gast'));
 
-    const spectators = await screen.findByRole('list', { name: 'Zuschauer' });
+    const spectators = await screen.findByRole('list', { name: 'Zuschauerinnen' });
     expect(within(spectators).getByRole('listitem', { name: 'Anna Test' })).toBeTruthy();
     expect(within(spectators).getByRole('listitem', { name: 'Gast Test' })).toBeTruthy();
     expect(within(spectators).queryByRole('listitem', { name: 'Bernd Test' })).toBeNull();

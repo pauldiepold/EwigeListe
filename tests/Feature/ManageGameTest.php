@@ -80,7 +80,7 @@ class ManageGameTest extends TestCase
     public function a_game_needs_winners(): void
     {
         $this->post(route('games.store', $this->round), $this->validGame(['winners' => []]))
-            ->assertSessionHasErrors(['winners' => 'Es muss mindestens ein Gewinner ausgewählt werden!']);
+            ->assertSessionHasErrors(['winners' => 'Wähle mindestens eine Person aus, die gewonnen hat!']);
 
         $this->assertDatabaseCount('games', 0);
     }
@@ -110,7 +110,7 @@ class ManageGameTest extends TestCase
             'winners' => [$this->players[1]->id, $this->players[2]->id, $this->players[3]->id],
             'points' => 1,
             'misplayed' => true,
-        ]))->assertSessionHasErrors(['points' => 'Wenn sich jemand vergibt, verliert er mit mindestens 2 Punkten!']);
+        ]))->assertSessionHasErrors(['points' => 'Wer sich vergibt, verliert mit mindestens 2 Punkten!']);
 
         $this->assertDatabaseCount('games', 0);
     }

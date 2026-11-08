@@ -10,7 +10,7 @@ defineProps<{
 <template>
   <ul
     v-if="spectators.length > 0"
-    aria-label="Zuschauer"
+    aria-label="Zuschauerinnen"
     class="flex gap-1.5 rounded-lg bg-default/90 p-1.5 ring ring-default"
   >
     <li v-for="spectator in spectators" :key="spectator.id" :aria-label="spectator.name">

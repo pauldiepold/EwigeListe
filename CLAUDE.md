@@ -11,6 +11,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 - Seiten, Komponenten, Resources und Tests: Skill `inertia-pages`.
 - Schlanke Laravel-Struktur: Middleware, Routing und Exceptions in `bootstrap/app.php`, Scheduler in `routes/console.php`, Models in `app/Models`.
 - Live-Spiel-Engine: `app/Models/LiveGame.php`, `app/Live/*`, Events in `app/Events/`.
+- Sichtbare Texte (UI, Meldungen, aria-labels) in der Du-Form und geschlechtsneutral: „Person“ oder „wer …“ statt „Spieler“, „Gewinner“ oder „Administrator“. Wo das holprig wird, generisches Femininum („Zuschauerinnen“), keine Partizipien wie „Zuschauende“. Im Code und in `GLOSSARY.md` bleibt „Spieler“ der Fachbegriff.
 - Begriffe: `GLOSSARY.md`. Entscheidungen: `docs/adr/`, die Gründe hinter dem heutigen Aufbau aus der Migration von Blade: `docs/migration.md`. Queue, Scheduler und Deploy auf Prod und Staging: `docs/betrieb.md`.
 
 ## Prüfungen
