@@ -82,7 +82,8 @@ php artisan queue:work --stop-when-empty --memory=384
 
 - Im Wartungsmodus (`php artisan down`, auch während jedes Deploys) arbeitet `queue:work` ohne `--force` keine Jobs ab, und `schedule:run` startet keine Befehle. Die Jobs bleiben in `jobs` liegen und laufen nach `artisan up` mit dem nächsten Cron-Aufruf.
 - Die Queue im Wartungsmodus leeren (z. B. vor einem Deploy, der Job-Klassen umbenennt): `php artisan queue:work --stop-when-empty --memory=384 --force`, danach prüfen, ob `jobs` leer ist.
-- Der Staging-Deploy startet nach `sync_db` selbst `stats:recalculate` (`.github/workflows/deploy-staging.yml`), der Prod-Deploy nicht.
+- Prod deployt bei jedem Push auf `master`, Staging nur manuell (Workflow „Deploy Staging“ auf einem Feature-Branch, meist mit `sync_db=yes`).
+- Der Staging-Deploy startet nach `sync_db` selbst `stats:recalculate` (`.github/workflows/deploy-staging.yml`), der Prod-Deploy nicht. Über den 5-Minuten-Cron dauert die Neuberechnung auf Staging rund 20 bis 25 Minuten; bis dahin zeigt Staging teils noch die Statistik aus dem Dump.
 - Beide Deploys installieren mit `composer install --no-dev`: Debugbar, Telescope, Boost, Pint, PHPUnit und Faker fehlen auf dem Server. Factories und Seeder laufen dort deshalb nicht; `tinker` ist eine normale Abhängigkeit und bleibt verfügbar.
 
 ## Fehlersuche
