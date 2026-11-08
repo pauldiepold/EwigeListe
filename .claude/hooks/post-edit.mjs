@@ -18,7 +18,7 @@ const isWindows = process.platform === 'win32';
 
 const generated = /^resources\/js\/inertia\/(actions|routes|wayfinder)\//;
 
-if (/^resources\/js\/inertia\/.+\.(ts|vue)$/.test(relative) && !generated.test(relative)) {
+if (/^resources\/js\/.+\.(ts|vue)$/.test(relative) && !generated.test(relative)) {
   const prettier = path.join(projectDir, 'node_modules', '.bin', isWindows ? 'prettier.cmd' : 'prettier');
   spawnSync(`"${prettier}" --write "${filePath}"`, { cwd: projectDir, stdio: 'ignore', shell: true });
 }

@@ -116,21 +116,6 @@ namespace App\Models{
  * @property int $created_by
  * @property int|null $queued
  * @property int|null $closed
- * @property string|null $records
- * @property string|null $stats
- * @property string|null $mostGames
- * @property string|null $highestPoints
- * @property string|null $lowestPoints
- * @property string|null $highestWinrate
- * @property string|null $lowestWinrate
- * @property string|null $highestSoloWinrate
- * @property string|null $lowestSoloWinrate
- * @property string|null $highestSoloRate
- * @property string|null $lowestSoloRate
- * @property string|null $highestWinstreak
- * @property string|null $highestLosestreak
- * @property string|null $mostGamesDay
- * @property string|null $mostGamesMonth
  * @property int|null $totalGames
  * @property numeric|null $pointsPerGame
  * @property numeric|null $gamesPerRound
@@ -154,25 +139,10 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereCreatedBy($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereGamesPerRound($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestLosestreak($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestSoloRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestSoloWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereHighestWinstreak($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereLowestPoints($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereLowestSoloRate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereLowestSoloWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereLowestWinrate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereMostGames($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereMostGamesDay($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereMostGamesMonth($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group wherePointsPerGame($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereQueued($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereRecords($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereStats($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereTotalGames($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Group whereUpdatedAt($value)
  */

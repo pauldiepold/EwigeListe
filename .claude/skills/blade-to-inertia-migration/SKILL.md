@@ -1,6 +1,6 @@
 ---
 name: blade-to-inertia-migration
-description: Migriert eine Blade-Seite per TDD zu Inertia + Vue 3 (Big Bang, `docs/migration.md`). Anwenden, wenn eine Route von `view()` auf `Inertia::render()` umgestellt, eine Page unter `resources/js/inertia/Pages/` angelegt oder Legacy (Blade, `resources/js/components/**`) einer migrierten Seite gelöscht wird.
+description: Migriert eine Blade-Seite per TDD zu Inertia + Vue 3 (Big Bang, `docs/migration.md`). Anwenden, wenn eine Route von `view()` auf `Inertia::render()` umgestellt, eine Page unter `resources/js/inertia/Pages/` angelegt oder die Blade-Datei einer migrierten Seite gelöscht wird.
 ---
 
 # Blade → Inertia Migration
@@ -13,7 +13,7 @@ Plan, Leitplanken und Routen-Matrix: `docs/migration.md`. Begriffe: `GLOSSARY.md
 2. **Roter Test.** Feature-Test mit `assertInertia` für Component und Props schreiben und laufen lassen: er muss _rot_ sein. Jede angefasste Mutation (POST/PATCH/DELETE) bekommt Tests für Redirect, Validierungsfehler und Berechtigung.
 3. **Backend.** Controller rendert per `Inertia::render()` und lädt nur, was die Page braucht. Mapping steckt in `app/Http/Resources/*`. Ungenutzte Controller-Daten werden gelöscht.
 4. **Frontend.** Page, Komponenten, Typen und Composables nach der Struktur unten.
-5. **Legacy löschen.** Blade-Datei und Legacy-Vue-Komponenten, die nur diese Seite nutzte, im selben PR entfernen. Vorher per Grep belegen, dass keine Route, kein `@include`/`@extends` und keine Registrierung in `resources/js/app.js` mehr darauf verweist.
+5. **Legacy löschen.** Blade-Datei und Legacy-Vue-Komponenten, die nur diese Seite nutzte, im selben PR entfernen. Vorher per Grep belegen, dass keine Route und kein `@include`/`@extends` mehr darauf verweist.
 6. **Status pflegen.** Routen-Matrix und ggf. Roadmap in `docs/migration.md` aktualisieren; neue Erkenntnisse unter „Learnings“.
 7. **Grün.** Fertig ist die Seite, wenn alles grün ist:
    ```bash
