@@ -14,6 +14,7 @@ return [
     */
 
     'failed' => 'Falsche Zugangsdaten.',
+    'password' => 'Das Passwort ist falsch.',
     'throttle' => 'Zu viele Versuche. Bitte versuche es erneut in :seconds Sekunden.',
 
 ];

@@ -39,7 +39,7 @@ class LoginTest extends TestCase
         $this->from(route('login'))
             ->post(route('login'), ['email' => $user->email, 'password' => 'falsch'])
             ->assertRedirect(route('login'))
-            ->assertSessionHasErrors('email');
+            ->assertSessionHasErrors(['email' => 'Falsche Zugangsdaten.']);
 
         $this->assertGuest();
     }

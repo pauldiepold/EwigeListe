@@ -47,8 +47,8 @@ class AuthTest extends TestCase
     {
         $this->post('register', [...$this->registrationAttributes(), 'first_name' => '', 'last_name' => ''])
             ->assertSessionHasErrors([
-                'first_name' => 'Es muss ein Vorname angegeben werden!',
-                'last_name' => 'Es muss ein Nachname angegeben werden!',
+                'first_name' => 'Vorname muss ausgefüllt sein.',
+                'last_name' => 'Nachname muss ausgefüllt sein.',
             ]);
     }
 
@@ -56,7 +56,7 @@ class AuthTest extends TestCase
     public function registration_rejects_a_password_shorter_than_eight_characters(): void
     {
         $this->post('register', [...$this->registrationAttributes(), 'password' => 'kurz123', 'password_confirmation' => 'kurz123'])
-            ->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
+            ->assertSessionHasErrors(['password' => 'Passwort muss mindestens 8 Zeichen lang sein.']);
 
         $this->assertGuest();
     }
