@@ -62,8 +62,10 @@ class Deck
         $this->deck->push(new Karte(1, 3, 1)); // Pik
         $this->deck->push(new Karte(0, 3, 1)); // Pik
 
-        $this->deck = $this->deck->shuffle();
-        $this->deck = $this->deck->split(4);
+        // PHPs `shuffle()` hängt an `mt_srand()`, `Collection::shuffle()` nicht: Tests legen die Verteilung per Seed fest.
+        $cards = $this->deck->all();
+        shuffle($cards);
+        $this->deck = collect($cards)->split(4);
     }
 
     public function getKarten($i)

@@ -64,6 +64,31 @@ describe('LiveToolbar', () => {
     expect(screen.queryByText('Karlchen kann gefangen werden')).toBeNull();
   });
 
+  it('schaltet das Meldungsprotokoll um', async () => {
+    const user = userEvent.setup();
+    const onToggle = vi.fn();
+    const { rerender } = renderWithUi(LiveToolbar, {
+      backPath: '/runde/7',
+      rules: allRules,
+      messagesOpen: false,
+      'onUpdate:messagesOpen': onToggle,
+    });
+
+    const button = screen.getByRole('button', { name: 'Meldungen' });
+    expect(button.getAttribute('aria-pressed')).toBe('false');
+
+    await user.click(button);
+    expect(onToggle).toHaveBeenLastCalledWith(true);
+
+    await rerender({ messagesOpen: true });
+    expect(screen.getByRole('button', { name: 'Meldungen' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Meldungen' }));
+    expect(onToggle).toHaveBeenLastCalledWith(false);
+  });
+
   it('bietet Vollbild nur an, wo der Browser es kennt', () => {
     renderToolbar();
     expect(screen.queryByRole('button', { name: 'Vollbild' })).toBeNull();

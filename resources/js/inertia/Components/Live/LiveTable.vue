@@ -80,7 +80,7 @@ const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
       <slot name="tools" />
     </div>
 
-    <div class="absolute right-2 bottom-[30%] z-20">
+    <div class="absolute top-[42%] right-2 z-20">
       <slot name="messages" />
     </div>
 

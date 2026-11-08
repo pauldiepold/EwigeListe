@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import LiveLayout from '@/Layouts/LiveLayout.vue';
+import LiveMessages from '@/Components/Live/LiveMessages.vue';
 import LiveReadyCheck from '@/Components/Live/LiveReadyCheck.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
@@ -89,6 +90,9 @@ const spectators = computed(() =>
 
 // Jedes neue (oder beendete) Spiel beginnt mit einem frischen Bereit-Check.
 watch(() => state.liveGame.value?.id, readyCheck.reset);
+
+/** Das Meldungsprotokoll klappt bei neuen Meldungen von selbst auf (`LiveMessages`) und lässt sich per Werkzeugleiste umschalten. */
+const messagesOpen = ref(false);
 </script>
 
 <template>
@@ -114,10 +118,19 @@ watch(() => state.liveGame.value?.id, readyCheck.reset);
 
       <template #tools>
         <LiveToolbar
+          v-model:messages-open="messagesOpen"
           :back-path="round.path"
           :rules="round.rules"
           :reloading="reloading"
           @reload="reloadData"
+        />
+      </template>
+
+      <template #messages>
+        <LiveMessages
+          v-model:open="messagesOpen"
+          :messages="state.liveGame.value?.messages ?? []"
+          :players="round.players"
         />
       </template>
 
