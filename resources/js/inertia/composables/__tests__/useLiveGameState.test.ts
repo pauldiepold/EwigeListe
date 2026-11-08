@@ -97,6 +97,16 @@ describe('useLiveGameState', () => {
     expect(state.hand.value).toEqual([]);
   });
 
+  it('ignoriert einen verspäteten Push eines älteren Spiels', () => {
+    // Nach dem Schmeißen speichert der Server das alte Spiel nach dem neuen noch einmal.
+    const state = useLiveGameState(pageProps({ liveGame: game({ id: 6, phase: 2 }) }));
+
+    state.applyPush({ liveGame: game({ id: 5, phase: 101 }), ich: me([card(3)]) });
+
+    expect(state.liveGame.value?.id).toBe(6);
+    expect(state.hand.value.map((c) => c.id)).toEqual([1, 2]);
+  });
+
   it('liest eine Hand, die als Objekt mit Schlüsseln ankommt', () => {
     const state = useLiveGameState(pageProps({ ich: me({ 0: card(7), 2: card(8) }) }));
 
