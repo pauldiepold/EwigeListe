@@ -1,4 +1,5 @@
 import type { LiveGameData, LivePlayer } from '@/types/live';
+import type { TrickSeat } from '@/Components/Live/liveTrickLayout';
 
 /**
  * Die Spieler des Spiels in der Reihenfolge, in der sie am Tisch erscheinen: Platz 0 sitzt unten,
@@ -42,3 +43,6 @@ export function playersOfGame(players: LivePlayer[], liveGame: LiveGameData | nu
 
   return players.map((player) => ({ ...player, isActive: gamePlayerIds.includes(player.id) }));
 }
+
+/** Die Plätze am Tisch aus Sicht des Betrachters in der Reihenfolge von `seatAroundViewer`. */
+export const TABLE_SEATS: readonly TrickSeat[] = ['unten', 'links', 'oben', 'rechts'];

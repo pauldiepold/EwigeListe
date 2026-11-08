@@ -17,7 +17,15 @@ import { playersOfGame } from '@/Components/Live/liveSeating';
 import { postLive } from '@/composables/liveRequest';
 import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
-import { listOf, useLiveGameState } from '@/composables/useLiveGameState';
+import {
+  listOf,
+  POVERTY_ASK_PHASE,
+  POVERTY_GIVE_BACK_PHASE,
+  POVERTY_GIVE_PHASE,
+  RESERVATION_PHASE,
+  useLiveGameState,
+  type PovertyPhase,
+} from '@/composables/useLiveGameState';
 import { useLivePlay } from '@/composables/useLivePlay';
 import { useLivePoverty } from '@/composables/useLivePoverty';
 import { useLiveReadyCheck } from '@/composables/useLiveReadyCheck';
@@ -59,7 +67,7 @@ function reloadData(): void {
 
 useRefreshOnVisible(reloadData);
 
-/** Aktionen an die Engine (Vorbehalt, später Karte spielen) mit gemeinsamer Fehlerbehandlung. */
+/** Aktionen an die Engine (Vorbehalt, Armut, Karte spielen, An-/Absage) mit gemeinsamer Fehlerbehandlung. */
 const liveAction = useLiveAction(reloadData);
 
 /** Karte spielen (optimistisch), Stich und An-/Absagen. */
@@ -72,7 +80,6 @@ const play = useLivePlay({
 const readyCheck = useLiveReadyCheck({
   activePlayerIds,
   viewerPlayerId: props.round.viewerPlayerId,
-  whisperReady: (playerId) => echo.sendReady(playerId),
   startGame: async () => {
     try {
       await postLive(startGame.url(props.round.liveRoundId));
@@ -94,6 +101,12 @@ const echo = useLiveEcho({
   onMemberLeft: readyCheck.reset,
 });
 
+/** Ich bin bereit: Der Check merkt es, die Mitspieler erfahren es per Flüstern. */
+function markMeReady(): void {
+  readyCheck.markMeReady();
+  echo.sendReady(props.round.viewerPlayerId);
+}
+
 const onlinePlayerIds = computed(() => echo.onlineMembers.value.map((member) => member.id));
 
 /**
@@ -113,12 +126,15 @@ const showHand = computed(
     state.hand.value.length > 0,
 );
 
+/** Die Engine hat mich als nächsten Spieler gesetzt (Vorbehalt, Armut oder Karte). */
+const isMyTurn = computed(() => state.liveGame.value?.dran === props.round.viewerPlayerId);
+
 /** In der Vorbehaltsphase wählen die Spieler reihum, wer dran ist, gibt die Vorhand vor. */
 const showReservations = computed(
-  () => state.liveGame.value?.phase === 2 && state.ich.value !== null,
+  () => state.liveGame.value?.phase === RESERVATION_PHASE && state.ich.value !== null,
 );
 
-/** Armut (Phasen 3, 32, 33): Auswahl der Karten für Hand und Overlay (`useLivePoverty`). */
+/** Armut (Phasen `POVERTY_*`): Auswahl der Karten für Hand und Overlay (`useLivePoverty`). */
 const poverty = useLivePoverty({
   state,
   viewerPlayerId: props.round.viewerPlayerId,
@@ -135,10 +151,15 @@ function pressCard(card: LiveEngineCard): void {
 }
 
 /** Die Phase der Armut, in der ich mitspiele; sonst `null` (auch für Zuschauer). */
-const povertyPhase = computed(() => {
+const povertyPhase = computed<PovertyPhase | null>(() => {
   const phase = state.liveGame.value?.phase;
 
-  return state.ich.value !== null && (phase === 3 || phase === 32 || phase === 33) ? phase : null;
+  return state.ich.value !== null &&
+    (phase === POVERTY_GIVE_PHASE ||
+      phase === POVERTY_ASK_PHASE ||
+      phase === POVERTY_GIVE_BACK_PHASE)
+    ? phase
+    : null;
 });
 
 const activePlayerName = computed(
@@ -276,14 +297,14 @@ const messagesOpen = ref(false);
             :is-first-game="round.gamesCount === 0"
             :can-be-ready="viewerIsActive"
             :i-am-ready="readyCheck.iAmReady.value"
-            @ready="readyCheck.markMeReady"
+            @ready="markMeReady"
           />
         </div>
         <LiveReservations
           v-else-if="showReservations && state.ich.value"
           :possible="listOf(state.ich.value.moeglicheVorbehalte)"
           :koenigs-solo="round.rules.koenigsSolo"
-          :is-my-turn="state.liveGame.value?.dran === round.viewerPlayerId"
+          :is-my-turn="isMyTurn"
           :decided="state.ich.value.vorbehalt != null"
           :busy="liveAction.busy.value"
           @choose="chooseReservation"
@@ -291,7 +312,7 @@ const messagesOpen = ref(false);
         <LivePoverty
           v-else-if="povertyPhase !== null"
           :phase="povertyPhase"
-          :is-my-turn="state.liveGame.value?.dran === round.viewerPlayerId"
+          :is-my-turn="isMyTurn"
           :active-player-name="activePlayerName"
           :can-submit="poverty.canSubmit.value"
           :trump-left="poverty.trumpLeft.value"

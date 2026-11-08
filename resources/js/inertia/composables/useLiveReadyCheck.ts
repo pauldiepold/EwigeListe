@@ -8,7 +8,7 @@ export type LiveReadyCheck = {
   iAmReady: ComputedRef<boolean>;
   /** Ein Mitspieler hat „bereit“ geflüstert. */
   receiveReady: (playerId: number) => void;
-  /** Ich bin bereit: wird gemerkt und den Mitspielern geflüstert. */
+  /** Ich bin bereit: wird gemerkt. Das Flüstern an die Mitspieler übernimmt der Aufrufer (Echo). */
   markMeReady: () => void;
   /** Jemand hat den Channel verlassen oder ein neues Spiel beginnt: alle müssen neu bestätigen. */
   reset: () => void;
@@ -18,8 +18,6 @@ type Options = {
   /** Die Spieler des (nächsten) Spiels in Sitzreihenfolge. */
   activePlayerIds: Readonly<Ref<number[]>>;
   viewerPlayerId: number;
-  /** Flüstert „bereit“ an die Mitspieler. */
-  whisperReady: (playerId: number) => void;
   /** Startet das Spiel; wird nur im Browser des ersten Spielers und nur einmal pro Runde gerufen. */
   startGame: () => Promise<void>;
 };
@@ -48,7 +46,6 @@ export function useLiveReadyCheck(options: Options): LiveReadyCheck {
 
   function markMeReady(): void {
     receiveReady(options.viewerPlayerId);
-    options.whisperReady(options.viewerPlayerId);
   }
 
   function reset(): void {
