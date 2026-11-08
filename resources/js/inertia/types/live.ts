@@ -1,3 +1,5 @@
+import type { LiveRules } from '@/Components/Live/liveRules';
+
 /** Farbe einer Karte in der Live-Engine: 1 Karo, 2 Herz, 3 Pik, 4 Kreuz (`app/Live/Karte.php`). */
 export type LiveCardSuit = 1 | 2 | 3 | 4;
 
@@ -31,15 +33,6 @@ export type LivePlayer = {
   avatarPath: string | null;
   /** Spielt im aktuellen (bzw. nächsten) Spiel mit, statt auszusetzen. */
   isActive: boolean;
-};
-
-export type LiveRules = {
-  schweinchen: boolean;
-  fuchsSticht: boolean;
-  schweinchenTrumpfsolo: boolean;
-  koenigsSolo: boolean;
-  karlchen: boolean;
-  karlchenFangen: boolean;
 };
 
 export type LiveRound = {

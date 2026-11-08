@@ -31,27 +31,6 @@ class PlayerSeeder extends Seeder
 
         User::factory()->create([
             'player_id' => function () {
-                return Player::factory()->create(['first_name' => 'AI 1', 'last_name' => 'Monte', 'ai_path' => 'lib_doko.so'])->id;
-            },
-            'email' => '1@ai.de',
-            'password' => Hash::make('test')]);
-
-        User::factory()->create([
-            'player_id' => function () {
-                return Player::factory()->create(['first_name' => 'AI 2', 'last_name' => 'Carlo', 'ai_path' => 'lib_doko.so'])->id;
-            },
-            'email' => '2@ai.de',
-            'password' => Hash::make('test')]);
-
-        User::factory()->create([
-            'player_id' => function () {
-                return Player::factory()->create(['first_name' => 'AI 3', 'last_name' => 'Leclerc', 'ai_path' => 'lib_doko.so'])->id;
-            },
-            'email' => '3@ai.de',
-            'password' => Hash::make('test')]);
-
-        User::factory()->create([
-            'player_id' => function () {
                 return Player::factory()->create(['first_name' => 'Isi', 'last_name' => 'Haide'])->id;
             },
             'email' => 'test2@test.de',

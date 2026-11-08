@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveRules } from '@/types/live';
+import type { LiveRules } from '@/Components/Live/liveRules';
 
 // Links fragen die aktuelle Adresse ab, die nur `createInertiaApp` anlegt.
 vi.mock('@inertiajs/vue3', async (importOriginal) => ({
@@ -46,8 +46,8 @@ describe('LiveToolbar', () => {
     expect(dialog.textContent).toContain('Regeln dieser Runde');
     const rule = (name: string) => screen.getByText(name).closest('li')!.textContent;
     expect(rule('Super-Schwein')).toContain('an');
-    expect(rule('Super-Schwein: Fuchs muss stechen')).toContain('an');
-    expect(rule('Super-Schwein: auch im Trumpfsolo')).toContain('aus');
+    expect(rule('Fuchs muss stechen')).toContain('an');
+    expect(rule('Super-Schwein auch im Trumpfsolo')).toContain('aus');
     expect(rule('Karlchen')).toContain('an');
     expect(rule('Karlchen kann gefangen werden')).toContain('aus');
   });
@@ -59,8 +59,8 @@ describe('LiveToolbar', () => {
     await user.click(screen.getByRole('button', { name: 'Info' }));
     await screen.findByRole('dialog');
 
-    expect(screen.queryByText('Super-Schwein: Fuchs muss stechen')).toBeNull();
-    expect(screen.queryByText('Super-Schwein: auch im Trumpfsolo')).toBeNull();
+    expect(screen.queryByText('Fuchs muss stechen')).toBeNull();
+    expect(screen.queryByText('Super-Schwein auch im Trumpfsolo')).toBeNull();
     expect(screen.queryByText('Karlchen kann gefangen werden')).toBeNull();
   });
 

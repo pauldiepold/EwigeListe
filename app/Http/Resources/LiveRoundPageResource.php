@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\LiveRound;
 use App\Models\Player;
 use App\Models\Round;
 use Illuminate\Http\Request;
@@ -29,14 +30,7 @@ class LiveRoundPageResource extends JsonResource
             'path' => $this->path(),
             'gamesCount' => $this->games->count(),
             'liveRoundId' => $this->liveRound->id,
-            'rules' => [
-                'schweinchen' => (bool) $this->liveRound->schweinchen,
-                'fuchsSticht' => (bool) $this->liveRound->fuchsSticht,
-                'schweinchenTrumpfsolo' => (bool) $this->liveRound->schweinchenTrumpfsolo,
-                'koenigsSolo' => (bool) $this->liveRound->koenigsSolo,
-                'karlchen' => (bool) $this->liveRound->karlchen,
-                'karlchenFangen' => (bool) $this->liveRound->karlchenFangen,
-            ],
+            'rules' => $this->liveRound->only(array_keys(LiveRound::RULE_DEFAULTS)),
             'viewerPlayerId' => $request->user()->player_id,
             'players' => $this->players->map(fn (Player $player): array => [
                 'id' => $player->id,

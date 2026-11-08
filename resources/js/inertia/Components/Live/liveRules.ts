@@ -1,53 +1,79 @@
-import type { LiveRules } from '@/types/live';
+/** Die Regeln einer Live-Runde; die Schlüssel entsprechen den Spalten von `live_rounds`. */
+export type LiveRuleKey =
+  | 'schweinchen'
+  | 'fuchsSticht'
+  | 'schweinchenTrumpfsolo'
+  | 'koenigsSolo'
+  | 'karlchen'
+  | 'karlchenFangen';
+
+export type LiveRules = Record<LiveRuleKey, boolean>;
 
 export type LiveRuleDefinition = {
-  key: keyof LiveRules;
+  key: LiveRuleKey;
   label: string;
   description: string;
-  /** Gilt nur, solange diese Regel an ist. */
-  requires?: keyof LiveRules;
+  /** Übergeordnete Regel: Ist sie aus, gibt es diese Regel nicht. */
+  parent?: LiveRuleKey;
 };
 
-/** Die Regeln einer Live-Runde mit Erklärung, in der Reihenfolge der Anzeige. */
-export const LIVE_RULES: LiveRuleDefinition[] = [
+/** In Anzeigereihenfolge; abhängige Regeln stehen direkt unter ihrer übergeordneten. */
+export const liveRuleDefinitions: LiveRuleDefinition[] = [
   {
     key: 'schweinchen',
     label: 'Super-Schwein',
     description:
-      'Der erste Fuchs wird als Fuchs gespielt, der zweite ist als Super-Schwein die höchste Karte im Spiel.',
+      'Der erste Fuchs wird als Fuchs gespielt, der zweite ist als Super-Schwein die höchste Karte im Spiel',
   },
   {
     key: 'fuchsSticht',
-    label: 'Super-Schwein: Fuchs muss stechen',
-    description:
-      'Der erste Fuchs muss den Stich gewinnen, damit der zweite zum Super-Schwein wird.',
-    requires: 'schweinchen',
+    label: 'Fuchs muss stechen',
+    description: 'Der erste Fuchs muss den Stich gewinnen, damit der zweite zum Super-Schwein wird',
+    parent: 'schweinchen',
   },
   {
     key: 'schweinchenTrumpfsolo',
-    label: 'Super-Schwein: auch im Trumpfsolo',
-    description: 'Farbsolo-Karo, nicht in anderen Farbsoli.',
-    requires: 'schweinchen',
+    label: 'Super-Schwein auch im Trumpfsolo',
+    description: 'Farbsolo-Karo, nicht in anderen Farbsoli',
+    parent: 'schweinchen',
   },
   {
     key: 'koenigsSolo',
     label: 'Königssolo',
-    description: 'Nur die Könige sind Trumpf.',
+    description: 'Nur die Könige sind Trumpf',
   },
   {
     key: 'karlchen',
     label: 'Karlchen',
-    description: 'Sticht ein Kreuz Bube den letzten Stich, gibt dies einen Extrapunkt.',
+    description: 'Sticht ein Kreuz Bube den letzten Stich, gibt dies einen Extrapunkt',
   },
   {
     key: 'karlchenFangen',
     label: 'Karlchen kann gefangen werden',
-    description: 'Ein gefangener Kreuz Bube im letzten Stich gibt einen Extrapunkt.',
-    requires: 'karlchen',
+    description: 'Ein gefangener Kreuz Bube im letzten Stich gibt einen Extrapunkt',
+    parent: 'karlchen',
   },
 ];
 
-/** Die Regeln, die in dieser Runde überhaupt eine Rolle spielen: abhängige nur bei aktiver übergeordneter. */
-export function visibleRules(rules: LiveRules): LiveRuleDefinition[] {
-  return LIVE_RULES.filter((rule) => rule.requires === undefined || rules[rule.requires]);
+/** Der übliche Standard: alle Regeln an. */
+export function defaultLiveRules(): LiveRules {
+  return {
+    schweinchen: true,
+    fuchsSticht: true,
+    schweinchenTrumpfsolo: true,
+    koenigsSolo: true,
+    karlchen: true,
+    karlchenFangen: true,
+  };
+}
+
+/** Eine Regel gilt nur, wenn sie an ist und ihre übergeordnete Regel (falls es eine gibt) auch. */
+export function isLiveRuleActive(rules: LiveRules, definition: LiveRuleDefinition): boolean {
+  return rules[definition.key] && (definition.parent === undefined || rules[definition.parent]);
+}
+
+export function activeLiveRuleLabels(rules: LiveRules): string[] {
+  return liveRuleDefinitions
+    .filter((definition) => isLiveRuleActive(rules, definition))
+    .map((definition) => definition.label);
 }

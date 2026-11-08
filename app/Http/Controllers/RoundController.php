@@ -37,7 +37,7 @@ class RoundController extends Controller
 
     public function show(Request $request, RoundChartSeries $roundChartSeries, Round $round): Response
     {
-        $round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user', 'createdBy']);
+        $round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user', 'createdBy', 'liveRound']);
 
         return Inertia::render('Rounds/Show', [
             'round' => (new RoundShowResource($round))->resolve($request),
@@ -97,7 +97,7 @@ class RoundController extends Controller
         }
 
         if ($validated->get('liveGame')) {
-            $round->createLiveRound();
+            $round->createLiveRound($request->liveRules());
         }
 
         return redirect()->route('rounds.show', $round);

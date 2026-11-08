@@ -84,9 +84,12 @@ class Round extends Model
         return $this->live_round_id !== null;
     }
 
-    public function createLiveRound()
+    /**
+     * @param  array<string, mixed>  $rules
+     */
+    public function createLiveRound(array $rules = [])
     {
-        $liveRound = $this->liveRound()->create();
+        $liveRound = $this->liveRound()->create(LiveRound::normalizeRules($rules));
         $this->liveRound()->associate($liveRound)->save();
     }
 

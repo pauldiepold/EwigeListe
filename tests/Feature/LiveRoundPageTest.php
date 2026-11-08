@@ -103,7 +103,7 @@ class LiveRoundPageTest extends TestCase
                 ->where('round.gamesCount', 0)
                 ->where('round.liveRoundId', $round->live_round_id)
                 ->where('round.rules.fuchsSticht', true)
-                ->where('round.rules.schweinchenTrumpfsolo', false)
+                ->where('round.rules.karlchenFangen', true)
                 ->where('round.players', fn ($players) => collect($players)->pluck('id')->all() === $users->pluck('player_id')->all())
                 ->where('round.players.0.firstName', $users[0]->player->first_name)
                 ->where('round.players.0.fullName', $users[0]->player->full_name)

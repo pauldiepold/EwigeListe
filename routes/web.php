@@ -61,8 +61,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/games/{game}', [GameController::class, 'update'])->name('games.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
 
-    Route::patch('/liveRounds/{liveRound}', [LiveRoundController::class, 'updateRegeln'])->name('liveRounds.updateRegeln');
-
     /* *********** Groups ************** */
     Route::get('liste', [GroupController::class, 'show'])->name('ewigeListe');
     Route::get('/listen', [GroupController::class, 'index'])->name('groups.index');

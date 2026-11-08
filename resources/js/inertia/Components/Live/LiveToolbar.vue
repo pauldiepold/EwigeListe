@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import LiveRulesList from '@/Components/Live/LiveRulesList.vue';
 import { useFullscreen } from '@/composables/useFullscreen';
-import type { LiveRules } from '@/types/live';
+import type { LiveRules } from '@/Components/Live/liveRules';
 
 defineProps<{
   /** Adresse der Runden-Seite. */
