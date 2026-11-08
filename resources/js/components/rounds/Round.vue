@@ -227,7 +227,6 @@ export default {
         this.presenceChannel
             .here(players => {
                 this.round.online_players = players;
-                this.addAIsToOnlinePlayers();
                 this.getWatchingPlayers();
             })
             .joining(player => {
@@ -249,7 +248,6 @@ export default {
             .listenForWhisper('message', e => {
                 //this.$refs.live_game.pushMessage(e.message);
             });
-        this.addAIsToOnlinePlayers();
     },
     unmounted() {
         window.removeEventListener("resize", this.getOrientation);
@@ -277,14 +275,6 @@ export default {
         },
     },
     methods: {
-        addAIsToOnlinePlayers() {
-            this.round.active_players_short.forEach(active_player_short => {
-                if (active_player_short.is_ai) {
-                    this.round.online_players.push(active_player_short);
-                    this.round.ready_players.push(active_player_short.id);
-                }
-            });
-        },
         getWatchingPlayers() {
             this.round.watching_players = this.round.online_players.filter(player => {
                 return !this.round.active_players.map(o => o['id']).includes(player.id);
@@ -343,7 +333,6 @@ export default {
 
         reconnectChannels() {
             this.round.online_players = Object.values(this.presenceChannel.subscription.members.members);
-            this.addAIsToOnlinePlayers();
             this.getWatchingPlayers();
         },
 

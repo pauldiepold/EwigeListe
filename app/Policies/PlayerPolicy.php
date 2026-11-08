@@ -14,6 +14,6 @@ class PlayerPolicy
      */
     public function view(?User $user, Player $player): bool
     {
-        return ! $player->hide && ! $player->is_ai;
+        return ! $player->hide;
     }
 }
