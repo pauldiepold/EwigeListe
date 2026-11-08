@@ -17,6 +17,6 @@ return [
     'sent' => 'Wir haben dir einen Link zum Zurücksetzen des Passworts gesendet.',
     'throttled' => 'Bitte warte kurz, bevor du es erneut versuchst.',
     'token' => 'Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.',
-    'user' => 'Es konnte leider kein Nutzer mit dieser E-Mail-Adresse gefunden werden.',
+    'user' => 'Es konnte leider kein Konto mit dieser E-Mail-Adresse gefunden werden.',
 
 ];

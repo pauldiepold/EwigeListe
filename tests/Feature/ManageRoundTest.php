@@ -131,7 +131,7 @@ class ManageRoundTest extends TestCase
             'players' => $players->pluck('id')->all(),
             'groups' => [Group::EWIGE_LISTE_ID, $foreignList->id],
             'liveGame' => false,
-        ])->assertSessionHasErrors(['groups' => "Keiner der Spieler ist Mitglied der Liste {$foreignList->name}."]);
+        ])->assertSessionHasErrors(['groups' => "Niemand aus der Runde ist Mitglied der Liste {$foreignList->name}."]);
 
         $this->assertDatabaseCount('rounds', 0);
     }
@@ -146,7 +146,7 @@ class ManageRoundTest extends TestCase
             'players' => $players->pluck('id')->all(),
             'groups' => [Group::EWIGE_LISTE_ID],
             'liveGame' => false,
-        ])->assertSessionHasErrors(['players' => 'Eine Runde braucht 4 bis 7 Spieler.']);
+        ])->assertSessionHasErrors(['players' => 'Eine Runde braucht 4 bis 7 Personen.']);
 
         $this->assertDatabaseCount('rounds', 0);
     }
@@ -229,7 +229,7 @@ class ManageRoundTest extends TestCase
         $foreignList = Group::factory()->create();
 
         $this->patch(route('rounds.update', $round), ['groups' => [$foreignList->id]])
-            ->assertSessionHasErrors(['groups' => "Keiner der Spieler ist Mitglied der Liste {$foreignList->name}."]);
+            ->assertSessionHasErrors(['groups' => "Niemand aus der Runde ist Mitglied der Liste {$foreignList->name}."]);
 
         $this->assertSame([Group::EWIGE_LISTE_ID], $round->groups()->pluck('groups.id')->all());
     }

@@ -27,7 +27,7 @@ class FlashToastTest extends TestCase
             ->assertRedirect(route('rounds.create'))
             ->assertInertiaFlash('toast', [
                 'type' => 'success',
-                'message' => 'Spieler Max Mustermann wurde erfolgreich erstellt!',
+                'message' => 'Max Mustermann wurde erfolgreich angelegt!',
             ]);
     }
 
@@ -42,7 +42,7 @@ class FlashToastTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->component('Rounds/Create')
                 ->hasFlash('toast.type', 'success')
-                ->hasFlash('toast.message', 'Spieler Max Mustermann wurde erfolgreich erstellt!')
+                ->hasFlash('toast.message', 'Max Mustermann wurde erfolgreich angelegt!')
                 ->missing('flash')
             );
     }

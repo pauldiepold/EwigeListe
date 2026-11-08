@@ -708,7 +708,7 @@ class LiveGame extends Model
             } elseif ($kreuzdamen->count() == 0) {
                 $spieler->isRe = false;
             } else {
-                abort(422, 'Spieler kann keine 2 Kreuzdamen haben, da Normalspiel');
+                abort(422, 'Mit zwei Kreuzdamen gibt es kein Normalspiel.');
             }
             $this->spielerSpeichern($spieler);
         }
@@ -938,7 +938,7 @@ class LiveGame extends Model
         $karte = $spieler->hand->where('id', $kartenID)->first();
 
         if (! is_a($karte, 'App\Live\Karte')) {
-            abort(422, 'Spieler besitzt diese Karte nicht!');
+            abort(422, 'Du hast diese Karte nicht!');
         }
 
         return $karte;

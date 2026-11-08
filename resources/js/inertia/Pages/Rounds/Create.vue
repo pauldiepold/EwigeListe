@@ -187,7 +187,7 @@ if (initialPlayer) {
             v-model="searchTerm"
             icon="i-lucide-search"
             placeholder="Bitte Namen eingeben"
-            aria-label="Spieler suchen"
+            aria-label="Person suchen"
             variant="none"
             size="lg"
             class="w-full border-b border-default"

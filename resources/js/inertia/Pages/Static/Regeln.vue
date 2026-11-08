@@ -13,17 +13,17 @@ import StaticArticle from '@/Components/Static/StaticArticle.vue';
         <h3>Spielfindung</h3>
         <p>
           Vor dem Spiel und vor Abhandlung der Vorbehalte müssen diese angekündigt werden. Sollte
-          eine Person einen Vorbehalt haben, hat er die Verantwortung diesen rechtzeitig zu melden.
-          Dabei ist die Reihenfolge der Personen irrelevant. Es ist sowohl möglich, einen Vorbehalt
-          nicht anzukündigen (wenn klar ist, dass dieser nicht gespielt wird, weil z.B. mindestens
-          zwei Personen einen Vorbehalt haben oder man selber eine Hochzeit hat), als auch einen
-          Vorbehalt anzukündigen, ohne die entsprechenden Karten und Absicht zu haben.
+          eine Person einen Vorbehalt haben, trägt sie die Verantwortung diesen rechtzeitig zu
+          melden. Dabei ist die Reihenfolge der Personen irrelevant. Es ist sowohl möglich, einen
+          Vorbehalt nicht anzukündigen (wenn klar ist, dass dieser nicht gespielt wird, weil z.B.
+          mindestens zwei Personen einen Vorbehalt haben oder man selber eine Hochzeit hat), als
+          auch einen Vorbehalt anzukündigen, ohne die entsprechenden Karten und Absicht zu haben.
         </p>
         <p>
           Anschließend werden folgende Vorbehalte jeweils in Sitzreihenfolge der Personen abgefragt:
         </p>
         <ul>
-          <li>Soli (vom Geber im Uhrzeigersinn)</li>
+          <li>Soli (im Uhrzeigersinn, beginnend nach der gebenden Person)</li>
           <li>
             Schmeißen ist möglich, falls sich Folgendes auf einer Hand befindet:
             <ul>
@@ -33,13 +33,13 @@ import StaticArticle from '@/Components/Static/StaticArticle.vue';
             </ul>
           </li>
           <li>
-            Armut: Maximal 3 Trumpf, drei Karten (alle Trumpfkarten) werden abgegeben,
-            Mitspieler:innen dürfen über Mitnahme im Uhrzeigersinn entscheiden (Armut +
-            Mitspieler:innen sind Re-Partei), es kann dabei ein Schweinchen entstehen
+            Armut: Maximal 3 Trumpf, drei Karten (alle Trumpfkarten) werden abgegeben, die anderen
+            entscheiden reihum im Uhrzeigersinn, ob sie die Armut mitnehmen (Armut und wer sie
+            mitnimmt sind Re-Partei), es kann dabei ein Schweinchen entstehen
           </li>
           <li>
-            Hochzeit: Beide Kreuzdamen auf einer Hand, erster fremder Stich innerhalb der ersten
-            drei Stiche entscheidet Mitspieler:innen (Hochzeit + Mitspieler:innen sind Re-Partei)
+            Hochzeit: Beide Kreuzdamen auf einer Hand, wer innerhalb der ersten drei Stiche den
+            ersten fremden Stich macht, spielt mit (beide sind Re-Partei)
           </li>
         </ul>
         <h3>Soli</h3>
@@ -87,8 +87,9 @@ import StaticArticle from '@/Components/Static/StaticArticle.vue';
           <li>Re bzw. Kontra: je 2 Punkte</li>
         </ul>
         <p>
-          Die Gewinner bekommen den Spielwert gutgeschrieben, die Verlierer abgezogen. Unabhängig
-          davon werden folgende Sonderpunkte (und negative Punkte an die Gegenpartei) vergeben:
+          Die gewinnende Partei bekommt den Spielwert gutgeschrieben, der verlierenden wird er
+          abgezogen. Unabhängig davon werden folgende Sonderpunkte (und negative Punkte an die
+          Gegenpartei) vergeben:
         </p>
         <ul>
           <li>gewonnen gegen die Re-Partei</li>
@@ -102,19 +103,19 @@ import StaticArticle from '@/Components/Static/StaticArticle.vue';
           <li><strong>Herz-Zehn:</strong> Die Zweite sticht die Erste, außer im letzten Stich.</li>
           <li>
             <strong>Superschwein:</strong> Befinden sich beide Karo-Asse auf einer Hand und wird mit
-            dem Ersten ein Stich gemacht (vom Mitspieler mitgenommen reicht nicht), so ist das
+            dem Ersten ein Stich gemacht (ein Stich der eigenen Partei reicht nicht), so ist das
             zweite das Superschwein (mit Ankündigung) und damit der höchste Trumpf.
           </li>
           <li>
-            <strong>Soli:</strong> Sonderpunkte werden nicht angerechnet; der Solo-Spieler bekommt
-            den Spielwert dreifach angerechnet (sowohl positiv als auch negativ). Ausnahme:
+            <strong>Soli:</strong> Sonderpunkte werden nicht angerechnet; wer ein Solo spielt,
+            bekommt den Spielwert dreifach angerechnet (sowohl positiv als auch negativ). Ausnahme:
             Verdeckte Hochzeit, hier gelten alle regulären Sonderpunkte.
           </li>
           <li>
-            <strong>Falsch bekannt:</strong> Der Spieler wird mit mindestens 6 Minuspunkten bestraft
-            und bereits getätigte Ansagen werden extra angerechnet. Außerdem muss der Spieler seinen
-            Mitspielern einen Kuchen backen. Beim Eingeben des Spiels in die Liste muss das falsche
-            Bekennen angegeben werden.
+            <strong>Falsch bekannt:</strong> Wer falsch bekennt, wird mit mindestens 6 Minuspunkten
+            bestraft, bereits getätigte Ansagen werden extra angerechnet. Außerdem muss die Person
+            allen anderen am Tisch einen Kuchen backen. Beim Eingeben des Spiels in die Liste muss
+            das falsche Bekennen angegeben werden.
           </li>
         </ul>
       </div>

@@ -44,7 +44,7 @@ class StoreGame extends FormRequest
             }
 
             if ($this->input('misplayed') && $this->input('points') < 2) {
-                $validator->errors()->add('points', 'Wenn sich jemand vergibt, verliert er mit mindestens 2 Punkten!');
+                $validator->errors()->add('points', 'Wer sich vergibt, verliert mit mindestens 2 Punkten!');
             }
         });
     }
@@ -55,8 +55,8 @@ class StoreGame extends FormRequest
     public function messages(): array
     {
         return [
-            'winners.required' => 'Es muss mindestens ein Gewinner ausgewählt werden!',
-            'winners.max' => 'Es dürfen höchstens drei Gewinner ausgewählt werden!',
+            'winners.required' => 'Wähle mindestens eine Person aus, die gewonnen hat!',
+            'winners.max' => 'Es können höchstens drei Personen gewinnen!',
             'points.required' => 'Es muss eine Punktzahl angegeben werden!',
         ];
     }

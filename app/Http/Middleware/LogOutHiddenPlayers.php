@@ -24,7 +24,7 @@ class LogOutHiddenPlayers
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        Toast::error('Dein Konto ist gesperrt. Wende dich bitte an den Administrator.');
+        Toast::error('Dein Konto ist gesperrt. Wende dich bitte an die Administration.');
 
         return redirect()->route('login');
     }

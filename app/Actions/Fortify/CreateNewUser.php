@@ -39,7 +39,7 @@ class CreateNewUser implements CreatesNewUsers
             'g-recaptcha-response' => $viaSocialite ? [] : ['required', 'captcha'],
         ], [
             'g-recaptcha-response.required' => 'Bitte bestätige, dass du kein Roboter bist.',
-            'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder kontaktiere den Administrator.',
+            'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder wende dich an die Administration.',
         ])->validate();
 
         return $this->playerRegistration->register(
