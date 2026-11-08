@@ -217,3 +217,32 @@ describe('useLivePoverty: Armut mitnehmen und zurückgeben', () => {
     expect(poverty.selectedIds.value).toEqual([]);
   });
 });
+
+describe('useLivePoverty: erhaltene Karten', () => {
+  const received = { ...card(6), armut_zurueck: true };
+  const hand = [...plainHand, received, { ...card(7), armut_zurueck: true }];
+
+  it('kennzeichnet beim Zurückgeben die Karten, die ich aus der Armut bekommen habe', () => {
+    const { poverty } = setup(game({ phase: 33 }), me(hand));
+
+    expect(poverty.receivedIds.value).toEqual([6, 7]);
+  });
+
+  it('kennzeichnet nichts, solange ich keine Armut mitgenommen habe', () => {
+    const { poverty } = setup(game({ phase: 3 }), me(hand));
+
+    expect(poverty.receivedIds.value).toEqual([]);
+  });
+
+  it('kennzeichnet nichts mehr, sobald das Spiel läuft', () => {
+    const { poverty } = setup(game({ phase: 4 }), me(hand));
+
+    expect(poverty.receivedIds.value).toEqual([]);
+  });
+
+  it('kennzeichnet nichts für Zuschauer ohne eigenen Spieler', () => {
+    const { poverty } = setup(game({ phase: 33 }), null);
+
+    expect(poverty.receivedIds.value).toEqual([]);
+  });
+});

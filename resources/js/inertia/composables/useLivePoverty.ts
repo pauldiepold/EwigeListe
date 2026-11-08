@@ -14,6 +14,8 @@ export type LivePoverty = {
   toggle: (card: LiveEngineCard) => void;
   /** Genau drei Karten sind gewählt; erst dann erscheint der Button zum Abgeben bzw. Zurückgeben. */
   canSubmit: ComputedRef<boolean>;
+  /** Beim Zurückgeben: die Karten auf meiner Hand, die ich aus der Armut mitgenommen habe. */
+  receivedIds: ComputedRef<number[]>;
   /** Die Armut wollte abgeben, hat aber noch Trumpf auf der Hand („Du musst all deinen Trumpf abgeben!“). */
   trumpLeft: Ref<boolean>;
   /** Die Armut gibt die gewählten Karten ab. */
@@ -40,6 +42,12 @@ export function useLivePoverty(options: {
   const isMyTurn = computed(() => state.liveGame.value?.dran === viewerPlayerId);
   const selecting = computed(
     () => state.ich.value !== null && isMyTurn.value && (phase.value === 3 || phase.value === 33),
+  );
+
+  const receivedIds = computed(() =>
+    state.ich.value !== null && phase.value === 33
+      ? state.hand.value.filter((card) => card.armut_zurueck).map((card) => card.id)
+      : [],
   );
 
   const selectedIds = ref<number[]>([]);
@@ -112,5 +120,5 @@ export function useLivePoverty(options: {
     }
   }
 
-  return { selecting, selectedIds, toggle, canSubmit, trumpLeft, give, answer, giveBack };
+  return { selecting, selectedIds, receivedIds, toggle, canSubmit, trumpLeft, give, answer, giveBack };
 }

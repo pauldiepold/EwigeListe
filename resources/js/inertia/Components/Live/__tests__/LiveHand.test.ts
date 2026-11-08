@@ -101,6 +101,16 @@ describe('LiveHand', () => {
       expect(onPress).not.toHaveBeenCalled();
     });
 
+    it('kennzeichnet die erhaltenen Armut-Karten', () => {
+      renderHand({ interactive: true, receivedIds: [herzZehn.id] });
+
+      expect(
+        screen.getByRole('button', { name: 'Herz 10 (aus der Armut erhalten)' }),
+      ).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Kreuz Dame' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Pik Bube' })).toBeTruthy();
+    });
+
     it('macht die Karten zu Schaltern, sobald es eine Auswahl gibt', () => {
       renderHand({ interactive: true, selectedIds: [pikBube.id] });
 

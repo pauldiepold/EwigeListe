@@ -268,6 +268,16 @@ describe('Live-Seite: Armut mitnehmen und zurückgeben', () => {
     });
   });
 
+  it('kennzeichnet beim Zurückgeben die mitgenommenen Karten', async () => {
+    const taken = { ...kreuzNeun, armut_zurueck: true };
+    renderShow(13, game({ phase: 33, dran: 13 }), [pikNeun, pikKoenig, kreuzAss, taken]);
+
+    expect(
+      await screen.findByRole('button', { name: 'Kreuz 9 (aus der Armut erhalten)' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Pik 9' })).toBeTruthy();
+  });
+
   it('wechselt per Push von der Auswahl zur Frage, ohne alte Auswahl mitzunehmen', async () => {
     renderShow(12, game(), hand);
     await userEvent.click(await screen.findByRole('button', { name: 'Pik 9' }));

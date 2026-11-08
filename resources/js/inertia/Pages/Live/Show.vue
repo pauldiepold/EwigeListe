@@ -248,6 +248,7 @@ const messagesOpen = ref(false);
           :interactive="poverty.selecting.value || play.handInteractive.value"
           :is-playable="poverty.selecting.value ? undefined : play.isPlayable"
           :selected-ids="poverty.selecting.value ? poverty.selectedIds.value : undefined"
+          :received-ids="poverty.receivedIds.value"
           @press="pressCard"
         />
       </template>

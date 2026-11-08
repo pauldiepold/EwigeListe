@@ -19,8 +19,10 @@ const props = withDefaults(
      * Karten Schalter, und ausgewählte rücken in ihrer Achse nach oben.
      */
     selectedIds?: number[];
+    /** IDs der Karten, die ich aus der Armut bekommen habe; sie tragen eine Markierung. */
+    receivedIds?: number[];
   }>(),
-  { interactive: false, isPlayable: () => true, selectedIds: undefined },
+  { interactive: false, isPlayable: () => true, selectedIds: undefined, receivedIds: () => [] },
 );
 
 defineEmits<{
@@ -54,6 +56,7 @@ const cardStyles = computed(() =>
         :interactive="interactive"
         :playable="isPlayable(card)"
         :selected="selectedIds ? selectedIds.includes(card.id) : undefined"
+        :received="receivedIds.includes(card.id)"
         @press="$emit('press', card)"
       />
     </div>
