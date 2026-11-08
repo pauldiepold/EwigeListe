@@ -2,66 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateEmail;
-use App\Http\Requests\UpdateListen;
-use App\Http\Requests\UpdateName;
-use App\Http\Requests\UpdatePassword;
-use App\Player;
-use App\Group;
-use App\Profile;
-use App\Round;
-use Illuminate\Database\Eloquent\Builder;
+use App\Http\Resources\BadgesResource;
+use App\Http\Resources\GroupOptionResource;
+use App\Http\Resources\PlayerShowResource;
+use App\Http\Resources\ProfileStatisticsResource;
+use App\Models\Group;
+use App\Models\Player;
+use App\Services\ProfileChartSeries;
+use App\Services\RoundArchive;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PlayerController extends Controller
 {
+    public function show(
+        Request $request,
+        RoundArchive $roundArchive,
+        ProfileChartSeries $profileChartSeries,
+        Player $player,
+        ?Group $group = null,
+    ): Response {
+        $this->authorize('view', $player);
 
-    public function show(Player $player, Group $group = null)
-    {
-        $selectedGroup = !$group ? Group::find(1) : $group;
+        $group ??= Group::findOrFail(Group::EWIGE_LISTE_ID);
+        $profile = $player->profiles()->where('group_id', $group->id)->firstOrFail();
+        $badges = $player->badges()->where('group_id', $group->id)->with('player')->get();
+        $hasStatistics = $profile->games >= ProfileStatisticsResource::MINIMUM_GAMES;
 
-        $player->load(['profiles.group', 'groups', 'rounds', 'games', 'badges']);
-
-        $badges = $player->badges()
-            ->where('group_id', $selectedGroup->id)
-            ->with(['player', 'group'])
-            ->get()
-            ->groupBy('type');
-
-        $profile = $player->profiles()
-            ->where('group_id', $selectedGroup->id)
-            ->first();
-
-        $rounds_count = $player->rounds()
-            ->whereHas('groups', function (Builder $query) use ($selectedGroup)
-            {
-                $query->where('groups.id', '=', $selectedGroup->id);
-            })
-            ->count();
-
-        return view('players.show', compact('player', 'profile', 'rounds_count', 'selectedGroup', 'badges'));
-
+        return Inertia::render('Players/Show', [
+            'player' => new PlayerShowResource($player),
+            'groupOptions' => GroupOptionResource::collection($player->groups)->resolve($request),
+            'selectedGroupId' => $group->id,
+            'profile' => new ProfileStatisticsResource($profile),
+            'badges' => (new BadgesResource($badges))->withoutLinks(),
+            'badgeCount' => $badges->count(),
+            ...$roundArchive->forGroup($group, $request, $player),
+            ...($hasStatistics ? ['profileChart' => Inertia::optional(fn (): array => $profileChartSeries->forProfile($profile))] : []),
+        ]);
     }
-
-    public function calculateAll()
-    {
-        Player::all()->each(function ($player, $key)
-        {
-            $player->calculate();
-        });
-
-        return redirect('/liste/1');
-    }
-
-    public function calculate(Player $player)
-    {
-        $player->calculate();
-
-        return redirect($player->path());
-    }
-
 }

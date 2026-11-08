@@ -1,0 +1,116 @@
+# Ewige Liste
+
+Web-App, mit der eine feste Doppelkopf-Runde von Freunden ihre Spiele erfasst, auswertet und online live gegeneinander spielt.
+
+## Language
+
+### Spielbetrieb
+
+**Runde**:
+Ein Doppelkopf-Abend mit fester Besetzung, in dem nacheinander mehrere Spiele gespielt werden. Eine Runde kann für mehrere Listen gleichzeitig zählen.
+_Avoid_: Session, Partie, Abend
+
+**Spiel**:
+Ein einzelnes Doppelkopf-Spiel innerhalb einer Runde, mit Punkten für die beteiligten Spieler.
+_Avoid_: Partie, Hand
+
+**Offline-Runde**:
+Eine Runde am echten Tisch, deren Spiele von Hand eingetragen werden.
+
+**Live-Runde**:
+Eine Runde, die in der App gespielt wird; ihre Spiele entstehen automatisch.
+
+**Regeln**:
+Die Einstellungen, nach denen in einer Live-Runde gespielt wird (z. B. Super-Schwein, Karlchen, Königssolo). Sie werden beim Anlegen der Runde festgelegt, sind mit dem üblichen Standard vorbelegt und gelten danach unverändert für alle Spiele der Runde.
+_Avoid_: Sonderregeln, Einstellungen
+
+**Zuschauer**:
+Ein Benutzer, der eine Live-Runde ansieht, ohne im aktuellen Spiel mitzuspielen, etwa weil er aussetzt oder nicht zur Runde gehört. Er sieht keine Hände.
+_Avoid_: Beobachter, Gast
+
+**Geber**:
+Der Spieler, der im aktuellen Spiel gibt. Das Amt wandert nach jedem Spiel weiter, außer nach Soli und falsch bedienten Spielen.
+_Avoid_: Dealer
+
+**Geberumlauf**:
+Jeder Spieler einer Runde hat einmal gegeben. Am Tisch heißt das oft ebenfalls „Runde“; hier ist damit immer der ganze Abend gemeint.
+_Avoid_: Runde (für den Umlauf)
+
+**Sitzreihenfolge**:
+Die Reihenfolge, in der die Spieler einer Runde am Tisch sitzen. Sie wird beim Erstellen der Runde festgelegt: Der Erste gibt zuerst, danach wandert das Amt des Gebers in dieser Reihenfolge weiter.
+_Avoid_: Spielerreihenfolge
+
+**Aussetzen**:
+Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus. Bei fünf Spielern setzt der Geber aus.
+
+### Am Tisch
+
+**Karte**:
+Eine Spielkarte des französischen Doppelkopf-Blatts: Farbe (Kreuz, Pik, Herz, Karo) und Rang (9, 10, Bube, Dame, König, Ass), jede Karte gibt es zweimal. Benannt wird sie mit Farbe vor Rang, z. B. „Kreuz Dame“.
+_Avoid_: Bauer, Junge, Treff
+
+**Hand**:
+Die Karten, die ein Spieler im laufenden Spiel hält; zu Beginn zwölf.
+_Avoid_: Blatt
+
+**Stich**:
+Die vier Karten, die die Spieler eines Spiels reihum nacheinander legen; wer die höchste gelegt hat, bekommt ihn.
+_Avoid_: Runde (für den Stich)
+
+### Personen
+
+**Spieler**:
+Eine Person, die in Runden mitspielt und Punkte sammelt. Jeder Spieler gehört zu genau einem Benutzer. Er hat einen Vor- und einen Nachnamen; in der Runde steht nur der Vorname. Beim Eintragen eines Spiels wird er bei gleichen Vornamen am Tisch um so viele Buchstaben des Nachnamens ergänzt, bis sie sich unterscheiden („Paul Di.“).
+_Avoid_: Mitspieler, Teilnehmer, User
+
+**Benutzer**:
+Das Konto eines Spielers; bei Schnellregistrierung ohne vorgesehenen Login.
+_Avoid_: Account, User, Spieler
+
+**Avatar**:
+Das Bild einer Person; gehört zum Benutzer und gilt damit in allen Listen. Ohne Avatar werden die Initialen gezeigt.
+_Avoid_: Profilbild
+
+**Schnellregistrierung**:
+Ein angemeldeter Benutzer legt beim Erstellen einer Runde für eine andere Person einen Spieler an, der sofort in der Runde mitspielt. Dazu entsteht ein Benutzer ohne echte E-Mail und ohne bekanntes Passwort; ein Login ist nicht vorgesehen, ließe sich durch Nachtragen der echten E-Mail und „Passwort vergessen“ nachholen.
+_Avoid_: Quick-Register, Gastspieler
+
+**Versteckter Spieler**:
+Ein Spieler, der nicht mehr für neue Runden ausgewählt werden kann (z. B. ehemalige Mitspieler oder Testkonten). Er kann sich nicht einloggen, sein Profil ist nur für den Admin sichtbar. Wird nur direkt in der Datenbank gesetzt.
+_Avoid_: Inaktiver Spieler, gelöschter Spieler
+
+### Auswertung
+
+**Liste**:
+Eine benannte Sammlung von Spielern, deren gemeinsame Runden zusammen ausgewertet werden (Tabelle, Rekorde, Statistiken).
+_Avoid_: Gruppe, Group, Tabelle
+
+**Ewige Liste**:
+Die besondere Liste der App, für die jede Runde automatisch zählt. Wird gezeigt, wenn keine andere Liste gewählt ist. Sie kann weder geschlossen noch verlassen werden.
+_Avoid_: Hauptliste, Default-Gruppe
+
+**Standardliste**:
+Eine Liste, die ein Spieler für sich markiert hat. Sie wird automatisch ausgewählt, sobald er einer neuen Runde hinzugefügt wird.
+_Avoid_: Default-Liste, Lieblingsliste
+
+**Geschlossene Liste**:
+Eine Liste, der keine neuen Runden mehr hinzugefügt werden können und deren Mitglieder feststehen. Ihre bisherigen Runden und Statistiken bleiben erhalten.
+_Avoid_: Archivierte Liste, gesperrte Liste
+
+**Mitglied**:
+Ein Spieler, der zu einer Liste gehört. Sein Profil ist seine Auswertung in dieser Liste.
+_Avoid_: Teilnehmer
+
+**Profil**:
+Ein Spieler in genau einer Liste, samt seiner Statistik in dieser Liste. Nicht das Benutzerkonto.
+_Avoid_: Benutzerprofil, Account
+
+**Rekord**:
+Der Bestwert unter den Profilen einer Liste, samt der Spieler, die ihn halten.
+
+**Listenstatistik**:
+Eine Kennzahl über alle Spiele einer Liste, zum Beispiel die Anzahl der Spiele insgesamt.
+
+**Abzeichen**:
+Auszeichnung für den Spieler mit den meisten Punkten bzw. Spielen einer Liste in einem Kalendermonat. Bei Gleichstand bekommt es nur ein Spieler.
+_Avoid_: Badge, Monatsrekord

@@ -1,5 +1,4 @@
 /.idea/
-.editorconfig
 /node_modules
 /public/hot
 /public/storage
@@ -13,3 +12,12 @@ npm-debug.log
 yarn-error.log
 *.sql
 *.Identifier
+public/build
+auto-imports.d.ts
+components.d.ts
+.claude/settings.local.json
+
+# Wayfinder (generiert vom Vite-Plugin)
+/resources/js/inertia/actions
+/resources/js/inertia/routes
+/resources/js/inertia/wayfinder

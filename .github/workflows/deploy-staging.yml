@@ -11,19 +11,34 @@ on:
         options:
           - 'yes'
           - 'no'
+  push:
+    branches:
+      - inertia-migration
+
+# Nie zwei Deploys gleichzeitig: ein neuer wartet, bis der laufende fertig ist.
+# Laufende Deploys werden nicht abgebrochen (sonst bleibt Staging im Wartungsmodus).
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
+    # Direkt per OpenSSH des Runners statt `appleboy/ssh-action`: Die Action lädt bei jedem Lauf
+    # ein Binary von GitHub-Releases nach, und dieser Download scheiterte wiederholt mit 504.
+    # Gleicher Aufbau wie `deploy-prod.yml`; beide synchron halten.
     steps:
+      - name: SSH-Schlüssel einrichten
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" 'bash -s' <<'DEPLOY'
             set -e
 
             cd ${{ secrets.STAGING_PATH }}
@@ -35,11 +50,23 @@ jobs:
             git checkout ${{ github.ref_name }}
             git reset --hard origin/${{ github.ref_name }}
 
+            # Zwischengespeicherte Provider- und Config-Listen des alten Stands verweisen auf gelöschte Klassen;
+            # schon `artisan down` würde daran scheitern.
+            echo "=== Bootstrap-Cache leeren ==="
+            rm -f bootstrap/cache/*.php
+
+            # Vor `artisan down`: Die Config des neuen Stands kann Klassen neuer Pakete brauchen
+            # (z. B. `Laravel\Fortify\Features` in `config/fortify.php`).
+            echo "=== Composer Install ==="
+            composer install --optimize-autoloader
+
             echo "=== Maintenance ON ==="
             php artisan down
 
-            echo "=== Composer Install ==="
-            composer install --optimize-autoloader
+            # Wayfinder liest beim Build die Routen; ein alter Cache würde neue Routen verschweigen.
+            echo "=== Caches leeren ==="
+            php artisan route:clear
+            php artisan config:clear
 
             echo "=== NPM Build ==="
             export NVM_DIR="$HOME/.nvm"
@@ -47,7 +74,8 @@ jobs:
             npm ci
             npm run prod
 
-            if [ "${{ github.event.inputs.sync_db }}" = "yes" ]; then
+            # Beim Push gibt es keine Inputs: dann immer mit frischem Prod-Dump.
+            if [ "${{ github.event.inputs.sync_db || 'yes' }}" = "yes" ]; then
               echo "=== DB Sync: neuesten Dump suchen ==="
               LATEST_DUMP=$(ls -t ${{ secrets.BACKUP_DUMP_PATH }}/*.sql.gz | head -1)
               echo "Verwende Dump: $LATEST_DUMP"
@@ -57,12 +85,21 @@ jobs:
                 -u ${{ secrets.STAGING_DB_USER }} \
                 -p${{ secrets.STAGING_DB_PASSWORD }} \
                 ${{ secrets.STAGING_DB_NAME }}
+
+              # Die Dateinamen stehen in `users.avatar`: Bilder nur zusammen mit dem Dump spiegeln.
+              echo "=== Avatare von Prod kopieren ==="
+              mkdir -p storage/app/public/avatars
+              rsync -a --delete ${{ secrets.PROD_PATH }}/storage/app/public/avatars/ storage/app/public/avatars/
             else
               echo "=== DB Sync übersprungen ==="
             fi
 
             echo "=== Migrations ==="
             php artisan migrate --force
+
+            # Ohne den Link `public/storage` liefert der Server die Avatare mit 404 aus.
+            echo "=== Storage-Link ==="
+            php artisan storage:link || true
 
             echo "=== Cache ==="
             php artisan config:cache
@@ -71,3 +108,10 @@ jobs:
 
             echo "=== Maintenance OFF ==="
             php artisan up
+
+            # Der Prod-Dump kennt die Listenstatistik noch nicht in den neuen Spalten.
+            if [ "${{ github.event.inputs.sync_db || 'yes' }}" = "yes" ]; then
+              echo "=== Statistiken neu berechnen ==="
+              php artisan stats:recalculate
+            fi
+          DEPLOY

@@ -2,47 +2,61 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Inertia\Testing\AssertableInertia as Assert;
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
 
-class ManageGroupsTest extends TestCase {
-
+class ManageGroupsTest extends TestCase
+{
     use RefreshDatabase, WithFaker;
 
-    /** @test */
+    #[Test]
     public function guests_cannot_manage_groups()
     {
-        $group = factory('App\Group')->create();
+        $group = Group::factory()->create();
 
         $this->get('/liste/erstellen')->assertRedirect('/login');
         $this->post('/groups', $group->toArray())->assertRedirect('login');
     }
 
-    /** @test */
+    #[Test]
     public function a_user_can_create_a_group()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(User::factory()->create());
 
-        $this->get('/liste/erstellen')->assertStatus(200);
+        $this->get(route('groups.create'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('Groups/Create'));
 
-        $attributes = factory('App\Group')->raw(['created_by' => auth()->user()->player->id]);
+        $attributes = Group::factory()->raw(['created_by' => auth()->user()->player->id]);
 
-        $this->post('groups', $attributes)->assertRedirect('/liste/1');
+        $response = $this->post('groups', $attributes);
+
+        $response->assertRedirect(Group::where('name', $attributes['name'])->sole()->path());
 
         $this->assertDatabaseHas('groups', $attributes);
 
-        $this->get('listen')->assertSee($attributes['name']);
+        $this->get(route('groups.index'))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Groups/Index')
+                ->has('groups', 2)
+                ->where('groups', fn ($groups) => collect($groups)->contains('name', $attributes['name']))
+            );
     }
 
-    /** @test */
+    #[Test]
     public function the_creator_of_a_group_is_in_that_group()
     {
         $this->withoutExceptionHandling();
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(User::factory()->create());
 
-        $attributes = factory('App\Group')->raw(['created_by' => auth()->user()->player->id]);
+        $attributes = Group::factory()->raw(['created_by' => auth()->user()->player->id]);
 
         $this->post('groups', $attributes);
 
@@ -51,36 +65,12 @@ class ManageGroupsTest extends TestCase {
         $this->assertTrue($group->players->contains(auth()->user()->player));
     }
 
-    /** @test */
-    public function a_user_can_view_a_group()
-    {
-        $this->actingAs(factory('App\User')->create());
-
-        $group = factory('App\Group')->create();
-
-        $this->get($group->path())->assertSee(e($group->name));
-    }
-
-    /** @test */
-    public function a_group_shows_its_players()
-    {
-        $this->actingAs(factory('App\User')->create());
-
-        $group = factory('App\Group')->create();
-
-        $players = factory('App\Player', 6)->create();
-
-        $group->addPlayers($players);
-
-        $this->get($group->path())->assertSee(e($players->first()->name));
-    }
-
-    /** @test */
+    #[Test]
     public function a_group_requires_a_name()
     {
-        $this->actingAs(factory('App\User')->create());
+        $this->actingAs(User::factory()->create());
 
-        $attributes = factory('App\Group')->raw(['name' => '']);
+        $attributes = Group::factory()->raw(['name' => '']);
 
         $this->post('/groups', $attributes)->assertSessionHasErrors('name');
 

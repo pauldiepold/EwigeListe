@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class LiveGame extends JsonResource
@@ -9,14 +10,13 @@ class LiveGame extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request)
     {
         return [
             'id' => $this->id,
-            'is_with_ai' => $this->is_with_ai,
             'phase' => $this->phase,
             'dran' => $this->dran,
             'stichNr' => $this->stichNr,
@@ -34,7 +34,7 @@ class LiveGame extends JsonResource
             'gewinntRe' => $this->when($this->beendet, $this->gewinntRe),
             'wertungsPunkte' => $this->when($this->beendet, $this->wertungsPunkte),
             'kontrasOffengelegt' => $this->kontrasOffengelegt,
-            //'stiche' => $this->stiche,
+            // 'stiche' => $this->stiche,
             'reAbsage' => $this->reAbsage,
             'kontraAbsage' => $this->kontraAbsage,
             'reAnsage' => $this->reAnsage,

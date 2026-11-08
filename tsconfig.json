@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.inertia.json",
+  "include": [
+    "resources/js/**/*.ts",
+    "resources/js/**/*.vue",
+    "auto-imports.d.ts",
+    "components.d.ts"
+  ]
+}
