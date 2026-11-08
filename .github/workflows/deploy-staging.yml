@@ -85,12 +85,21 @@ jobs:
                 -u ${{ secrets.STAGING_DB_USER }} \
                 -p${{ secrets.STAGING_DB_PASSWORD }} \
                 ${{ secrets.STAGING_DB_NAME }}
+
+              # Die Dateinamen stehen in `users.avatar`: Bilder nur zusammen mit dem Dump spiegeln.
+              echo "=== Avatare von Prod kopieren ==="
+              mkdir -p storage/app/public/avatars
+              rsync -a --delete ${{ secrets.PROD_PATH }}/storage/app/public/avatars/ storage/app/public/avatars/
             else
               echo "=== DB Sync übersprungen ==="
             fi
 
             echo "=== Migrations ==="
             php artisan migrate --force
+
+            # Ohne den Link `public/storage` liefert der Server die Avatare mit 404 aus.
+            echo "=== Storage-Link ==="
+            php artisan storage:link || true
 
             echo "=== Cache ==="
             php artisan config:cache

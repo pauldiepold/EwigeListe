@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Game;
 use App\Models\Group;
 use App\Models\LiveRound;
+use App\Models\Player;
 use App\Models\Round;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -136,6 +137,21 @@ class RoundArchiveTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('rounds.current_page', 2)
                 ->has('rounds.data', 1)
+            );
+    }
+
+    #[Test]
+    public function the_archive_lists_the_first_names_of_the_players(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $round = $this->roundInList(Group::findOrFail(Group::EWIGE_LISTE_ID));
+        foreach (['Anna', 'Ben', 'Cem'] as $index => $firstName) {
+            $round->players()->attach(Player::factory()->create(['first_name' => $firstName]), ['index' => $index]);
+        }
+
+        $this->get(route('rounds.index'))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('rounds.data.0.players_label', 'Anna, Ben und Cem')
             );
     }
 
