@@ -42,7 +42,7 @@ defineSlots<{
       <UIcon name="i-lucide-scroll-text" class="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
       <span>
         Regeln:
-        {{ ruleLabels.length ? ruleLabels.join(', ') : 'ohne Sonderregeln' }}
+        {{ ruleLabels.length ? ruleLabels.join(', ') : 'alle Regeln aus' }}
       </span>
     </p>
     <!-- Als einzige bedienbare Zeile mit Text: Die Aktionen beziehen sich auf das letzte Spiel. -->
