@@ -4,10 +4,6 @@ on:
   pull_request:
     branches:
       - master
-      - inertia-migration
-  push:
-    branches:
-      - inertia-migration
 
 concurrency:
   group: ci-${{ github.ref }}

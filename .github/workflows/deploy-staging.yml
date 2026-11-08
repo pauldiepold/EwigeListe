@@ -1,5 +1,6 @@
 name: Deploy Staging
 
+# Nur manuell: seit dem Go-Live gibt es keinen Integrationsbranch mehr, Staging zeigt gezielt einen Feature-Branch.
 on:
   workflow_dispatch:
     inputs:
@@ -11,9 +12,6 @@ on:
         options:
           - 'yes'
           - 'no'
-  push:
-    branches:
-      - inertia-migration
 
 # Nie zwei Deploys gleichzeitig: ein neuer wartet, bis der laufende fertig ist.
 # Laufende Deploys werden nicht abgebrochen (sonst bleibt Staging im Wartungsmodus).
@@ -57,8 +55,10 @@ jobs:
 
             # Vor `artisan down`: Die Config des neuen Stands kann Klassen neuer Pakete brauchen
             # (z. B. `Laravel\Fortify\Features` in `config/fortify.php`).
+            # Ohne Dev-Pakete (Debugbar, Telescope, Boost, PHPUnit …): Zur Laufzeit braucht sie nichts,
+            # Telescope registriert `AppServiceProvider` nur lokal.
             echo "=== Composer Install ==="
-            composer install --optimize-autoloader
+            composer install --no-dev --optimize-autoloader
 
             echo "=== Maintenance ON ==="
             php artisan down
