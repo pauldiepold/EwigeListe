@@ -27,6 +27,7 @@ jobs:
 
     # Direkt per OpenSSH des Runners statt `appleboy/ssh-action`: Die Action lädt bei jedem Lauf
     # ein Binary von GitHub-Releases nach, und dieser Download scheiterte wiederholt mit 504.
+    # Gleicher Aufbau wie `deploy-prod.yml`; beide synchron halten.
     steps:
       - name: SSH-Schlüssel einrichten
         run: |
