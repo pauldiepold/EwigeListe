@@ -41,7 +41,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | ✅ |
-| 5 | Live-Spiel im neuen Design | #36 | todo |
+| 5 | Live-Spiel im neuen Design | #36 (Karten #94 ✅) | todo |
 | 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
 
