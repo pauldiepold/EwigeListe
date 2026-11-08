@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Group;
+use App\Models\LiveRound;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
@@ -31,6 +32,7 @@ class StoreRound extends FormRequest
             'groups' => 'array',
             'groups.*' => 'exists:groups,id',
             'liveGame' => 'required|boolean',
+            ...array_fill_keys(array_keys(LiveRound::RULE_DEFAULTS), 'sometimes|boolean'),
         ];
     }
 
@@ -69,6 +71,16 @@ class StoreRound extends FormRequest
                 $validator->errors()->add('groups', "Keiner der Spieler ist Mitglied der Liste {$group->name}.");
             }
         }
+    }
+
+    /**
+     * Die Regeln der Live-Runde, ergänzt um den Standard.
+     *
+     * @return array<string, bool>
+     */
+    public function liveRules(): array
+    {
+        return LiveRound::normalizeRules($this->safe()->only(array_keys(LiveRound::RULE_DEFAULTS)));
     }
 
     public function messages()

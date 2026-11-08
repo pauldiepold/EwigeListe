@@ -2,6 +2,9 @@
 import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { useSortable } from '@vueuse/integrations/useSortable';
+import LiveRulesConfirmModal from '@/Components/Live/LiveRulesConfirmModal.vue';
+import LiveRulesFields from '@/Components/Live/LiveRulesFields.vue';
+import { defaultLiveRules } from '@/Components/Live/liveRules';
 import QuickRegisterModal from '@/Components/Rounds/QuickRegisterModal.vue';
 import RoundListSelection from '@/Components/Rounds/RoundListSelection.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -29,6 +32,10 @@ const form = useForm({
   groups: [] as number[],
   liveGame: false,
 });
+
+/** Die Regeln liegen neben dem Formular und gehen nur bei einer Online-Runde als einzelne Felder mit. */
+const liveRules = ref(defaultLiveRules());
+const confirmingRules = ref(false);
 
 const {
   selectableLists,
@@ -129,16 +136,33 @@ async function movePlayer(fromIndex: number, toIndex: number): Promise<void> {
   seatList.value?.querySelector<HTMLElement>(`[data-drag-handle="${moved.id}"]`)?.focus();
 }
 
+/** Online-Runden fragen vorher nach den Regeln, weil sie sich danach nicht mehr ändern lassen. */
 function submitRound(): void {
   hasTriedToStart.value = true;
   if (!canStart.value || form.processing) {
     return;
   }
 
+  if (form.liveGame) {
+    confirmingRules.value = true;
+    return;
+  }
+
+  createRound();
+}
+
+function createRound(): void {
   form.players = selectedPlayers.value.map((player) => player.id);
   form.groups = selectedListIds.value;
-  // Nur bei Fehlern bleiben, wo man ist; die neue Runde öffnet oben.
-  form.post(storeRound.url(), { preserveScroll: 'errors' });
+  form
+    .transform((data) => (data.liveGame ? { ...data, ...liveRules.value } : data))
+    // Nur bei Fehlern bleiben, wo man ist; die neue Runde öffnet oben.
+    .post(storeRound.url(), {
+      preserveScroll: 'errors',
+      onFinish: () => {
+        confirmingRules.value = false;
+      },
+    });
 }
 
 const initialPlayer = props.players.find((player) => player.id === authPlayerId);
@@ -267,6 +291,16 @@ if (initialPlayer) {
           </button>
         </div>
 
+        <section v-if="form.liveGame" class="w-full space-y-2" aria-labelledby="live-rules-heading">
+          <div class="text-center">
+            <h2 id="live-rules-heading" class="text-muted">Regeln</h2>
+            <p class="text-xs text-dimmed">
+              Gelten für die ganze Runde und lassen sich später nicht mehr ändern.
+            </p>
+          </div>
+          <LiveRulesFields v-model="liveRules" />
+        </section>
+
         <UAlert
           v-if="validationError"
           color="error"
@@ -296,6 +330,13 @@ if (initialPlayer) {
           </p>
         </div>
       </section>
+
+      <LiveRulesConfirmModal
+        v-model:open="confirmingRules"
+        :rules="liveRules"
+        :loading="form.processing"
+        @confirm="createRound"
+      />
 
       <RoundListSelection
         v-if="selectedPlayers.length"
