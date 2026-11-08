@@ -95,7 +95,7 @@ class GameController extends Controller
             $spieler = $liveGame->getSpieler();
             $armutSpieler = $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'));
 
-            $liveGame->pushMessage("<b>$spieler->name</b>: nimmt die Armut mit!");
+            $liveGame->pushMessage('nimmt die Armut mit!', $spieler->id);
 
             $hand = $spieler->hand->concat($armutSpieler->armutKarten);
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\LiveMessagesCast;
 use App\Casts\SticheCast;
 use App\Events\LiveGameSaved;
 use App\Events\RoundUpdated;
@@ -77,7 +78,7 @@ class LiveGame extends Model
         'aktuellerStich' => 'object',
         'beendet' => 'boolean',
         'gewinntRe' => 'boolean',
-        'messages' => 'collection',
+        'messages' => LiveMessagesCast::class,
         'geschmissen' => 'boolean',
         'geheiratet' => 'boolean',
         'winners' => 'collection',
@@ -283,7 +284,7 @@ class LiveGame extends Model
                 $this->geheiratet = true;
                 $this->setAnzeige('partei', $stecher->id, 'Re-Partei');
                 $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
-                $this->pushMessage("<b>$stecher->name:</b> hat geheiratet!");
+                $this->pushMessage('hat geheiratet!', $stecher->id);
                 $this->spielerSpeichern($stecher);
 
                 $this->alleSpielerKontraSetzen($stecher->id, true);
@@ -322,7 +323,7 @@ class LiveGame extends Model
                 // Hochzeit spielt alleine
                 $this->geheiratet = true;
                 $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
-                $this->pushMessage("<b>$heirater->name:</b> spielt alleine!");
+                $this->pushMessage('spielt alleine!', $heirater->id);
 
                 $this->alleSpielerKontraSetzen($stecher->id, true);
             }
@@ -372,7 +373,7 @@ class LiveGame extends Model
                 }
 
                 $this->schweinchen = true;
-                $this->pushMessage("<b>$spieler->name:</b> Schweinchen!");
+                $this->pushMessage('Schweinchen!', $spieler->id);
             }
         }
     }
@@ -595,7 +596,7 @@ class LiveGame extends Model
             $this->pushMessage('Es wird ein Normalspiel gespielt!');
             $this->alleSpielerKontraSetzen($spieler->id, false);
         } else {
-            $this->pushMessage("<b>$spieler->name</b> spielt ein $vorbehalt!");
+            $this->pushMessage("spielt ein $vorbehalt!", $spieler->id);
             $this->alleSpielerKontraSetzen($spieler->id, true);
 
             $this->setAnzeige('spieltyp', $spieler->id, $vorbehalt);
@@ -609,7 +610,7 @@ class LiveGame extends Model
 
     public function schmeissen($position = null, $niemand_armut = false)
     {
-        $schmeisser = $position == null ? $this->getSpielerByPosition($position) : null;
+        $schmeisser = $position !== null ? $this->getSpielerByPosition($position) : null;
 
         $this->geschmissen = true;
         $this->beendet = true;
@@ -620,7 +621,7 @@ class LiveGame extends Model
         if ($niemand_armut) {
             $newGame->pushMessage('Niemand wollte die Armut mitnehmen. Neues Spiel gestartet!');
         } else {
-            $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+            $newGame->pushMessage('hat geschmissen!', $schmeisser?->id);
         }
         $newGame->save();
 
@@ -637,7 +638,7 @@ class LiveGame extends Model
         $armutSpieler = $this->getSpielerByPosition($position);
         $this->setAnzeige('spieltyp', $armutSpieler->id, 'Armut');
         $this->setAnzeige('partei', $armutSpieler->id, 'Re-Partei');
-        $this->pushMessage("<b>$armutSpieler->name</b> spielt eine Armut!");
+        $this->pushMessage('spielt eine Armut!', $armutSpieler->id);
 
         $this->dran = $armutSpieler->id;
     }
@@ -650,7 +651,7 @@ class LiveGame extends Model
         $spieler->isRe = true;
 
         $this->setAnzeige('spieltyp', $spieler->id, 'Hochzeit');
-        $this->pushMessage("<b>$spieler->name</b> spielt eine Hochzeit!");
+        $this->pushMessage('spielt eine Hochzeit!', $spieler->id);
 
         $this->alleSpielerKontraSetzen();
 
@@ -1428,7 +1429,7 @@ class LiveGame extends Model
             $this->setAnzeige('partei', $spieler->id, $ansage.'-Partei');
         }
         $this->setAnzeige('ansage', $spieler->id, $ansage);
-        $this->pushMessage("<b>$spieler->name</b>: $ansage!");
+        $this->pushMessage("$ansage!", $spieler->id);
 
         $this->wurdeOffengelegtDurchAnAbsage($spieler);
     }
@@ -1452,7 +1453,7 @@ class LiveGame extends Model
         $this->setAnzeige('absage', $spieler->id, $absageZahl);
 
         $message = $absageZahl == 0 ? 'Schwarz!' : "Keine $absageZahl!";
-        $this->pushMessage("<b>$spieler->name</b>: $message");
+        $this->pushMessage($message, $spieler->id);
     }
 
     public function wurdeOffengelegtDurchAnAbsage($spieler)
@@ -1519,14 +1520,13 @@ class LiveGame extends Model
         $this->alleSpielerKontraSetzen($spieler->id, true);
     }
 
-    public function pushMessage($message, $name = null)
+    /**
+     * Fügt eine Meldung vorn an. Der Name des Spielers gehört nicht in den Text, das Frontend setzt ihn davor.
+     */
+    public function pushMessage(string $text, ?int $spielerId = null): void
     {
         $messages = $this->messages;
-        if ($name) {
-            $message = "<b>$name:</b> $message";
-        }
-
-        $messages->prepend($message);
+        $messages->prepend(['spielerId' => $spielerId, 'text' => $text]);
         $this->messages = $messages;
     }
 
