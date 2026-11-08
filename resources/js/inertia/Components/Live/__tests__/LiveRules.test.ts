@@ -50,12 +50,21 @@ describe('LiveRulesConfirmModal', () => {
     });
   }
 
-  it('listet die aktiven Regeln', async () => {
+  it('listet aktive und deaktivierte Regeln', async () => {
     renderModal();
 
     expect(await screen.findByText('Mit diesen Regeln spielen?')).toBeTruthy();
-    expect(screen.getByText('Karlchen kann gefangen werden')).toBeTruthy();
-    expect(screen.queryByText('Königssolo')).toBeNull();
+    expect(
+      screen.getByRole('listitem', { name: 'Karlchen kann gefangen werden: an' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Königssolo: aus' })).toBeTruthy();
+  });
+
+  it('lässt abhängige Regeln weg, wenn die übergeordnete aus ist', async () => {
+    renderModal({ rules: { ...defaultLiveRules(), karlchen: false } });
+
+    expect(await screen.findByRole('listitem', { name: 'Karlchen: aus' })).toBeTruthy();
+    expect(screen.queryByText('Karlchen kann gefangen werden')).toBeNull();
   });
 
   it('meldet „Runde erstellen“ als Bestätigung', async () => {

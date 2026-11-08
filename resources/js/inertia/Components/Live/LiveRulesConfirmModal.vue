@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { activeLiveRuleLabels, type LiveRules } from '@/Components/Live/liveRules';
+import { liveRuleOverview, type LiveRules } from '@/Components/Live/liveRules';
 
 /**
  * Rückfrage vor dem Anlegen einer Online-Runde. Die Regeln lassen sich danach nicht mehr ändern,
@@ -17,7 +17,7 @@ defineEmits<{
   confirm: [];
 }>();
 
-const labels = computed(() => activeLiveRuleLabels(props.rules));
+const overview = computed(() => liveRuleOverview(props.rules));
 </script>
 
 <template>
@@ -29,13 +29,23 @@ const labels = computed(() => activeLiveRuleLabels(props.rules));
     :ui="{ content: 'top-4 translate-y-0 sm:top-16' }"
   >
     <template #body>
-      <ul v-if="labels.length" class="space-y-2">
-        <li v-for="label in labels" :key="label" class="flex items-center gap-2">
-          <UIcon name="i-lucide-check" class="size-4 shrink-0 text-primary" aria-hidden="true" />
-          <span>{{ label }}</span>
+      <ul class="space-y-2">
+        <li
+          v-for="rule in overview"
+          :key="rule.label"
+          :aria-label="`${rule.label}: ${rule.active ? 'an' : 'aus'}`"
+          class="flex items-center gap-2"
+          :class="{ 'text-muted': !rule.active }"
+        >
+          <UIcon
+            :name="rule.active ? 'i-lucide-check' : 'i-lucide-x'"
+            class="size-4 shrink-0"
+            :class="rule.active ? 'text-primary' : 'text-muted'"
+            aria-hidden="true"
+          />
+          <span>{{ rule.label }}</span>
         </li>
       </ul>
-      <p v-else class="text-muted">Keine Sonderregeln.</p>
     </template>
 
     <template #footer>

@@ -91,11 +91,11 @@ function deleteRound(): void {
     </template>
 
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
-      <div v-if="round.isLive" class="mt-2 flex justify-center">
+      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mt-2 mb-6 w-full" />
+
+      <div v-if="round.isLive" class="mb-6 flex justify-center">
         <LiveRoundButton :round-id="round.id" :viewer-is-active="round.viewerIsActive" />
       </div>
-
-      <UTabs v-model="activeTab" :items="tabs" :content="false" class="mt-2 mb-6 w-full" />
 
       <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
       <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">

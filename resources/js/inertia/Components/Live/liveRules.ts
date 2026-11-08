@@ -72,6 +72,13 @@ export function isLiveRuleActive(rules: LiveRules, definition: LiveRuleDefinitio
   return rules[definition.key] && (definition.parent === undefined || rules[definition.parent]);
 }
 
+/** Alle Regeln mit ihrem Zustand; abhängige Regeln fehlen, wenn ihre übergeordnete aus ist. */
+export function liveRuleOverview(rules: LiveRules): { label: string; active: boolean }[] {
+  return liveRuleDefinitions
+    .filter((definition) => definition.parent === undefined || rules[definition.parent])
+    .map((definition) => ({ label: definition.label, active: rules[definition.key] }));
+}
+
 export function activeLiveRuleLabels(rules: LiveRules): string[] {
   return liveRuleDefinitions
     .filter((definition) => isLiveRuleActive(rules, definition))
