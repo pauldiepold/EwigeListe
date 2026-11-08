@@ -95,4 +95,17 @@ class LiveGameEndTest extends TestCase
         $this->assertNotSame($first->id, $second->id);
         $this->assertSame($this->users[2]->player_id, $second->vorhand);
     }
+
+    #[Test]
+    public function a_running_game_cannot_be_replaced_by_starting_a_new_one(): void
+    {
+        $running = $this->startGameWithSeed(1);
+
+        $this->actingAs($this->users[0])
+            ->postJson(route('live.rounds.start', $this->round->liveRound))
+            ->assertStatus(422);
+
+        $this->assertSame(1, LiveGame::count());
+        $this->assertSame($running->id, $this->currentGame()->id);
+    }
 }
