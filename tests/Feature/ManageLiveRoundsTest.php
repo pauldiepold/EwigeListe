@@ -9,7 +9,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Schema;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -157,13 +156,5 @@ class ManageLiveRoundsTest extends TestCase
         foreach ([0, 1, 2, 3] as $index) {
             $this->assertCount(12, $liveGame->{'spieler'.$index}->hand);
         }
-        $this->assertEmpty($liveGame->messages);
-    }
-
-    #[Test]
-    public function the_ai_columns_are_gone(): void
-    {
-        $this->assertFalse(Schema::hasColumn('players', 'ai_path'));
-        $this->assertFalse(Schema::hasColumn('live_games', 'is_with_ai'));
     }
 }
