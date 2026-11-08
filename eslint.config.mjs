@@ -7,7 +7,7 @@ import skipFormatting from 'eslint-config-prettier';
 export default [
     ...pluginVue.configs['flat/essential'],
     {
-        files: ['resources/js/inertia/**/*.{ts,vue}'],
+        files: ['resources/js/**/*.{ts,vue}'],
         languageOptions: {
             parser: vueParser,
             parserOptions: {
@@ -27,11 +27,6 @@ export default [
     },
     {
         ignores: [
-            'resources/js/components/**',
-            'resources/js/lib/**',
-            'resources/js/scripts/**',
-            'resources/js/app.js',
-            'resources/js/bootstrap.js',
             'node_modules/**',
             'public/**',
             'resources/js/inertia/actions/**',

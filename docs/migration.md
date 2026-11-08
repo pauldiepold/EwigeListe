@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 bis 4 erledigt, Phase 5 umgesetzt (Gesamtabnahme mit vier Browsern offen), Phase 6 offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 bis 4 erledigt, Phase 5 umgesetzt (Gesamtabnahme mit vier Browsern offen), Phase 6: Legacy-Abbau umgesetzt, Spieleabend und Go-Live offen · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -42,7 +42,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | ✅ |
 | 5 | Live-Spiel im neuen Design | #36 (Karten #94 ✅, Regeln #99 ✅, KI #98, Seite #100, Echtzeit #101, Hand #102, Karten #103, Armut #104, Meldungen #105, Spielende und Legacy-Abbau #106) | umgesetzt, Gesamtabnahme offen |
-| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | todo |
+| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | Legacy-Abbau umgesetzt, Spieleabend und Go-Live offen |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
 
 #48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
@@ -57,6 +57,24 @@ Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #73 Spieler und Benutzer 
 4. Mindestens ein echter Spieleabend auf Staging inklusive Live-Spiel ohne funktionale Fehler.
 5. Rollback-Plan: `master` vor dem Merge taggen, DB-Backup, Datenmigrationen per wiederholbarem Neuberechnungs-Befehl.
 6. Go-Live-PR #16 wird per Merge-Commit gemergt, damit die Historie und der Hash in `.git-blame-ignore-revs` erhalten bleiben.
+
+## Go-Live-Ablauf
+
+Vorher, auf Staging:
+
+1. Spieleabend mit Freunden inklusive Live-Spiel, Funde beheben. Danach prüfen, ob sich Seitenwechsel am Handy langsam anfühlen; wenn ja, Erkenntnisse aus #57 nutzen und #66 bzw. #67 wieder öffnen.
+2. `php artisan stats:recalculate` läuft nach jedem Staging-Deploy mit `sync_db` und ist damit auf Prod-Daten erprobt.
+
+Go-Live:
+
+1. Den Stand von GitHub taggen: `git fetch origin && git tag pre-inertia origin/master && git push origin pre-inertia`.
+2. Auf Prod `php artisan down`, damit zwischen Backup und Deploy keine Spiele mehr eingetragen werden.
+3. Prod-Queue leerlaufen lassen: Serialisierte Jobs tragen noch die alten Klassennamen (`App\Round`).
+4. DB-Backup von Prod ziehen.
+5. #16 per Merge-Commit nach `master` mergen. Der Push startet „Deploy Production“, der Deploy führt `migrate --force` aus und schaltet am Ende `artisan up`.
+6. Einmalig `php artisan stats:recalculate`: Die Listenstatistik steht auf Prod noch nicht in den neuen Spalten.
+
+Rollback: „Deploy Production“ deployt nur `origin/master`. Also auf Prod `php artisan down`, das DB-Backup einspielen und den Merge auf `master` per `git revert -m 1 <merge-commit>` zurücknehmen und pushen; der Deploy bringt den alten Code. Ein `migrate:rollback` allein reicht nicht, weil `master` die umbenannten und gelöschten Spalten erwartet (`players.surname`/`name`, `ai_path`, die alten Statistik-Spalten von `groups`).
 
 ## Routen-Matrix
 
@@ -83,7 +101,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | GET | `listen/calculate`, `liste/calculate*`, `players/calculate*` | — | Group-/PlayerController | — | #33 | gestrichen | dito |
 | — | Fehlerseiten ab 400 | — | `AppServiceProvider` | `Error` | #33 | ✅ | 419 als Toast zurück aufs Formular, 503 statisch in `errors/503.blade.php` |
 | GET | alle unbekannten URLs | — | `Route::fallback` | `Error` | #33 | ✅ | im `web`-Stack, damit Angemeldete angemeldet bleiben; GET auf reine POST-URLs ergibt dadurch 404 statt 405 |
-| — | Kommentare | — | `CommentController` | — | #33 | gestrichen | Tabelle bleibt bis #37; Wiedereinführung in #80 |
+| — | Kommentare | — | `CommentController` | — | #33 | gestrichen | Tabelle bleibt für die Wiedereinführung in #80 |
 | GET | `test`, `testClient`, `mail` | — | `TestController` | — | #26 | gestrichen | Routen, Controller und Views entfernt |
 | — | E-Mail-Verifizierung | — | `VerificationController` | — | #26 | gestrichen | Controller und `auth/verify.blade.php` entfernt |
 
@@ -169,6 +187,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-11-08 | Karten spielen und Stich des Live-Spiels: `useLivePlay` hält die gelegte Karte optimistisch im Stich und nimmt sie aus der Hand, bis der Push sie aus meiner Hand entfernt; bei Ablehnung kehrt sie zurück und `useLiveAction` meldet 422/419. Der Zustand der Seite bleibt unberührt. `useLiveTrickDisplay` zeigt nach einem vollen Stich (`stichNr` zählt hoch) den `letzterStich` 2 Sekunden mit leuchtender Gewinner-Karte (`stecher`); eine eigene Karte beendet das sofort. `LiveTrick` legt den Stich über Kreuz (`liveTrickLayout.ts`, Vorgaben aus #94). Bewusst anders als auf `master`: Absagen heißen „Keine 90“ statt „90“; der Stich liegt bei 40 % statt 46 % der Tischhöhe, damit er die Hand nicht überdeckt; der Gewinner leuchtet (#103) | Eine Quelle für die optimistische Karte statt Mutation von Props wie in `LiveGame.vue`. Der Stich-Abschluss braucht keinen eigenen Broadcast, weil der Push nach der vierten Karte `aktuellerStich` leert und `letzterStich` füllt |
 | 2026-11-08 | Armut des Live-Spiels (Phasen 3, 32, 33): Die gewählten Karten bleiben in der Hand und rücken nach oben (statt wie auf `master` in eine zweite Reihe in der Mitte zu wandern); die Auswahl liegt in `useLivePoverty`, das Overlay `LivePoverty` zeigt nur Text und Buttons. Das Abgeben prüft den Trumpf wie auf `master` erst beim Klick (Hinweis „Du musst all deinen Trumpf abgeben!“, nichts wird gesendet) und nimmt den Hinweis bei jeder Änderung der Auswahl zurück. Neu gegenüber `master`: Die anderen sehen in Phase 33 „Name gibt Karten zurück …“ (dort blieb das Overlay leer). Zuschauer und wer aussetzt sehen kein Armut-Overlay, wie auf `master`. Endpunkte und Engine unverändert (#104) | Hand und Auswahl sind dieselben Karten, ein zweiter Kartenstapel entfiele; `LivePovertyTest` deckt Mitnehmen und Ablehnen über die Endpunkte ab, weil die Engine Blackbox bleibt |
 | 2026-11-08 | Spielende des Live-Spiels: Ein Push mit Phase 101 macht das Spiel im Zustand zum „letzten Spiel“ (`liveGame` leer, `lastLiveGame` gesetzt, `ich` leer), genau wie die Props nach einem Neuladen. Der Stich-Zustand liest dafür das laufende, danach das beendete Spiel, sodass der letzte Stich 2 Sekunden mit leuchtendem Gewinner liegen bleibt (`useLiveTrickDisplay`); erst danach erscheinen im Slot `#overlay` `LiveScoring` (Wertung aus `lastLiveGame`: gewonnen/verloren nur für Mitspieler, Augen, einzelne Wertungspunkte, Gewinner, „Re/Kontra gewinnt mit X Punkten!“) und daneben der Bereit-Check. Ein geschmissenes Spiel hat keine Wertung und zeigt nur den Bereit-Check. Bewusst anders als auf `master`: die Wertung steht in eigener Box neben dem Bereit-Check, negative Summen tragen ein einfaches Minus (dort „--“) und „1 Punkt“ statt „1 Punkten“; das Einblenden des letzten Stichs über die Werkzeugleiste gilt nur im laufenden Spiel. Das Spiel in der Rundentabelle und der nächste Geber kommen unverändert vom Server (`LiveGameEndTest` spielt dafür ein Spiel durch). Legacy-Abbau: `components/live/*`, `components/rounds/Round.vue`, die nur dafür genutzten `Tab`, `Tabs`, `NavIcon`, `rounds.fetchData`, die Legacy-Resources `Round`, `Game`, `Player`, `PlayerFull`, `LiveRound`, `Group` und `public/img/wood.jpg`; die jQuery-Kartenbibliothek und die alten Karten-SVGs waren auf dem Branch schon weg. `resources/js/app.js`, `bootstrap.js`, `lib/` und `scripts/` bleiben für #37 (#106) | Das Overlay braucht den letzten Stich als Vorlauf, ohne dass der Server ihn länger hält; Push und Reload müssen dasselbe Bild ergeben, sonst hinge der Ablauf an der Reihenfolge von `LiveGameDataBroadcasted` und `RoundUpdated`. Die verbliebenen Dateien gehören zum Legacy-Entry, den #37 als Ganzes entfernt |
+| 2026-11-08 | Legacy-Abbau: `resources/js/app.js`, `bootstrap.js`, `lib/`, `scripts/`, `public/webfonts/` (FontAwesome und lokale Schriften, ersetzt durch Google Fonts) sowie `alpinejs`, `axios`, `lodash` und `moment` sind entfernt; Vite hat einen Entry, Lint, Format, Type-Check und Vitest decken ganz `resources/js` ab. Die alten Statistik-Spalten von `groups` (`records`, `stats`, `mostGames` bis `mostGamesMonth`) löscht eine Migration. Die Tabelle `comments` bleibt bis #80 (#37) | Ein Rollback auf `master` braucht wegen der umbenannten `players`-Spalten ohnehin das DB-Backup, die Spalten von `groups` bringen dafür nichts mehr. Ob die Prod-Kommentare übernommen werden, entscheidet #80; die leere Tabelle kostet bis dahin nichts |
 
 ## Offene Fragen
 
@@ -181,7 +200,6 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 - `Resource::collection()` nutzt `AnonymousResourceCollection` mit eigenem `$wrap = 'data'`; das `$wrap = null` der Resource greift dort nicht. Als Prop deshalb `->resolve($request)` anhängen (#30).
 - Inertia-Links auf Seiten, die noch Blade sind, liefern eine HTML-Antwort statt einer Inertia-Antwort. Wegen des Big Bangs nehmen wir das bewusst in Kauf.
 - Referenz für „Wird das noch genutzt?“ ist `master`, nicht der Branch: In der Cursor-Phase wurden Legacy-Komponenten auf dem Branch bereits umgebaut oder gelöscht. Beispiel: `vue-slicksort` und `vue-scrollto` sind auf dem Branch ungenutzt, auf `master` hingen daran Drag-and-drop der Spieler und das Scrollen zum Suchfeld in `CreateRound.vue` (#52). Für #30–#32 gilt das besonders: Die Charts (Chart.js v4) und `rounds/CreateGame.vue` (Modal ohne jQuery) wurden auf dem Branch schon umgebaut (#55).
-- Legacy-Vue-Komponenten werden in `resources/js/app.js` per Glob global registriert. Ob eine Komponente noch genutzt wird, zeigt nur ein Grep nach ihrem Tag (PascalCase und kebab-case) in Blade und anderen Legacy-Komponenten, kein Import.
 - Boost-Guidelines und -Skills nach Paket-Updates mit `php artisan boost:update` neu erzeugen, nicht von Hand pflegen. Die Guidelines landen über `config/boost.php` in `AGENTS.md` (von `CLAUDE.md` importiert), die Skills in `.claude/skills/`.
 - PHPUnit 12 erkennt `/** @test */` nicht mehr; ohne `#[Test]` laufen solche Tests stillschweigend nicht. Die alte Suite lief deshalb mit 5 statt 30 Tests.
 - `assertSee` ohne `assertOk()` ist trügerisch: Eine 500er-Seite enthält den gesuchten Text oft im Stacktrace. Mehrere Blade-Tests waren so nur scheinbar grün.

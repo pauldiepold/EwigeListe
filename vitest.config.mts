@@ -24,7 +24,7 @@ export default defineConfig(async () => {
         },
         test: {
             environment: 'jsdom',
-            include: ['resources/js/inertia/**/__tests__/*.test.ts'],
+            include: ['resources/js/**/__tests__/*.test.ts'],
             setupFiles: ['resources/js/inertia/testing/setup.ts'],
             restoreMocks: true,
         },
