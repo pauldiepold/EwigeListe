@@ -16,6 +16,7 @@
         "wayfinder-development",
         "telescope-debugging",
         "inertia-vue-development",
+        "echo-vue-development",
         "tailwindcss-development",
         "echo-development"
     ]
