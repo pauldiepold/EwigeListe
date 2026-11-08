@@ -199,7 +199,7 @@ function rowBackground(game: RoundGame): string {
             v-for="(score, seat) in game.scores"
             :key="seat"
             class="px-1 py-1.5"
-            :class="{ 'font-bold': score.won }"
+            :class="score.won ? 'font-medium text-highlighted' : 'text-muted'"
           >
             <USkeleton v-if="isPendingRow(game)" class="mx-auto h-5 w-8" />
             <template v-else>{{ score.points ?? '-' }}</template>
