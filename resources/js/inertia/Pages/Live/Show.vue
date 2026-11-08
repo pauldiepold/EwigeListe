@@ -10,17 +10,19 @@ import LiveReservations from '@/Components/Live/LiveReservations.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
+import LiveTrick from '@/Components/Live/LiveTrick.vue';
 import LiveWaitingForPlayers from '@/Components/Live/LiveWaitingForPlayers.vue';
 import { postLive } from '@/composables/liveRequest';
 import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
 import { listOf, useLiveGameState } from '@/composables/useLiveGameState';
+import { useLivePlay } from '@/composables/useLivePlay';
 import { useLivePoverty } from '@/composables/useLivePoverty';
 import { useLiveReadyCheck } from '@/composables/useLiveReadyCheck';
 import { useRefreshOnVisible } from '@/composables/useRefreshOnVisible';
 import { vorbehalt as sendReservation } from '@/routes/live/games';
 import { start as startGame } from '@/routes/live/rounds';
-import type { LiveShowProps } from '@/types/live';
+import type { LiveEngineCard, LiveShowProps } from '@/types/live';
 
 const props = defineProps<LiveShowProps>();
 
@@ -57,6 +59,13 @@ useRefreshOnVisible(reloadData);
 
 /** Aktionen an die Engine (Vorbehalt, später Karte spielen) mit gemeinsamer Fehlerbehandlung. */
 const liveAction = useLiveAction(reloadData);
+
+/** Karte spielen (optimistisch), Stich und An-/Absagen. */
+const play = useLivePlay({
+  state,
+  viewerPlayerId: props.round.viewerPlayerId,
+  send: liveAction.send,
+});
 
 const readyCheck = useLiveReadyCheck({
   activePlayerIds,
@@ -114,6 +123,15 @@ const poverty = useLivePoverty({
   action: liveAction,
 });
 
+/** Ein Tipp auf eine Karte wählt sie für die Armut oder spielt sie. */
+function pressCard(card: LiveEngineCard): void {
+  if (poverty.selecting.value) {
+    poverty.toggle(card);
+  } else {
+    void play.playCard(card);
+  }
+}
+
 /** Die Phase der Armut, in der ich mitspiele; sonst `null` (auch für Zuschauer). */
 const povertyPhase = computed(() => {
   const phase = state.liveGame.value?.phase;
@@ -168,11 +186,20 @@ const messagesOpen = ref(false);
       <template #tools>
         <LiveToolbar
           v-model:messages-open="messagesOpen"
+          v-model:last-trick-open="play.trick.lastTrickPinned.value"
           :back-path="round.path"
           :rules="round.rules"
           :reloading="reloading"
           @reload="reloadData"
-        />
+        >
+          <UButton
+            v-if="play.announcement.value"
+            :label="play.announcement.value.label"
+            size="sm"
+            :disabled="play.announcementLocked.value"
+            @click="play.announce"
+          />
+        </LiveToolbar>
       </template>
 
       <template #messages>
@@ -183,14 +210,26 @@ const messagesOpen = ref(false);
         />
       </template>
 
+      <template #trick="{ size }">
+        <LiveTrick
+          v-if="allPlayersOnline && play.trick.visible.value"
+          :cards="play.trick.cards.value"
+          :players="round.players"
+          :viewer-player-id="round.viewerPlayerId"
+          :table-size="size"
+          :winner-id="play.trick.winnerId.value"
+        />
+      </template>
+
       <template #hand="{ size }">
         <LiveHand
           v-if="showHand"
-          :cards="state.hand.value"
+          :cards="play.hand.value"
           :table-size="size"
-          :interactive="poverty.selecting.value"
+          :interactive="poverty.selecting.value || play.handInteractive.value"
+          :is-playable="poverty.selecting.value ? undefined : play.isPlayable"
           :selected-ids="poverty.selecting.value ? poverty.selectedIds.value : undefined"
-          @press="poverty.toggle"
+          @press="pressCard"
         />
       </template>
 

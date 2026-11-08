@@ -520,3 +520,386 @@ describe('Live-Seite: Hand und Vorbehalte', () => {
     await waitFor(() => expect(reloadPage).toHaveBeenCalledTimes(1));
   });
 });
+
+/** Eine Karte der Engine mit allen Feldern, die der Tisch auswertet. */
+function playableCard(
+  id: number,
+  farbe: 1 | 2 | 3 | 4,
+  wert: 1 | 2 | 3 | 4 | 5 | 6,
+  overrides: Partial<LiveEngineCard> = {},
+): LiveEngineCard {
+  return { ...engineCard(id, farbe, wert), ...overrides };
+}
+
+const kreuzDame = () => playableCard(1, 4, 3);
+const herzZehn = () => playableCard(2, 2, 5, { spielbar: false });
+
+function handOf(...cards: LiveEngineCard[]): LiveSpieler {
+  return { ...ich(), hand: cards };
+}
+
+const trickGroup = () => screen.getByRole('group', { name: 'Stich' });
+const namesIn = (group: HTMLElement) =>
+  within(group)
+    .queryAllByRole('img')
+    .map((card) => card.getAttribute('aria-label'));
+
+describe('Live-Seite: Karte spielen', () => {
+  it('sendet die gespielte Karte und legt sie sofort vor meinen Platz in den Stich', async () => {
+    postLive.mockReturnValue(new Promise<void>(() => undefined));
+    renderShow(12, {
+      liveGame: game({ dran: 12 }),
+      ich: handOf(kreuzDame(), herzZehn()),
+    });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+    expect(postLive).toHaveBeenCalledWith(
+      '/api/live/1/karteSpielen',
+      expect.objectContaining({ karte: expect.objectContaining({ id: 1 }) }),
+    );
+    expect(namesIn(trickGroup())).toEqual(['Kreuz Dame']);
+    expect(screen.queryByRole('button', { name: 'Kreuz Dame' })).toBeNull();
+  });
+
+  it('sperrt nicht spielbare Karten und alle Karten, solange ein anderer dran ist', async () => {
+    renderShow(12, {
+      liveGame: game({ dran: 12 }),
+      ich: handOf(kreuzDame(), herzZehn()),
+    });
+    setOnline(...activeMembers);
+
+    const dame = await screen.findByRole<HTMLButtonElement>('button', { name: 'Kreuz Dame' });
+    expect(dame.disabled).toBe(false);
+    expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Herz 10' }).disabled).toBe(true);
+
+    echo.options!.onPush({ liveGame: game({ dran: 13 }), ich: handOf(kreuzDame(), herzZehn()) });
+
+    await waitFor(() => expect(dame.disabled).toBe(true));
+  });
+
+  it('zeigt die Hand in der Vorbehaltsphase nur zum Anschauen', async () => {
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12 }), ich: handOf(kreuzDame()) });
+    setOnline(...activeMembers);
+
+    await screen.findByRole('group', { name: 'Deine Hand' });
+    expect(screen.queryByRole('button', { name: 'Kreuz Dame' })).toBeNull();
+    expect(screen.queryByRole('group', { name: 'Stich' })).toBeNull();
+  });
+
+  it('nimmt die Karte bei Ablehnung (422) aus dem Stich, erklärt den Grund und lädt neu', async () => {
+    postLive.mockRejectedValue({
+      response: { status: 422, data: '{"message":"Du musst Herz bedienen!"}' },
+    });
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: handOf(kreuzDame(), herzZehn()) });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+    expect(await screen.findByText('Du musst Herz bedienen!')).toBeTruthy();
+    expect(router.reload).toHaveBeenCalledWith(
+      expect.objectContaining({ only: ['round', 'liveGame', 'lastLiveGame', 'ich'] }),
+    );
+    expect(namesIn(trickGroup())).toEqual([]);
+    expect(screen.getByRole('button', { name: 'Kreuz Dame' })).toBeTruthy();
+  });
+
+  it('lädt die ganze Seite neu, wenn die Sitzung abgelaufen ist (419)', async () => {
+    postLive.mockRejectedValue({ response: { status: 419, data: '' } });
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: handOf(kreuzDame()) });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+    await waitFor(() => expect(reloadPage).toHaveBeenCalledTimes(1));
+  });
+
+  it('übergibt die Karte an den Push: sie liegt genau einmal im Stich und nicht mehr in der Hand', async () => {
+    postLive.mockReturnValue(new Promise<void>(() => undefined));
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: handOf(kreuzDame(), herzZehn()) });
+    setOnline(...activeMembers);
+    await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+    echo.options!.onPush({
+      liveGame: game({
+        dran: 13,
+        aktuellerStich: {
+          karten: [{ ...kreuzDame(), gespieltVon: 12, spielbar: false }],
+          stecher: null,
+        },
+      }),
+      ich: handOf(herzZehn()),
+    });
+
+    await waitFor(() => expect(echo.options).not.toBeNull());
+    expect(namesIn(trickGroup())).toEqual(['Kreuz Dame']);
+    expect(namesIn(screen.getByRole('group', { name: 'Deine Hand' }))).toEqual([]);
+    expect(screen.getByRole('button', { name: 'Herz 10' })).toBeTruthy();
+  });
+
+  it('lässt meine Karte im Stich liegen, wenn zwischendurch ein fremder Push ankommt', async () => {
+    postLive.mockReturnValue(new Promise<void>(() => undefined));
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: handOf(kreuzDame(), herzZehn()) });
+    setOnline(...activeMembers);
+    await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+    // Ein Push, der meine Karte noch nicht kennt (z. B. weil ein anderer eine Ansage macht).
+    echo.options!.onPush({
+      liveGame: game({
+        dran: 12,
+        kontraAnsage: true,
+        spieler: { ...game().spieler, 13: { ...display(), ansage: 'Kontra' } },
+      }),
+      ich: handOf(kreuzDame(), herzZehn()),
+    });
+
+    const seat = screen.getByRole('group', { name: /^Dieter,/ });
+    await waitFor(() => expect(seat.textContent).toContain('Kontra'));
+    expect(namesIn(trickGroup())).toEqual(['Kreuz Dame']);
+    expect(screen.queryByRole('button', { name: 'Kreuz Dame' })).toBeNull();
+  });
+});
+
+describe('Live-Seite: Stich', () => {
+  const played = (id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6, by: number) =>
+    playableCard(id, farbe, wert, { gespieltVon: by, spielbar: false });
+
+  it('legt jede Karte vor den Spieler, der sie gelegt hat, und lässt andere Plätze leer', async () => {
+    renderShow(12, {
+      liveGame: game({
+        dran: 14,
+        aktuellerStich: {
+          karten: [played(5, 3, 4, 13), played(6, 1, 2, 12)],
+          stecher: null,
+        },
+      }),
+      ich: handOf(kreuzDame()),
+    });
+    setOnline(...activeMembers);
+
+    const trick = await screen.findByRole('group', { name: 'Stich' });
+    const slot = (position: string) =>
+      trick.querySelector<HTMLElement>(`[data-trick-slot="${position}"]`)!;
+    expect(namesIn(slot('links'))).toEqual(['Pik König']);
+    expect(namesIn(slot('unten'))).toEqual(['Karo Bube']);
+    expect(namesIn(slot('oben'))).toEqual([]);
+    expect(namesIn(slot('rechts'))).toEqual([]);
+    expect(trick.querySelectorAll('[data-trick-slot]')).toHaveLength(4);
+  });
+
+  it('zeigt Zuschauern den Stich ebenfalls, aus der Sitzreihenfolge', async () => {
+    renderShow(10, {
+      liveGame: game({
+        dran: 12,
+        aktuellerStich: { karten: [played(5, 3, 4, 11)], stecher: null },
+      }),
+      ich: null,
+    });
+    setOnline(...activeMembers, member(10, 'Anna'));
+
+    const trick = await screen.findByRole('group', { name: 'Stich' });
+    expect(namesIn(trick.querySelector<HTMLElement>('[data-trick-slot="unten"]')!)).toEqual([
+      'Pik König',
+    ]);
+  });
+
+  describe('Abschluss', () => {
+    const fullTrick = () => [
+      played(5, 3, 4, 11),
+      played(6, 1, 2, 12),
+      played(7, 2, 6, 13),
+      played(8, 4, 1, 14),
+    ];
+    const afterTrick = () =>
+      game({
+        stichNr: 2,
+        dran: 13,
+        aktuellerStich: { karten: [], stecher: null },
+        letzterStich: { karten: fullTrick(), stecher: 13 },
+      });
+    const winnerSlots = () =>
+      Array.from(document.querySelectorAll<HTMLElement>('[data-winner]')).map(
+        (slot) => slot.dataset.trickSlot,
+      );
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('lässt den vollen Stich 2 Sekunden mit leuchtendem Gewinner liegen und räumt ihn dann ab', async () => {
+      renderShow(12, {
+        liveGame: game({
+          stichNr: 1,
+          aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+        }),
+        ich: handOf(kreuzDame()),
+      });
+      setOnline(...activeMembers);
+      await screen.findByRole('group', { name: 'Stich' });
+
+      vi.useFakeTimers();
+      echo.options!.onPush({ liveGame: afterTrick(), ich: handOf(kreuzDame()) });
+
+      await vi.advanceTimersByTimeAsync(1900);
+      expect(namesIn(trickGroup())).toHaveLength(4);
+      expect(winnerSlots()).toEqual(['links']);
+
+      await vi.advanceTimersByTimeAsync(200);
+      expect(namesIn(trickGroup())).toEqual([]);
+      expect(winnerSlots()).toEqual([]);
+    });
+
+    it('zeigt meine optimistische vierte Karte nahtlos als vollen Stich, bis der Push den Gewinner nennt', async () => {
+      postLive.mockReturnValue(new Promise<void>(() => undefined));
+      renderShow(12, {
+        liveGame: game({
+          dran: 12,
+          aktuellerStich: {
+            karten: [fullTrick()[0], fullTrick()[2], fullTrick()[3]],
+            stecher: null,
+          },
+        }),
+        ich: handOf(playableCard(6, 1, 2)),
+      });
+      setOnline(...activeMembers);
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Karo Bube' }));
+      expect(namesIn(trickGroup())).toHaveLength(4);
+      expect(winnerSlots()).toEqual([]);
+
+      echo.options!.onPush({ liveGame: afterTrick(), ich: handOf() });
+
+      await waitFor(() => expect(winnerSlots()).toEqual(['links']));
+      expect(namesIn(trickGroup())).toHaveLength(4);
+    });
+
+    it('zeigt meine Karte sofort im neuen Stich, auch wenn der alte noch liegt', async () => {
+      postLive.mockReturnValue(new Promise<void>(() => undefined));
+      renderShow(12, {
+        liveGame: game({
+          stichNr: 1,
+          aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+        }),
+        ich: handOf(kreuzDame()),
+      });
+      setOnline(...activeMembers);
+      await screen.findByRole('group', { name: 'Stich' });
+      echo.options!.onPush({
+        liveGame: { ...afterTrick(), dran: 12 },
+        ich: handOf({ ...kreuzDame(), spielbar: true }),
+      });
+      await waitFor(() => expect(winnerSlots()).toEqual(['links']));
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Kreuz Dame' }));
+
+      expect(namesIn(trickGroup())).toEqual(['Kreuz Dame']);
+      expect(winnerSlots()).toEqual([]);
+    });
+
+    it('blendet den letzten Stich per Werkzeugleiste ein und aus', async () => {
+      renderShow(12, {
+        liveGame: {
+          ...afterTrick(),
+          stichNr: 3,
+          aktuellerStich: { karten: [played(9, 2, 5, 13)], stecher: null },
+        },
+        ich: handOf(kreuzDame()),
+      });
+      setOnline(...activeMembers);
+      await screen.findByRole('group', { name: 'Stich' });
+      expect(namesIn(trickGroup())).toEqual(['Herz 10']);
+
+      const toggle = screen.getByRole('button', { name: 'Letzter Stich' });
+      await userEvent.click(toggle);
+
+      expect(namesIn(trickGroup())).toHaveLength(4);
+      expect(winnerSlots()).toEqual(['links']);
+      expect(toggle.getAttribute('aria-pressed')).toBe('true');
+
+      await userEvent.click(toggle);
+
+      expect(namesIn(trickGroup())).toEqual(['Herz 10']);
+    });
+  });
+});
+
+describe('Live-Seite: Ansagen', () => {
+  const withAnnouncement = (possible: string | number | null) => ({
+    ...handOf(kreuzDame()),
+    moeglicheAnAbsage: possible,
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('zeigt den Button, sobald eine Ansage möglich ist, auch vor dem ersten eigenen Zug', async () => {
+    renderShow(12, { liveGame: game({ dran: 11, stichNr: 1 }), ich: withAnnouncement('Re') });
+    setOnline(...activeMembers);
+
+    expect(await screen.findByRole('button', { name: 'Re' })).toBeTruthy();
+  });
+
+  it('zeigt ihn sonst nur, wenn ich dran bin, und nie ohne mögliche Ansage', async () => {
+    const view = renderShow(12, {
+      liveGame: game({
+        dran: 13,
+        stichNr: 2,
+        aktuellerStich: { karten: [], stecher: null },
+      }),
+      ich: withAnnouncement('Re'),
+    });
+    setOnline(...activeMembers);
+    await screen.findByRole('group', { name: 'Stich' });
+    expect(screen.queryByRole('button', { name: 'Re' })).toBeNull();
+
+    echo.options!.onPush({
+      liveGame: game({ dran: 12, stichNr: 2 }),
+      ich: withAnnouncement('Re'),
+    });
+    expect(await screen.findByRole('button', { name: 'Re' })).toBeTruthy();
+
+    echo.options!.onPush({ liveGame: game({ dran: 12, stichNr: 2 }), ich: withAnnouncement(null) });
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Re' })).toBeNull());
+    view.unmount();
+  });
+
+  it('sendet die Ansage und sperrt den Button 2 Sekunden', async () => {
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: withAnnouncement('Kontra') });
+    setOnline(...activeMembers);
+
+    const button = await screen.findByRole<HTMLButtonElement>('button', { name: 'Kontra' });
+    vi.useFakeTimers();
+    await userEvent.setup({ advanceTimers: (ms) => vi.advanceTimersByTime(ms) }).click(button);
+
+    expect(postLive).toHaveBeenCalledWith('/api/live/1/ansage', { ansage: 'Kontra' });
+    expect(button.disabled).toBe(true);
+
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(button.disabled).toBe(true);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(button.disabled).toBe(false);
+  });
+
+  it('beschriftet Absagen mit „Keine 90“ und sendet den Wert der Engine', async () => {
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: withAnnouncement(90) });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Keine 90' }));
+
+    expect(postLive).toHaveBeenCalledWith('/api/live/1/ansage', { ansage: 90 });
+  });
+
+  it('meldet eine abgelehnte Ansage (422) mit Toast', async () => {
+    postLive.mockRejectedValue({
+      response: { status: 422, data: '{"message":"Du darfst diese Absage nicht machen."}' },
+    });
+    renderShow(12, { liveGame: game({ dran: 12 }), ich: withAnnouncement('Schwarz') });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Schwarz' }));
+
+    expect(await screen.findByText('Du darfst diese Absage nicht machen.')).toBeTruthy();
+  });
+});
