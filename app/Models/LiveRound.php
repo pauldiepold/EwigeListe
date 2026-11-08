@@ -10,7 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class LiveRound extends Model
 {
-    protected $attributes = [
+    /**
+     * Die Regeln einer Live-Runde mit ihrem Standard (alle an außer Super-Schwein im Trumpfsolo).
+     *
+     * @var array<string, bool>
+     */
+    public const array RULE_DEFAULTS = [
         'schweinchen' => true,
         'fuchsSticht' => true,
         'schweinchenTrumpfsolo' => false,
@@ -19,7 +24,46 @@ class LiveRound extends Model
         'karlchenFangen' => true,
     ];
 
+    /**
+     * Abhängige Regel => übergeordnete Regel. Ist die übergeordnete aus, ist die abhängige es auch.
+     *
+     * @var array<string, string>
+     */
+    public const array RULE_PARENTS = [
+        'fuchsSticht' => 'schweinchen',
+        'schweinchenTrumpfsolo' => 'schweinchen',
+        'karlchenFangen' => 'karlchen',
+    ];
+
+    protected $attributes = self::RULE_DEFAULTS;
+
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return array_map(fn (): string => 'boolean', self::RULE_DEFAULTS);
+    }
+
+    /**
+     * Ergänzt fehlende Regeln um den Standard und schaltet Regeln aus, deren übergeordnete Regel aus ist.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, bool>
+     */
+    public static function normalizeRules(array $input): array
+    {
+        $rules = [];
+
+        foreach (self::RULE_DEFAULTS as $rule => $default) {
+            $rules[$rule] = (bool) ($input[$rule] ?? $default);
+        }
+
+        foreach (self::RULE_PARENTS as $rule => $parent) {
+            $rules[$rule] = $rules[$rule] && $rules[$parent];
+        }
+
+        return $rules;
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {
@@ -63,12 +107,11 @@ class LiveRound extends Model
         return $this->hasManyThrough(Game::class, LiveGame::class);
     }
 
-    public function starteNeuesSpiel()
+    /**
+     * Gibt ein neues Spiel mit den aktiven Spielern der Runde und liefert es zurück.
+     */
+    public function starteNeuesSpiel(): LiveGame
     {
-        if ($this->liveGames->where('beendet', 0)->count() != 0) {
-            // abort(422, 'Es darf keine geöffneten Spiele geben!');
-        }
-
         $activePlayers = $this->round->getActivePlayers(false);
 
         $spielerIDsInaktiv = $this->round->getInactivePlayers()->pluck('id');
@@ -82,9 +125,6 @@ class LiveRound extends Model
         $liveGame = new LiveGame;
 
         $liveGame->live_round_id = $this->id;
-        $liveGame->is_with_ai = $activePlayers->contains(function ($player, $key) {
-            return $player->is_ai;
-        });
         $liveGame->vorhand = $activePlayers->first()->pivot->player_id;
         $liveGame->dran = $activePlayers->first()->pivot->player_id;
         $liveGame->aktuellerStich = new Stich;
@@ -103,22 +143,8 @@ class LiveRound extends Model
         $liveGame->moeglicheVorbehalteBerechnen();
         $liveGame->phase = 2;
 
-        if ($liveGame->is_with_ai) {
-            if ($liveGame->spieler0->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler1->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler2->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler3->moeglicheVorbehalte->contains('Hochzeit')) {
-                $this->starteNeuesSpiel();
-
-                return 0;
-            }
-            $liveGame->pushMessage('Im Spiel mit KI sind keine Schweinchen, Hochzeiten oder Soli möglich.');
-            $liveGame->handleVorbehalteInAIGame();
-            $liveGame->checkForAITurn();
-        }
-
         $liveGame->save();
 
-        return 0;
+        return $liveGame;
     }
 }

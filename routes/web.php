@@ -7,6 +7,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Live\GameController as LiveGameController;
 use App\Http\Controllers\Live\RoundController as LiveRoundController;
+use App\Http\Controllers\Live\TableController as LiveTableController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\StaticPageController;
@@ -53,13 +54,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/rounds', [RoundController::class, 'store'])->name('rounds.store');
     Route::get('/rounds/current', [RoundController::class, 'current'])->name('rounds.current');
     Route::get('/runde/{round}', [RoundController::class, 'show'])->name('rounds.show');
+    Route::get('/runde/{round}/live', [LiveTableController::class, 'show'])->name('rounds.live');
     Route::patch('/rounds/{round}', [RoundController::class, 'update'])->name('rounds.update');
     Route::delete('/rounds/{round}', [RoundController::class, 'destroy'])->name('rounds.destroy');
     Route::post('/rounds/{round}/games', [GameController::class, 'store'])->name('games.store');
     Route::patch('/games/{game}', [GameController::class, 'update'])->name('games.update');
     Route::delete('/games/{game}', [GameController::class, 'destroy'])->name('games.destroy');
-
-    Route::patch('/liveRounds/{liveRound}', [LiveRoundController::class, 'updateRegeln'])->name('liveRounds.updateRegeln');
 
     /* *********** Groups ************** */
     Route::get('liste', [GroupController::class, 'show'])->name('ewigeListe');
@@ -74,8 +74,6 @@ Route::middleware('auth')->group(function () {
 
     /* *********** API ************** */
     Route::prefix('api')->group(function () {
-        Route::get('/rounds/{round}/fetchData', [RoundController::class, 'fetchData'])->name('rounds.fetchData');
-
         Route::middleware('can:update,liveRound')->group(function () {
             Route::post('live/{liveRound}/spielStarten', [LiveRoundController::class, 'starteNeuesSpiel'])->name('live.rounds.start');
         });
@@ -88,7 +86,6 @@ Route::middleware('auth')->group(function () {
             Route::post('live/{liveGame}/karteSpielen', [LiveGameController::class, 'karteSpielen'])->name('live.games.karteSpielen');
             Route::post('live/{liveGame}/ansage', [LiveGameController::class, 'ansage'])->name('live.games.ansage');
         });
-
     });
 
     /* *********** Admin ************** */

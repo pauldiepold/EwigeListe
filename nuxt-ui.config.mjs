@@ -1,5 +1,5 @@
 /**
- * Optionen des Nuxt-UI-Vite-Plugins. Eigene Datei, weil `vite.config.js` und `vitest.config.mts`
+ * Optionen des Nuxt-UI-Vite-Plugins. Eigene Datei, weil `vite.config.mjs` und `vitest.config.mts`
  * sie teilen: Tests rendern die Komponenten so wie die App.
  */
 export default {

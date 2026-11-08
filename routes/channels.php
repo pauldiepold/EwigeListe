@@ -34,7 +34,7 @@ Broadcast::channel('liveRound.{liveRound}', function ($user, LiveRound $liveRoun
 });
 
 Broadcast::channel('liveRound.{liveRound}.{player}', function ($user, LiveRound $liveRound, Player $player) {
-    if ($user->id == $player->id) {
+    if ($user->player_id == $player->id) {
         if ($user->can('update', $liveRound)) {
             return true;
         }

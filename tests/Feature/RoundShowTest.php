@@ -177,6 +177,26 @@ class RoundShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->where('round.isLive', true));
     }
 
+    #[Test]
+    public function a_live_round_shows_its_rules_and_an_offline_round_none(): void
+    {
+        $round = $this->roundWithPlayers($this->otherPlayers(4));
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page->where('round.info.rules', null));
+
+        $round->createLiveRound(['koenigsSolo' => false, 'karlchen' => false]);
+
+        $this->get(route('rounds.show', $round))
+            ->assertInertia(fn (Assert $page) => $page->where('round.info.rules', [
+                'schweinchen' => true,
+                'fuchsSticht' => true,
+                'schweinchenTrumpfsolo' => false,
+                'koenigsSolo' => false,
+                'karlchen' => false,
+                'karlchenFangen' => false,
+            ]));
+    }
+
     /**
      * @param  list<int>  $expectedSeats
      */

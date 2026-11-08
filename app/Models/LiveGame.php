@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\LiveMessagesCast;
 use App\Casts\SticheCast;
 use App\Events\LiveGameSaved;
 use App\Events\RoundUpdated;
@@ -67,7 +68,6 @@ class LiveGame extends Model
     ];
 
     protected $casts = [
-        'is_with_ai' => 'boolean',
         'spieler0' => 'object',
         'spieler1' => 'object',
         'spieler2' => 'object',
@@ -78,7 +78,7 @@ class LiveGame extends Model
         'aktuellerStich' => 'object',
         'beendet' => 'boolean',
         'gewinntRe' => 'boolean',
-        'messages' => 'collection',
+        'messages' => LiveMessagesCast::class,
         'geschmissen' => 'boolean',
         'geheiratet' => 'boolean',
         'winners' => 'collection',
@@ -284,7 +284,7 @@ class LiveGame extends Model
                 $this->geheiratet = true;
                 $this->setAnzeige('partei', $stecher->id, 'Re-Partei');
                 $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
-                $this->pushMessage("<b>$stecher->name:</b> hat geheiratet!");
+                $this->pushMessage('hat geheiratet!', $stecher->id);
                 $this->spielerSpeichern($stecher);
 
                 $this->alleSpielerKontraSetzen($stecher->id, true);
@@ -323,7 +323,7 @@ class LiveGame extends Model
                 // Hochzeit spielt alleine
                 $this->geheiratet = true;
                 $this->setAnzeige('partei', $heirater->id, 'Re-Partei');
-                $this->pushMessage("<b>$heirater->name:</b> spielt alleine!");
+                $this->pushMessage('spielt alleine!', $heirater->id);
 
                 $this->alleSpielerKontraSetzen($stecher->id, true);
             }
@@ -346,7 +346,7 @@ class LiveGame extends Model
                 $siegerKarte = $this->besteKarteBestimmen($siegerKarten, $ersteKarte->farbe);
             }
         }
-        if ($this->liveRound->schweinchen && ! $this->is_with_ai &&
+        if ($this->liveRound->schweinchen &&
             ($this->spieltyp == 'Normalspiel' ||
                 $this->spieltyp == 'Armut' ||
                 $this->spieltyp == 'Hochzeit' ||
@@ -373,7 +373,7 @@ class LiveGame extends Model
                 }
 
                 $this->schweinchen = true;
-                $this->pushMessage("<b>$spieler->name:</b> Schweinchen!");
+                $this->pushMessage('Schweinchen!', $spieler->id);
             }
         }
     }
@@ -455,7 +455,7 @@ class LiveGame extends Model
             return;
         }
 
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         if (! $spieler->moeglicheVorbehalte->contains($vorbehalt)) {
@@ -486,7 +486,7 @@ class LiveGame extends Model
 
     public function hatSpielerVorbehaltOffengelegt($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         return isset($spieler->vorbehalt);
@@ -596,7 +596,7 @@ class LiveGame extends Model
             $this->pushMessage('Es wird ein Normalspiel gespielt!');
             $this->alleSpielerKontraSetzen($spieler->id, false);
         } else {
-            $this->pushMessage("<b>$spieler->name</b> spielt ein $vorbehalt!");
+            $this->pushMessage("spielt ein $vorbehalt!", $spieler->id);
             $this->alleSpielerKontraSetzen($spieler->id, true);
 
             $this->setAnzeige('spieltyp', $spieler->id, $vorbehalt);
@@ -610,7 +610,7 @@ class LiveGame extends Model
 
     public function schmeissen($position = null, $niemand_armut = false)
     {
-        $schmeisser = $position == null ? $this->getSpielerByPosition($position) : null;
+        $schmeisser = $position !== null ? $this->getSpielerByPosition($position) : null;
 
         $this->geschmissen = true;
         $this->beendet = true;
@@ -621,7 +621,7 @@ class LiveGame extends Model
         if ($niemand_armut) {
             $newGame->pushMessage('Niemand wollte die Armut mitnehmen. Neues Spiel gestartet!');
         } else {
-            $newGame->pushMessage("<b>$schmeisser->name</b> hat geschmissen!");
+            $newGame->pushMessage('hat geschmissen!', $schmeisser?->id);
         }
         $newGame->save();
 
@@ -638,7 +638,7 @@ class LiveGame extends Model
         $armutSpieler = $this->getSpielerByPosition($position);
         $this->setAnzeige('spieltyp', $armutSpieler->id, 'Armut');
         $this->setAnzeige('partei', $armutSpieler->id, 'Re-Partei');
-        $this->pushMessage("<b>$armutSpieler->name</b> spielt eine Armut!");
+        $this->pushMessage('spielt eine Armut!', $armutSpieler->id);
 
         $this->dran = $armutSpieler->id;
     }
@@ -651,7 +651,7 @@ class LiveGame extends Model
         $spieler->isRe = true;
 
         $this->setAnzeige('spieltyp', $spieler->id, 'Hochzeit');
-        $this->pushMessage("<b>$spieler->name</b> spielt eine Hochzeit!");
+        $this->pushMessage('spielt eine Hochzeit!', $spieler->id);
 
         $this->alleSpielerKontraSetzen();
 
@@ -876,7 +876,7 @@ class LiveGame extends Model
      */
     public function getSpieler($spielerID = null, $hand_save = true)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spielerString = $this->getSpielerString($spielerID);
 
         $spieler = $this->$spielerString;
@@ -915,7 +915,7 @@ class LiveGame extends Model
 
     public function getSpielerString($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
 
         return 'spieler'.$this->spielerIDs->search($spielerID);
     }
@@ -932,7 +932,7 @@ class LiveGame extends Model
      */
     public function getKarteVonSpieler($kartenID, $spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         $karte = $spieler->hand->where('id', $kartenID)->first();
@@ -953,7 +953,7 @@ class LiveGame extends Model
 
     public function istSpielerDran($spielerID = null, $ansageVorDemSpiel = false)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         if ($ansageVorDemSpiel && $this->stichNr == 1 && $this->aktuellerStich->count() == 0) {
             return;
         }
@@ -964,7 +964,7 @@ class LiveGame extends Model
 
     public function istSpielerAktiv($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         if ($this->spielerIDsInaktiv->contains($spielerID)) {
             abort(422, 'Du setzt gerade aus!');
         }
@@ -1322,7 +1322,7 @@ class LiveGame extends Model
 
     public function getGegnerIDs($spielerID)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
 
         $ich = $this->getSpieler($spielerID);
 
@@ -1429,7 +1429,7 @@ class LiveGame extends Model
             $this->setAnzeige('partei', $spieler->id, $ansage.'-Partei');
         }
         $this->setAnzeige('ansage', $spieler->id, $ansage);
-        $this->pushMessage("<b>$spieler->name</b>: $ansage!");
+        $this->pushMessage("$ansage!", $spieler->id);
 
         $this->wurdeOffengelegtDurchAnAbsage($spieler);
     }
@@ -1453,7 +1453,7 @@ class LiveGame extends Model
         $this->setAnzeige('absage', $spieler->id, $absageZahl);
 
         $message = $absageZahl == 0 ? 'Schwarz!' : "Keine $absageZahl!";
-        $this->pushMessage("<b>$spieler->name</b>: $message");
+        $this->pushMessage($message, $spieler->id);
     }
 
     public function wurdeOffengelegtDurchAnAbsage($spieler)
@@ -1520,14 +1520,13 @@ class LiveGame extends Model
         $this->alleSpielerKontraSetzen($spieler->id, true);
     }
 
-    public function pushMessage($message, $name = null)
+    /**
+     * Fügt eine Meldung vorn an. Der Name des Spielers gehört nicht in den Text, das Frontend setzt ihn davor.
+     */
+    public function pushMessage(string $text, ?int $spielerId = null): void
     {
         $messages = $this->messages;
-        if ($name) {
-            $message = "<b>$name:</b> $message";
-        }
-
-        $messages->prepend($message);
+        $messages->prepend(['spielerId' => $spielerId, 'text' => $text]);
         $this->messages = $messages;
     }
 
@@ -1542,69 +1541,5 @@ class LiveGame extends Model
             $anzeige->set($attribut, $spielerID, $wert);
         }
         $this->anzeige = $anzeige;
-    }
-
-    public function handleVorbehalteInAIGame()
-    {
-        $players = [
-            $this->spieler0,
-            $this->spieler1,
-            $this->spieler2,
-            $this->spieler3,
-        ];
-        foreach ($players as $spieler) {
-            if ($spieler->moeglicheVorbehalte->contains('Hochzeit')) {
-                $spieler->vorbehalt = 'Hochzeit';
-                $this->setAnzeige('vorbehalt', $spieler->id, 'Vorbehalt');
-            } else {
-                $spieler->vorbehalt = true;
-                $this->setAnzeige('vorbehalt', $spieler->id, 'Gesund');
-            }
-            $this->spielerSpeichern($spieler);
-        }
-        $this->vorbehalteAbhandeln();
-    }
-
-    public function checkForAITurn()
-    {
-        $spieler = $this->getSpieler($this->dran);
-        if ($spieler->ai) {
-            $karte = $spieler->ai->getBestCard($this);
-
-            $this->kartenSortieren();
-            $this->istKarteSpielbar($karte);
-
-            $this->karteSpielen($karte, $spieler);
-
-            if ($this->aktuellerStich->count() == 4) {
-                $this->stichVerteilen();
-            }
-
-            if ($this->spielBeendet()) {
-                $this->beendet = true;
-                $this->phase = 101;
-
-                $this->punkteZaehlen();
-
-                $this->wertungBerechnen();
-                $this->spielErgebnisUebertragen();
-
-                $this->save();
-                broadcast(new RoundUpdated($this->liveRound->round->id));
-
-                return 'Spiel beendet';
-            }
-
-            $this->naechstenSpielerBerechnen();
-            $this->spielbareKartenBerechnen();
-            $this->kartenSortieren();
-            $this->moeglicheAnAbsagenEintragen();
-
-            $this->save();
-
-            return $this->checkForAITurn();
-        }
-
-        return 'no ai turn';
     }
 }

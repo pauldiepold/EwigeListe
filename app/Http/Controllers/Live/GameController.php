@@ -63,7 +63,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'karten' => 'required|array|size:3',
             'karten.*' => 'required|array',
-            'karte.*.id' => 'required|integer|between:0,47',
+            'karten.*.id' => 'required|integer|between:0,47|distinct',
         ]);
 
         $karten = collect();
@@ -95,7 +95,7 @@ class GameController extends Controller
             $spieler = $liveGame->getSpieler();
             $armutSpieler = $liveGame->getSpielerByPosition($liveGame->vorbehalte->search('Armut'));
 
-            $liveGame->pushMessage("<b>$spieler->name</b>: nimmt die Armut mit!");
+            $liveGame->pushMessage('nimmt die Armut mit!', $spieler->id);
 
             $hand = $spieler->hand->concat($armutSpieler->armutKarten);
 
@@ -127,7 +127,7 @@ class GameController extends Controller
         $validated = $request->validate([
             'karten' => 'required|array|size:3',
             'karten.*' => 'required|array',
-            'karte.*.id' => 'required|integer|between:0,47',
+            'karten.*.id' => 'required|integer|between:0,47|distinct',
         ]);
 
         $karten = collect();
@@ -187,7 +187,7 @@ class GameController extends Controller
 
         $liveGame->save();
 
-        return $liveGame->checkForAITurn();
+        return 'success';
     }
 
     public function ansage(LiveGame $liveGame, Request $request)

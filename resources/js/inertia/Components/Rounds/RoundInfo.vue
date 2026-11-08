@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { activeLiveRuleLabels } from '@/Components/Live/liveRules';
 import type { RoundInfo } from '@/types/round-show';
 
-defineProps<{
+const props = defineProps<{
   info: RoundInfo;
 }>();
+
+/** Nur bei einer Live-Runde; die Regeln stehen nach dem Anlegen fest. */
+const ruleLabels = computed(() =>
+  props.info.rules ? activeLiveRuleLabels(props.info.rules) : null,
+);
 
 defineSlots<{
   /** Aktionen zum letzten Spiel, rechts in dessen Zeile. */
@@ -30,6 +37,13 @@ defineSlots<{
       <span><span class="sr-only">Gestartet von </span>{{ info.startedBy }}</span>
       <span aria-hidden="true">&middot;</span>
       <span>{{ info.startedAt }}</span>
+    </p>
+    <p v-if="ruleLabels" class="flex items-start gap-1.5">
+      <UIcon name="i-lucide-scroll-text" class="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+      <span>
+        Regeln:
+        {{ ruleLabels.length ? ruleLabels.join(', ') : 'alle Regeln aus' }}
+      </span>
     </p>
     <!-- Als einzige bedienbare Zeile mit Text: Die Aktionen beziehen sich auf das letzte Spiel. -->
     <!--

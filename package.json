@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@inertiajs/vue3": "^3.9.1",
+    "@laravel/echo-vue": "^2.6.3",
     "@nuxt/ui": "^4.12.0"
   }
 }

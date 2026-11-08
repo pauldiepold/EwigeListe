@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Game;
 use App\Models\Group;
+use App\Models\LiveRound;
 use App\Models\Player;
 use App\Models\Round;
 use App\Models\User;
@@ -172,7 +173,7 @@ class RoundShowResource extends JsonResource
     }
 
     /**
-     * @return array{gamesCount: int, averageGameMinutes: ?int, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string}
+     * @return array{gamesCount: int, averageGameMinutes: ?int, startedBy: string, startedAt: string, lastGameBy: ?string, lastGameAt: ?string, rules: ?array<string, bool>}
      */
     private function info(): array
     {
@@ -183,6 +184,7 @@ class RoundShowResource extends JsonResource
             'averageGameMinutes' => $this->averageGameMinutes(),
             'startedBy' => $this->createdBy->first_name,
             'startedAt' => $this->shortTimestamp($this->created_at),
+            'rules' => $this->liveRound?->only(array_keys(LiveRound::RULE_DEFAULTS)),
             'lastGameBy' => $lastGame?->createdBy?->first_name,
             'lastGameAt' => $lastGame
                 ? ($lastGame->created_at->isSameDay($this->created_at)

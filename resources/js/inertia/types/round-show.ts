@@ -1,3 +1,5 @@
+import type { LiveRules } from '@/Components/Live/liveRules';
+
 export type RoundPlayer = {
   id: number;
   firstName: string;
@@ -49,6 +51,8 @@ export type RoundInfo = {
   startedAt: string;
   lastGameBy: string | null;
   lastGameAt: string | null;
+  /** Regeln der Live-Runde; `null` bei einer Offline-Runde. */
+  rules: LiveRules | null;
 };
 
 export type RoundList = {

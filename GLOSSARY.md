@@ -60,11 +60,11 @@ _Avoid_: Runde (für den Stich)
 ### Personen
 
 **Spieler**:
-Eine Person (oder KI), die in Runden mitspielt und Punkte sammelt. Jeder Spieler gehört zu genau einem Benutzer. Er hat einen Vor- und einen Nachnamen; in der Runde steht nur der Vorname. Beim Eintragen eines Spiels wird er bei gleichen Vornamen am Tisch um so viele Buchstaben des Nachnamens ergänzt, bis sie sich unterscheiden („Paul Di.“).
+Eine Person, die in Runden mitspielt und Punkte sammelt. Jeder Spieler gehört zu genau einem Benutzer. Er hat einen Vor- und einen Nachnamen; in der Runde steht nur der Vorname. Beim Eintragen eines Spiels wird er bei gleichen Vornamen am Tisch um so viele Buchstaben des Nachnamens ergänzt, bis sie sich unterscheiden („Paul Di.“).
 _Avoid_: Mitspieler, Teilnehmer, User
 
 **Benutzer**:
-Das Konto eines Spielers; bei KI und Schnellregistrierung ohne vorgesehenen Login.
+Das Konto eines Spielers; bei Schnellregistrierung ohne vorgesehenen Login.
 _Avoid_: Account, User, Spieler
 
 **Avatar**:

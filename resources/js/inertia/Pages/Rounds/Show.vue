@@ -4,6 +4,7 @@ import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import GamesChartLoading from '@/Components/Groups/GamesChartLoading.vue';
 import EnterGameModal from '@/Components/Rounds/EnterGameModal.vue';
+import LiveRoundButton from '@/Components/Rounds/LiveRoundButton.vue';
 import RoundChart from '@/Components/Rounds/RoundChart.vue';
 import RoundInfo from '@/Components/Rounds/RoundInfo.vue';
 import RoundLists from '@/Components/Rounds/RoundLists.vue';
@@ -19,7 +20,6 @@ const props = defineProps<RoundShowProps>();
 
 const tabs = computed(() => [
   { label: 'Runde', icon: 'i-lucide-circle-play', value: 'runde' },
-  ...(props.round.isLive ? [{ label: 'Live', icon: 'i-lucide-dices', value: 'live' }] : []),
   { label: 'Statistiken', icon: 'i-lucide-chart-area', value: 'statistiken' },
   { label: 'Listen', icon: 'i-lucide-list', value: 'listen' },
 ]);
@@ -92,6 +92,10 @@ function deleteRound(): void {
 
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col">
       <UTabs v-model="activeTab" :items="tabs" :content="false" class="mt-2 mb-6 w-full" />
+
+      <div v-if="round.isLive" class="mb-6 flex justify-center">
+        <LiveRoundButton :round-id="round.id" :viewer-is-active="round.viewerIsActive" />
+      </div>
 
       <!-- Füllt den Bildschirm, damit die Rundendaten unten stehen und der Footer darunter. -->
       <section v-if="activeTab === 'runde'" class="flex flex-1 flex-col gap-6">
@@ -189,15 +193,6 @@ function deleteRound(): void {
           </template>
         </RoundInfo>
       </section>
-
-      <UAlert
-        v-else-if="activeTab === 'live'"
-        class="mx-auto max-w-xl"
-        color="neutral"
-        variant="subtle"
-        icon="i-lucide-dices"
-        title="Das Live-Spiel ist hier gerade nicht verfügbar."
-      />
 
       <section v-else-if="activeTab === 'statistiken'">
         <WhenVisible v-if="round.hasChart" data="roundChart">

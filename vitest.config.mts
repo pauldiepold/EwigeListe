@@ -4,7 +4,7 @@ import { defineConfig } from 'vitest/config';
 import nuxtUiOptions from './nuxt-ui.config.mjs';
 
 /**
- * Eigene Config statt `mergeConfig` mit `vite.config.js`: `laravel()` bricht unter `CI` im
+ * Eigene Config statt `mergeConfig` mit `vite.config.mjs`: `laravel()` bricht unter `CI` im
  * Serve-Modus ab, und `wayfinder()` riefe bei jedem Lauf `php artisan` auf. Die Wayfinder-Dateien
  * erzeugt vorher `npm run build`. `ui()` bleibt drin, weil es `U*`-Komponenten und `useToast`
  * automatisch importiert.
