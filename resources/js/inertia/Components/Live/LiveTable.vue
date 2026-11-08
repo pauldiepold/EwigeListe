@@ -28,7 +28,7 @@ defineSlots<{
   trick?: (props: { size: TableSize }) => unknown;
   /** Meine Hand unten, in Tischkoordinaten (`absolute inset-0`). `size` ist die Größe des Tisches in Pixeln. */
   hand?: (props: { size: TableSize }) => unknown;
-  /** Overlays in der Mitte: Warten, Bereit-Check, Vorbehalte, Armut, Wertung. */
+  /** Overlays oben mittig, knapp unter dem oberen Spieler: Warten, Bereit-Check, Vorbehalte, Armut, Wertung. */
   overlay?: () => unknown;
 }>();
 
@@ -78,9 +78,9 @@ const viewerSitsOut = computed(() => {
   return props.liveGame !== null && viewer !== undefined && !viewer.isActive;
 });
 
-/** Links sitzt die Werkzeugleiste; mein Badge steht in einer Flucht mit dem des linken Spielers. */
+/** Links oben sitzt die Werkzeugleiste; mein Badge steht ganz links unten, weg von der Hand. */
 const SEAT_CLASSES: Record<TrickSeat, string> = {
-  unten: 'bottom-2 left-16',
+  unten: 'bottom-2 left-2',
   links: 'top-[24%] left-16',
   oben: 'top-2 left-1/2 -translate-x-1/2',
   rechts: 'top-[24%] right-2',
@@ -129,7 +129,7 @@ const SEAT_CLASSES: Record<TrickSeat, string> = {
       <slot name="hand" :size="size" />
     </div>
 
-    <div class="absolute top-1/2 left-1/2 z-30 -translate-x-1/2 -translate-y-1/2">
+    <div class="absolute top-18 left-1/2 z-30 -translate-x-1/2">
       <p
         v-if="viewerSitsOut"
         class="rounded-lg bg-default px-4 py-3 text-center font-semibold ring ring-default"
