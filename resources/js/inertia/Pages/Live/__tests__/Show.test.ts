@@ -174,8 +174,8 @@ describe('Live-Seite: Bereit-Check', () => {
 
     expect(echo.sendReady).toHaveBeenCalledWith(12);
     expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
-    expect(screen.getByRole('listitem', { name: 'Clara, bereit' })).toBeTruthy();
-    expect(screen.getByRole('listitem', { name: 'Dieter, nicht bereit' })).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Clara, online, bereit' })).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Dieter, online' })).toBeTruthy();
   });
 
   it('startet das Spiel im Browser des ersten Spielers, sobald alle bereit sind', async () => {
@@ -202,7 +202,7 @@ describe('Live-Seite: Bereit-Check', () => {
     echo.options!.onReady(13);
     echo.options!.onReady(14);
 
-    await screen.findByRole('listitem', { name: 'Eva, bereit' });
+    await screen.findByRole('listitem', { name: 'Eva, online, bereit' });
     expect(postLive).not.toHaveBeenCalled();
   });
 
@@ -214,7 +214,7 @@ describe('Live-Seite: Bereit-Check', () => {
     echo.options!.onMemberLeft();
 
     expect(await screen.findByRole('button', { name: 'Bereit?' })).toBeTruthy();
-    expect(screen.getByRole('listitem', { name: 'Clara, nicht bereit' })).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Clara, online' })).toBeTruthy();
   });
 
   it('lässt wer aussetzt zusehen, ohne Bereit-Button', async () => {
@@ -231,6 +231,68 @@ describe('Live-Seite: Bereit-Check', () => {
 
     await waitFor(() => expect(screen.getAllByRole('group').length).toBe(4));
     expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
+  });
+
+  it('sperrt „Bereit?“ und flüstert nichts, solange ein Spieler des Spiels fehlt', async () => {
+    renderShow(12);
+    setOnline(member(11, 'Bernd'), member(12, 'Clara'), member(13, 'Dieter'));
+
+    const button = (await screen.findByRole('button', { name: 'Bereit?' })) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+    expect(screen.getByText('Bitte warte, bis alle online sind')).toBeTruthy();
+    expect(screen.queryByText(/sobald alle bereit sind/)).toBeNull();
+
+    await userEvent.click(button);
+
+    expect(echo.sendReady).not.toHaveBeenCalled();
+    expect(screen.queryByText('bereit')).toBeNull();
+  });
+
+  it('schaltet „Bereit?“ frei, sobald alle online sind', async () => {
+    renderShow(12);
+    setOnline(member(11, 'Bernd'), member(12, 'Clara'));
+    const button = (await screen.findByRole('button', { name: 'Bereit?' })) as HTMLButtonElement;
+    expect(button.disabled).toBe(true);
+
+    setOnline(...activeMembers);
+
+    await screen.findByText('Das erste Spiel startet, sobald alle bereit sind');
+    expect(button.disabled).toBe(false);
+    await userEvent.click(button);
+    expect(echo.sendReady).toHaveBeenCalledWith(12);
+  });
+
+  it('zeigt „online“ und „bereit“ unabhängig voneinander', async () => {
+    renderShow(12);
+    setOnline(member(11, 'Bernd'), member(12, 'Clara'), member(13, 'Dieter'));
+    await screen.findByText('Bitte warte, bis alle online sind');
+
+    echo.options!.onReady(14);
+    echo.options!.onReady(11);
+
+    const eva = await screen.findByRole('listitem', { name: 'Eva, offline, bereit' });
+    expect(within(eva).getByText('bereit')).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Bernd, online, bereit' })).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Dieter, online' })).toBeTruthy();
+  });
+
+  it('lässt Zuschauer die Übersicht ohne Button sehen und nennt, wer fehlt', async () => {
+    renderShow(10);
+    setOnline(member(11, 'Bernd'), member(10, 'Anna'));
+
+    await screen.findByText('Bitte warte, bis alle online sind');
+    expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
+    expect(screen.getByRole('listitem', { name: 'Eva, offline' })).toBeTruthy();
+  });
+
+  it('zeigt mitten im Spiel nur den Hinweis und die Online-Anzeige, ohne Bereit-Zeile', async () => {
+    renderShow(12, { liveGame: game({ phase: 2 }), ich: ich() });
+    setOnline(member(11, 'Bernd'), member(12, 'Clara'));
+
+    await screen.findByText('Bitte warte, bis alle online sind');
+    expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
+    expect(screen.getByRole('listitem', { name: 'Clara, online' })).toBeTruthy();
+    expect(screen.getByRole('listitem', { name: 'Dieter, offline' })).toBeTruthy();
   });
 });
 

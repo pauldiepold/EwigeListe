@@ -4,7 +4,7 @@ import { Head, router } from '@inertiajs/vue3';
 import LiveLayout from '@/Layouts/LiveLayout.vue';
 import LiveHand from '@/Components/Live/LiveHand.vue';
 import LiveMessages from '@/Components/Live/LiveMessages.vue';
-import LiveReadyCheck from '@/Components/Live/LiveReadyCheck.vue';
+import LivePlayerOverview from '@/Components/Live/LivePlayerOverview.vue';
 import LiveScoring from '@/Components/Live/LiveScoring.vue';
 import LivePoverty from '@/Components/Live/LivePoverty.vue';
 import LiveReservations from '@/Components/Live/LiveReservations.vue';
@@ -12,7 +12,6 @@ import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
 import LiveTrick from '@/Components/Live/LiveTrick.vue';
-import LiveWaitingForPlayers from '@/Components/Live/LiveWaitingForPlayers.vue';
 import { playersOfGame } from '@/Components/Live/liveSeating';
 import { postLive } from '@/composables/liveRequest';
 import { useLiveAction } from '@/composables/useLiveAction';
@@ -101,12 +100,6 @@ const echo = useLiveEcho({
   onMemberLeft: readyCheck.reset,
 });
 
-/** Ich bin bereit: Der Check merkt es, die Mitspieler erfahren es per Flüstern. */
-function markMeReady(): void {
-  readyCheck.markMeReady();
-  echo.sendReady(props.round.viewerPlayerId);
-}
-
 const onlinePlayerIds = computed(() => echo.onlineMembers.value.map((member) => member.id));
 
 /**
@@ -116,6 +109,19 @@ const onlinePlayerIds = computed(() => echo.onlineMembers.value.map((member) => 
 const allPlayersOnline = computed(() =>
   activePlayerIds.value.every((id) => onlinePlayerIds.value.includes(id)),
 );
+
+/**
+ * Ich bin bereit: Der Check merkt es, die Mitspieler erfahren es per Flüstern. Solange nicht alle
+ * Spieler online sind, erreicht das Flüstern nicht alle und wird deshalb gar nicht erst gesendet.
+ */
+function markMeReady(): void {
+  if (!allPlayersOnline.value) {
+    return;
+  }
+
+  readyCheck.markMeReady();
+  echo.sendReady(props.round.viewerPlayerId);
+}
 
 /** Meine Hand liegt auf dem Tisch, sobald ein Spiel läuft und alle da sind. Zuschauer haben keine. */
 const showHand = computed(
@@ -279,20 +285,17 @@ const messagesOpen = ref(false);
       </template>
 
       <template #overlay>
-        <LiveWaitingForPlayers
-          v-if="!allPlayersOnline"
-          :players="activePlayers"
-          :online-player-ids="onlinePlayerIds"
-        />
-        <div v-else-if="betweenGames" class="flex items-stretch gap-3">
+        <div v-if="!allPlayersOnline || betweenGames" class="flex items-stretch gap-3">
           <LiveScoring
-            v-if="scoredGame"
+            v-if="betweenGames && scoredGame"
             :game="scoredGame"
             :players="round.players"
             :viewer-player-id="round.viewerPlayerId"
           />
-          <LiveReadyCheck
+          <LivePlayerOverview
             :players="activePlayers"
+            :online-player-ids="onlinePlayerIds"
+            :show-ready="betweenGames"
             :ready-ids="readyCheck.readyIds.value"
             :is-first-game="round.gamesCount === 0"
             :can-be-ready="viewerIsActive"
