@@ -15,7 +15,7 @@ defineProps<{
 defineEmits<{ reload: [] }>();
 
 defineSlots<{
-  /** Weitere Werkzeuge unter den festen (letzter Stich, Meldungen, Neu laden, …). */
+  /** Aktionen unter der Leiste (z. B. „Kontra“); sie verändern die Breite der Leiste nicht. */
   default?: () => unknown;
 }>();
 
@@ -31,74 +31,78 @@ const infoOpen = ref(false);
 </script>
 
 <template>
-  <div
-    class="flex flex-col gap-2 rounded-lg bg-default/90 p-1.5 ring ring-default"
-    role="toolbar"
-    aria-label="Werkzeuge"
-    aria-orientation="vertical"
-  >
-    <UButton
-      :to="backPath"
-      icon="i-lucide-arrow-left"
-      color="neutral"
-      variant="ghost"
-      aria-label="Zurück zur Runde"
-      title="Zurück zur Runde"
-    />
-    <UButton
-      icon="i-lucide-info"
-      color="neutral"
-      variant="ghost"
-      aria-label="Info"
-      title="Info und Regeln"
-      @click="infoOpen = true"
-    />
-    <UButton
-      icon="i-lucide-history"
-      color="neutral"
-      :variant="lastTrickOpen ? 'soft' : 'ghost'"
-      aria-label="Letzter Stich"
-      title="Letzten Stich ein- und ausblenden"
-      :aria-pressed="lastTrickOpen"
-      @click="lastTrickOpen = !lastTrickOpen"
-    />
-    <UButton
-      icon="i-lucide-message-square-text"
-      color="neutral"
-      :variant="messagesOpen ? 'soft' : 'ghost'"
-      aria-label="Meldungen"
-      title="Meldungen ein- und ausblenden"
-      :aria-pressed="messagesOpen"
-      @click="messagesOpen = !messagesOpen"
-    />
-    <UButton
-      v-if="canFullscreen"
-      :icon="isFullscreen ? 'i-lucide-minimize' : 'i-lucide-maximize'"
-      color="neutral"
-      variant="ghost"
-      :aria-label="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
-      :title="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
-      @click="toggleFullscreen"
-    />
-    <UButton
-      icon="i-lucide-refresh-cw"
-      color="neutral"
-      variant="ghost"
-      aria-label="Daten neu laden"
-      title="Daten neu laden"
-      :loading="reloading"
-      @click="$emit('reload')"
-    />
-    <slot />
-
-    <UModal
-      v-model:open="infoOpen"
-      title="Regeln dieser Runde"
-      description="Sie gelten für alle Spiele dieser Runde."
+  <div class="flex flex-col gap-2">
+    <div
+      class="flex flex-col gap-2 rounded-lg bg-default/90 p-1.5 ring ring-default"
+      role="toolbar"
+      aria-label="Werkzeuge"
+      aria-orientation="vertical"
     >
-      <template #body>
-        <LiveRulesList :rules="rules" />
-      </template>
-    </UModal>
+      <UButton
+        :to="backPath"
+        icon="i-lucide-arrow-left"
+        color="neutral"
+        variant="ghost"
+        aria-label="Zurück zur Runde"
+        title="Zurück zur Runde"
+      />
+      <UButton
+        icon="i-lucide-info"
+        color="neutral"
+        variant="ghost"
+        aria-label="Info"
+        title="Info und Regeln"
+        @click="infoOpen = true"
+      />
+      <UButton
+        icon="i-lucide-history"
+        color="neutral"
+        :variant="lastTrickOpen ? 'soft' : 'ghost'"
+        aria-label="Letzter Stich"
+        title="Letzten Stich ein- und ausblenden"
+        :aria-pressed="lastTrickOpen"
+        @click="lastTrickOpen = !lastTrickOpen"
+      />
+      <UButton
+        icon="i-lucide-message-square-text"
+        color="neutral"
+        :variant="messagesOpen ? 'soft' : 'ghost'"
+        aria-label="Meldungen"
+        title="Meldungen ein- und ausblenden"
+        :aria-pressed="messagesOpen"
+        @click="messagesOpen = !messagesOpen"
+      />
+      <UButton
+        v-if="canFullscreen"
+        :icon="isFullscreen ? 'i-lucide-minimize' : 'i-lucide-maximize'"
+        color="neutral"
+        variant="ghost"
+        :aria-label="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
+        :title="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
+        @click="toggleFullscreen"
+      />
+      <UButton
+        icon="i-lucide-refresh-cw"
+        color="neutral"
+        variant="ghost"
+        aria-label="Daten neu laden"
+        title="Daten neu laden"
+        :loading="reloading"
+        @click="$emit('reload')"
+      />
+      <UModal
+        v-model:open="infoOpen"
+        title="Regeln dieser Runde"
+        description="Sie gelten für alle Spiele dieser Runde."
+      >
+        <template #body>
+          <LiveRulesList :rules="rules" />
+        </template>
+      </UModal>
+    </div>
+    <!-- Trägt nichts zur Breite bei: Aktionen sind mindestens so breit wie die Leiste und dürfen überstehen. -->
+    <div class="w-0 min-w-full">
+      <slot />
+    </div>
   </div>
 </template>

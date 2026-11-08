@@ -8,7 +8,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 
 /**
- * Abzeichen, gruppiert nach Typ und Jahr (neueste zuerst). Erwartet sie bereits sortiert.
+ * Abzeichen, gruppiert nach Jahr und Monat (neueste zuerst), je Monat der Sieger nach Punkten und
+ * nach Spielen. Erwartet sie bereits sortiert.
  *
  * @property Collection<int, Badge> $resource
  */
@@ -29,29 +30,41 @@ class BadgesResource extends JsonResource
     }
 
     /**
-     * @return list<array{type: string, years: list<array{year: int, badges: list<array{firstName: string, value: int, date: string, path: ?string}>}>}>
+     * @return list<array{year: int, months: list<array{month: int, points: ?array{firstName: string, value: int, path: ?string}, games: ?array{firstName: string, value: int, path: ?string}}>}>
      */
     public function toArray(Request $request): array
     {
         return $this->resource
-            ->groupBy('type')
-            ->map(fn (Collection $badges, string $type): array => [
-                'type' => $type,
-                'years' => $badges
-                    ->groupBy('year')
-                    ->map(fn (Collection $badges, int $year): array => [
-                        'year' => $year,
-                        'badges' => $badges->map(fn (Badge $badge): array => [
-                            'firstName' => $badge->player->first_name,
-                            'value' => $badge->value,
-                            'date' => $badge->date->isoFormat('MMMM YYYY'),
-                            'path' => $this->linked ? $badge->playerPathFor($request->user()) : null,
-                        ])->all(),
+            ->groupBy('year')
+            ->map(fn (Collection $badgesOfYear, int $year): array => [
+                'year' => $year,
+                'months' => $badgesOfYear
+                    ->groupBy('month')
+                    ->map(fn (Collection $badgesOfMonth, int $month): array => [
+                        'month' => $month,
+                        'points' => $this->winner($badgesOfMonth->firstWhere('type', 'points'), $request),
+                        'games' => $this->winner($badgesOfMonth->firstWhere('type', 'games'), $request),
                     ])
                     ->values()
                     ->all(),
             ])
             ->values()
             ->all();
+    }
+
+    /**
+     * @return ?array{firstName: string, value: int, path: ?string}
+     */
+    private function winner(?Badge $badge, Request $request): ?array
+    {
+        if ($badge === null) {
+            return null;
+        }
+
+        return [
+            'firstName' => $badge->player->first_name,
+            'value' => $badge->value,
+            'path' => $this->linked ? $badge->playerPathFor($request->user()) : null,
+        ];
     }
 }

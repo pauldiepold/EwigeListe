@@ -48,7 +48,7 @@ class RoundController extends Controller
 
     public function current(): RedirectResponse
     {
-        $lastRound = auth()->user()->player->rounds()->latest()->first();
+        $lastRound = auth()->user()->player->latestRound()->first();
 
         return $lastRound
             ? redirect()->route('rounds.show', $lastRound)

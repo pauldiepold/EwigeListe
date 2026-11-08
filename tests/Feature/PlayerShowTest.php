@@ -10,6 +10,7 @@ use App\Models\Profile;
 use App\Models\Round;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
@@ -121,6 +122,42 @@ class PlayerShowTest extends TestCase
 
         $this->actingAs($this->admin)->get(route('players.show', $player))
             ->assertInertia(fn (Assert $page) => $page->where('player.editableUserId', $ownUser->id));
+    }
+
+    #[Test]
+    public function the_uploaded_avatar_is_offered_in_full_size(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('avatars/2026-10-30_20-45-38_1_full.jpg', 'original');
+        $player = $this->memberOfEwigeListe();
+        $player->user->update(['avatar_path' => '2026-10-30_20-45-38_1.jpg']);
+
+        $this->get(route('players.show', $player))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('player.avatarPath', '/storage/avatars/2026-10-30_20-45-38_1.jpg')
+                ->where('player.avatarFullPath', '/storage/avatars/2026-10-30_20-45-38_1_full.jpg'));
+    }
+
+    /**
+     * Uploads vor November 2020 speicherten kein Original.
+     */
+    #[Test]
+    public function an_avatar_without_a_stored_original_is_not_offered_in_full_size(): void
+    {
+        Storage::fake('public');
+        $player = $this->memberOfEwigeListe();
+        $player->user->update(['avatar_path' => '2020-05-01_12-00-00_Anna_Muster.jpg']);
+        $withoutAvatar = $this->memberOfEwigeListe();
+
+        $this->get(route('players.show', $player))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('player.avatarPath', '/storage/avatars/2020-05-01_12-00-00_Anna_Muster.jpg')
+                ->where('player.avatarFullPath', null));
+
+        $this->get(route('players.show', $withoutAvatar))
+            ->assertInertia(fn (Assert $page) => $page
+                ->where('player.avatarPath', null)
+                ->where('player.avatarFullPath', null));
     }
 
     #[Test]
@@ -339,14 +376,14 @@ class PlayerShowTest extends TestCase
 
         $this->get(route('players.show', [$player, $list]))
             ->assertInertia(fn (Assert $page) => $page
-                ->has('badges', 2)
                 ->where('badgeCount', 2)
-                ->where('badges.0.type', 'games')
-                ->where('badges.1.type', 'points')
-                ->where('badges.1.years.0', [
+                ->where('badges', [[
                     'year' => 2024,
-                    'badges' => [['firstName' => 'Anna', 'value' => 42, 'date' => 'Juli 2024', 'path' => null]],
-                ])
+                    'months' => [
+                        ['month' => 8, 'points' => null, 'games' => ['firstName' => 'Anna', 'value' => 30, 'path' => null]],
+                        ['month' => 7, 'points' => ['firstName' => 'Anna', 'value' => 42, 'path' => null], 'games' => null],
+                    ],
+                ]])
             );
     }
 

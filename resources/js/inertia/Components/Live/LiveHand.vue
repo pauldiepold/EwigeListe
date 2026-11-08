@@ -36,7 +36,7 @@ const cardStyles = computed(() =>
   props.cards.map((_, index) => ({
     width: `${layout.value.cardWidth}px`,
     transformOrigin: `50% ${layout.value.radius}px`,
-    transform: `translate(${props.tableSize.width / 2 - layout.value.cardWidth / 2}px, ${layout.value.top}px) rotate(${Math.round(layout.value.angles[index] * 1000) / 1000}deg)`,
+    transform: `translate(${layout.value.centerX - layout.value.cardWidth / 2}px, ${layout.value.top}px) rotate(${Math.round(layout.value.angles[index] * 1000) / 1000}deg)`,
     zIndex: index + 1,
   })),
 );

@@ -227,6 +227,7 @@ const messagesOpen = ref(false);
       class="portrait:hidden"
       :players="tablePlayers"
       :viewer-player-id="round.viewerPlayerId"
+      :online-player-ids="onlinePlayerIds"
       :live-game="tableGame"
     >
       <template #spectators>
@@ -246,6 +247,7 @@ const messagesOpen = ref(false);
             v-if="play.announcement.value"
             :label="play.announcement.value.label"
             size="sm"
+            class="w-max min-w-full justify-center"
             :disabled="play.announcementLocked.value"
             @click="play.announce"
           />

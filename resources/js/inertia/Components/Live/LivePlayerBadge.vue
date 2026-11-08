@@ -9,6 +9,8 @@ const props = defineProps<{
   /** Anzeige des Spielers im laufenden Spiel; `null` vor dem Spielbeginn. */
   display: LivePlayerDisplay | null;
   isTurn: boolean;
+  /** Der Spieler ist gerade am Tisch (Presence-Kanal). */
+  isOnline: boolean;
   /** Vorhand zählt nur in der Vorbehaltsphase und sonst nicht. */
   isVorhand: boolean;
 }>();
@@ -31,14 +33,20 @@ const details = computed(() =>
   <div
     role="group"
     :aria-label="`${player.firstName}, ${position}`"
-    class="flex max-w-48 items-center gap-2 rounded-lg bg-default/90 px-2 py-1.5 text-xs ring transition-shadow"
-    :class="isTurn ? 'ring-2 ring-primary' : 'ring-default'"
+    class="flex max-w-48 items-center gap-2.5 rounded-lg px-3 py-2 text-xs ring transition-colors"
+    :class="isTurn ? 'bg-primary/15 ring-primary/50' : 'bg-default/90 ring-default'"
   >
-    <UAvatar :src="player.avatarPath ?? undefined" :alt="player.firstName" size="md" />
+    <UAvatar
+      :src="player.avatarPath ?? undefined"
+      :alt="player.firstName"
+      size="md"
+      class="transition-shadow"
+      :class="isOnline ? 'shadow-[0_0_6px_1px] shadow-success/60' : 'opacity-40'"
+    />
     <div class="min-w-0">
       <p class="flex items-center gap-1.5">
         <b class="truncate text-highlighted">{{ player.firstName }}</b>
-        <UBadge v-if="isTurn" label="dran" color="primary" size="sm" />
+        <UBadge v-if="isTurn" label="dran" color="primary" variant="soft" size="sm" />
       </p>
       <p v-if="details" class="truncate text-muted">{{ details }}</p>
     </div>

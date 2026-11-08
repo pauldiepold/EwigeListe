@@ -83,7 +83,7 @@ Referenz: `Components/Rounds/__tests__/EnterGameModal.test.ts`.
   ```ts
   const page = vi.hoisted(() => ({
     url: '/rounds/create',
-    props: { auth: { user: { id: 1 }, player: { id: 5, surname: 'Paul', name: 'Paul D.' } }, navigation: { showCurrentRound: false } },
+    props: { auth: { user: { id: 1 }, player: { id: 5, fullName: 'Paul D.' } }, navigation: { currentRoundId: null } },
     flash: {},
   }));
   vi.mock('@inertiajs/vue3', async (importOriginal) => ({

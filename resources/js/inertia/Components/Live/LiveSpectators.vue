@@ -11,7 +11,7 @@ defineProps<{
   <ul
     v-if="spectators.length > 0"
     aria-label="Zuschauer"
-    class="flex flex-col gap-1.5 rounded-lg bg-default/90 p-1.5 ring ring-default"
+    class="flex gap-1.5 rounded-lg bg-default/90 p-1.5 ring ring-default"
   >
     <li v-for="spectator in spectators" :key="spectator.id" :aria-label="spectator.name">
       <UAvatar :src="spectator.avatar_path ?? undefined" :alt="spectator.name" size="sm" />

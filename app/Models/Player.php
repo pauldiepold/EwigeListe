@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Gate;
 
 class Player extends Model
@@ -48,6 +49,14 @@ class Player extends Model
     public function rounds()
     {
         return $this->belongsToMany(Round::class)->withTimestamps()->withPivot('index');
+    }
+
+    /**
+     * Die neueste Runde des Spielers, Ziel von „Aktuelle Runde“.
+     */
+    public function latestRound(): BelongsToMany
+    {
+        return $this->rounds()->latest();
     }
 
     public function games()

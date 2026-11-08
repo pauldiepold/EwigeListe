@@ -90,33 +90,34 @@ class GroupShowTest extends TestCase
     }
 
     #[Test]
-    public function badges_are_grouped_by_type_and_year(): void
+    public function badges_are_grouped_by_year_and_month_with_one_winner_per_type(): void
     {
         $group = Group::factory()->create();
-        $player = $this->memberOf($group, []);
-        foreach ([[2025, 3], [2024, 7]] as [$year, $month]) {
+        $anna = $this->memberOf($group, []);
+        $ben = $this->memberOf($group, []);
+        foreach ([[2025, 3, 'points', $anna, 42], [2024, 7, 'points', $anna, 42], [2024, 7, 'games', $ben, 30]] as [$year, $month, $type, $player, $value]) {
             Badge::create([
                 'group_id' => $group->id,
                 'player_id' => $player->id,
-                'type' => 'points',
+                'type' => $type,
                 'year' => $year,
                 'month' => $month,
-                'value' => 42,
+                'value' => $value,
             ]);
         }
 
         $this->get(route('groups.show', $group))
             ->assertInertia(fn (Assert $page) => $page
-                ->has('badges', 1)
-                ->where('badges.0.type', 'points')
-                ->where('badges.0.years.0.year', 2025)
-                ->where('badges.0.years.1.year', 2024)
-                ->where('badges.0.years.1.badges.0', [
-                    'firstName' => $player->first_name,
-                    'value' => 42,
-                    'date' => 'Juli 2024',
-                    'path' => "/profil/{$player->id}/{$group->id}#abzeichen",
-                ])
+                ->has('badges', 2)
+                ->where('badges.0.year', 2025)
+                ->where('badges.0.months.0.month', 3)
+                ->where('badges.0.months.0.games', null)
+                ->where('badges.1.year', 2024)
+                ->where('badges.1.months', [[
+                    'month' => 7,
+                    'points' => ['firstName' => $anna->first_name, 'value' => 42, 'path' => "/profil/{$anna->id}/{$group->id}#abzeichen"],
+                    'games' => ['firstName' => $ben->first_name, 'value' => 30, 'path' => "/profil/{$ben->id}/{$group->id}#abzeichen"],
+                ]])
             );
     }
 
@@ -133,7 +134,7 @@ class GroupShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('members.0.path', null)
                 ->where('statistics.records.0.holders.0.path', null)
-                ->where('badges.0.years.0.badges.0.path', null)
+                ->where('badges.0.months.0.points.path', null)
             );
     }
 
@@ -150,7 +151,7 @@ class GroupShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page
                 ->where('members.0.path', "/profil/{$locked->id}/{$group->id}")
                 ->where('statistics.records.0.holders.0.path', "/profil/{$locked->id}/{$group->id}")
-                ->where('badges.0.years.0.badges.0.path', "/profil/{$locked->id}/{$group->id}#abzeichen")
+                ->where('badges.0.months.0.points.path', "/profil/{$locked->id}/{$group->id}#abzeichen")
             );
     }
 

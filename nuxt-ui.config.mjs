@@ -16,6 +16,15 @@ export default {
                 root: 'bg-elevated ring-accented shadow-xl',
             },
         },
+        // Nuxt UI setzt Eingaben in `md` auf `text-base`, damit iOS beim Fokus nicht zoomt. Das
+        // Select ist ein Button, zoomt also nicht, und wirkte mit 16px am Handy zu groß.
+        select: {
+            variants: {
+                size: {
+                    md: { base: 'text-sm/5' },
+                },
+            },
+        },
         // Am Handy trägt nur der aktive Tab Text, sonst kürzt Nuxt UI alle Beschriftungen.
         // Nur bei Tabs mit Icon; `sr-only` lässt den Namen für Screenreader stehen.
         tabs: {

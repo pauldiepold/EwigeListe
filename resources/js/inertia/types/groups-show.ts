@@ -41,19 +41,18 @@ export type GroupMember = {
 
 export type BadgeType = 'points' | 'games';
 
-export type GroupBadge = {
+export type BadgeWinner = {
   firstName: string;
   value: number;
-  date: string;
   path: string | null;
 };
 
-export type GroupBadgesOfType = {
-  type: BadgeType;
-  years: Array<{
-    year: number;
-    badges: GroupBadge[];
-  }>;
+/** Ein Monat mit mindestens einem Abzeichen; `month` zählt ab 1. */
+export type BadgeMonth = { month: number } & Record<BadgeType, BadgeWinner | null>;
+
+export type BadgeYear = {
+  year: number;
+  months: BadgeMonth[];
 };
 
 export type GroupShowProps = {
@@ -64,7 +63,7 @@ export type GroupShowProps = {
   };
   members: GroupMember[];
   statistics: GroupStatistics;
-  badges: GroupBadgesOfType[];
+  badges: BadgeYear[];
   rounds: PaginatedRoundArchiveRows;
   archiveSort: ArchiveSort;
   hasGamesChart: boolean;

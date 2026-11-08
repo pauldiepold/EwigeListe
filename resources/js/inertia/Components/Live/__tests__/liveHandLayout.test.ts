@@ -11,8 +11,8 @@ describe('handLayout', () => {
     expect(layout.cardWidth).toBeCloseTo(144 / 1.4);
   });
 
-  it('dreht die Karten um einen Punkt 8 Kartenhöhen unter ihrer Oberkante', () => {
-    expect(handLayout(12, TABLE).radius).toBeCloseTo(8 * 144);
+  it('dreht die Karten um einen Punkt 12 Kartenhöhen unter ihrer Oberkante', () => {
+    expect(handLayout(12, TABLE).radius).toBeCloseTo(12 * 144);
   });
 
   it('fächert die Karten symmetrisch auf, die linke Karte kippt nach links', () => {
@@ -27,11 +27,11 @@ describe('handLayout', () => {
 
   it('wählt den Winkel so, dass der Kartenabstand am Rand des Bogens dem Abstand entspricht', () => {
     // 12 Karten füllen 78 % der Tischbreite: Abstand (0,78 × 800 − 102,86) / 11 ≈ 47,38 px,
-    // Winkel im Bogenmaß ≈ Abstand / Radius = 47,38 / 1152.
+    // Winkel im Bogenmaß ≈ Abstand / Radius = 47,38 / 1728.
     const { angles } = handLayout(12, TABLE);
 
     const stepInRadians = ((angles[1] - angles[0]) * Math.PI) / 180;
-    expect(stepInRadians).toBeCloseTo(47.38 / 1152, 4);
+    expect(stepInRadians).toBeCloseTo(47.38 / 1728, 4);
   });
 
   it('rückt wenige Karten höchstens um 0,72 Kartenbreiten auseinander', () => {
@@ -45,10 +45,15 @@ describe('handLayout', () => {
     expect(handLayout(1, TABLE).angles).toEqual([0]);
   });
 
-  it('lässt die Hand unten rund 20 % aus dem Tisch ragen, solange sie nicht gefächert ist', () => {
+  it('lässt die Hand unten rund 40 % aus dem Tisch ragen, solange sie nicht gefächert ist', () => {
     const { top, cardHeight } = handLayout(1, TABLE);
 
-    expect(top + cardHeight).toBeCloseTo(TABLE.height + 0.2 * cardHeight);
+    expect(top + cardHeight).toBeCloseTo(TABLE.height + 0.4 * cardHeight);
+  });
+
+  it('rückt die Hand auf schmalen Tischen nach rechts, auf breiten steht sie mittig', () => {
+    expect(handLayout(12, TABLE).centerX).toBeCloseTo(0.56 * 800);
+    expect(handLayout(12, { width: 1200, height: 500 }).centerX).toBeCloseTo(600);
   });
 
   it('hebt einen breiten Fächer an, damit die äußeren Karten ihr Eckzeichen zeigen', () => {
