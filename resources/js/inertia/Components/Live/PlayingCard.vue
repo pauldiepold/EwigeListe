@@ -40,7 +40,7 @@ const isSelected = computed(() => props.interactive && props.selected === true);
 const frameClasses = computed(() => [
   'relative block aspect-[5/7] w-full min-w-0 border-0 bg-transparent p-0 transition-transform duration-200 [container-type:inline-size] motion-reduce:transition-none',
   props.interactive && props.playable ? 'cursor-pointer' : 'cursor-default',
-  isSelected.value ? '-translate-y-[8%]' : '',
+  isSelected.value ? '-translate-y-[20%]' : '',
 ]);
 
 const FACE_SHADOWS = {

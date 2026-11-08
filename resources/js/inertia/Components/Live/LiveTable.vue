@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import LivePlayerBadge from '@/Components/Live/LivePlayerBadge.vue';
+import type { TableSize } from '@/Components/Live/liveHandLayout';
 import { seatAroundViewer } from '@/Components/Live/liveSeating';
 import type { LiveGameData, LivePlayer } from '@/types/live';
 
@@ -19,13 +20,40 @@ defineSlots<{
   tools?: () => unknown;
   /** Platz für das Meldungsprotokoll rechts. */
   messages?: () => unknown;
-  /** Der Stich in der Mitte. */
-  trick?: () => unknown;
-  /** Meine Hand unten. */
-  hand?: () => unknown;
+  /** Der Stich in der Mitte. `size` ist die Größe des Tisches in Pixeln, nach der sich Karten richten. */
+  trick?: (props: { size: TableSize }) => unknown;
+  /** Meine Hand unten, in Tischkoordinaten (`absolute inset-0`). `size` ist die Größe des Tisches in Pixeln. */
+  hand?: (props: { size: TableSize }) => unknown;
   /** Overlays in der Mitte: Warten, Bereit-Check, Vorbehalte, Armut, Wertung. */
   overlay?: () => unknown;
 }>();
+
+const tableElement = ref<HTMLElement | null>(null);
+
+/** Größe des Tisches in Pixeln. Karten in Hand und Stich richten ihre Größe danach aus. */
+const size = ref<TableSize>({ width: 0, height: 0 });
+
+let resizeObserver: ResizeObserver | undefined;
+
+function measure(): void {
+  if (tableElement.value) {
+    size.value = {
+      width: tableElement.value.clientWidth,
+      height: tableElement.value.clientHeight,
+    };
+  }
+}
+
+onMounted(() => {
+  measure();
+
+  if (typeof ResizeObserver !== 'undefined' && tableElement.value) {
+    resizeObserver = new ResizeObserver(measure);
+    resizeObserver.observe(tableElement.value);
+  }
+});
+
+onBeforeUnmount(() => resizeObserver?.disconnect());
 
 const POSITIONS = ['unten', 'links', 'oben', 'rechts'] as const;
 
@@ -56,11 +84,15 @@ const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
 </script>
 
 <template>
-  <div class="relative size-full overflow-hidden rounded-xl bg-elevated ring ring-default">
+  <div
+    ref="tableElement"
+    class="relative size-full overflow-hidden rounded-xl bg-elevated ring ring-default"
+  >
+    <!-- Die Badges liegen über den äußeren Karten der Hand und lassen Klicks auf diese durch. -->
     <div
       v-for="seat in seats"
       :key="seat.player.id"
-      class="absolute z-10"
+      class="pointer-events-none absolute z-10"
       :class="SEAT_CLASSES[seat.position]"
     >
       <LivePlayerBadge
@@ -85,11 +117,11 @@ const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
     </div>
 
     <div class="absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2">
-      <slot name="trick" />
+      <slot name="trick" :size="size" />
     </div>
 
-    <div class="absolute bottom-0 left-1/2 -translate-x-1/2">
-      <slot name="hand" />
+    <div class="pointer-events-none absolute inset-0">
+      <slot name="hand" :size="size" />
     </div>
 
     <div class="absolute top-1/2 left-1/2 z-30 -translate-x-1/2 -translate-y-1/2">

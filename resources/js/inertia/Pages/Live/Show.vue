@@ -2,17 +2,21 @@
 import { computed, ref, watch } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import LiveLayout from '@/Layouts/LiveLayout.vue';
+import LiveHand from '@/Components/Live/LiveHand.vue';
 import LiveMessages from '@/Components/Live/LiveMessages.vue';
 import LiveReadyCheck from '@/Components/Live/LiveReadyCheck.vue';
+import LiveReservations from '@/Components/Live/LiveReservations.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
 import LiveWaitingForPlayers from '@/Components/Live/LiveWaitingForPlayers.vue';
 import { postLive } from '@/composables/liveRequest';
+import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
-import { useLiveGameState } from '@/composables/useLiveGameState';
+import { listOf, useLiveGameState } from '@/composables/useLiveGameState';
 import { useLiveReadyCheck } from '@/composables/useLiveReadyCheck';
 import { useRefreshOnVisible } from '@/composables/useRefreshOnVisible';
+import { vorbehalt as sendReservation } from '@/routes/live/games';
 import { start as startGame } from '@/routes/live/rounds';
 import type { LiveShowProps } from '@/types/live';
 
@@ -49,6 +53,9 @@ function reloadData(): void {
 
 useRefreshOnVisible(reloadData);
 
+/** Aktionen an die Engine (Vorbehalt, später Karte spielen) mit gemeinsamer Fehlerbehandlung. */
+const liveAction = useLiveAction(reloadData);
+
 const readyCheck = useLiveReadyCheck({
   activePlayerIds,
   viewerPlayerId: props.round.viewerPlayerId,
@@ -83,6 +90,28 @@ const onlinePlayerIds = computed(() => echo.onlineMembers.value.map((member) => 
 const allPlayersOnline = computed(() =>
   activePlayerIds.value.every((id) => onlinePlayerIds.value.includes(id)),
 );
+
+/** Meine Hand liegt auf dem Tisch, sobald ein Spiel läuft und alle da sind. Zuschauer haben keine. */
+const showHand = computed(
+  () =>
+    allPlayersOnline.value &&
+    state.liveGame.value !== null &&
+    state.ich.value !== null &&
+    state.hand.value.length > 0,
+);
+
+/** In der Vorbehaltsphase wählen die Spieler reihum, wer dran ist, gibt die Vorhand vor. */
+const showReservations = computed(
+  () => state.liveGame.value?.phase === 2 && state.ich.value !== null,
+);
+
+async function chooseReservation(reservation: string): Promise<void> {
+  const liveGame = state.liveGame.value;
+
+  if (liveGame) {
+    await liveAction.send(sendReservation.url(liveGame.id), { vorbehalt: reservation });
+  }
+}
 
 const spectators = computed(() =>
   echo.onlineMembers.value.filter((member) => !activePlayerIds.value.includes(member.id)),
@@ -134,6 +163,10 @@ const messagesOpen = ref(false);
         />
       </template>
 
+      <template #hand="{ size }">
+        <LiveHand v-if="showHand" :cards="state.hand.value" :table-size="size" />
+      </template>
+
       <template #overlay>
         <LiveWaitingForPlayers
           v-if="!allPlayersOnline"
@@ -148,6 +181,15 @@ const messagesOpen = ref(false);
           :can-be-ready="viewerIsActive"
           :i-am-ready="readyCheck.iAmReady.value"
           @ready="readyCheck.markMeReady"
+        />
+        <LiveReservations
+          v-else-if="showReservations && state.ich.value"
+          :possible="listOf(state.ich.value.moeglicheVorbehalte)"
+          :koenigs-solo="round.rules.koenigsSolo"
+          :is-my-turn="state.liveGame.value?.dran === round.viewerPlayerId"
+          :decided="state.ich.value.vorbehalt != null"
+          :busy="liveAction.busy.value"
+          @choose="chooseReservation"
         />
       </template>
     </LiveTable>

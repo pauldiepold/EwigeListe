@@ -7,6 +7,7 @@ import Show from '@/Pages/Live/Show.vue';
 import { renderWithUi } from '@/testing/renderWithUi';
 import type { LiveEchoMember, UseLiveEchoOptions } from '@/composables/useLiveEcho';
 import type {
+  LiveEngineCard,
   LiveGameData,
   LiveGamePush,
   LivePlayer,
@@ -36,6 +37,9 @@ vi.mock('@/composables/useLiveEcho', async () => {
 
 const postLive = vi.hoisted(() => vi.fn());
 vi.mock('@/composables/liveRequest', () => ({ postLive }));
+
+const reloadPage = vi.hoisted(() => vi.fn());
+vi.mock('@/composables/reloadPage', () => ({ reloadPage }));
 
 // `Head` und Links brauchen die App, die nur `createInertiaApp` anlegt.
 vi.mock('@inertiajs/vue3', async (importOriginal) => {
@@ -168,6 +172,7 @@ beforeEach(() => {
   echo.sendReady.mockReset();
   postLive.mockReset();
   postLive.mockResolvedValue(undefined);
+  reloadPage.mockReset();
   vi.spyOn(router, 'reload').mockImplementation(() => undefined);
 });
 
@@ -347,5 +352,171 @@ describe('Live-Seite: Pushes und Neuladen', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Daten neu laden' }));
 
     expect(router.reload).toHaveBeenCalledTimes(1);
+  });
+});
+
+function engineCard(id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6): LiveEngineCard {
+  return {
+    id,
+    farbe,
+    wert,
+    rang: 0,
+    punkte: 0,
+    trumpf: false,
+    spielbar: true,
+    gespieltVon: false,
+    armut_zurueck: false,
+  };
+}
+
+const SOLOS = [
+  'Fleischlos',
+  'Bubensolo',
+  'Damensolo',
+  'Königssolo',
+  'Trumpfsolo',
+  'Farbsolo Herz',
+  'Farbsolo Pik',
+  'Farbsolo Kreuz',
+];
+
+/** Clara (12) mit zwei Karten und allen Soli; sie hat noch keinen Vorbehalt gemeldet. */
+function claraWithHand(overrides: Partial<LiveSpieler> = {}): LiveSpieler {
+  return {
+    ...ich(),
+    hand: [engineCard(1, 4, 3), engineCard(2, 2, 5)],
+    moeglicheVorbehalte: SOLOS,
+    ...overrides,
+  };
+}
+
+describe('Live-Seite: Hand und Vorbehalte', () => {
+  it('zeigt meine Hand, sobald das Spiel läuft und alle online sind', async () => {
+    renderShow(12, { liveGame: game({ phase: 2, dran: 11, vorhand: 11 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+
+    const handGroup = await screen.findByRole('group', { name: 'Deine Hand' });
+    expect(
+      within(handGroup)
+        .getAllByRole('img')
+        .map((card) => card.getAttribute('aria-label')),
+    ).toEqual(['Kreuz Dame', 'Herz 10']);
+  });
+
+  it('zeigt die Hand nicht, solange nicht alle online sind', async () => {
+    renderShow(12, { liveGame: game({ phase: 2 }), ich: claraWithHand() });
+    setOnline(member(11, 'Bernd'), member(12, 'Clara'));
+
+    await screen.findByText('Bitte warte, bis alle online sind');
+    expect(screen.queryByRole('group', { name: 'Deine Hand' })).toBeNull();
+    expect(screen.queryByText('Mögliche Vorbehalte:')).toBeNull();
+  });
+
+  it('zeigt Zuschauern und wer aussetzt weder Hand noch Vorbehalte', async () => {
+    renderShow(10, { liveGame: game({ phase: 2 }), ich: null });
+    setOnline(...activeMembers, member(10, 'Anna'));
+
+    await screen.findByText('Du setzt dieses Spiel aus!');
+    expect(screen.queryByRole('group', { name: 'Deine Hand' })).toBeNull();
+    expect(screen.queryByText('Mögliche Vorbehalte:')).toBeNull();
+  });
+
+  it('zeigt die möglichen Vorbehalte gesperrt, solange ein anderer dran ist', async () => {
+    renderShow(12, { liveGame: game({ phase: 2, dran: 11, vorhand: 11 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+
+    expect(await screen.findByText('Mögliche Vorbehalte:')).toBeTruthy();
+    expect((screen.getByRole('button', { name: 'Gesund' }) as HTMLButtonElement).disabled).toBe(
+      true,
+    );
+  });
+
+  it('meldet Vorhand und gemeldete Vorbehalte an den Badges', async () => {
+    const spieler = { 11: display(), 12: display(), 13: display(), 14: display() };
+    spieler[11].vorbehalt = 'Gesund';
+    spieler[13].vorbehalt = 'Vorbehalt';
+    renderShow(12, {
+      liveGame: game({ phase: 2, dran: 12, vorhand: 11, spieler }),
+      ich: claraWithHand(),
+    });
+    setOnline(...activeMembers);
+
+    const seatOf = (name: string) => screen.getByRole('group', { name: new RegExp(`^${name},`) });
+    await waitFor(() => expect(seatOf('Bernd').textContent).toContain('Vorhand · Gesund'));
+    expect(seatOf('Dieter').textContent).toContain('Vorbehalt');
+    expect(seatOf('Dieter').textContent).not.toContain('Vorhand');
+  });
+
+  it('sendet meinen Vorbehalt an die Engine und sperrt die Buttons, bis sie antwortet', async () => {
+    let answer!: () => void;
+    postLive.mockReturnValue(new Promise<void>((resolve) => (answer = resolve)));
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12, vorhand: 12 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Gesund' }));
+
+    expect(postLive).toHaveBeenCalledWith('/api/live/1/vorbehalt', { vorbehalt: 'Gesund' });
+    expect((screen.getByRole('button', { name: 'Bubensolo' }) as HTMLButtonElement).disabled).toBe(
+      true,
+    );
+    answer();
+    await waitFor(() =>
+      expect(
+        (screen.getByRole('button', { name: 'Bubensolo' }) as HTMLButtonElement).disabled,
+      ).toBe(false),
+    );
+  });
+
+  it('bittet nach meiner Wahl zu warten, sobald der Push meinen Vorbehalt bringt', async () => {
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12, vorhand: 12 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+    await screen.findByText('Wähle deinen Vorbehalt:');
+
+    echo.options!.onPush({
+      liveGame: game({ phase: 2, dran: 13, vorhand: 12 }),
+      ich: claraWithHand({ vorbehalt: 'Gesund' }),
+    });
+
+    expect(
+      await screen.findByText('Bitte warte, bis alle ihren Vorbehalt bestimmt haben.'),
+    ).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Gesund' })).toBeNull();
+    expect(screen.getByRole('group', { name: 'Deine Hand' })).toBeTruthy();
+  });
+
+  it('blendet die Vorbehalte mit Beginn des Spiels aus und lässt die Hand stehen', async () => {
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+    await screen.findByText('Wähle deinen Vorbehalt:');
+
+    echo.options!.onPush({ liveGame: game({ phase: 4, dran: 11 }), ich: claraWithHand() });
+
+    await waitFor(() => expect(screen.queryByText('Wähle deinen Vorbehalt:')).toBeNull());
+    expect(screen.getByRole('group', { name: 'Deine Hand' })).toBeTruthy();
+  });
+
+  it('meldet einen abgelehnten Vorbehalt (422) mit Toast und lädt die Daten neu', async () => {
+    postLive.mockRejectedValue({
+      response: { status: 422, data: '{"message":"Dieser Vorbehalt ist nicht möglich!"}' },
+    });
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12, vorhand: 12 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Gesund' }));
+
+    expect(await screen.findByText('Dieser Vorbehalt ist nicht möglich!')).toBeTruthy();
+    expect(router.reload).toHaveBeenCalledWith(
+      expect.objectContaining({ only: ['round', 'liveGame', 'lastLiveGame', 'ich'] }),
+    );
+  });
+
+  it('lädt die ganze Seite neu, wenn die Sitzung abgelaufen ist (419)', async () => {
+    postLive.mockRejectedValue({ response: { status: 419, data: '' } });
+    renderShow(12, { liveGame: game({ phase: 2, dran: 12, vorhand: 12 }), ich: claraWithHand() });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Gesund' }));
+
+    await waitFor(() => expect(reloadPage).toHaveBeenCalledTimes(1));
   });
 });
