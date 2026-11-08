@@ -152,7 +152,7 @@ function rowBackground(game: RoundGame): string {
             <component
               :is="player.path ? Link : 'span'"
               :href="player.path ?? undefined"
-              class="flex flex-col items-center gap-1 rounded-md px-0.5 pt-1.5 pb-1 no-underline"
+              class="flex flex-col items-center gap-2 rounded-md px-0.5 pt-1.5 pb-1 no-underline"
             >
               <UAvatar
                 :src="player.avatarPath ?? undefined"
@@ -174,11 +174,10 @@ function rowBackground(game: RoundGame): string {
             </component>
           </th>
           <th
-            class="px-0.5 pt-2 pb-3 text-sm font-semibold text-highlighted"
+            class="px-0.5 pt-2 pb-3 text-sm leading-4 font-semibold text-highlighted"
             :class="HEAD_CELL_CLASSES"
           >
-            <span class="sm:hidden">Punkte</span>
-            <span class="hidden sm:inline">Punkte</span>
+            Punkte
           </th>
         </tr>
       </thead>
