@@ -23,7 +23,7 @@ trait CreatesLiveRound
     protected function setUpLiveRound(): void
     {
         $this->users = Player::factory()->count(4)->create()->map(
-            fn (Player $player): User => User::factory()->create(['id' => $player->id, 'player_id' => $player->id]),
+            fn (Player $player): User => User::factory()->create(['id' => $player->id + 1000, 'player_id' => $player->id]),
         );
         $this->round = Round::factory()->create();
         foreach ($this->users->values() as $seat => $user) {

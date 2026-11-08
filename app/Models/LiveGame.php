@@ -455,7 +455,7 @@ class LiveGame extends Model
             return;
         }
 
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         if (! $spieler->moeglicheVorbehalte->contains($vorbehalt)) {
@@ -486,7 +486,7 @@ class LiveGame extends Model
 
     public function hatSpielerVorbehaltOffengelegt($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         return isset($spieler->vorbehalt);
@@ -876,7 +876,7 @@ class LiveGame extends Model
      */
     public function getSpieler($spielerID = null, $hand_save = true)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spielerString = $this->getSpielerString($spielerID);
 
         $spieler = $this->$spielerString;
@@ -915,7 +915,7 @@ class LiveGame extends Model
 
     public function getSpielerString($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
 
         return 'spieler'.$this->spielerIDs->search($spielerID);
     }
@@ -932,7 +932,7 @@ class LiveGame extends Model
      */
     public function getKarteVonSpieler($kartenID, $spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         $spieler = $this->getSpieler($spielerID);
 
         $karte = $spieler->hand->where('id', $kartenID)->first();
@@ -953,7 +953,7 @@ class LiveGame extends Model
 
     public function istSpielerDran($spielerID = null, $ansageVorDemSpiel = false)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         if ($ansageVorDemSpiel && $this->stichNr == 1 && $this->aktuellerStich->count() == 0) {
             return;
         }
@@ -964,7 +964,7 @@ class LiveGame extends Model
 
     public function istSpielerAktiv($spielerID = null)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
         if ($this->spielerIDsInaktiv->contains($spielerID)) {
             abort(422, 'Du setzt gerade aus!');
         }
@@ -1322,7 +1322,7 @@ class LiveGame extends Model
 
     public function getGegnerIDs($spielerID)
     {
-        $spielerID = $spielerID ?? auth()->id();
+        $spielerID = $spielerID ?? auth()->user()?->player_id;
 
         $ich = $this->getSpieler($spielerID);
 

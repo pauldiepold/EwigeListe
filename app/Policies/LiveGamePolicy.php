@@ -12,7 +12,7 @@ class LiveGamePolicy
 
     public function update(User $user, LiveGame $liveGame)
     {
-        if ($liveGame->spielerIDs->contains($user->id)) {
+        if ($liveGame->spielerIDs->contains($user->player_id)) {
             return true;
         }
     }
