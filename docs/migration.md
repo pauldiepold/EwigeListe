@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 bis 4 erledigt, Phase 5 umgesetzt (Gesamtabnahme mit vier Browsern offen), Phase 6: Legacy-Abbau umgesetzt, Spieleabend und Go-Live offen · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Phase 0 bis 6 umgesetzt, Go-Live ohne vorherigen Spieleabend (siehe Entscheidungen, 2026-11-08) · Branch `inertia-migration` · Go-Live-PR #16
 
 ## Ziel
 
@@ -41,8 +41,8 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 2 | Review & Korrektur des Cursor-Stands, Tests für migrierte Seiten, Laravel Pint | #28, #58 | ✅ |
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | ✅ |
-| 5 | Live-Spiel im neuen Design | #36 (Karten #94 ✅, Regeln #99 ✅, KI #98, Seite #100, Echtzeit #101, Hand #102, Karten #103, Armut #104, Meldungen #105, Spielende und Legacy-Abbau #106) | umgesetzt, Gesamtabnahme offen |
-| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | Legacy-Abbau umgesetzt, Spieleabend und Go-Live offen |
+| 5 | Live-Spiel im neuen Design | #36 (Karten #94 ✅, Regeln #99 ✅, KI #98, Seite #100, Echtzeit #101, Hand #102, Karten #103, Armut #104, Meldungen #105, Spielende und Legacy-Abbau #106) | ✅ (Gesamtabnahme entfällt, Abnahme im Betrieb) |
+| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | Legacy-Abbau ✅, Spieleabend entfällt, Go-Live offen |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
 
 #48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
@@ -54,7 +54,7 @@ Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #73 Spieler und Benutzer 
 1. Jede Route ist migriert oder bewusst gestrichen; Blade nur noch für E-Mails, das Inertia-Root-Template und die statische 503-Seite.
 2. Tests, Type-Check und Lint sind grün.
 3. Legacy-JS, Legacy-CSS und Legacy-Abhängigkeiten sind entfernt.
-4. Mindestens ein echter Spieleabend auf Staging inklusive Live-Spiel ohne funktionale Fehler.
+4. ~~Mindestens ein echter Spieleabend auf Staging inklusive Live-Spiel ohne funktionale Fehler.~~ Entfällt (Entscheidung 2026-11-08).
 5. Rollback-Plan: `master` vor dem Merge taggen, DB-Backup, Datenmigrationen per wiederholbarem Neuberechnungs-Befehl.
 6. Go-Live-PR #16 wird per Merge-Commit gemergt, damit die Historie und der Hash in `.git-blame-ignore-revs` erhalten bleiben.
 
@@ -62,8 +62,10 @@ Reihenfolge in Phase 3: #29 Benutzer → #30 Liste → #73 Spieler und Benutzer 
 
 Vorher, auf Staging:
 
-1. Spieleabend mit Freunden inklusive Live-Spiel, Funde beheben. Danach prüfen, ob sich Seitenwechsel am Handy langsam anfühlen; wenn ja, Erkenntnisse aus #57 nutzen und #66 bzw. #67 wieder öffnen.
+1. ~~Spieleabend mit Freunden inklusive Live-Spiel~~ entfällt. Ob sich Seitenwechsel am Handy langsam anfühlen, zeigt jetzt der Betrieb; wenn ja, Erkenntnisse aus #57 nutzen und #66 bzw. #67 wieder öffnen.
 2. `php artisan stats:recalculate` läuft nach jedem Staging-Deploy mit `sync_db` und ist damit auf Prod-Daten erprobt.
+3. Prod-`.env`: `VITE_PUSHER_APP_KEY` und `VITE_PUSHER_APP_CLUSTER` ergänzen (`master` las `MIX_*`). Gebaut wird auf dem Server, ohne die Variablen fehlt der Pusher-Key im Bundle und Live-Spiel sowie Echtzeit der Runde bleiben stumm.
+4. Versteckte Spieler prüfen (`WHERE hide = 1`): Sie werden ab dem Go-Live bei jedem Request ausgeloggt (#73).
 
 Go-Live:
 
@@ -188,7 +190,8 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-11-08 | Armut des Live-Spiels (Phasen 3, 32, 33): Die gewählten Karten bleiben in der Hand und rücken nach oben (statt wie auf `master` in eine zweite Reihe in der Mitte zu wandern); die Auswahl liegt in `useLivePoverty`, das Overlay `LivePoverty` zeigt nur Text und Buttons. Das Abgeben prüft den Trumpf wie auf `master` erst beim Klick (Hinweis „Du musst all deinen Trumpf abgeben!“, nichts wird gesendet) und nimmt den Hinweis bei jeder Änderung der Auswahl zurück. Neu gegenüber `master`: Die anderen sehen in Phase 33 „Name gibt Karten zurück …“ (dort blieb das Overlay leer). Zuschauer und wer aussetzt sehen kein Armut-Overlay, wie auf `master`. Endpunkte und Engine unverändert (#104) | Hand und Auswahl sind dieselben Karten, ein zweiter Kartenstapel entfiele; `LivePovertyTest` deckt Mitnehmen und Ablehnen über die Endpunkte ab, weil die Engine Blackbox bleibt |
 | 2026-11-08 | Spielende des Live-Spiels: Ein Push mit Phase 101 macht das Spiel im Zustand zum „letzten Spiel“ (`liveGame` leer, `lastLiveGame` gesetzt, `ich` leer), genau wie die Props nach einem Neuladen. Der Stich-Zustand liest dafür das laufende, danach das beendete Spiel, sodass der letzte Stich 2 Sekunden mit leuchtendem Gewinner liegen bleibt (`useLiveTrickDisplay`); erst danach erscheinen im Slot `#overlay` `LiveScoring` (Wertung aus `lastLiveGame`: gewonnen/verloren nur für Mitspieler, Augen, einzelne Wertungspunkte, Gewinner, „Re/Kontra gewinnt mit X Punkten!“) und daneben der Bereit-Check. Ein geschmissenes Spiel hat keine Wertung und zeigt nur den Bereit-Check. Bewusst anders als auf `master`: die Wertung steht in eigener Box neben dem Bereit-Check, negative Summen tragen ein einfaches Minus (dort „--“) und „1 Punkt“ statt „1 Punkten“; das Einblenden des letzten Stichs über die Werkzeugleiste gilt nur im laufenden Spiel. Das Spiel in der Rundentabelle und der nächste Geber kommen unverändert vom Server (`LiveGameEndTest` spielt dafür ein Spiel durch). Legacy-Abbau: `components/live/*`, `components/rounds/Round.vue`, die nur dafür genutzten `Tab`, `Tabs`, `NavIcon`, `rounds.fetchData`, die Legacy-Resources `Round`, `Game`, `Player`, `PlayerFull`, `LiveRound`, `Group` und `public/img/wood.jpg`; die jQuery-Kartenbibliothek und die alten Karten-SVGs waren auf dem Branch schon weg. `resources/js/app.js`, `bootstrap.js`, `lib/` und `scripts/` bleiben für #37 (#106) | Das Overlay braucht den letzten Stich als Vorlauf, ohne dass der Server ihn länger hält; Push und Reload müssen dasselbe Bild ergeben, sonst hinge der Ablauf an der Reihenfolge von `LiveGameDataBroadcasted` und `RoundUpdated`. Die verbliebenen Dateien gehören zum Legacy-Entry, den #37 als Ganzes entfernt |
 | 2026-11-08 | Legacy-Abbau: `resources/js/app.js`, `bootstrap.js`, `lib/`, `scripts/`, `public/webfonts/` (FontAwesome und lokale Schriften, ersetzt durch Google Fonts) sowie `alpinejs`, `axios`, `lodash` und `moment` sind entfernt; Vite hat einen Entry, Lint, Format, Type-Check und Vitest decken ganz `resources/js` ab. Die alten Statistik-Spalten von `groups` (`records`, `stats`, `mostGames` bis `mostGamesMonth`) löscht eine Migration. Die Tabelle `comments` bleibt bis #80 (#37) | Ein Rollback auf `master` braucht wegen der umbenannten `players`-Spalten ohnehin das DB-Backup, die Spalten von `groups` bringen dafür nichts mehr. Ob die Prod-Kommentare übernommen werden, entscheidet #80; die leere Tabelle kostet bis dahin nichts |
-| 2026-11-08 | Aufräumen vor dem Go-Live: `resources/archive/`, `server.php`, `app/Helper/helper.php` (`nice_count` durch `Arr::join` ersetzt) und der `inspire`-Befehl sind gelöscht, `doctrine/dbal` und `filp/whoops` keine direkten Abhängigkeiten mehr. `telescope:prune` läuft nur noch lokal | Alles ungenutzt: Laravel 13 braucht DBAL für `->change()` nicht, `server.php` braucht weder Herd noch `artisan serve`. Telescope ist nur lokal registriert, auf Prod gab es den eingeplanten Befehl nie |
+| 2026-11-08 | Aufräumen vor dem Go-Live: `resources/archive/`, `server.php`, `app/Helper/helper.php` (`nice_count` durch `Arr::join` ersetzt) und der `inspire`-Befehl sind gelöscht, `doctrine/dbal` und `filp/whoops` keine direkten Abhängigkeiten mehr. `telescope:prune` läuft nur noch lokal. Alle Composer-Pakete sind innerhalb der Versionsgrenzen aktualisiert (u. a. Symfony 8.1.11 wegen sieben Sicherheitswarnungen) | Alles ungenutzt: Laravel 13 braucht DBAL für `->change()` nicht, `server.php` braucht weder Herd noch `artisan serve`. Telescope ist nur lokal registriert, auf Prod gab es den eingeplanten Befehl nie. Prod startet ohne bekannte Lücken |
+| 2026-11-08 | Go-Live ohne Spieleabend auf Staging und ohne Gesamtabnahme des Live-Spiels mit vier Browsern; Kriterium 4 entfällt. Funde aus dem Betrieb werden nach dem Go-Live behoben | Pauls Entscheidung. Die Live-Engine ist unverändert und die Seiten sind einzeln abgenommen; das Rollback (Tag, DB-Backup, `git revert -m 1`) bleibt als Netz |
 
 ## Offene Fragen
 
