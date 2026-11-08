@@ -1,6 +1,6 @@
 import { computed, onScopeDispose, ref, watch, type ComputedRef, type Ref } from 'vue';
 import { ansage as sendAnnouncement, karteSpielen } from '@/routes/live/games';
-import { listOf, type LiveGameState } from '@/composables/useLiveGameState';
+import { listOf, PLAYING_PHASE, type LiveGameState } from '@/composables/useLiveGameState';
 import { useLiveTrickDisplay, type LiveTrickDisplay } from '@/composables/useLiveTrickDisplay';
 import type { LiveEngineCard } from '@/types/live';
 
@@ -65,7 +65,9 @@ export function useLivePlay({ state, viewerPlayerId, send }: UseLivePlayOptions)
 
   const hand = computed(() => state.hand.value.filter((card) => card.id !== pendingCard.value?.id));
 
-  const isPlaying = computed(() => state.liveGame.value?.phase === 4 && state.ich.value !== null);
+  const isPlaying = computed(
+    () => state.liveGame.value?.phase === PLAYING_PHASE && state.ich.value !== null,
+  );
   const isMyTurn = computed(() => isPlaying.value && state.liveGame.value?.dran === viewerPlayerId);
 
   const currentTrick = computed(() => {

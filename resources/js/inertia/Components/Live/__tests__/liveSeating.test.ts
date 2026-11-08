@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { seatAroundViewer } from '@/Components/Live/liveSeating';
-import type { LivePlayer } from '@/types/live';
+import { playersOfGame, seatAroundViewer } from '@/Components/Live/liveSeating';
+import type { LiveGameData, LivePlayer } from '@/types/live';
 
 function table(activeSeats: number[], count = activeSeats.length): LivePlayer[] {
   return Array.from({ length: count }, (_, seat) => ({
@@ -57,5 +57,31 @@ describe('seatAroundViewer', () => {
 
     expect(ids(seatAroundViewer(players, 999))).toEqual([101, 102, 103, 104]);
     expect(ids(seatAroundViewer(players, null))).toEqual([101, 102, 103, 104]);
+  });
+});
+
+describe('playersOfGame', () => {
+  const spieler = (...ids: number[]) =>
+    ({ spieler: Object.fromEntries(ids.map((id) => [id, {}])) }) as unknown as LiveGameData;
+
+  it('übernimmt, wer im Spiel mitspielt, nicht was die Seite als aktiv führt', () => {
+    // Die Seite setzt schon Sitz 4 aus, im angezeigten Spiel spielt aber noch Sitz 4 und setzt Sitz 0 aus.
+    const players = table([0, 1, 2, 3], 5);
+
+    const result = playersOfGame(players, spieler(101, 102, 103, 104));
+
+    expect(result.map((player) => player.isActive)).toEqual([false, true, true, true, true]);
+  });
+
+  it('lässt die Seite gelten, solange kein Spiel angezeigt wird', () => {
+    const players = table([0, 1, 2, 3], 5);
+
+    expect(playersOfGame(players, null)).toBe(players);
+  });
+
+  it('behält die Sitzreihenfolge', () => {
+    const players = table([0, 1, 2, 3], 5);
+
+    expect(ids(playersOfGame(players, spieler(101, 102, 103, 104)))).toEqual(ids(players));
   });
 });

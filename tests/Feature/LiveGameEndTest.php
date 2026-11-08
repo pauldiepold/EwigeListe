@@ -2,47 +2,23 @@
 
 namespace Tests\Feature;
 
-use App\Models\Group;
 use App\Models\LiveGame;
-use App\Models\Player;
-use App\Models\Round;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use Inertia\Testing\AssertableInertia as Assert;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Concerns\CreatesLiveRound;
 use Tests\TestCase;
 
 class LiveGameEndTest extends TestCase
 {
+    use CreatesLiveRound;
     use RefreshDatabase;
-
-    /** @var Collection<int, User> */
-    private Collection $users;
-
-    private Round $round;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Die Engine vergleicht die Benutzer-ID mit der Spieler-ID, deshalb sind beide hier gleich.
-        $this->users = Player::factory()->count(4)->create()->map(
-            fn (Player $player): User => User::factory()->create(['id' => $player->id, 'player_id' => $player->id]),
-        );
-        $this->round = Round::factory()->create();
-        foreach ($this->users->values() as $seat => $user) {
-            $this->round->players()->attach($user->player_id, ['index' => $seat]);
-        }
-        $ewigeListe = Group::findOrFail(Group::EWIGE_LISTE_ID);
-        $ewigeListe->addPlayers($this->users->map(fn (User $user): Player => $user->player));
-        $this->round->groups()->attach($ewigeListe);
-        $this->round->createLiveRound();
-    }
-
-    private function currentGame(): LiveGame
-    {
-        return LiveGame::where('live_round_id', $this->round->fresh()->live_round_id)->latest('id')->firstOrFail();
+        $this->setUpLiveRound();
     }
 
     /**
@@ -50,19 +26,17 @@ class LiveGameEndTest extends TestCase
      */
     private function playNormalGameToTheEnd(): LiveGame
     {
-        mt_srand(1);
-        $this->round->fresh()->liveRound->starteNeuesSpiel();
-        $game = $this->currentGame();
+        $game = $this->startGameWithSeed(1);
 
         foreach ($this->users as $ignored) {
-            $this->actingAs($this->users->firstWhere('id', $this->currentGame()->dran))
+            $this->actingAs($this->userWhoseTurnItIs())
                 ->post(route('live.games.vorbehalt', $game), ['vorbehalt' => 'Gesund'])
                 ->assertOk();
         }
 
         for ($card = 0; $card < 48; $card++) {
             $current = $this->currentGame();
-            $dran = $this->users->firstWhere('id', $current->dran);
+            $dran = $this->userOfPlayer($current->dran);
             $playable = collect($current->getSpieler($dran->player_id)->hand)->firstWhere('spielbar', true);
 
             $this->actingAs($dran)
@@ -120,5 +94,18 @@ class LiveGameEndTest extends TestCase
         $second = $this->currentGame();
         $this->assertNotSame($first->id, $second->id);
         $this->assertSame($this->users[2]->player_id, $second->vorhand);
+    }
+
+    #[Test]
+    public function a_running_game_cannot_be_replaced_by_starting_a_new_one(): void
+    {
+        $running = $this->startGameWithSeed(1);
+
+        $this->actingAs($this->users[0])
+            ->postJson(route('live.rounds.start', $this->round->liveRound))
+            ->assertStatus(422);
+
+        $this->assertSame(1, LiveGame::count());
+        $this->assertSame($running->id, $this->currentGame()->id);
     }
 }

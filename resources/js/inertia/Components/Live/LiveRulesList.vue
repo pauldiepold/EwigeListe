@@ -1,17 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { liveRuleDefinitions, type LiveRules } from '@/Components/Live/liveRules';
+import { visibleLiveRules, type LiveRules } from '@/Components/Live/liveRules';
 
 const props = defineProps<{
   rules: LiveRules;
 }>();
 
-/** Abhängige Regeln gibt es nur, solange ihre übergeordnete Regel an ist. */
-const definitions = computed(() =>
-  liveRuleDefinitions.filter(
-    (definition) => definition.parent === undefined || props.rules[definition.parent],
-  ),
-);
+const definitions = computed(() => visibleLiveRules(props.rules));
 </script>
 
 <template>

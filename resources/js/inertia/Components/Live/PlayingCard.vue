@@ -19,17 +19,25 @@ const props = withDefaults(
     playable?: boolean;
     /** Nur mit `interactive`: gesetzt macht es die Karte zum Schalter (Armut), `true` hebt sie an. */
     selected?: boolean;
+    /** Die Karte kam aus der Armut: Streifen am oberen Rand und Zusatz im Namen. */
+    received?: boolean;
     /** Leuchtrand für die Karte des Stich-Gewinners. */
     winner?: boolean;
   }>(),
-  { interactive: false, playable: true, selected: undefined, winner: false },
+  { interactive: false, playable: true, selected: undefined, received: false, winner: false },
 );
 
 const emit = defineEmits<{
   press: [card: LiveCard];
 }>();
 
-const name = computed(() => (props.card ? cardName(props.card) : ''));
+const name = computed(() => {
+  if (!props.card) {
+    return '';
+  }
+
+  return props.received ? `${cardName(props.card)} (aus der Armut erhalten)` : cardName(props.card);
+});
 const index = computed(() => (props.card ? cardIndex(props.card) : ''));
 const color = computed(() =>
   props.card && isRedCard(props.card) ? 'var(--card-red)' : 'var(--card-black)',
@@ -112,6 +120,12 @@ function press() {
       <svg x="12" y="94" width="74" height="74" viewBox="-600 -600 1200 1200">
         <path :d="cardSuitPath(card)" :fill="color" />
       </svg>
+      <path
+        v-if="received"
+        d="M1 17 A16 16 0 0 1 17 1 H233 A16 16 0 0 1 249 17 V19 H1 Z"
+        fill="var(--card-received)"
+        data-received
+      />
       <rect
         width="250"
         height="350"
@@ -134,6 +148,7 @@ function press() {
   --card-edge: #c9d1d9;
   --card-red: #c4122f;
   --card-black: #1b1d22;
+  --card-received: #f59e0b;
   --card-shade: #18212c;
 }
 

@@ -2,7 +2,9 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import LivePlayerBadge from '@/Components/Live/LivePlayerBadge.vue';
 import type { TableSize } from '@/Components/Live/liveHandLayout';
-import { seatAroundViewer } from '@/Components/Live/liveSeating';
+import { seatAroundViewer, TABLE_SEATS } from '@/Components/Live/liveSeating';
+import type { TrickSeat } from '@/Components/Live/liveTrickLayout';
+import { RESERVATION_PHASE } from '@/composables/useLiveGameState';
 import type { LiveGameData, LivePlayer } from '@/types/live';
 
 const props = defineProps<{
@@ -55,16 +57,14 @@ onMounted(() => {
 
 onBeforeUnmount(() => resizeObserver?.disconnect());
 
-const POSITIONS = ['unten', 'links', 'oben', 'rechts'] as const;
-
 /** Nach Platz am Tisch, beginnend mit mir unten; Zuschauer sehen die Sitzreihenfolge. */
 const seats = computed(() =>
   seatAroundViewer(props.players, props.viewerPlayerId).map((player, index) => ({
     player,
-    position: POSITIONS[index],
+    position: TABLE_SEATS[index],
     display: props.liveGame?.spieler[player.id] ?? null,
     isTurn: props.liveGame?.dran === player.id,
-    isVorhand: props.liveGame?.phase === 2 && props.liveGame.vorhand === player.id,
+    isVorhand: props.liveGame?.phase === RESERVATION_PHASE && props.liveGame.vorhand === player.id,
   })),
 );
 
@@ -75,7 +75,7 @@ const viewerSitsOut = computed(() => {
   return props.liveGame !== null && viewer !== undefined && !viewer.isActive;
 });
 
-const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
+const SEAT_CLASSES: Record<TrickSeat, string> = {
   unten: 'bottom-2 left-[8%]',
   links: 'top-[24%] left-14',
   oben: 'top-2 left-1/2 -translate-x-1/2',

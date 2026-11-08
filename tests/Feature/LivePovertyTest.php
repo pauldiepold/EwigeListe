@@ -2,14 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Models\Group;
 use App\Models\LiveGame;
-use App\Models\Player;
-use App\Models\Round;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Concerns\CreatesLiveRound;
 use Tests\TestCase;
 
 /**
@@ -18,34 +15,14 @@ use Tests\TestCase;
  */
 class LivePovertyTest extends TestCase
 {
+    use CreatesLiveRound;
     use RefreshDatabase;
-
-    /** @var Collection<int, User> */
-    private Collection $users;
-
-    private Round $round;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Die Engine vergleicht die Benutzer-ID mit der Spieler-ID, deshalb sind beide hier gleich.
-        $this->users = Player::factory()->count(4)->create()->map(
-            fn (Player $player): User => User::factory()->create(['id' => $player->id, 'player_id' => $player->id]),
-        );
-        $this->round = Round::factory()->create();
-        foreach ($this->users->values() as $seat => $user) {
-            $this->round->players()->attach($user->player_id, ['index' => $seat]);
-        }
-        $ewigeListe = Group::findOrFail(Group::EWIGE_LISTE_ID);
-        $ewigeListe->addPlayers($this->users->map(fn (User $user): Player => $user->player));
-        $this->round->groups()->attach($ewigeListe);
-        $this->round->createLiveRound();
-    }
-
-    private function currentGame(): LiveGame
-    {
-        return LiveGame::where('live_round_id', $this->round->fresh()->live_round_id)->latest('id')->firstOrFail();
+        $this->setUpLiveRound();
     }
 
     /**
@@ -72,7 +49,7 @@ class LivePovertyTest extends TestCase
 
         foreach ($this->users as $ignored) {
             $dran = $this->currentGame()->dran;
-            $this->actingAs($this->users->firstWhere('id', $dran))
+            $this->actingAs($this->userOfPlayer($dran))
                 ->post(route('live.games.vorbehalt', $game), [
                     'vorbehalt' => $dran === $poverty->id ? 'Armut' : 'Gesund',
                 ])
@@ -81,7 +58,7 @@ class LivePovertyTest extends TestCase
 
         $this->assertSame(3, $this->currentGame()->phase);
 
-        return $this->users->firstWhere('id', $poverty->id);
+        return $this->userOfPlayer($poverty->id);
     }
 
     /**
@@ -89,7 +66,7 @@ class LivePovertyTest extends TestCase
      */
     private function cardsToGiveAway(LiveGame $game, User $poverty): array
     {
-        $hand = $game->getSpieler($poverty->id)->hand;
+        $hand = $game->getSpieler($poverty->player_id)->hand;
         $cards = $hand->where('trumpf', true)->concat($hand->where('trumpf', false))->take(3);
 
         return ['karten' => $cards->map(fn ($karte): array => ['id' => $karte->id])->values()->all()];
@@ -107,8 +84,58 @@ class LivePovertyTest extends TestCase
 
         $game = $this->currentGame();
         $this->assertSame(32, $game->phase);
-        $this->assertNotSame($poverty->id, $game->dran);
-        $this->assertCount(9, $game->getSpieler($poverty->id)->hand);
+        $this->assertNotSame($poverty->player_id, $game->dran);
+        $this->assertCount(9, $game->getSpieler($poverty->player_id)->hand);
+    }
+
+    #[Test]
+    public function giving_away_the_same_card_twice_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $cards = $this->cardsToGiveAway($game, $poverty)['karten'];
+
+        $this->actingAs($poverty)
+            ->postJson(route('live.games.armutAbgeben', $game), ['karten' => [$cards[0], $cards[0], $cards[1]]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.0.id');
+
+        $this->assertSame(3, $this->currentGame()->phase);
+    }
+
+    #[Test]
+    public function giving_away_a_card_without_an_id_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $cards = $this->cardsToGiveAway($game, $poverty)['karten'];
+
+        $this->actingAs($poverty)
+            ->postJson(route('live.games.armutAbgeben', $game), ['karten' => [$cards[0], $cards[1], ['name' => 'x']]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.2.id');
+    }
+
+    #[Test]
+    public function giving_back_the_same_card_twice_is_rejected(): void
+    {
+        $poverty = $this->startGameWithPoverty();
+        $game = $this->currentGame();
+        $this->actingAs($poverty)
+            ->post(route('live.games.armutAbgeben', $game), $this->cardsToGiveAway($game, $poverty))
+            ->assertOk();
+        $taker = $this->userWhoseTurnItIs();
+        $this->actingAs($taker)
+            ->post(route('live.games.armutMitnehmen', $game), ['mitnehmen' => true])
+            ->assertOk();
+        $card = ['id' => $this->currentGame()->getSpieler($taker->player_id)->hand->first()->id];
+
+        $this->actingAs($taker)
+            ->postJson(route('live.games.armutZurueckgeben', $game), ['karten' => [$card, $card, $card]])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('karten.0.id');
+
+        $this->assertSame(33, $this->currentGame()->phase);
     }
 
     #[Test]
@@ -116,7 +143,7 @@ class LivePovertyTest extends TestCase
     {
         $poverty = $this->startGameWithPoverty();
         $game = $this->currentGame();
-        $hand = $game->getSpieler($poverty->id)->hand;
+        $hand = $game->getSpieler($poverty->player_id)->hand;
         $nonTrump = $hand->where('trumpf', false)->take(3)->map(fn ($karte): array => ['id' => $karte->id])->values()->all();
 
         $this->actingAs($poverty)
@@ -135,15 +162,15 @@ class LivePovertyTest extends TestCase
             ->post(route('live.games.armutAbgeben', $game), $this->cardsToGiveAway($game, $poverty))
             ->assertOk();
 
-        $taker = $this->users->firstWhere('id', $this->currentGame()->dran);
+        $taker = $this->userOfPlayer($this->currentGame()->dran);
         $this->actingAs($taker)
             ->post(route('live.games.armutMitnehmen', $game), ['mitnehmen' => true])
             ->assertOk();
 
         $game = $this->currentGame();
         $this->assertSame(33, $game->phase);
-        $this->assertSame($taker->id, $game->dran);
-        $hand = $game->getSpieler($taker->id)->hand;
+        $this->assertSame($taker->player_id, $game->dran);
+        $hand = $game->getSpieler($taker->player_id)->hand;
         $this->assertCount(15, $hand);
 
         $this->actingAs($taker)
@@ -154,8 +181,8 @@ class LivePovertyTest extends TestCase
 
         $game = $this->currentGame();
         $this->assertSame(4, $game->phase);
-        $this->assertCount(12, $game->getSpieler($taker->id)->hand);
-        $this->assertCount(12, $game->getSpieler($poverty->id)->hand);
+        $this->assertCount(12, $game->getSpieler($taker->player_id)->hand);
+        $this->assertCount(12, $game->getSpieler($poverty->player_id)->hand);
     }
 
     #[Test]
@@ -168,7 +195,7 @@ class LivePovertyTest extends TestCase
             ->assertOk();
 
         foreach (range(1, 3) as $ignored) {
-            $asked = $this->users->firstWhere('id', $this->currentGame()->dran);
+            $asked = $this->userOfPlayer($this->currentGame()->dran);
             $this->actingAs($asked)
                 ->post(route('live.games.armutMitnehmen', $game), ['mitnehmen' => false])
                 ->assertOk();

@@ -1,39 +1,24 @@
-import { type Ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { screen, waitFor } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Show from '@/Pages/Live/Show.vue';
+import { echo, resetLiveEcho } from '@/testing/liveEcho';
+import { liveCard, liveGame, livePlayer, liveSpieler } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveEchoMember, UseLiveEchoOptions } from '@/composables/useLiveEcho';
+import type { LiveEchoMember } from '@/composables/useLiveEcho';
 import type {
   LiveCardRank,
   LiveCardSuit,
   LiveEngineCard,
   LiveGameData,
-  LivePlayer,
   LiveShowProps,
   LiveSpieler,
 } from '@/types/live';
 
-/** Ersetzt die Echo-Anbindung: Der Test löst Pushes aus und stellt die Online-Liste ein. */
-const echo = vi.hoisted(() => ({
-  options: null as UseLiveEchoOptions | null,
-  onlineMembers: null as Ref<LiveEchoMember[]> | null,
-}));
-
-vi.mock('@/composables/useLiveEcho', async () => {
-  const { ref } = await import('vue');
-  echo.onlineMembers = ref([]);
-
-  return {
-    useLiveEcho: (options: UseLiveEchoOptions) => {
-      echo.options = options;
-
-      return { onlineMembers: echo.onlineMembers, sendReady: vi.fn() };
-    },
-  };
-});
+vi.mock('@/composables/useLiveEcho', async () =>
+  (await import('@/testing/liveEcho')).liveEchoModule(),
+);
 
 const postLive = vi.hoisted(() => vi.fn());
 vi.mock('@/composables/liveRequest', () => ({ postLive }));
@@ -58,19 +43,13 @@ const rules = {
   karlchenFangen: false,
 };
 
-function player(seat: number, name: string): LivePlayer {
-  return {
-    id: 10 + seat,
-    firstName: name,
-    lastName: 'Test',
-    fullName: `${name} Test`,
-    avatarPath: null,
-    isActive: true,
-  };
-}
-
 /** Bernd (11) bis Eva (14) spielen; Clara (12) hat die Armut, Dieter (13) wird gefragt. */
-const players = [player(1, 'Bernd'), player(2, 'Clara'), player(3, 'Dieter'), player(4, 'Eva')];
+const players = [
+  livePlayer(11, 'Bernd'),
+  livePlayer(12, 'Clara'),
+  livePlayer(13, 'Dieter'),
+  livePlayer(14, 'Eva'),
+];
 const members: LiveEchoMember[] = players.map((p) => ({
   id: p.id,
   name: p.fullName,
@@ -78,17 +57,7 @@ const members: LiveEchoMember[] = players.map((p) => ({
 }));
 
 function card(id: number, farbe: LiveCardSuit, wert: LiveCardRank, trumpf = false): LiveEngineCard {
-  return {
-    id,
-    farbe,
-    wert,
-    rang: id,
-    punkte: 0,
-    trumpf,
-    spielbar: true,
-    gespieltVon: false,
-    armut_zurueck: false,
-  };
+  return liveCard(id, farbe, wert, { trumpf });
 }
 
 const pikNeun = card(1, 3, 1);
@@ -99,42 +68,11 @@ const herzDame = card(5, 2, 3, true);
 const herzZehn = card(6, 2, 5, true);
 
 function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
-    id: 1,
-    phase: 3,
-    dran: 12,
-    stichNr: 1,
-    vorhand: 11,
-    aktuellerStich: { karten: [], stecher: null },
-    letzterStich: { karten: [], stecher: null },
-    spieler: {},
-    messages: [],
-    spieltyp: '',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
-    ...overrides,
-  };
+  return liveGame({ phase: 3, dran: 12, spieler: {}, ...overrides });
 }
 
 function ich(id: number, hand: LiveEngineCard[]): LiveSpieler {
-  return {
-    id,
-    index: 0,
-    hand,
-    armutKarten: [],
-    moeglicheVorbehalte: [],
-    vorbehalt: 'Gesund',
-    isRe: null,
-    ansage: null,
-    absage: null,
-    moeglicheAnAbsage: null,
-    punkte: null,
-    parteiOffengelegt: 0,
-  };
+  return liveSpieler({ id, hand, vorbehalt: 'Gesund' });
 }
 
 function renderShow(viewerPlayerId: number, liveGame: LiveGameData, hand: LiveEngineCard[]) {
@@ -153,7 +91,7 @@ function renderShow(viewerPlayerId: number, liveGame: LiveGameData, hand: LiveEn
     ich: ich(viewerPlayerId, hand),
   };
   const view = renderWithUi(Show, props);
-  echo.onlineMembers!.value = members;
+  echo.onlineMembers.value = members;
 
   return view;
 }
@@ -163,8 +101,7 @@ function cardButton(name: string): HTMLButtonElement {
 }
 
 beforeEach(() => {
-  echo.options = null;
-  echo.onlineMembers!.value = [];
+  resetLiveEcho();
   postLive.mockReset();
   postLive.mockResolvedValue(undefined);
   vi.spyOn(router, 'reload').mockImplementation(() => undefined);
@@ -266,6 +203,16 @@ describe('Live-Seite: Armut mitnehmen und zurückgeben', () => {
     expect(postLive).toHaveBeenCalledWith('/api/live/1/armutZurueck', {
       karten: [{ id: 1 }, { id: 3 }, { id: 4 }],
     });
+  });
+
+  it('kennzeichnet beim Zurückgeben die mitgenommenen Karten', async () => {
+    const taken = { ...kreuzNeun, armut_zurueck: true };
+    renderShow(13, game({ phase: 33, dran: 13 }), [pikNeun, pikKoenig, kreuzAss, taken]);
+
+    expect(
+      await screen.findByRole('button', { name: 'Kreuz 9 (aus der Armut erhalten)' }),
+    ).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Pik 9' })).toBeTruthy();
   });
 
   it('wechselt per Push von der Auswahl zur Frage, ohne alte Auswahl mitzunehmen', async () => {

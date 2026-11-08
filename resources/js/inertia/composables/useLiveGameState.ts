@@ -12,8 +12,23 @@ export function listOf<T>(value: T[] | Record<string, T> | null | undefined): T[
   return Array.isArray(value) ? value : Object.values(value ?? {});
 }
 
+// Die Spielphasen der Engine (`LiveGame::$phase`).
+
+/** Die Spieler melden reihum ihre Vorbehalte. */
+export const RESERVATION_PHASE = 2;
+/** Die Armut wählt drei Karten zum Abgeben. */
+export const POVERTY_GIVE_PHASE = 3;
+/** Reihum wird gefragt, wer die Armut mitnimmt. */
+export const POVERTY_ASK_PHASE = 32;
+/** Der Mitnehmer gibt drei Karten zurück. */
+export const POVERTY_GIVE_BACK_PHASE = 33;
+/** Das Spiel läuft: Karten werden gespielt. */
+export const PLAYING_PHASE = 4;
 /** Phase eines beendeten Spiels in der Engine: Die Wertung steht fest. */
 export const GAME_OVER_PHASE = 101;
+
+export type PovertyPhase =
+  typeof POVERTY_GIVE_PHASE | typeof POVERTY_ASK_PHASE | typeof POVERTY_GIVE_BACK_PHASE;
 
 export type LiveGameState = {
   /** Das laufende Spiel; `null` vor dem ersten und zwischen zwei Spielen. */

@@ -2,26 +2,13 @@ import { screen, within } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import LiveHand from '@/Components/Live/LiveHand.vue';
+import { liveCard } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveCardRank, LiveCardSuit, LiveEngineCard } from '@/types/live';
+import type { LiveEngineCard } from '@/types/live';
 
-function card(id: number, farbe: LiveCardSuit, wert: LiveCardRank): LiveEngineCard {
-  return {
-    id,
-    farbe,
-    wert,
-    rang: 0,
-    punkte: 0,
-    trumpf: false,
-    spielbar: true,
-    gespieltVon: false,
-    armut_zurueck: false,
-  };
-}
-
-const kreuzDame = card(1, 4, 3);
-const herzZehn = card(2, 2, 5);
-const pikBube = card(3, 3, 2);
+const kreuzDame = liveCard(1, 4, 3);
+const herzZehn = liveCard(2, 2, 5);
+const pikBube = liveCard(3, 3, 2);
 const hand = [kreuzDame, herzZehn, pikBube];
 
 const tableSize = { width: 800, height: 400 };
@@ -99,6 +86,14 @@ describe('LiveHand', () => {
       ).toBe(false);
       await userEvent.click(locked);
       expect(onPress).not.toHaveBeenCalled();
+    });
+
+    it('kennzeichnet die erhaltenen Armut-Karten', () => {
+      renderHand({ interactive: true, receivedIds: [herzZehn.id] });
+
+      expect(screen.getByRole('button', { name: 'Herz 10 (aus der Armut erhalten)' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Kreuz Dame' })).toBeTruthy();
+      expect(screen.getByRole('button', { name: 'Pik Bube' })).toBeTruthy();
     });
 
     it('macht die Karten zu Schaltern, sobald es eine Auswahl gibt', () => {

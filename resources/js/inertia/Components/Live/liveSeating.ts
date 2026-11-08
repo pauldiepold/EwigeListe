@@ -1,4 +1,5 @@
-import type { LivePlayer } from '@/types/live';
+import type { LiveGameData, LivePlayer } from '@/types/live';
+import type { TrickSeat } from '@/Components/Live/liveTrickLayout';
 
 /**
  * Die Spieler des Spiels in der Reihenfolge, in der sie am Tisch erscheinen: Platz 0 sitzt unten,
@@ -27,3 +28,21 @@ export function seatAroundViewer(players: LivePlayer[], viewerId: number | null)
 
   return active;
 }
+
+/**
+ * Die Spieler der Runde, wobei `isActive` aus dem angezeigten Spiel stammt statt aus der Seite. Der
+ * Tisch zeigt das beendete Spiel noch, während die Seite schon die Spieler des nächsten aktiv setzt
+ * (ab fünf Spielern wechselt, wer aussetzt). Ohne Spiel gilt die Seite.
+ */
+export function playersOfGame(players: LivePlayer[], liveGame: LiveGameData | null): LivePlayer[] {
+  if (liveGame === null) {
+    return players;
+  }
+
+  const gamePlayerIds = Object.keys(liveGame.spieler).map(Number);
+
+  return players.map((player) => ({ ...player, isActive: gamePlayerIds.includes(player.id) }));
+}
+
+/** Die Plätze am Tisch aus Sicht des Betrachters in der Reihenfolge von `seatAroundViewer`. */
+export const TABLE_SEATS: readonly TrickSeat[] = ['unten', 'links', 'oben', 'rechts'];

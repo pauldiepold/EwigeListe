@@ -45,7 +45,7 @@ class SticheCast implements CastsAttributes
     public function set($model, $key, $value, $attributes)
     {
         if (! $value instanceof Collection) {
-            throw new InvalidArgumentException('The given value is not an Collection instance.');
+            throw new InvalidArgumentException('The given value is not a Collection instance.');
         }
 
         return json_encode($value);

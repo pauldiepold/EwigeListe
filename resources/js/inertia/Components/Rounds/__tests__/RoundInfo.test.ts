@@ -34,7 +34,7 @@ describe('RoundInfo', () => {
     expect(rules?.textContent).not.toContain('Karlchen');
   });
 
-  it('nennt eine Live-Runde ohne Regeln „ohne Sonderregeln“', () => {
+  it('nennt eine Live-Runde ohne eingeschaltete Regeln „alle Regeln aus“', () => {
     const rules = {
       schweinchen: false,
       fuchsSticht: false,
@@ -45,6 +45,6 @@ describe('RoundInfo', () => {
     };
     renderWithUi(RoundInfo, { info: { ...info, rules } });
 
-    expect(screen.getByText(/ohne Sonderregeln/)).toBeTruthy();
+    expect(screen.getByText(/alle Regeln aus/)).toBeTruthy();
   });
 });

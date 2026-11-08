@@ -1,39 +1,30 @@
-import { type Ref } from 'vue';
 import { router } from '@inertiajs/vue3';
 import { screen, within, waitFor } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Show from '@/Pages/Live/Show.vue';
+import { echo, resetLiveEcho } from '@/testing/liveEcho';
+import {
+  liveCard,
+  liveDisplay as display,
+  liveGame as game,
+  livePlayer,
+  liveSpieler as ich,
+  playedCard,
+} from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveEchoMember, UseLiveEchoOptions } from '@/composables/useLiveEcho';
+import type { LiveEchoMember } from '@/composables/useLiveEcho';
 import type {
   LiveEngineCard,
   LiveGameData,
   LiveGamePush,
-  LivePlayer,
   LiveShowProps,
   LiveSpieler,
 } from '@/types/live';
 
-/** Ersetzt die Echo-Anbindung: Der Test löst Pushes aus und stellt die Online-Liste ein. */
-const echo = vi.hoisted(() => ({
-  options: null as UseLiveEchoOptions | null,
-  onlineMembers: null as Ref<LiveEchoMember[]> | null,
-  sendReady: vi.fn(),
-}));
-
-vi.mock('@/composables/useLiveEcho', async () => {
-  const { ref } = await import('vue');
-  echo.onlineMembers = ref([]);
-
-  return {
-    useLiveEcho: (options: UseLiveEchoOptions) => {
-      echo.options = options;
-
-      return { onlineMembers: echo.onlineMembers, sendReady: echo.sendReady };
-    },
-  };
-});
+vi.mock('@/composables/useLiveEcho', async () =>
+  (await import('@/testing/liveEcho')).liveEchoModule(),
+);
 
 const postLive = vi.hoisted(() => vi.fn());
 vi.mock('@/composables/liveRequest', () => ({ postLive }));
@@ -61,24 +52,13 @@ const rules = {
   karlchenFangen: false,
 };
 
-function player(seat: number, name: string, isActive = true): LivePlayer {
-  return {
-    id: 10 + seat,
-    firstName: name,
-    lastName: 'Test',
-    fullName: `${name} Test`,
-    avatarPath: null,
-    isActive,
-  };
-}
-
 /** Anna setzt aus; Bernd (11) ist der erste aktive Spieler am Tisch. */
 const players = [
-  player(0, 'Anna', false),
-  player(1, 'Bernd'),
-  player(2, 'Clara'),
-  player(3, 'Dieter'),
-  player(4, 'Eva'),
+  livePlayer(10, 'Anna', false),
+  livePlayer(11, 'Bernd'),
+  livePlayer(12, 'Clara'),
+  livePlayer(13, 'Dieter'),
+  livePlayer(14, 'Eva'),
 ];
 
 function member(id: number, name: string): LiveEchoMember {
@@ -91,49 +71,6 @@ const activeMembers = [
   member(13, 'Dieter'),
   member(14, 'Eva'),
 ];
-
-function display() {
-  return { ansage: '', spieltyp: '', partei: '', vorbehalt: '' };
-}
-
-function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
-    id: 1,
-    phase: 4,
-    dran: 11,
-    stichNr: 1,
-    vorhand: 11,
-    aktuellerStich: { karten: [], stecher: null },
-    letzterStich: { karten: [], stecher: null },
-    spieler: { 11: display(), 12: display(), 13: display(), 14: display() },
-    messages: [],
-    spieltyp: '',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
-    ...overrides,
-  };
-}
-
-function ich(): LiveSpieler {
-  return {
-    id: 12,
-    index: 0,
-    hand: [],
-    armutKarten: [],
-    moeglicheVorbehalte: [],
-    vorbehalt: null,
-    isRe: null,
-    ansage: null,
-    absage: null,
-    moeglicheAnAbsage: null,
-    punkte: null,
-    parteiOffengelegt: 0,
-  };
-}
 
 function pageProps(viewerPlayerId: number, overrides: Partial<LiveShowProps> = {}): LiveShowProps {
   return {
@@ -158,7 +95,7 @@ function renderShow(viewerPlayerId: number, overrides: Partial<LiveShowProps> = 
 }
 
 function setOnline(...members: LiveEchoMember[]): void {
-  echo.onlineMembers!.value = members;
+  echo.onlineMembers.value = members;
 }
 
 function setVisibility(state: 'visible' | 'hidden'): void {
@@ -167,9 +104,7 @@ function setVisibility(state: 'visible' | 'hidden'): void {
 }
 
 beforeEach(() => {
-  echo.options = null;
-  echo.onlineMembers!.value = [];
-  echo.sendReady.mockReset();
+  resetLiveEcho();
   postLive.mockReset();
   postLive.mockResolvedValue(undefined);
   reloadPage.mockReset();
@@ -355,20 +290,6 @@ describe('Live-Seite: Pushes und Neuladen', () => {
   });
 });
 
-function engineCard(id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6): LiveEngineCard {
-  return {
-    id,
-    farbe,
-    wert,
-    rang: 0,
-    punkte: 0,
-    trumpf: false,
-    spielbar: true,
-    gespieltVon: false,
-    armut_zurueck: false,
-  };
-}
-
 const SOLOS = [
   'Fleischlos',
   'Bubensolo',
@@ -384,7 +305,7 @@ const SOLOS = [
 function claraWithHand(overrides: Partial<LiveSpieler> = {}): LiveSpieler {
   return {
     ...ich(),
-    hand: [engineCard(1, 4, 3), engineCard(2, 2, 5)],
+    hand: [liveCard(1, 4, 3), liveCard(2, 2, 5)],
     moeglicheVorbehalte: SOLOS,
     ...overrides,
   };
@@ -521,18 +442,8 @@ describe('Live-Seite: Hand und Vorbehalte', () => {
   });
 });
 
-/** Eine Karte der Engine mit allen Feldern, die der Tisch auswertet. */
-function playableCard(
-  id: number,
-  farbe: 1 | 2 | 3 | 4,
-  wert: 1 | 2 | 3 | 4 | 5 | 6,
-  overrides: Partial<LiveEngineCard> = {},
-): LiveEngineCard {
-  return { ...engineCard(id, farbe, wert), ...overrides };
-}
-
-const kreuzDame = () => playableCard(1, 4, 3);
-const herzZehn = () => playableCard(2, 2, 5, { spielbar: false });
+const kreuzDame = () => liveCard(1, 4, 3);
+const herzZehn = () => liveCard(2, 2, 5, { spielbar: false });
 
 function handOf(...cards: LiveEngineCard[]): LiveSpieler {
   return { ...ich(), hand: cards };
@@ -662,8 +573,7 @@ describe('Live-Seite: Karte spielen', () => {
 });
 
 describe('Live-Seite: Stich', () => {
-  const played = (id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6, by: number) =>
-    playableCard(id, farbe, wert, { gespieltVon: by, spielbar: false });
+  const played = playedCard;
 
   it('legt jede Karte vor den Spieler, der sie gelegt hat, und lässt andere Plätze leer', async () => {
     renderShow(12, {
@@ -760,7 +670,7 @@ describe('Live-Seite: Stich', () => {
             stecher: null,
           },
         }),
-        ich: handOf(playableCard(6, 1, 2)),
+        ich: handOf(liveCard(6, 1, 2)),
       });
       setOnline(...activeMembers);
 
@@ -905,8 +815,7 @@ describe('Live-Seite: Ansagen', () => {
 });
 
 describe('Live-Seite: Spielende', () => {
-  const played = (id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6, by: number) =>
-    playableCard(id, farbe, wert, { gespieltVon: by, spielbar: false });
+  const played = playedCard;
   const fullTrick = () => [
     played(5, 3, 4, 11),
     played(6, 1, 2, 12),
@@ -991,6 +900,36 @@ describe('Live-Seite: Spielende', () => {
 
     await vi.advanceTimersByTimeAsync(200);
     expect(screen.getByRole('table', { name: 'Wertung' })).toBeTruthy();
+  });
+
+  it('lässt die Plätze des beendeten Spiels stehen, auch wenn die neu geladene Runde schon die nächsten Spieler aktiv setzt', async () => {
+    const { rerender } = renderShow(12, {
+      liveGame: game({
+        stichNr: 12,
+        dran: 14,
+        aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+      }),
+      ich: handOf(),
+    });
+    setOnline(member(10, 'Anna'), ...activeMembers);
+    await screen.findByRole('group', { name: 'Stich' });
+
+    vi.useFakeTimers();
+    echo.options!.onPush({ liveGame: endedGame(), ich: handOf() });
+    // Beim nächsten Spiel gibt Bernd (11) ab und Eva (14) setzt aus.
+    const nextGamePlayers = players.map((p) => ({ ...p, isActive: p.id !== 14 }));
+    const props = pageProps(12);
+    await rerender({
+      round: { ...props.round, players: nextGamePlayers },
+      liveGame: null,
+      lastLiveGame: endedGame(),
+      ich: null,
+    });
+
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(lastTrickCards()).toBe(4);
+    expect(document.querySelectorAll('[data-trick-slot]')).toHaveLength(4);
+    expect(screen.getByText('Eva')).toBeTruthy();
   });
 
   it('zeigt die Wertung samt Bereit-Check für das nächste Spiel, wenn die Seite danach geladen wird', async () => {

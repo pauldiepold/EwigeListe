@@ -12,6 +12,8 @@ class RoundController extends Controller
     {
         $this->authorize('update', $liveRound);
 
+        abort_if($liveRound->currentLiveGame() !== null, 422, 'Es läuft bereits ein Spiel!');
+
         $liveRound->starteNeuesSpiel();
 
         broadcast(new RoundUpdated($liveRound->round->id));

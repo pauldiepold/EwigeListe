@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import {
-  liveRuleDefinitions,
+  visibleLiveRules,
   type LiveRuleDefinition,
   type LiveRuleKey,
   type LiveRules,
@@ -10,11 +10,7 @@ import {
 /** Die Schalter für die Regeln einer Live-Runde. Abhängige Schalter erscheinen nur bei aktiver übergeordneter Regel. */
 const rules = defineModel<LiveRules>({ required: true });
 
-const visibleDefinitions = computed(() =>
-  liveRuleDefinitions.filter(
-    (definition) => definition.parent === undefined || rules.value[definition.parent],
-  ),
-);
+const visibleDefinitions = computed(() => visibleLiveRules(rules.value));
 
 function setRule(key: LiveRuleKey, value: boolean): void {
   rules.value = { ...rules.value, [key]: value };

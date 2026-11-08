@@ -1,5 +1,5 @@
 import { computed, onScopeDispose, ref, watch, type ComputedRef, type Ref } from 'vue';
-import { GAME_OVER_PHASE, listOf } from '@/composables/useLiveGameState';
+import { GAME_OVER_PHASE, listOf, PLAYING_PHASE } from '@/composables/useLiveGameState';
 import type { LiveEngineCard, LiveGameData } from '@/types/live';
 
 /** So lange bleibt ein voller Stich mit hervorgehobenem Gewinner liegen, bevor er abgeräumt wird. */
@@ -73,7 +73,8 @@ export function useLiveTrickDisplay(
     () => closing.value || (lastTrickPinned.value && liveGame.value?.phase !== GAME_OVER_PHASE),
   );
   const visible = computed(
-    () => liveGame.value !== null && (showingLastTrick.value || liveGame.value.phase === 4),
+    () =>
+      liveGame.value !== null && (showingLastTrick.value || liveGame.value.phase === PLAYING_PHASE),
   );
 
   const cards = computed(() =>

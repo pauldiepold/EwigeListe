@@ -87,4 +87,26 @@ describe('PlayingCard', () => {
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByRole('img')).toBeNull();
   });
+
+  describe('erhaltene Armut-Karte', () => {
+    it('nennt eine erhaltene Karte auch in ihrem Namen', () => {
+      renderWithUi(PlayingCard, { card: kreuzDame, received: true });
+
+      expect(screen.getByRole('img', { name: 'Kreuz Dame (aus der Armut erhalten)' })).toBeTruthy();
+    });
+
+    it('nennt eine normale Karte nur bei ihrem Namen', () => {
+      renderWithUi(PlayingCard, { card: kreuzDame });
+
+      expect(screen.getByRole('img', { name: 'Kreuz Dame' })).toBeTruthy();
+    });
+
+    it('bleibt als erhaltene Karte ein Button', () => {
+      renderWithUi(PlayingCard, { card: kreuzDame, interactive: true, received: true });
+
+      expect(
+        screen.getByRole('button', { name: 'Kreuz Dame (aus der Armut erhalten)' }),
+      ).toBeTruthy();
+    });
+  });
 });

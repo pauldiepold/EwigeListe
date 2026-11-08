@@ -2,8 +2,8 @@
 import { computed } from 'vue';
 import PlayingCard from '@/Components/Live/PlayingCard.vue';
 import type { TableSize } from '@/Components/Live/liveHandLayout';
-import { seatAroundViewer } from '@/Components/Live/liveSeating';
-import { trickLayout, type TrickSeat } from '@/Components/Live/liveTrickLayout';
+import { seatAroundViewer, TABLE_SEATS } from '@/Components/Live/liveSeating';
+import { trickLayout } from '@/Components/Live/liveTrickLayout';
 import type { LiveEngineCard, LivePlayer } from '@/types/live';
 
 const props = defineProps<{
@@ -18,14 +18,12 @@ const props = defineProps<{
   winnerId?: number | null;
 }>();
 
-const POSITIONS: TrickSeat[] = ['unten', 'links', 'oben', 'rechts'];
-
 const layout = computed(() => trickLayout(props.tableSize));
 
 /** Jeder Platz mit der Karte, die der Spieler dort gelegt hat (oder leer); spätere Karten liegen oben. */
 const slots = computed(() =>
   seatAroundViewer(props.players, props.viewerPlayerId).map((player, index) => {
-    const position = POSITIONS[index];
+    const position = TABLE_SEATS[index];
     const order = props.cards.findIndex((card) => card.gespieltVon === player.id);
     const { x, y } = layout.value.offsets[position];
 

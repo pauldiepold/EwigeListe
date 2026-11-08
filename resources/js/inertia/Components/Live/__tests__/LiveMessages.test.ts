@@ -2,24 +2,14 @@ import { screen, within } from '@testing-library/vue';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import LiveMessages from '@/Components/Live/LiveMessages.vue';
+import { livePlayer } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveMessage, LivePlayer } from '@/types/live';
-
-function player(id: number, firstName: string): LivePlayer {
-  return {
-    id,
-    firstName,
-    lastName: 'Test',
-    fullName: `${firstName} Test`,
-    avatarPath: null,
-    isActive: true,
-  };
-}
+import type { LiveMessage } from '@/types/live';
 
 const players = [
-  player(11, 'Anna'),
-  player(12, 'Bernd'),
-  player(13, '<img src=x onerror=alert(1)>'),
+  livePlayer(11, 'Anna'),
+  livePlayer(12, 'Bernd'),
+  livePlayer(13, '<img src=x onerror=alert(1)>'),
 ];
 
 function renderMessages(props: {

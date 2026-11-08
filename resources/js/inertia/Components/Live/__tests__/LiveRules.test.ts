@@ -3,7 +3,12 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import LiveRulesConfirmModal from '@/Components/Live/LiveRulesConfirmModal.vue';
 import LiveRulesFields from '@/Components/Live/LiveRulesFields.vue';
-import { activeLiveRuleLabels, defaultLiveRules } from '@/Components/Live/liveRules';
+import {
+  activeLiveRuleLabels,
+  defaultLiveRules,
+  visibleLiveRules,
+  type LiveRules,
+} from '@/Components/Live/liveRules';
 import { renderWithUi } from '@/testing/renderWithUi';
 
 describe('activeLiveRuleLabels', () => {
@@ -22,6 +27,23 @@ describe('activeLiveRuleLabels', () => {
     });
 
     expect(labels).toEqual(['Königssolo']);
+  });
+});
+
+describe('visibleLiveRules', () => {
+  const keys = (rules: LiveRules) => visibleLiveRules(rules).map((definition) => definition.key);
+
+  it('zeigt alle Regeln, wenn die übergeordneten an sind', () => {
+    expect(keys(defaultLiveRules())).toHaveLength(6);
+  });
+
+  it('lässt nur die abhängigen Regeln einer ausgeschalteten übergeordneten Regel weg', () => {
+    expect(keys({ ...defaultLiveRules(), schweinchen: false })).toEqual([
+      'schweinchen',
+      'koenigsSolo',
+      'karlchen',
+      'karlchenFangen',
+    ]);
   });
 });
 
