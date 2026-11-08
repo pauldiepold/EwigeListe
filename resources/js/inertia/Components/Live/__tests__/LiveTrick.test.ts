@@ -2,47 +2,17 @@ import { screen } from '@testing-library/vue';
 import { describe, expect, it } from 'vitest';
 import LiveTrick from '@/Components/Live/LiveTrick.vue';
 import { trickLayout } from '@/Components/Live/liveTrickLayout';
+import { livePlayer, playedCard as played } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveCardRank, LiveCardSuit, LiveEngineCard, LivePlayer } from '@/types/live';
-
-function player(id: number, name: string, isActive = true): LivePlayer {
-  return {
-    id,
-    firstName: name,
-    lastName: 'Test',
-    fullName: `${name} Test`,
-    avatarPath: null,
-    isActive,
-  };
-}
 
 /** Anna setzt aus; Clara ist der Betrachter. */
 const players = [
-  player(10, 'Anna', false),
-  player(11, 'Bernd'),
-  player(12, 'Clara'),
-  player(13, 'Dieter'),
-  player(14, 'Eva'),
+  livePlayer(10, 'Anna', false),
+  livePlayer(11, 'Bernd'),
+  livePlayer(12, 'Clara'),
+  livePlayer(13, 'Dieter'),
+  livePlayer(14, 'Eva'),
 ];
-
-function played(
-  id: number,
-  farbe: LiveCardSuit,
-  wert: LiveCardRank,
-  gespieltVon: number,
-): LiveEngineCard {
-  return {
-    id,
-    farbe,
-    wert,
-    rang: 0,
-    punkte: 0,
-    trumpf: false,
-    spielbar: false,
-    gespieltVon,
-    armut_zurueck: false,
-  };
-}
 
 const tableSize = { width: 800, height: 400 };
 

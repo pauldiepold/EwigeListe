@@ -1,59 +1,19 @@
 import { nextTick, reactive } from 'vue';
 import { describe, expect, it } from 'vitest';
 import { useLiveGameState } from '@/composables/useLiveGameState';
+import { liveCard, liveGame, liveSpieler } from '@/testing/live';
 import type { LiveEngineCard, LiveGameData, LiveShowProps, LiveSpieler } from '@/types/live';
 
 function card(id: number): LiveEngineCard {
-  return {
-    id,
-    farbe: 4,
-    wert: 3,
-    rang: id,
-    punkte: 3,
-    trumpf: true,
-    spielbar: true,
-    gespieltVon: false,
-    armut_zurueck: false,
-  };
+  return liveCard(id, 4, 3, { trumpf: true });
 }
 
 function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
-    id: 5,
-    phase: 4,
-    dran: 11,
-    stichNr: 1,
-    vorhand: 11,
-    aktuellerStich: { karten: [], stecher: null },
-    letzterStich: { karten: [], stecher: null },
-    spieler: {},
-    messages: [],
-    spieltyp: 'Normalspiel',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
-    ...overrides,
-  };
+  return liveGame({ id: 5, spieler: {}, spieltyp: 'Normalspiel', ...overrides });
 }
 
 function me(hand: LiveSpieler['hand']): LiveSpieler {
-  return {
-    id: 11,
-    index: 0,
-    hand,
-    armutKarten: [],
-    moeglicheVorbehalte: [],
-    vorbehalt: null,
-    isRe: null,
-    ansage: null,
-    absage: null,
-    moeglicheAnAbsage: null,
-    punkte: null,
-    parteiOffengelegt: 0,
-  };
+  return liveSpieler({ id: 11, hand });
 }
 
 function pageProps(overrides: Partial<LiveShowProps> = {}): LiveShowProps {

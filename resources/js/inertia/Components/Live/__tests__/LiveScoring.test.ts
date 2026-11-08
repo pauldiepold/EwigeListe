@@ -1,50 +1,24 @@
 import { screen, within } from '@testing-library/vue';
 import { describe, expect, it } from 'vitest';
 import LiveScoring from '@/Components/Live/LiveScoring.vue';
+import { liveGame, livePlayer } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveGameData, LivePlayer } from '@/types/live';
-
-function player(id: number, firstName: string): LivePlayer {
-  return {
-    id,
-    firstName,
-    lastName: 'Test',
-    fullName: `${firstName} Test`,
-    avatarPath: null,
-    isActive: true,
-  };
-}
+import type { LiveGameData } from '@/types/live';
 
 const players = [
-  player(10, 'Anna'),
-  player(11, 'Bernd'),
-  player(12, 'Clara'),
-  player(13, 'Dieter'),
+  livePlayer(10, 'Anna'),
+  livePlayer(11, 'Bernd'),
+  livePlayer(12, 'Clara'),
+  livePlayer(13, 'Dieter'),
 ];
-
-function display() {
-  return { ansage: '', spieltyp: '', partei: '', vorbehalt: '' };
-}
 
 /** Bernd und Clara (Re) gewinnen mit drei Wertungspunkten; Dieter spielt auf der Seite der Verlierer. */
 function endedGame(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
+  return liveGame({
     id: 4,
     phase: 101,
-    dran: 11,
     stichNr: 13,
-    vorhand: 11,
-    aktuellerStich: { karten: [], stecher: null },
     letzterStich: { karten: [], stecher: 11 },
-    spieler: { 11: display(), 12: display(), 13: display(), 14: display() },
-    messages: [],
-    spieltyp: '',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
     winners: [11, 12],
     wertung: [
       ['Gewonnen', '+1'],
@@ -56,7 +30,7 @@ function endedGame(overrides: Partial<LiveGameData> = {}): LiveGameData {
     gewinntRe: true,
     wertungsPunkte: 3,
     ...overrides,
-  };
+  });
 }
 
 function renderScoring(viewerPlayerId: number, game: LiveGameData = endedGame()) {

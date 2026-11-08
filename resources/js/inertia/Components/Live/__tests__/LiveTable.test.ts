@@ -1,53 +1,20 @@
 import { screen, within } from '@testing-library/vue';
 import { describe, expect, it } from 'vitest';
 import LiveTable from '@/Components/Live/LiveTable.vue';
+import { liveGame, livePlayer } from '@/testing/live';
 import { renderWithUi } from '@/testing/renderWithUi';
-import type { LiveGameData, LivePlayer } from '@/types/live';
-
-function player(seat: number, name: string, isActive = true): LivePlayer {
-  return {
-    id: 10 + seat,
-    firstName: name,
-    lastName: 'Test',
-    fullName: `${name} Test`,
-    avatarPath: null,
-    isActive,
-  };
-}
+import type { LiveGameData } from '@/types/live';
 
 const fivePlayers = [
-  player(0, 'Anna', false),
-  player(1, 'Bernd'),
-  player(2, 'Clara'),
-  player(3, 'Dieter'),
-  player(4, 'Eva'),
+  livePlayer(10, 'Anna', false),
+  livePlayer(11, 'Bernd'),
+  livePlayer(12, 'Clara'),
+  livePlayer(13, 'Dieter'),
+  livePlayer(14, 'Eva'),
 ];
 
 function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
-    id: 1,
-    phase: 4,
-    dran: 12,
-    stichNr: 1,
-    vorhand: 12,
-    aktuellerStich: { karten: [], stecher: null },
-    letzterStich: { karten: [], stecher: null },
-    spieler: {
-      11: { ansage: '', spieltyp: '', partei: '', vorbehalt: '' },
-      12: { ansage: '', spieltyp: '', partei: '', vorbehalt: '' },
-      13: { ansage: '', spieltyp: '', partei: '', vorbehalt: '' },
-      14: { ansage: '', spieltyp: '', partei: '', vorbehalt: '' },
-    },
-    messages: [],
-    spieltyp: '',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
-    ...overrides,
-  };
+  return liveGame({ dran: 12, vorhand: 12, ...overrides });
 }
 
 function seatNames(): string[] {

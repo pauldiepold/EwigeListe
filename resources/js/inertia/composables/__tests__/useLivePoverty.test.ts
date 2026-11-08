@@ -2,61 +2,21 @@ import { nextTick } from 'vue';
 import { describe, expect, it, vi } from 'vitest';
 import { useLiveGameState } from '@/composables/useLiveGameState';
 import { useLivePoverty } from '@/composables/useLivePoverty';
+import { liveCard, liveGame, liveSpieler } from '@/testing/live';
 import type { LiveEngineCard, LiveGameData, LiveSpieler } from '@/types/live';
 
 const VIEWER = 12;
 
 function card(id: number, trumpf = false): LiveEngineCard {
-  return {
-    id,
-    farbe: 4,
-    wert: 3,
-    rang: id,
-    punkte: 3,
-    trumpf,
-    spielbar: true,
-    gespieltVon: false,
-    armut_zurueck: false,
-  };
+  return liveCard(id, 4, 3, { trumpf });
 }
 
 function game(overrides: Partial<LiveGameData> = {}): LiveGameData {
-  return {
-    id: 5,
-    phase: 3,
-    dran: VIEWER,
-    stichNr: 1,
-    vorhand: 11,
-    aktuellerStich: { karten: [], stecher: null },
-    letzterStich: { karten: [], stecher: null },
-    spieler: {},
-    messages: [],
-    spieltyp: '',
-    schweinchen: false,
-    kontrasOffengelegt: 0,
-    reAnsage: false,
-    kontraAnsage: false,
-    reAbsage: null,
-    kontraAbsage: null,
-    ...overrides,
-  };
+  return liveGame({ id: 5, phase: 3, dran: VIEWER, spieler: {}, ...overrides });
 }
 
 function me(hand: LiveEngineCard[]): LiveSpieler {
-  return {
-    id: VIEWER,
-    index: 1,
-    hand,
-    armutKarten: [],
-    moeglicheVorbehalte: [],
-    vorbehalt: 'Armut',
-    isRe: null,
-    ansage: null,
-    absage: null,
-    moeglicheAnAbsage: null,
-    punkte: null,
-    parteiOffengelegt: 0,
-  };
+  return liveSpieler({ id: VIEWER, index: 1, hand, vorbehalt: 'Armut' });
 }
 
 /** Eine Hand ohne Trumpf: Karten 1 bis 5 sind frei wählbar. */

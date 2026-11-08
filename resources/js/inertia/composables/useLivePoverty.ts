@@ -120,5 +120,15 @@ export function useLivePoverty(options: {
     }
   }
 
-  return { selecting, selectedIds, receivedIds, toggle, canSubmit, trumpLeft, give, answer, giveBack };
+  return {
+    selecting,
+    selectedIds,
+    receivedIds,
+    toggle,
+    canSubmit,
+    trumpLeft,
+    give,
+    answer,
+    giveBack,
+  };
 }
