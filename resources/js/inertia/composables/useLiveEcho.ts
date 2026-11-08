@@ -1,6 +1,6 @@
-import { ref, watch, type Ref } from 'vue';
+import { onUnmounted, ref, watch, type Ref } from 'vue';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { useEchoConnection } from '@/composables/echoConnection';
+import { useEchoConnection, usePresenceMembers } from '@/composables/echoConnection';
 import type { LiveGamePush } from '@/types/live';
 
 /** Wer online ist, wie `routes/channels.php` ihn für `round.{id}` beschreibt (`id` ist die Spieler-ID). */
@@ -48,11 +48,10 @@ export type UseLiveEchoReturn = {
  * Alle Channels sind nur offen, solange die Seite offen ist.
  */
 export function useLiveEcho(options: UseLiveEchoOptions): UseLiveEchoReturn {
-  const onlineMembers = ref<LiveEchoMember[]>([]);
   const connection = useEchoConnection();
 
   if (connection === null) {
-    return { onlineMembers, sendReady: () => undefined };
+    return { onlineMembers: ref<LiveEchoMember[]>([]), sendReady: () => undefined };
   }
 
   const presence = useEchoPresence<unknown, 'pusher'>(
@@ -61,20 +60,12 @@ export function useLiveEcho(options: UseLiveEchoOptions): UseLiveEchoReturn {
     options.onRoundUpdated,
   ).channel();
 
-  presence
-    .here((members: LiveEchoMember[]) => {
-      onlineMembers.value = members;
-    })
-    .joining((member: LiveEchoMember) => {
-      if (!onlineMembers.value.some((online) => online.id === member.id)) {
-        onlineMembers.value = [...onlineMembers.value, member];
-      }
-    })
-    .leaving((member: LiveEchoMember) => {
-      onlineMembers.value = onlineMembers.value.filter((online) => online.id !== member.id);
-      options.onMemberLeft();
-    })
-    .listenForWhisper('ready', (message: { id: number }) => options.onReady(message.id));
+  const onlineMembers = usePresenceMembers<LiveEchoMember>(presence, () => options.onMemberLeft());
+
+  // Auf dem geteilten Channel (Runde und Live-Seite) bleiben Listener der alten Seite sonst hängen.
+  const onReady = (message: { id: number }): void => options.onReady(message.id);
+  presence.listenForWhisper('ready', onReady);
+  onUnmounted(() => presence.stopListeningForWhisper('ready', onReady));
 
   watch(
     options.isActivePlayer,

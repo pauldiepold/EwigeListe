@@ -1,6 +1,6 @@
-import { ref, type Ref } from 'vue';
+import { computed, type ComputedRef } from 'vue';
 import { useEchoPresence } from '@laravel/echo-vue';
-import { useEchoConnection } from '@/composables/echoConnection';
+import { useEchoConnection, usePresenceMembers } from '@/composables/echoConnection';
 import { useRefreshOnVisible } from '@/composables/useRefreshOnVisible';
 
 type PresenceMember = { id: number };
@@ -13,26 +13,19 @@ type PresenceMember = { id: number };
 export function useRoundUpdates(
   roundId: number,
   refresh: () => void,
-): { onlinePlayerIds: Ref<number[]> } {
-  const onlinePlayerIds = ref<number[]>([]);
-
+): { onlinePlayerIds: ComputedRef<number[]> } {
   useRefreshOnVisible(refresh);
 
   if (useEchoConnection() === null) {
-    return { onlinePlayerIds };
+    return { onlinePlayerIds: computed(() => []) };
   }
 
-  useEchoPresence<unknown, 'pusher'>(`round.${roundId}`, 'RoundUpdated', refresh)
-    .channel()
-    .here((members: PresenceMember[]) => {
-      onlinePlayerIds.value = members.map((member) => member.id);
-    })
-    .joining((member: PresenceMember) => {
-      onlinePlayerIds.value = [...onlinePlayerIds.value, member.id];
-    })
-    .leaving((member: PresenceMember) => {
-      onlinePlayerIds.value = onlinePlayerIds.value.filter((id) => id !== member.id);
-    });
+  const channel = useEchoPresence<unknown, 'pusher'>(
+    `round.${roundId}`,
+    'RoundUpdated',
+    refresh,
+  ).channel();
+  const members = usePresenceMembers<PresenceMember>(channel);
 
-  return { onlinePlayerIds };
+  return { onlinePlayerIds: computed(() => members.value.map((member) => member.id)) };
 }
