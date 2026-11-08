@@ -14,7 +14,7 @@ declare module '@inertiajs/core' {
         user: { id: number } | null;
         player: { id: number; fullName: string } | null;
       };
-      navigation: { showCurrentRound: boolean };
+      navigation: { currentRoundId: number | null };
     };
   }
 }

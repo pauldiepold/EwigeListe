@@ -41,9 +41,19 @@ const page = usePage();
 const isDark = computed(() => colorMode.value === 'dark');
 const isAuthenticated = computed(() => page.props.auth.user !== null);
 const authPlayer = computed(() => page.props.auth.player);
-const canOpenCurrentRound = computed(() => page.props.navigation.showCurrentRound);
+const currentRoundId = computed(() => page.props.navigation.currentRoundId);
 
 const currentPath = computed(() => page.url.split(/[?#]/)[0]);
+
+/** Runde, deren Ansicht (auch live) gerade offen ist. */
+const openRoundId = computed<number | null>(() => {
+  const match = currentPath.value.match(/^\/runde\/(\d+)(?:\/|$)/);
+
+  return match ? Number(match[1]) : null;
+});
+const isCurrentRoundOpen = computed(
+  () => openRoundId.value !== null && openRoundId.value === currentRoundId.value,
+);
 
 interface NavItem {
   to: string;
@@ -80,14 +90,13 @@ const navItems = computed<NavItem[]>(() => {
 
   return [
     homeItem,
-    ...(canOpenCurrentRound.value
+    ...(currentRoundId.value !== null
       ? [
           {
             to: currentRound.url(),
             icon: 'i-lucide-circle-play',
             label: 'Aktuelle Runde',
-            // Jede geöffnete Runde zählt als Runden-Ansicht, auch eine aus dem Archiv.
-            active: /^\/runde\/\d/.test(currentPath.value),
+            active: isCurrentRoundOpen.value,
           },
         ]
       : []),
@@ -108,7 +117,10 @@ const navItems = computed<NavItem[]>(() => {
       to: roundsIndex.url(),
       icon: 'i-lucide-history',
       label: 'Rundenarchiv',
-      active: currentPath.value.startsWith(roundsIndex.url()),
+      // Jede andere geöffnete Runde stammt aus dem Archiv.
+      active:
+        currentPath.value.startsWith(roundsIndex.url()) ||
+        (openRoundId.value !== null && !isCurrentRoundOpen.value),
     },
   ];
 });

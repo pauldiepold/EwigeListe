@@ -46,19 +46,21 @@ class InertiaShellTest extends TestCase
         $this->actingAs(User::factory()->create())
             ->get(route('index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->where('navigation.showCurrentRound', false));
+            ->assertInertia(fn (Assert $page) => $page->where('navigation.currentRoundId', null));
     }
 
     #[Test]
-    public function the_current_round_is_offered_once_the_player_has_a_round(): void
+    public function the_current_round_is_the_players_latest_round(): void
     {
         $user = User::factory()->create();
-        Round::factory()->create()->players()->attach($user->player, ['index' => 0]);
+        Round::factory()->create(['created_at' => now()->subDay()])->players()->attach($user->player, ['index' => 0]);
+        $latestRound = Round::factory()->create();
+        $latestRound->players()->attach($user->player, ['index' => 0]);
 
         $this->actingAs($user)
             ->get(route('index'))
             ->assertOk()
-            ->assertInertia(fn (Assert $page) => $page->where('navigation.showCurrentRound', true));
+            ->assertInertia(fn (Assert $page) => $page->where('navigation.currentRoundId', $latestRound->id));
     }
 
     #[Test]
