@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import type { ButtonProps } from '@nuxt/ui';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import GroupBadges from '@/Components/Groups/GroupBadges.vue';
+import ProfileBadgeCalendar from '@/Components/Players/ProfileBadgeCalendar.vue';
 import ProfileCharts from '@/Components/Players/ProfileCharts.vue';
 import ProfileStatisticsPanel from '@/Components/Players/ProfileStatisticsPanel.vue';
 import RoundArchive from '@/Components/Rounds/RoundArchive.vue';
@@ -19,6 +20,26 @@ const page = usePage();
 const isOwnProfile = computed(() => page.props.auth.player?.id === props.player.id);
 
 const title = computed(() => `Profil von ${props.player.fullName}`);
+
+/** Am Desktop neben dem Titel, darunter unter dem Avatar, weil der Name sonst keinen Platz hat. */
+const accountSettingsButton = computed<ButtonProps | null>(() =>
+  props.player.editableUserId === null
+    ? null
+    : {
+        to: editUser.url(props.player.editableUserId),
+        label: 'Konto-Einstellungen',
+        icon: 'i-lucide-user-cog',
+        color: 'neutral',
+        variant: 'subtle',
+        size: 'sm',
+      },
+);
+
+const headerLinks = computed<ButtonProps[]>(() =>
+  accountSettingsButton.value === null
+    ? []
+    : [{ ...accountSettingsButton.value, class: 'hidden lg:inline-flex' }],
+);
 
 const tabs = [
   { label: 'Statistiken', icon: 'i-lucide-user', value: 'statistiken' },
@@ -46,22 +67,50 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
 <template>
   <Head :title="title" />
 
-  <AppLayout :title="title">
+  <AppLayout :title="title" :header-links="headerLinks">
     <div class="mx-auto w-full max-w-5xl space-y-6">
       <div class="flex flex-col items-center gap-3">
-        <UAvatar :src="player.avatarPath ?? undefined" :alt="player.fullName" size="3xl" />
-        <UButton
-          v-if="player.editableUserId !== null"
-          :to="editUser.url(player.editableUserId)"
-          variant="outline"
-          icon="i-lucide-user-cog"
-          label="Konto-Einstellungen"
+        <UModal
+          v-if="player.avatarPath && player.avatarFullPath"
+          :title="player.fullName"
+          :ui="{ content: 'max-w-2xl' }"
+        >
+          <button
+            type="button"
+            class="cursor-zoom-in rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            aria-label="Profilbild vergrößern"
+          >
+            <img
+              :src="player.avatarPath"
+              :alt="player.fullName"
+              class="size-36 rounded-full object-cover sm:size-44"
+            />
+          </button>
+
+          <template #body>
+            <img :src="player.avatarFullPath" :alt="player.fullName" class="w-full rounded-md" />
+          </template>
+        </UModal>
+        <img
+          v-else-if="player.avatarPath"
+          :src="player.avatarPath"
+          :alt="player.fullName"
+          class="size-36 rounded-full object-cover sm:size-44"
         />
+        <UAvatar v-else :alt="player.fullName" class="size-36 text-5xl sm:size-44" />
+        <UButton v-if="accountSettingsButton" v-bind="accountSettingsButton" class="lg:hidden" />
       </div>
 
       <UTabs v-model="activeTab" :items="tabs" :content="false" class="w-full" />
 
-      <UFormField v-if="activeTab !== 'listen'" label="Liste">
+      <UFormField
+        v-if="activeTab !== 'listen'"
+        label="Liste"
+        :class="{
+          'mx-auto max-w-md': activeTab === 'statistiken',
+          'mx-auto max-w-2xl': activeTab === 'abzeichen',
+        }"
+      >
         <USelect
           :model-value="selectedGroupId"
           :items="groupOptions"
@@ -88,7 +137,7 @@ const { onArchivePageChange, onArchiveSortChange } = useRoundArchiveVisit(
       </template>
 
       <template v-else-if="activeTab === 'abzeichen'">
-        <GroupBadges v-if="badges.length > 0" :badges="badges" />
+        <ProfileBadgeCalendar v-if="badges.length > 0" :years="badges" />
         <p v-else class="text-lg text-toned">Bisher keine Abzeichen auf dieser Liste.</p>
       </template>
 
