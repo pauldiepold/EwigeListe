@@ -96,19 +96,15 @@ class PlayerShowTest extends TestCase
     }
 
     #[Test]
-    public function only_the_admin_may_view_hidden_and_ai_players(): void
+    public function only_the_admin_may_view_hidden_players(): void
     {
         $regular = Player::factory()->create();
         $hidden = Player::factory()->hidden()->create();
-        $ai = Player::factory()->create();
-        $ai->forceFill(['ai_path' => 'lib_doko.so'])->save();
 
         $this->assertTrue($this->viewer->can('view', $regular));
         $this->assertFalse($this->viewer->can('view', $hidden));
-        $this->assertFalse($this->viewer->can('view', $ai));
 
         $this->assertTrue($this->admin->can('view', $hidden));
-        $this->assertTrue($this->admin->can('view', $ai));
     }
 
     #[Test]

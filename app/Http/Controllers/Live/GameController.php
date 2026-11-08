@@ -187,7 +187,7 @@ class GameController extends Controller
 
         $liveGame->save();
 
-        return $liveGame->checkForAITurn();
+        return 'success';
     }
 
     public function ansage(LiveGame $liveGame, Request $request)

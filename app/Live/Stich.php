@@ -56,9 +56,4 @@ class Stich
     {
         return $this->karten->first();
     }
-
-    public function getAIString()
-    {
-        return $this->karten->map(fn ($card) => $card->getAIString());
-    }
 }

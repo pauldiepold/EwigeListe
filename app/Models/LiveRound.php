@@ -126,9 +126,6 @@ class LiveRound extends Model
         $liveGame = new LiveGame;
 
         $liveGame->live_round_id = $this->id;
-        $liveGame->is_with_ai = $activePlayers->contains(function ($player, $key) {
-            return $player->is_ai;
-        });
         $liveGame->vorhand = $activePlayers->first()->pivot->player_id;
         $liveGame->dran = $activePlayers->first()->pivot->player_id;
         $liveGame->aktuellerStich = new Stich;
@@ -146,20 +143,6 @@ class LiveRound extends Model
         $liveGame->kartenGeben();
         $liveGame->moeglicheVorbehalteBerechnen();
         $liveGame->phase = 2;
-
-        if ($liveGame->is_with_ai) {
-            if ($liveGame->spieler0->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler1->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler2->moeglicheVorbehalte->contains('Hochzeit') ||
-                $liveGame->spieler3->moeglicheVorbehalte->contains('Hochzeit')) {
-                $this->starteNeuesSpiel();
-
-                return 0;
-            }
-            $liveGame->pushMessage('Im Spiel mit KI sind keine Schweinchen, Hochzeiten oder Soli möglich.');
-            $liveGame->handleVorbehalteInAIGame();
-            $liveGame->checkForAITurn();
-        }
 
         $liveGame->save();
 
