@@ -11,14 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 class LiveRound extends Model
 {
     /**
-     * Die Regeln einer Live-Runde mit ihrem Standard (alle an).
+     * Die Regeln einer Live-Runde mit ihrem Standard (alle an außer Super-Schwein im Trumpfsolo).
      *
      * @var array<string, bool>
      */
     public const array RULE_DEFAULTS = [
         'schweinchen' => true,
         'fuchsSticht' => true,
-        'schweinchenTrumpfsolo' => true,
+        'schweinchenTrumpfsolo' => false,
         'koenigsSolo' => true,
         'karlchen' => true,
         'karlchenFangen' => true,

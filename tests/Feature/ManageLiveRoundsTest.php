@@ -82,7 +82,7 @@ class ManageLiveRoundsTest extends TestCase
         $this->assertSame([
             'schweinchen' => true,
             'fuchsSticht' => true,
-            'schweinchenTrumpfsolo' => true,
+            'schweinchenTrumpfsolo' => false,
             'koenigsSolo' => true,
             'karlchen' => true,
             'karlchenFangen' => true,

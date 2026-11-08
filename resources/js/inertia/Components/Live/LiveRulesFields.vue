@@ -31,7 +31,7 @@ function isDependent(definition: LiveRuleDefinition): boolean {
       v-for="definition in visibleDefinitions"
       :key="definition.key"
       class="px-4 py-3"
-      :class="{ 'ml-4 border-l-2 border-l-primary/40 py-2': isDependent(definition) }"
+      :class="{ 'pl-10': isDependent(definition) }"
     >
       <USwitch
         :model-value="rules[definition.key]"

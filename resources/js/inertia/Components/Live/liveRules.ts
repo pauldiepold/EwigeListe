@@ -55,12 +55,12 @@ export const liveRuleDefinitions: LiveRuleDefinition[] = [
   },
 ];
 
-/** Der übliche Standard: alle Regeln an. */
+/** Der übliche Standard: alle Regeln an außer Super-Schwein im Trumpfsolo. */
 export function defaultLiveRules(): LiveRules {
   return {
     schweinchen: true,
     fuchsSticht: true,
-    schweinchenTrumpfsolo: true,
+    schweinchenTrumpfsolo: false,
     koenigsSolo: true,
     karlchen: true,
     karlchenFangen: true,

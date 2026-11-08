@@ -7,8 +7,9 @@ import { activeLiveRuleLabels, defaultLiveRules } from '@/Components/Live/liveRu
 import { renderWithUi } from '@/testing/renderWithUi';
 
 describe('activeLiveRuleLabels', () => {
-  it('nennt beim Standard alle sechs Regeln', () => {
-    expect(activeLiveRuleLabels(defaultLiveRules())).toHaveLength(6);
+  it('nennt beim Standard alle Regeln außer Super-Schwein im Trumpfsolo', () => {
+    expect(activeLiveRuleLabels(defaultLiveRules())).not.toContain('Super-Schwein auch im Trumpfsolo');
+    expect(activeLiveRuleLabels(defaultLiveRules())).toHaveLength(5);
   });
 
   it('lässt abhängige Regeln weg, wenn die übergeordnete aus ist', () => {

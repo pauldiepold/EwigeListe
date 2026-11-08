@@ -190,7 +190,7 @@ class RoundShowTest extends TestCase
             ->assertInertia(fn (Assert $page) => $page->where('round.info.rules', [
                 'schweinchen' => true,
                 'fuchsSticht' => true,
-                'schweinchenTrumpfsolo' => true,
+                'schweinchenTrumpfsolo' => false,
                 'koenigsSolo' => false,
                 'karlchen' => false,
                 'karlchenFangen' => false,
