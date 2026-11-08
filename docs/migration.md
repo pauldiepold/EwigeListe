@@ -2,7 +2,7 @@
 
 Leitdokument für die Migration: Ziel, Leitplanken, Roadmap, Fortschritt und Entscheidungen. Die Details zu jedem Arbeitspaket stehen im verlinkten GitHub-Issue. Begriffe: `GLOSSARY.md`.
 
-**Stand:** Phase 0 bis 6 umgesetzt, Go-Live ohne vorherigen Spieleabend (siehe Entscheidungen, 2026-11-08) · Branch `inertia-migration` · Go-Live-PR #16
+**Stand:** Abgeschlossen. Go-Live am 2026-11-08 ohne vorherigen Spieleabend (siehe Entscheidungen): #16 per Merge-Commit `467d544` nach `master`, alter Stand als Tag `pre-inertia`. Dieses Dokument bleibt als Entscheidungsprotokoll; Betrieb von Queue und Scheduler: `docs/betrieb.md`
 
 ## Ziel
 
@@ -42,7 +42,7 @@ Die gesamte App läuft als Laravel + Inertia + Vue-3-SPA (TypeScript, Nuxt UI). 
 | 3 | Restliche Seiten ohne Live-Spiel | #29, #30, #73, #31, #32, #33 | ✅ |
 | 4 | Design: bis zu 4 Spikes, Abstimmung, Rollout | #34, #35 | ✅ |
 | 5 | Live-Spiel im neuen Design | #36 (Karten #94 ✅, Regeln #99 ✅, KI #98, Seite #100, Echtzeit #101, Hand #102, Karten #103, Armut #104, Meldungen #105, Spielende und Legacy-Abbau #106) | ✅ (Gesamtabnahme entfällt, Abnahme im Betrieb) |
-| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | Legacy-Abbau ✅, Spieleabend entfällt, Go-Live offen |
+| 6 | Legacy-Abbau, Spieleabend auf Staging, Go-Live | #37 | ✅ (Spieleabend entfällt, Go-Live 2026-11-08) |
 | danach | Backend-Modernisierung, Feature-Issues | #38, Label `nach-migration` | — |
 
 #48 ist vor #28 abgeschlossen, damit die bestehenden Seiten nur einmal auf den finalen Stack gebracht werden.
@@ -71,10 +71,12 @@ Go-Live:
 
 1. Den Stand von GitHub taggen: `git fetch origin && git tag pre-inertia origin/master && git push origin pre-inertia`.
 2. Auf Prod `php artisan down`, damit zwischen Backup und Deploy keine Spiele mehr eingetragen werden.
-3. Prod-Queue leerlaufen lassen: Serialisierte Jobs tragen noch die alten Klassennamen (`App\Round`).
+3. Prod-Queue leerlaufen lassen: Serialisierte Jobs tragen noch die alten Klassennamen (`App\Round`). Im Wartungsmodus arbeitet der Cron-Worker nichts ab, also von Hand `php artisan queue:work --stop-when-empty --force` und prüfen, ob `jobs` leer ist.
 4. DB-Backup von Prod ziehen.
 5. #16 per Merge-Commit nach `master` mergen. Der Push startet „Deploy Production“, der Deploy führt `migrate --force` aus und schaltet am Ende `artisan up`.
-6. Einmalig `php artisan stats:recalculate`: Die Listenstatistik steht auf Prod noch nicht in den neuen Spalten.
+6. Einmalig `php artisan stats:recalculate`: Die Listenstatistik steht auf Prod noch nicht in den neuen Spalten. Danach `php artisan queue:work --stop-when-empty --memory=384`; mit den standardmäßigen 128 MB stoppt der Worker nach zwei Profilen (siehe `docs/betrieb.md`).
+
+Alle Schritte sind am 2026-11-08 so gelaufen.
 
 Rollback: „Deploy Production“ deployt nur `origin/master`. Also auf Prod `php artisan down`, das DB-Backup einspielen und den Merge auf `master` per `git revert -m 1 <merge-commit>` zurücknehmen und pushen; der Deploy bringt den alten Code. Ein `migrate:rollback` allein reicht nicht, weil `master` die umbenannten und gelöschten Spalten erwartet (`players.surname`/`name`, `ai_path`, die alten Statistik-Spalten von `groups`).
 
@@ -192,6 +194,7 @@ Status: `todo` · `in_progress` · `✅` · `gestrichen`. Bei ✅-Zeilen aus der
 | 2026-11-08 | Legacy-Abbau: `resources/js/app.js`, `bootstrap.js`, `lib/`, `scripts/`, `public/webfonts/` (FontAwesome und lokale Schriften, ersetzt durch Google Fonts) sowie `alpinejs`, `axios`, `lodash` und `moment` sind entfernt; Vite hat einen Entry, Lint, Format, Type-Check und Vitest decken ganz `resources/js` ab. Die alten Statistik-Spalten von `groups` (`records`, `stats`, `mostGames` bis `mostGamesMonth`) löscht eine Migration. Die Tabelle `comments` bleibt bis #80 (#37) | Ein Rollback auf `master` braucht wegen der umbenannten `players`-Spalten ohnehin das DB-Backup, die Spalten von `groups` bringen dafür nichts mehr. Ob die Prod-Kommentare übernommen werden, entscheidet #80; die leere Tabelle kostet bis dahin nichts |
 | 2026-11-08 | Aufräumen vor dem Go-Live: `resources/archive/`, `server.php`, `app/Helper/helper.php` (`nice_count` durch `Arr::join` ersetzt) und der `inspire`-Befehl sind gelöscht, `doctrine/dbal` und `filp/whoops` keine direkten Abhängigkeiten mehr. `telescope:prune` läuft nur noch lokal. Alle Composer-Pakete sind innerhalb der Versionsgrenzen aktualisiert (u. a. Symfony 8.1.11 wegen sieben Sicherheitswarnungen) | Alles ungenutzt: Laravel 13 braucht DBAL für `->change()` nicht, `server.php` braucht weder Herd noch `artisan serve`. Telescope ist nur lokal registriert, auf Prod gab es den eingeplanten Befehl nie. Prod startet ohne bekannte Lücken |
 | 2026-11-08 | Go-Live ohne Spieleabend auf Staging und ohne Gesamtabnahme des Live-Spiels mit vier Browsern; Kriterium 4 entfällt. Funde aus dem Betrieb werden nach dem Go-Live behoben | Pauls Entscheidung. Die Live-Engine ist unverändert und die Seiten sind einzeln abgenommen; das Rollback (Tag, DB-Backup, `git revert -m 1`) bleibt als Netz |
+| 2026-11-08 | Go-Live durchgeführt (#16, Merge-Commit `467d544`, Tag `pre-inertia`). Der Cron-Worker auf Prod und Staging läuft mit `queue:work --stop-when-empty --memory=384 --max-time=50`, dokumentiert in `docs/betrieb.md` | Bei `stats:recalculate` stoppte der Worker mit den standardmäßigen 128 MB nach zwei `UpdateProfile`-Jobs. Das `memory_limit` der CLI liegt auf Prod bei 512 MB, `--memory` braucht Abstand darunter. `--max-time` hält den minütlichen Aufruf unter einer Minute, damit sich Worker nicht stapeln und `schedule:run` keine Minute verpasst |
 
 ## Offene Fragen
 
