@@ -39,7 +39,7 @@ function label(player: LivePlayer): string {
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-3 rounded-lg bg-default px-4 py-3 ring ring-default">
+  <div class="flex flex-col items-center gap-5 rounded-lg bg-default px-6 py-5 ring ring-default">
     <UButton
       v-if="showReady && canBeReady && !iAmReady"
       label="Bereit?"
@@ -52,12 +52,13 @@ function label(player: LivePlayer): string {
         {{ isFirstGame ? 'Das erste' : 'Das nächste' }} Spiel startet, sobald alle bereit sind
       </template>
     </p>
-    <ul class="grid grid-cols-2 gap-x-4 gap-y-2">
+    <!-- Abstand so groß, dass sich die Leucht-Schatten der Avatare nicht berühren; am Desktop alle in einer Reihe. -->
+    <ul class="grid grid-cols-2 gap-x-10 gap-y-6 lg:grid-cols-4 lg:gap-x-12">
       <li
         v-for="player in players"
         :key="player.id"
         :aria-label="label(player)"
-        class="flex items-center gap-2"
+        class="flex items-center gap-3"
       >
         <UAvatar
           :src="player.avatarPath ?? undefined"
@@ -67,8 +68,8 @@ function label(player: LivePlayer): string {
           :class="isOnline(player) ? 'shadow-[0_0_10px_2px] shadow-success/60' : 'opacity-40'"
         />
         <div class="flex min-w-0 flex-col">
-          <span class="truncate text-sm leading-4">{{ player.firstName }}</span>
-          <span v-if="isReady(player)" class="text-xs leading-4 text-success">bereit</span>
+          <span class="truncate text-sm leading-5">{{ player.firstName }}</span>
+          <span v-if="isReady(player)" class="text-xs leading-4 text-success/70">bereit</span>
         </div>
       </li>
     </ul>

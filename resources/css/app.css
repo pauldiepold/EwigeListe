@@ -6,7 +6,7 @@ layer(base);
 @import '@nuxt/ui';
 
 /* Die Nuxt-UI-Konfiguration setzt eigene Klassen an Komponenten. */
-@source '../../vite.config.js';
+@source '../../vite.config.mjs';
 
 /*
   Nuxt UI nutzt für `primary` und `secondary` hell Stufe 500 und dunkel Stufe 400 und liest die
