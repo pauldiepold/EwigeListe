@@ -68,6 +68,32 @@ class LiveMessagesTest extends TestCase
     }
 
     #[Test]
+    public function throwing_in_starts_a_new_game_with_a_message_naming_the_player(): void
+    {
+        // Bei Seed 5 darf der Spieler auf Position 3 schmeißen, niemand hat eine Hochzeit.
+        $game = $this->startGameWithSeed(5);
+        $thrower = $game->getSpieler($game->spielerIDs[3]);
+        $this->assertTrue($thrower->moeglicheVorbehalte->contains('Schmeißen'));
+
+        foreach ($this->users as $ignored) {
+            $dran = $this->currentGame()->dran;
+            $this->actingAs($this->users->firstWhere('id', $dran))
+                ->post(route('live.games.vorbehalt', $game), [
+                    'vorbehalt' => $dran === $thrower->id ? 'Schmeißen' : 'Gesund',
+                ])
+                ->assertOk();
+        }
+
+        $this->assertTrue($game->fresh()->geschmissen);
+        $newGame = $this->currentGame();
+        $this->assertNotSame($game->id, $newGame->id);
+        $this->assertEquals(
+            ['spielerId' => $thrower->id, 'text' => 'hat geschmissen!'],
+            $newGame->messages->first(),
+        );
+    }
+
+    #[Test]
     public function a_game_without_reservations_yields_the_normal_game_message_without_a_player(): void
     {
         $game = $this->startGameWithSeed(1);

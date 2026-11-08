@@ -48,6 +48,11 @@ export function useLiveGameState(
   const hand = computed(() => listOf(ich.value?.hand));
 
   function applyPush(push: LiveGamePush): void {
+    // Ein Push des Vorgängerspiels kann nach dem neuen Spiel ankommen (Schmeißen, abgelehnte Armut).
+    if (liveGame.value !== null && push.liveGame.id < liveGame.value.id) {
+      return;
+    }
+
     liveGame.value = push.liveGame;
 
     if (push.ich) {

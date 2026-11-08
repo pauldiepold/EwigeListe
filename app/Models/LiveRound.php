@@ -107,12 +107,11 @@ class LiveRound extends Model
         return $this->hasManyThrough(Game::class, LiveGame::class);
     }
 
-    public function starteNeuesSpiel()
+    /**
+     * Gibt ein neues Spiel mit den aktiven Spielern der Runde und liefert es zurück.
+     */
+    public function starteNeuesSpiel(): LiveGame
     {
-        if ($this->liveGames->where('beendet', 0)->count() != 0) {
-            // abort(422, 'Es darf keine geöffneten Spiele geben!');
-        }
-
         $activePlayers = $this->round->getActivePlayers(false);
 
         $spielerIDsInaktiv = $this->round->getInactivePlayers()->pluck('id');
@@ -146,6 +145,6 @@ class LiveRound extends Model
 
         $liveGame->save();
 
-        return 0;
+        return $liveGame;
     }
 }
