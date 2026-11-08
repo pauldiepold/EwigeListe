@@ -7,6 +7,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Live\GameController as LiveGameController;
 use App\Http\Controllers\Live\RoundController as LiveRoundController;
+use App\Http\Controllers\Live\TableController as LiveTableController;
 use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\RoundController;
 use App\Http\Controllers\StaticPageController;
@@ -53,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/rounds', [RoundController::class, 'store'])->name('rounds.store');
     Route::get('/rounds/current', [RoundController::class, 'current'])->name('rounds.current');
     Route::get('/runde/{round}', [RoundController::class, 'show'])->name('rounds.show');
+    Route::get('/runde/{round}/live', [LiveTableController::class, 'show'])->name('rounds.live');
     Route::patch('/rounds/{round}', [RoundController::class, 'update'])->name('rounds.update');
     Route::delete('/rounds/{round}', [RoundController::class, 'destroy'])->name('rounds.destroy');
     Route::post('/rounds/{round}/games', [GameController::class, 'store'])->name('games.store');
