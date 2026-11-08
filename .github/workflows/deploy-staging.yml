@@ -57,8 +57,10 @@ jobs:
 
             # Vor `artisan down`: Die Config des neuen Stands kann Klassen neuer Pakete brauchen
             # (z. B. `Laravel\Fortify\Features` in `config/fortify.php`).
+            # Ohne Dev-Pakete (Debugbar, Telescope, Boost, PHPUnit …): Zur Laufzeit braucht sie nichts,
+            # Telescope registriert `AppServiceProvider` nur lokal.
             echo "=== Composer Install ==="
-            composer install --optimize-autoloader
+            composer install --no-dev --optimize-autoloader
 
             echo "=== Maintenance ON ==="
             php artisan down
