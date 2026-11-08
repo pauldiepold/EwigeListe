@@ -43,6 +43,20 @@ _Avoid_: Spielerreihenfolge
 **Aussetzen**:
 Bei mehr als vier Spielern sind pro Spiel nur vier aktiv, die übrigen setzen aus. Bei fünf Spielern setzt der Geber aus.
 
+### Am Tisch
+
+**Karte**:
+Eine Spielkarte des französischen Doppelkopf-Blatts: Farbe (Kreuz, Pik, Herz, Karo) und Rang (9, 10, Bube, Dame, König, Ass), jede Karte gibt es zweimal. Benannt wird sie mit Farbe vor Rang, z. B. „Kreuz Dame“.
+_Avoid_: Bauer, Junge, Treff
+
+**Hand**:
+Die Karten, die ein Spieler im laufenden Spiel hält; zu Beginn zwölf.
+_Avoid_: Blatt
+
+**Stich**:
+Die vier Karten, die die Spieler eines Spiels reihum nacheinander legen; wer die höchste gelegt hat, bekommt ihn.
+_Avoid_: Runde (für den Stich)
+
 ### Personen
 
 **Spieler**:
