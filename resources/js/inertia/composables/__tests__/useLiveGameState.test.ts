@@ -107,6 +107,42 @@ describe('useLiveGameState', () => {
     expect(state.hand.value.map((c) => c.id)).toEqual([1, 2]);
   });
 
+  it('führt ein beendetes Spiel wie ein Reload: kein laufendes Spiel, sondern das letzte', () => {
+    const state = useLiveGameState(pageProps());
+
+    state.applyPush({
+      liveGame: game({ phase: 101, stichNr: 13, winners: [11, 12], wertungsPunkte: 2 }),
+      ich: me([]),
+    });
+
+    expect(state.liveGame.value).toBeNull();
+    expect(state.lastLiveGame.value).toMatchObject({ id: 5, wertungsPunkte: 2 });
+    expect(state.ich.value).toBeNull();
+    expect(state.hand.value).toEqual([]);
+  });
+
+  it('ignoriert einen verspäteten Push des Spiels, das schon beendet ist', () => {
+    const state = useLiveGameState(
+      pageProps({ liveGame: null, lastLiveGame: game({ id: 5, phase: 101 }), ich: null }),
+    );
+
+    state.applyPush({ liveGame: game({ id: 4, phase: 4 }), ich: me([card(3)]) });
+
+    expect(state.liveGame.value).toBeNull();
+    expect(state.ich.value).toBeNull();
+  });
+
+  it('nimmt das nächste Spiel nach einem beendeten an', () => {
+    const state = useLiveGameState(
+      pageProps({ liveGame: null, lastLiveGame: game({ id: 5, phase: 101 }), ich: null }),
+    );
+
+    state.applyPush({ liveGame: game({ id: 6, phase: 2 }), ich: me([card(3)]) });
+
+    expect(state.liveGame.value?.id).toBe(6);
+    expect(state.hand.value.map((c) => c.id)).toEqual([3]);
+  });
+
   it('liest eine Hand, die als Objekt mit Schlüsseln ankommt', () => {
     const state = useLiveGameState(pageProps({ ich: me({ 0: card(7), 2: card(8) }) }));
 

@@ -5,6 +5,7 @@ import LiveLayout from '@/Layouts/LiveLayout.vue';
 import LiveHand from '@/Components/Live/LiveHand.vue';
 import LiveMessages from '@/Components/Live/LiveMessages.vue';
 import LiveReadyCheck from '@/Components/Live/LiveReadyCheck.vue';
+import LiveScoring from '@/Components/Live/LiveScoring.vue';
 import LivePoverty from '@/Components/Live/LivePoverty.vue';
 import LiveReservations from '@/Components/Live/LiveReservations.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
@@ -151,6 +152,24 @@ async function chooseReservation(reservation: string): Promise<void> {
   }
 }
 
+/**
+ * Zwischen zwei Spielen (und vor dem ersten) folgt der Bereit-Check, nach einem Spiel zusammen mit
+ * dessen Wertung. Das gilt erst, wenn der letzte Stich abgeräumt ist.
+ */
+const betweenGames = computed(() => state.liveGame.value === null && !play.trick.closing.value);
+
+/** Das beendete Spiel mit seiner Wertung; ein geschmissenes Spiel hat keine. */
+const scoredGame = computed(() => {
+  const lastGame = state.lastLiveGame.value;
+
+  return lastGame !== null && lastGame.wertungsPunkte != null ? lastGame : null;
+});
+
+/** Am Tisch bleibt das beendete Spiel (Anzeigen der Spieler) stehen, solange sein letzter Stich liegt. */
+const tableGame = computed(
+  () => state.liveGame.value ?? (play.trick.closing.value ? state.lastLiveGame.value : null),
+);
+
 const spectators = computed(() =>
   echo.onlineMembers.value.filter((member) => !activePlayerIds.value.includes(member.id)),
 );
@@ -177,7 +196,7 @@ const messagesOpen = ref(false);
       class="portrait:hidden"
       :players="round.players"
       :viewer-player-id="round.viewerPlayerId"
-      :live-game="state.liveGame.value"
+      :live-game="tableGame"
     >
       <template #spectators>
         <LiveSpectators :spectators="spectators" />
@@ -239,15 +258,22 @@ const messagesOpen = ref(false);
           :players="activePlayers"
           :online-player-ids="onlinePlayerIds"
         />
-        <LiveReadyCheck
-          v-else-if="state.liveGame.value === null"
-          :players="activePlayers"
-          :ready-ids="readyCheck.readyIds.value"
-          :is-first-game="round.gamesCount === 0"
-          :can-be-ready="viewerIsActive"
-          :i-am-ready="readyCheck.iAmReady.value"
-          @ready="readyCheck.markMeReady"
-        />
+        <div v-else-if="betweenGames" class="flex items-stretch gap-3">
+          <LiveScoring
+            v-if="scoredGame"
+            :game="scoredGame"
+            :players="round.players"
+            :viewer-player-id="round.viewerPlayerId"
+          />
+          <LiveReadyCheck
+            :players="activePlayers"
+            :ready-ids="readyCheck.readyIds.value"
+            :is-first-game="round.gamesCount === 0"
+            :can-be-ready="viewerIsActive"
+            :i-am-ready="readyCheck.iAmReady.value"
+            @ready="readyCheck.markMeReady"
+          />
+        </div>
         <LiveReservations
           v-else-if="showReservations && state.ich.value"
           :possible="listOf(state.ich.value.moeglicheVorbehalte)"

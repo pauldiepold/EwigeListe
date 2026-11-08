@@ -12,6 +12,9 @@ export function listOf<T>(value: T[] | Record<string, T> | null | undefined): T[
   return Array.isArray(value) ? value : Object.values(value ?? {});
 }
 
+/** Phase eines beendeten Spiels in der Engine: Die Wertung steht fest. */
+export const GAME_OVER_PHASE = 101;
+
 export type LiveGameState = {
   /** Das laufende Spiel; `null` vor dem ersten und zwischen zwei Spielen. */
   liveGame: Ref<LiveGameData | null>;
@@ -49,7 +52,18 @@ export function useLiveGameState(
 
   function applyPush(push: LiveGamePush): void {
     // Ein Push des Vorgängerspiels kann nach dem neuen Spiel ankommen (Schmeißen, abgelehnte Armut).
-    if (liveGame.value !== null && push.liveGame.id < liveGame.value.id) {
+    const knownId = Math.max(liveGame.value?.id ?? 0, lastLiveGame.value?.id ?? 0);
+
+    if (push.liveGame.id < knownId) {
+      return;
+    }
+
+    // Ein beendetes Spiel ist wie nach einem Reload das letzte Spiel; ein laufendes gibt es nicht mehr.
+    if (push.liveGame.phase === GAME_OVER_PHASE) {
+      liveGame.value = null;
+      lastLiveGame.value = push.liveGame;
+      ich.value = null;
+
       return;
     }
 

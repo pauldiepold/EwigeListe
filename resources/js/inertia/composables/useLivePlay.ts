@@ -76,7 +76,9 @@ export function useLivePlay({ state, viewerPlayerId, send }: UseLivePlayOptions)
       : cards;
   });
 
-  const trick = useLiveTrickDisplay(state.liveGame, currentTrick);
+  // Nach dem letzten Stich ist das Spiel beendet (`liveGame` leer); sein letzter Stich liegt noch kurz da.
+  const tableGame = computed(() => state.liveGame.value ?? state.lastLiveGame.value);
+  const trick = useLiveTrickDisplay(tableGame, currentTrick);
 
   function isPlayable(card: LiveEngineCard): boolean {
     return isMyTurn.value && pendingCard.value === null && card.spielbar;

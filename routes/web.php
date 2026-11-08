@@ -74,7 +74,6 @@ Route::middleware('auth')->group(function () {
 
     /* *********** API ************** */
     Route::prefix('api')->group(function () {
-        Route::get('/rounds/{round}/fetchData', [RoundController::class, 'fetchData'])->name('rounds.fetchData');
 
         Route::middleware('can:update,liveRound')->group(function () {
             Route::post('live/{liveRound}/spielStarten', [LiveRoundController::class, 'starteNeuesSpiel'])->name('live.rounds.start');

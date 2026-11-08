@@ -1,5 +1,5 @@
 import { computed, onScopeDispose, ref, watch, type ComputedRef, type Ref } from 'vue';
-import { listOf } from '@/composables/useLiveGameState';
+import { GAME_OVER_PHASE, listOf } from '@/composables/useLiveGameState';
 import type { LiveEngineCard, LiveGameData } from '@/types/live';
 
 /** So lange bleibt ein voller Stich mit hervorgehobenem Gewinner liegen, bevor er abgeräumt wird. */
@@ -14,6 +14,8 @@ export type LiveTrickDisplay = {
   winnerId: ComputedRef<number | null>;
   /** Der letzte Stich ist zu sehen, weil der Spieler ihn eingeblendet hat oder er gerade abgeräumt wird. */
   showingLastTrick: ComputedRef<boolean>;
+  /** Der volle Stich liegt noch kurz auf dem Tisch, bevor er abgeräumt wird. */
+  closing: ComputedRef<boolean>;
   /** Der Spieler hat den letzten Stich über die Werkzeugleiste eingeblendet. */
   lastTrickPinned: Ref<boolean>;
   toggleLastTrick: () => void;
@@ -27,7 +29,8 @@ export type LiveTrickDisplay = {
  * danach zeigt der Tisch wieder den aktuellen Stich. Die Werkzeugleiste kann den letzten Stich dauerhaft
  * einblenden.
  *
- * @param liveGame Das laufende Spiel aus dem Live-Zustand.
+ * @param liveGame Das laufende Spiel aus dem Live-Zustand, nach dem Spielende das beendete: So bleibt
+ *   dessen letzter Stich die 2 Sekunden liegen, bevor der Tisch zur Wertung wechselt.
  * @param currentTrick Die Karten des aktuellen Stichs, inklusive meiner optimistisch gelegten Karte.
  */
 export function useLiveTrickDisplay(
@@ -51,6 +54,10 @@ export function useLiveTrickDisplay(
       return;
     }
 
+    if (next.phase === GAME_OVER_PHASE) {
+      lastTrickPinned.value = false;
+    }
+
     // `stichNr` zählt hoch, sobald die Engine einen vollen Stich verteilt hat.
     if (next.stichNr > previous.stichNr) {
       clearTimeout(closingTimer);
@@ -61,7 +68,10 @@ export function useLiveTrickDisplay(
 
   onScopeDispose(() => clearTimeout(closingTimer));
 
-  const showingLastTrick = computed(() => lastTrickPinned.value || closing.value);
+  // Nach dem Spielende gibt es keinen laufenden Stich mehr, den der letzte verdecken könnte.
+  const showingLastTrick = computed(
+    () => closing.value || (lastTrickPinned.value && liveGame.value?.phase !== GAME_OVER_PHASE),
+  );
   const visible = computed(
     () => liveGame.value !== null && (showingLastTrick.value || liveGame.value.phase === 4),
   );
@@ -78,6 +88,7 @@ export function useLiveTrickDisplay(
     visible,
     cards,
     winnerId,
+    closing: computed(() => closing.value),
     showingLastTrick,
     lastTrickPinned,
     toggleLastTrick: () => (lastTrickPinned.value = !lastTrickPinned.value),
