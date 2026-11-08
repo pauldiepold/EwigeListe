@@ -13,6 +13,8 @@ const props = defineProps<{
 }>();
 
 defineSlots<{
+  /** Zuschauer am Rand oben links. */
+  spectators?: () => unknown;
   /** Werkzeugleiste links (letzter Stich, Meldungen, Neu laden, Vollbild, …). */
   tools?: () => unknown;
   /** Platz für das Meldungsprotokoll rechts. */
@@ -68,6 +70,10 @@ const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
         :is-turn="seat.isTurn"
         :is-vorhand="seat.isVorhand"
       />
+    </div>
+
+    <div class="absolute top-2 left-2 z-20">
+      <slot name="spectators" />
     </div>
 
     <div class="absolute top-1/2 left-2 z-20 -translate-y-1/2">

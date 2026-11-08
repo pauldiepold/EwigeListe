@@ -8,7 +8,11 @@ defineProps<{
   /** Adresse der Runden-Seite. */
   backPath: string;
   rules: LiveRules;
+  /** Die Daten werden gerade neu geladen. */
+  reloading?: boolean;
 }>();
+
+defineEmits<{ reload: [] }>();
 
 defineSlots<{
   /** Weitere Werkzeuge unter den festen (letzter Stich, Meldungen, Neu laden, …). */
@@ -51,6 +55,15 @@ const infoOpen = ref(false);
       :aria-label="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
       :title="isFullscreen ? 'Vollbild beenden' : 'Vollbild'"
       @click="toggleFullscreen"
+    />
+    <UButton
+      icon="i-lucide-refresh-cw"
+      color="neutral"
+      variant="ghost"
+      aria-label="Daten neu laden"
+      title="Daten neu laden"
+      :loading="reloading"
+      @click="$emit('reload')"
     />
     <slot />
 
