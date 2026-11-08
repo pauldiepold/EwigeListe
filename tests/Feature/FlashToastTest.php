@@ -75,7 +75,7 @@ class FlashToastTest extends TestCase
             ->assertSessionMissing('status')
             ->assertInertiaFlash('toast', [
                 'type' => 'success',
-                'message' => trans(Password::PASSWORD_RESET),
+                'message' => 'Das Passwort wurde zurückgesetzt!',
             ]);
     }
 

@@ -38,12 +38,8 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $viaSocialite ? [] : $this->passwordRules(),
             'g-recaptcha-response' => $viaSocialite ? [] : ['required', 'captcha'],
         ], [
-            'first_name.required' => 'Es muss ein Vorname angegeben werden!',
-            'last_name.required' => 'Es muss ein Nachname angegeben werden!',
-            'email.required' => 'Es muss eine E-Mail Adresse angegeben werden!',
             'g-recaptcha-response.required' => 'Bitte bestätige, dass du kein Roboter bist.',
             'g-recaptcha-response.captcha' => 'reCAPTCHA-Fehler! Versuche es später erneut oder kontaktiere den Administrator.',
-            ...$this->passwordMessages(),
         ])->validate();
 
         return $this->playerRegistration->register(

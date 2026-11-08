@@ -196,15 +196,15 @@ class ManageUsersTest extends TestCase
             'password' => 'neues-passwort',
             'password_confirmation' => 'anderes-passwort',
         ])->assertSessionHasErrors([
-            'current_password' => 'Das alte Passwort stimmt nicht!',
-            'password' => 'Die Passwörter stimmen nicht überein!',
+            'current_password' => 'Das Passwort ist falsch.',
+            'password' => 'Passwort stimmt nicht mit der Bestätigung überein.',
         ]);
 
         $this->patch(route('users.updatePassword', $user), [
             'current_password' => 'testtest',
             'password' => 'kurz123',
             'password_confirmation' => 'kurz123',
-        ])->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
+        ])->assertSessionHasErrors(['password' => 'Passwort muss mindestens 8 Zeichen lang sein.']);
 
         $this->assertTrue(Hash::check('testtest', $user->fresh()->password));
     }

@@ -46,6 +46,16 @@ class PasswordResetTest extends TestCase
     }
 
     #[Test]
+    public function requesting_a_reset_link_answers_in_german(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create();
+
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertSessionHas('status', 'Wir haben dir einen Link zum Zurücksetzen des Passworts gesendet.');
+    }
+
+    #[Test]
     public function the_reset_page_receives_token_and_email_from_the_link(): void
     {
         $this->get(route('password.reset', ['token' => 'abc', 'email' => 'max@example.com']))
@@ -83,7 +93,7 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
             'password' => 'kurz123',
             'password_confirmation' => 'kurz123',
-        ])->assertSessionHasErrors(['password' => 'Das Passwort muss mindestens 8 Zeichen haben!']);
+        ])->assertSessionHasErrors(['password' => 'Passwort muss mindestens 8 Zeichen lang sein.']);
 
         $this->assertTrue(Hash::check('test', $user->fresh()->password));
     }

@@ -59,14 +59,9 @@ class QuickRegisterController extends Controller
      */
     protected function validator(array $data): \Illuminate\Contracts\Validation\Validator
     {
-        $messages = [
-            'first_name.required' => 'Es muss ein Vorname angegeben werden!',
-            'last_name.required' => 'Es muss ein Nachname angegeben werden!',
-        ];
-
         return Validator::make($data, [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-        ], $messages);
+        ]);
     }
 }

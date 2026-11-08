@@ -76,8 +76,8 @@ class QuickRegisterTest extends TestCase
             ->post(route('register.quick.store'), ['first_name' => '', 'last_name' => ''])
             ->assertRedirect(route('rounds.create'))
             ->assertSessionHasErrors([
-                'first_name' => 'Es muss ein Vorname angegeben werden!',
-                'last_name' => 'Es muss ein Nachname angegeben werden!',
+                'first_name' => 'Vorname muss ausgefüllt sein.',
+                'last_name' => 'Nachname muss ausgefüllt sein.',
             ]);
 
         $this->assertSame($playerCount, Player::count());

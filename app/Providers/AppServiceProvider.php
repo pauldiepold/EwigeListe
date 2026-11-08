@@ -35,7 +35,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-        setlocale(LC_TIME, config('app.locale'));
         Carbon::setLocale(config('app.locale'));
 
         Gate::before(fn (User $user) => $user->isAdmin() ? true : null);
