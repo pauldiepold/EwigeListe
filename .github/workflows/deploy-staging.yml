@@ -25,14 +25,19 @@ jobs:
   deploy:
     runs-on: ubuntu-26.04
 
+    # Direkt per OpenSSH des Runners statt `appleboy/ssh-action`: Die Action lädt bei jedem Lauf
+    # ein Binary von GitHub-Releases nach, und dieser Download scheiterte wiederholt mit 504.
     steps:
+      - name: SSH-Schlüssel einrichten
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
+        run: |
+          ssh -i ~/.ssh/deploy_key "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" 'bash -s' <<'DEPLOY'
             set -e
 
             cd ${{ secrets.STAGING_PATH }}
@@ -99,3 +104,4 @@ jobs:
               echo "=== Statistiken neu berechnen ==="
               php artisan stats:recalculate
             fi
+          DEPLOY
