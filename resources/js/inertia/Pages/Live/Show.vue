@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import LiveLayout from '@/Layouts/LiveLayout.vue';
+import LiveMessages from '@/Components/Live/LiveMessages.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
 import { useLiveGameState } from '@/composables/useLiveGameState';
@@ -14,6 +16,9 @@ const props = defineProps<LiveShowProps>();
  * Komponenten in den Slots des Tisches und lesen von hier.
  */
 const state = useLiveGameState(props);
+
+/** Das Meldungsprotokoll klappt bei neuen Meldungen von selbst auf (`LiveMessages`) und lässt sich per Werkzeugleiste umschalten. */
+const messagesOpen = ref(false);
 </script>
 
 <template>
@@ -34,7 +39,19 @@ const state = useLiveGameState(props);
       :live-game="state.liveGame.value"
     >
       <template #tools>
-        <LiveToolbar :back-path="round.path" :rules="round.rules" />
+        <LiveToolbar
+          v-model:messages-open="messagesOpen"
+          :back-path="round.path"
+          :rules="round.rules"
+        />
+      </template>
+
+      <template #messages>
+        <LiveMessages
+          v-model:open="messagesOpen"
+          :messages="state.liveGame.value?.messages ?? []"
+          :players="round.players"
+        />
       </template>
     </LiveTable>
   </LiveLayout>

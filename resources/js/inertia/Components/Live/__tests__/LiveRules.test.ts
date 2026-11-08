@@ -8,7 +8,9 @@ import { renderWithUi } from '@/testing/renderWithUi';
 
 describe('activeLiveRuleLabels', () => {
   it('nennt beim Standard alle Regeln außer Super-Schwein im Trumpfsolo', () => {
-    expect(activeLiveRuleLabels(defaultLiveRules())).not.toContain('Super-Schwein auch im Trumpfsolo');
+    expect(activeLiveRuleLabels(defaultLiveRules())).not.toContain(
+      'Super-Schwein auch im Trumpfsolo',
+    );
     expect(activeLiveRuleLabels(defaultLiveRules())).toHaveLength(5);
   });
 

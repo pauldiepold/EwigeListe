@@ -47,6 +47,12 @@ export type LiveRound = {
   players: LivePlayer[];
 };
 
+/** Eine Meldung der Engine: Reiner Text, der Name steht nicht darin, sondern kommt aus der Spielerliste. */
+export type LiveMessage = {
+  spielerId: number | null;
+  text: string;
+};
+
 /** Anzeige eines Spielers am Tisch (`App\Live\Anzeige`); leer, solange noch nichts feststeht. */
 export type LivePlayerDisplay = {
   ansage: string;
@@ -75,7 +81,8 @@ export type LiveGameData = {
   letzterStich: LiveTrick;
   /** Anzeige je Spieler-ID. */
   spieler: Record<number, LivePlayerDisplay>;
-  messages: unknown[];
+  /** Neueste zuerst. */
+  messages: LiveMessage[];
   spieltyp: string;
   schweinchen: boolean;
   kontrasOffengelegt: number;

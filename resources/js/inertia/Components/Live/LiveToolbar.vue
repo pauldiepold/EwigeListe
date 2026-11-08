@@ -17,6 +17,9 @@ defineSlots<{
 
 const { isSupported: canFullscreen, isFullscreen, toggle: toggleFullscreen } = useFullscreen();
 
+/** Ob das Meldungsprotokoll aufgeklappt ist (geteilt mit `LiveMessages`). */
+const messagesOpen = defineModel<boolean>('messagesOpen', { default: false });
+
 const infoOpen = ref(false);
 </script>
 
@@ -42,6 +45,15 @@ const infoOpen = ref(false);
       aria-label="Info"
       title="Info und Regeln"
       @click="infoOpen = true"
+    />
+    <UButton
+      icon="i-lucide-message-square-text"
+      color="neutral"
+      :variant="messagesOpen ? 'soft' : 'ghost'"
+      aria-label="Meldungen"
+      title="Meldungen ein- und ausblenden"
+      :aria-pressed="messagesOpen"
+      @click="messagesOpen = !messagesOpen"
     />
     <UButton
       v-if="canFullscreen"
