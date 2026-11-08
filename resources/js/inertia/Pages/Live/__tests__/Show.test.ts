@@ -903,3 +903,152 @@ describe('Live-Seite: Ansagen', () => {
     expect(await screen.findByText('Du darfst diese Absage nicht machen.')).toBeTruthy();
   });
 });
+
+describe('Live-Seite: Spielende', () => {
+  const played = (id: number, farbe: 1 | 2 | 3 | 4, wert: 1 | 2 | 3 | 4 | 5 | 6, by: number) =>
+    playableCard(id, farbe, wert, { gespieltVon: by, spielbar: false });
+  const fullTrick = () => [
+    played(5, 3, 4, 11),
+    played(6, 1, 2, 12),
+    played(7, 2, 6, 13),
+    played(8, 4, 1, 14),
+  ];
+
+  /** Das Spiel nach dem letzten Stich: Phase 101, Wertung steht fest. Bernd und Dieter gewinnen für Re. */
+  function endedGame(overrides: Partial<LiveGameData> = {}): LiveGameData {
+    return game({
+      phase: 101,
+      stichNr: 13,
+      dran: 13,
+      aktuellerStich: { karten: [], stecher: null },
+      letzterStich: { karten: fullTrick(), stecher: 13 },
+      winners: [11, 13],
+      wertung: [
+        ['Gewonnen', '+1'],
+        ['Gegen die Alten', '+1'],
+      ],
+      reAugen: 130,
+      kontraAugen: 110,
+      gewinntRe: true,
+      wertungsPunkte: 2,
+      ...overrides,
+    });
+  }
+
+  const lastTrickCards = () => document.querySelectorAll('[data-trick-slot] [role="img"]').length;
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('lässt den letzten Stich 2 Sekunden liegen und zeigt dann Wertung und Bereit-Check', async () => {
+    renderShow(12, {
+      liveGame: game({
+        stichNr: 12,
+        dran: 14,
+        aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+      }),
+      ich: handOf(),
+    });
+    setOnline(...activeMembers);
+    await screen.findByRole('group', { name: 'Stich' });
+
+    vi.useFakeTimers();
+    echo.options!.onPush({ liveGame: endedGame(), ich: handOf() });
+
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(lastTrickCards()).toBe(4);
+    expect(document.querySelectorAll('[data-winner]')).toHaveLength(1);
+    expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
+    expect(screen.queryByRole('table', { name: 'Wertung' })).toBeNull();
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(screen.queryByRole('group', { name: 'Stich' })).toBeNull();
+    expect(screen.getByRole('table', { name: 'Wertung' })).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Bereit?' })).toBeTruthy();
+  });
+
+  it('lässt den letzten Stich auch liegen, wenn das Neuladen nach RoundUpdated dazwischenkommt', async () => {
+    const { rerender } = renderShow(12, {
+      liveGame: game({
+        stichNr: 12,
+        dran: 14,
+        aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+      }),
+      ich: handOf(),
+    });
+    setOnline(...activeMembers);
+    await screen.findByRole('group', { name: 'Stich' });
+
+    vi.useFakeTimers();
+    echo.options!.onPush({ liveGame: endedGame(), ich: handOf() });
+    // Der Server schickt gleich danach `RoundUpdated`: Die Props kommen als beendetes Spiel neu.
+    await rerender({ liveGame: null, lastLiveGame: endedGame(), ich: null });
+
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(lastTrickCards()).toBe(4);
+    expect(screen.queryByRole('table', { name: 'Wertung' })).toBeNull();
+
+    await vi.advanceTimersByTimeAsync(200);
+    expect(screen.getByRole('table', { name: 'Wertung' })).toBeTruthy();
+  });
+
+  it('zeigt die Wertung samt Bereit-Check für das nächste Spiel, wenn die Seite danach geladen wird', async () => {
+    const props = pageProps(12, { lastLiveGame: endedGame() });
+    renderWithUi(Show, { ...props, round: { ...props.round, gamesCount: 1 } });
+    setOnline(...activeMembers);
+
+    expect(await screen.findByRole('table', { name: 'Wertung' })).toBeTruthy();
+    expect(screen.getByText('Du hast verloren!')).toBeTruthy();
+    expect(screen.getByText('Re gewinnt mit 2 Punkten!')).toBeTruthy();
+    expect(screen.getByText('Das nächste Spiel startet, sobald alle bereit sind')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Bereit?' })).toBeTruthy();
+    expect(screen.queryByRole('group', { name: 'Stich' })).toBeNull();
+  });
+
+  it('zeigt vor dem ersten Spiel keine Wertung', async () => {
+    renderShow(12);
+    setOnline(...activeMembers);
+
+    await screen.findByRole('button', { name: 'Bereit?' });
+    expect(screen.queryByRole('table', { name: 'Wertung' })).toBeNull();
+  });
+
+  it('räumt die Wertung ab, sobald das nächste Spiel beginnt', async () => {
+    renderShow(12, { lastLiveGame: endedGame() });
+    setOnline(...activeMembers);
+    await screen.findByRole('table', { name: 'Wertung' });
+
+    echo.options!.onPush({
+      liveGame: game({ id: 2, phase: 2, dran: 12, vorhand: 12 }),
+      ich: ich(),
+    });
+
+    await waitFor(() => expect(screen.queryByRole('table', { name: 'Wertung' })).toBeNull());
+    expect(screen.queryByRole('button', { name: 'Bereit?' })).toBeNull();
+  });
+
+  it('startet das nächste Spiel erst, wenn nach der Wertung alle bereit sind', async () => {
+    renderShow(11, { lastLiveGame: endedGame() });
+    setOnline(...activeMembers);
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Bereit?' }));
+    echo.options!.onReady(12);
+    echo.options!.onReady(13);
+    expect(postLive).not.toHaveBeenCalled();
+    echo.options!.onReady(14);
+
+    await waitFor(() => expect(postLive).toHaveBeenCalledWith('/api/live/5/spielStarten'));
+  });
+
+  it('lässt den eingeblendeten letzten Stich die Wertung nicht verdecken', async () => {
+    renderShow(12, { lastLiveGame: endedGame() });
+    setOnline(...activeMembers);
+    await screen.findByRole('table', { name: 'Wertung' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Letzter Stich' }));
+
+    expect(screen.getByRole('table', { name: 'Wertung' })).toBeTruthy();
+    expect(screen.queryByRole('group', { name: 'Stich' })).toBeNull();
+  });
+});

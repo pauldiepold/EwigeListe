@@ -6,7 +6,6 @@ use App\Http\Requests\StoreRound;
 use App\Http\Requests\UpdateRound;
 use App\Http\Resources\CreateRoundPlayerResource;
 use App\Http\Resources\GroupOptionResource;
-use App\Http\Resources\Round as RoundResource;
 use App\Http\Resources\RoundShowResource;
 use App\Http\Toast;
 use App\Models\Group;
@@ -45,11 +44,6 @@ class RoundController extends Controller
                 ? ['roundChart' => Inertia::optional(fn (): array => $roundChartSeries->forRound($round))]
                 : []),
         ]);
-    }
-
-    public function fetchData(Round $round)
-    {
-        return new RoundResource($round->load(['games.players', 'games.createdBy', 'groups', 'players.groups', 'players.user']));
     }
 
     public function current(): RedirectResponse

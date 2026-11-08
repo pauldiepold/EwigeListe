@@ -9,7 +9,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 - Leitdokument (Plan, Fortschritt, Entscheidungen): `docs/migration.md`. Big Bang auf Branch `inertia-migration`; Status im selben PR pflegen.
 - Seiten migrieren per Skill `blade-to-inertia-migration` (TDD, Legacy im selben PR löschen).
 - Neuer Code **nur** unter `resources/js/inertia/` (Alias `@`, Pages in `resources/js/inertia/Pages/`): Vue 3 + TS, Nuxt UI, Lucide-Icons (`i-lucide-*`), Inertia v3, Routen per Wayfinder (`@/routes/...`, `@/actions/...`; vom Vite-Plugin generiert, nicht eingecheckt).
-- Legacy: `resources/js/components/**` (alte Vue-Komponenten, Entry `resources/js/app.js`). Nicht erweitern; bis zur Migration ist es die Spezifikation der Seite.
+- Legacy: Entry `resources/js/app.js` mit `bootstrap.js`, `lib/` und `scripts/` (die alten Vue-Komponenten unter `resources/js/components/**` sind mit der Live-Migration gelöscht). Nicht erweitern; #37 entfernt den Rest.
 - Ziel pro GET-Route: `Inertia::render()`. Blade bleibt nur für E-Mails, das Inertia-Root-Template und die statische 503-Seite.
 - Props über `app/Http/Resources/*` (`$wrap = null`), Controller schlank.
 - Domänen-Glossar: `GLOSSARY.md`, Entscheidungen: `docs/adr/`.
