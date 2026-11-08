@@ -183,7 +183,6 @@ namespace App\Models{
 /**
  * @property int $id
  * @property int $live_round_id
- * @property bool|null $is_with_ai
  * @property \Illuminate\Support\Collection<array-key, mixed> $spielerIDsInaktiv
  * @property object $spieler0
  * @property object $spieler1
@@ -308,7 +307,6 @@ namespace App\Models{
  * @property int $id
  * @property string $surname
  * @property string $name
- * @property string|null $ai_path
  * @property int|null $payment
  * @property int $hide
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -327,7 +325,6 @@ namespace App\Models{
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Game> $games
  * @property-read int|null $games_count
  * @property-read mixed $avatar_path
- * @property-read mixed $is_ai
  * @property-read mixed $path
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Group> $groups
  * @property-read int|null $groups_count

@@ -10,8 +10,6 @@ class Spieler
 
     public $index;
 
-    public $ai;
-
     public $hand;
 
     public $hand_save;
@@ -49,12 +47,10 @@ class Spieler
             $this->id = $player->id;
             $this->name = $player->full_name;
             $this->index = $player->pivot->index;
-            $this->ai = $player->is_ai ? new AI($player) : null;
         } else {
             $this->id = '';
             $this->name = '';
             $this->index = '';
-            $this->ai = null;
         }
         $this->parteiOffengelegt = 0;
 
@@ -80,8 +76,6 @@ class Spieler
             $spieler->id = $input->id;
             $spieler->name = $input->name;
             $spieler->index = $input->index;
-
-            $spieler->ai = $input->ai ? AI::create(collect($input->ai)) : null;
 
             $spieler->parteiOffengelegt = $input->parteiOffengelegt;
 
@@ -157,10 +151,5 @@ class Spieler
             $punkte += $stich->punkteZaehlen();
         }
         $this->punkte = $punkte;
-    }
-
-    public function getAIString()
-    {
-        return $this->hand->map(fn ($card) => $card->getAIString());
     }
 }

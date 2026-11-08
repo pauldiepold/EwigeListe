@@ -16,7 +16,6 @@ class Player extends Model
 
     protected $appends = [
         'avatar_path',
-        'is_ai',
     ];
 
     protected $fillable = ['first_name', 'last_name'];
@@ -44,11 +43,6 @@ class Player extends Model
     public function getFullNameAttribute(): string
     {
         return "{$this->first_name} {$this->last_name}";
-    }
-
-    public function getIsAiAttribute()
-    {
-        return ! is_null($this->ai_path);
     }
 
     public function rounds()
