@@ -10,16 +10,60 @@ use Illuminate\Database\Eloquent\Model;
 
 class LiveRound extends Model
 {
-    protected $attributes = [
+    /**
+     * Die Regeln einer Live-Runde mit ihrem Standard (alle an).
+     *
+     * @var array<string, bool>
+     */
+    public const array RULE_DEFAULTS = [
         'schweinchen' => true,
         'fuchsSticht' => true,
-        'schweinchenTrumpfsolo' => false,
+        'schweinchenTrumpfsolo' => true,
         'koenigsSolo' => true,
         'karlchen' => true,
         'karlchenFangen' => true,
     ];
 
+    /**
+     * Abhängige Regel => übergeordnete Regel. Ist die übergeordnete aus, ist die abhängige es auch.
+     *
+     * @var array<string, string>
+     */
+    public const array RULE_PARENTS = [
+        'fuchsSticht' => 'schweinchen',
+        'schweinchenTrumpfsolo' => 'schweinchen',
+        'karlchenFangen' => 'karlchen',
+    ];
+
+    protected $attributes = self::RULE_DEFAULTS;
+
     protected $guarded = [];
+
+    protected function casts(): array
+    {
+        return array_map(fn (): string => 'boolean', self::RULE_DEFAULTS);
+    }
+
+    /**
+     * Ergänzt fehlende Regeln um den Standard und schaltet Regeln aus, deren übergeordnete Regel aus ist.
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, bool>
+     */
+    public static function normalizeRules(array $input): array
+    {
+        $rules = [];
+
+        foreach (self::RULE_DEFAULTS as $rule => $default) {
+            $rules[$rule] = (bool) ($input[$rule] ?? $default);
+        }
+
+        foreach (self::RULE_PARENTS as $rule => $parent) {
+            $rules[$rule] = $rules[$rule] && $rules[$parent];
+        }
+
+        return $rules;
+    }
 
     protected function serializeDate(DateTimeInterface $date)
     {

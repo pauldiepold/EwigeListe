@@ -66,16 +66,6 @@
                                 class="center-absolute live-overlay p-4 flex content-center justify-around w-1/3"
                                 :class="{'w-3/4': round.last_live_game || aktiv && !allPlayersReady && round.games.length === 0}">
 
-                                <!-- Regeln vor dem ersten Spiel ändern -->
-                                <div class="mr-6 flex flex-col justify-center"
-                                     v-if="aktiv && !allPlayersReady && round.games.length === 0">
-                                    <div class="mb-4">
-                                        <button @click="$refs.tabs.selectTabByName('Einstellungen');"
-                                                class="btn btn-primary">Regeln anpassen
-                                        </button>
-                                    </div>
-                                    Die Regeln können nur vor Beginn des ersten Spiels angepasst werden.
-                                </div>
                                 <!-- Wertung anzeigen -->
                                 <div class="mr-6 flex flex-col justify-center"
                                      v-if="round.last_live_game">
@@ -178,14 +168,6 @@
             <tab v-if="round.games.length >= 4" name="Statistiken" icon="fa-chart-area" :selected="false">
                 <template v-slot:default="props">
                     <round-graph :round_id="round.id" :key="props.tabKey"></round-graph>
-                </template>
-            </tab>
-
-            <tab v-if="round.live_round" name="Einstellungen" icon="fa-cog" :selected="false">
-                <template v-slot:default="props">
-                    <round-settings :round="round"
-                                    :key="props.tabKey"
-                                    ref="round_settings"/>
                 </template>
             </tab>
 
