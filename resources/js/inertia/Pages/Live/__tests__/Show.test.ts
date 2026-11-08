@@ -993,6 +993,36 @@ describe('Live-Seite: Spielende', () => {
     expect(screen.getByRole('table', { name: 'Wertung' })).toBeTruthy();
   });
 
+  it('lässt die Plätze des beendeten Spiels stehen, auch wenn die neu geladene Runde schon die nächsten Spieler aktiv setzt', async () => {
+    const { rerender } = renderShow(12, {
+      liveGame: game({
+        stichNr: 12,
+        dran: 14,
+        aktuellerStich: { karten: fullTrick().slice(0, 3), stecher: null },
+      }),
+      ich: handOf(),
+    });
+    setOnline(member(10, 'Anna'), ...activeMembers);
+    await screen.findByRole('group', { name: 'Stich' });
+
+    vi.useFakeTimers();
+    echo.options!.onPush({ liveGame: endedGame(), ich: handOf() });
+    // Beim nächsten Spiel gibt Bernd (11) ab und Eva (14) setzt aus.
+    const nextGamePlayers = players.map((p) => ({ ...p, isActive: p.id !== 14 }));
+    const props = pageProps(12);
+    await rerender({
+      round: { ...props.round, players: nextGamePlayers },
+      liveGame: null,
+      lastLiveGame: endedGame(),
+      ich: null,
+    });
+
+    await vi.advanceTimersByTimeAsync(1900);
+    expect(lastTrickCards()).toBe(4);
+    expect(document.querySelectorAll('[data-trick-slot]')).toHaveLength(4);
+    expect(screen.getByText('Eva')).toBeTruthy();
+  });
+
   it('zeigt die Wertung samt Bereit-Check für das nächste Spiel, wenn die Seite danach geladen wird', async () => {
     const props = pageProps(12, { lastLiveGame: endedGame() });
     renderWithUi(Show, { ...props, round: { ...props.round, gamesCount: 1 } });

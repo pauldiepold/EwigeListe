@@ -13,6 +13,7 @@ import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
 import LiveTrick from '@/Components/Live/LiveTrick.vue';
 import LiveWaitingForPlayers from '@/Components/Live/LiveWaitingForPlayers.vue';
+import { playersOfGame } from '@/Components/Live/liveSeating';
 import { postLive } from '@/composables/liveRequest';
 import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
@@ -170,6 +171,9 @@ const tableGame = computed(
   () => state.liveGame.value ?? (play.trick.closing.value ? state.lastLiveGame.value : null),
 );
 
+/** Die Plätze am Tisch folgen dem angezeigten Spiel, nicht den Spielern, die die Seite schon fürs nächste aktiv setzt. */
+const tablePlayers = computed(() => playersOfGame(props.round.players, tableGame.value));
+
 const spectators = computed(() =>
   echo.onlineMembers.value.filter((member) => !activePlayerIds.value.includes(member.id)),
 );
@@ -194,7 +198,7 @@ const messagesOpen = ref(false);
 
     <LiveTable
       class="portrait:hidden"
-      :players="round.players"
+      :players="tablePlayers"
       :viewer-player-id="round.viewerPlayerId"
       :live-game="tableGame"
     >
@@ -233,7 +237,7 @@ const messagesOpen = ref(false);
         <LiveTrick
           v-if="allPlayersOnline && play.trick.visible.value"
           :cards="play.trick.cards.value"
-          :players="round.players"
+          :players="tablePlayers"
           :viewer-player-id="round.viewerPlayerId"
           :table-size="size"
           :winner-id="play.trick.winnerId.value"
