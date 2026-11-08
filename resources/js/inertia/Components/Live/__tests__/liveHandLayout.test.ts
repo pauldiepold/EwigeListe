@@ -45,10 +45,10 @@ describe('handLayout', () => {
     expect(handLayout(1, TABLE).angles).toEqual([0]);
   });
 
-  it('lässt die Hand unten rund ein Drittel aus dem Tisch ragen, solange sie nicht gefächert ist', () => {
+  it('lässt die Hand unten rund 40 % aus dem Tisch ragen, solange sie nicht gefächert ist', () => {
     const { top, cardHeight } = handLayout(1, TABLE);
 
-    expect(top + cardHeight).toBeCloseTo(TABLE.height + cardHeight / 3);
+    expect(top + cardHeight).toBeCloseTo(TABLE.height + 0.4 * cardHeight);
   });
 
   it('rückt die Hand auf schmalen Tischen nach rechts, auf breiten steht sie mittig', () => {

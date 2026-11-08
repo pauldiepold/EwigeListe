@@ -25,7 +25,7 @@ export const NARROW_TABLE_WIDTH = 1024;
 /**
  * Die Hand als leichter Fächer: Alle Karten drehen sich um einen gemeinsamen Punkt weit unter dem
  * Tisch (Radius 12 Kartenhöhen). Der Abstand der Karten ist `min((0,78 × Tischbreite − Kartenbreite)
- * / (n − 1), 0,72 × Kartenbreite)`. Die Hand ragt unten etwa ein Drittel aus dem Tisch
+ * / (n − 1), 0,72 × Kartenbreite)`. Die Hand ragt unten etwa 40 % aus dem Tisch
  * (lesbar bleiben muss nur das Eckzeichen oben links; so verdecken Overlays in der Mitte es nicht)
  * und wird um die Durchbiegung des Bogens angehoben, damit auch die äußeren Karten ihr Eckzeichen
  * zeigen. Auf schmalen Tischen sitzt die Hand bei 56 % der Breite statt mittig, damit mein Badge
@@ -52,7 +52,7 @@ export function handLayout(count: number, table: TableSize): HandLayout {
     cardWidth,
     cardHeight,
     centerX: table.width * (table.width < NARROW_TABLE_WIDTH ? 0.56 : 0.5),
-    top: table.height - cardHeight * (2 / 3) - dip * 0.6,
+    top: table.height - cardHeight * 0.6 - dip * 0.6,
     radius,
     angles: Array.from(
       { length: Math.max(count, 0) },
