@@ -5,6 +5,7 @@ import LiveLayout from '@/Layouts/LiveLayout.vue';
 import LiveHand from '@/Components/Live/LiveHand.vue';
 import LiveMessages from '@/Components/Live/LiveMessages.vue';
 import LiveReadyCheck from '@/Components/Live/LiveReadyCheck.vue';
+import LivePoverty from '@/Components/Live/LivePoverty.vue';
 import LiveReservations from '@/Components/Live/LiveReservations.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
@@ -16,11 +17,12 @@ import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
 import { listOf, useLiveGameState } from '@/composables/useLiveGameState';
 import { useLivePlay } from '@/composables/useLivePlay';
+import { useLivePoverty } from '@/composables/useLivePoverty';
 import { useLiveReadyCheck } from '@/composables/useLiveReadyCheck';
 import { useRefreshOnVisible } from '@/composables/useRefreshOnVisible';
 import { vorbehalt as sendReservation } from '@/routes/live/games';
 import { start as startGame } from '@/routes/live/rounds';
-import type { LiveShowProps } from '@/types/live';
+import type { LiveEngineCard, LiveShowProps } from '@/types/live';
 
 const props = defineProps<LiveShowProps>();
 
@@ -114,6 +116,33 @@ const showReservations = computed(
   () => state.liveGame.value?.phase === 2 && state.ich.value !== null,
 );
 
+/** Armut (Phasen 3, 32, 33): Auswahl der Karten für Hand und Overlay (`useLivePoverty`). */
+const poverty = useLivePoverty({
+  state,
+  viewerPlayerId: props.round.viewerPlayerId,
+  action: liveAction,
+});
+
+/** Ein Tipp auf eine Karte wählt sie für die Armut oder spielt sie. */
+function pressCard(card: LiveEngineCard): void {
+  if (poverty.selecting.value) {
+    poverty.toggle(card);
+  } else {
+    void play.playCard(card);
+  }
+}
+
+/** Die Phase der Armut, in der ich mitspiele; sonst `null` (auch für Zuschauer). */
+const povertyPhase = computed(() => {
+  const phase = state.liveGame.value?.phase;
+
+  return state.ich.value !== null && (phase === 3 || phase === 32 || phase === 33) ? phase : null;
+});
+
+const activePlayerName = computed(
+  () => props.round.players.find((p) => p.id === state.liveGame.value?.dran)?.firstName ?? '',
+);
+
 async function chooseReservation(reservation: string): Promise<void> {
   const liveGame = state.liveGame.value;
 
@@ -197,9 +226,10 @@ const messagesOpen = ref(false);
           v-if="showHand"
           :cards="play.hand.value"
           :table-size="size"
-          :interactive="play.handInteractive.value"
-          :is-playable="play.isPlayable"
-          @press="play.playCard"
+          :interactive="poverty.selecting.value || play.handInteractive.value"
+          :is-playable="poverty.selecting.value ? undefined : play.isPlayable"
+          :selected-ids="poverty.selecting.value ? poverty.selectedIds.value : undefined"
+          @press="pressCard"
         />
       </template>
 
@@ -226,6 +256,18 @@ const messagesOpen = ref(false);
           :decided="state.ich.value.vorbehalt != null"
           :busy="liveAction.busy.value"
           @choose="chooseReservation"
+        />
+        <LivePoverty
+          v-else-if="povertyPhase !== null"
+          :phase="povertyPhase"
+          :is-my-turn="state.liveGame.value?.dran === round.viewerPlayerId"
+          :active-player-name="activePlayerName"
+          :can-submit="poverty.canSubmit.value"
+          :trump-left="poverty.trumpLeft.value"
+          :busy="liveAction.busy.value"
+          @give="poverty.give"
+          @answer="poverty.answer"
+          @give-back="poverty.giveBack"
         />
       </template>
     </LiveTable>
