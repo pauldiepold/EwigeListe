@@ -9,11 +9,13 @@ import LiveReservations from '@/Components/Live/LiveReservations.vue';
 import LiveSpectators from '@/Components/Live/LiveSpectators.vue';
 import LiveTable from '@/Components/Live/LiveTable.vue';
 import LiveToolbar from '@/Components/Live/LiveToolbar.vue';
+import LiveTrick from '@/Components/Live/LiveTrick.vue';
 import LiveWaitingForPlayers from '@/Components/Live/LiveWaitingForPlayers.vue';
 import { postLive } from '@/composables/liveRequest';
 import { useLiveAction } from '@/composables/useLiveAction';
 import { useLiveEcho } from '@/composables/useLiveEcho';
 import { listOf, useLiveGameState } from '@/composables/useLiveGameState';
+import { useLivePlay } from '@/composables/useLivePlay';
 import { useLiveReadyCheck } from '@/composables/useLiveReadyCheck';
 import { useRefreshOnVisible } from '@/composables/useRefreshOnVisible';
 import { vorbehalt as sendReservation } from '@/routes/live/games';
@@ -55,6 +57,13 @@ useRefreshOnVisible(reloadData);
 
 /** Aktionen an die Engine (Vorbehalt, später Karte spielen) mit gemeinsamer Fehlerbehandlung. */
 const liveAction = useLiveAction(reloadData);
+
+/** Karte spielen (optimistisch), Stich und An-/Absagen. */
+const play = useLivePlay({
+  state,
+  viewerPlayerId: props.round.viewerPlayerId,
+  send: liveAction.send,
+});
 
 const readyCheck = useLiveReadyCheck({
   activePlayerIds,
@@ -148,11 +157,20 @@ const messagesOpen = ref(false);
       <template #tools>
         <LiveToolbar
           v-model:messages-open="messagesOpen"
+          v-model:last-trick-open="play.trick.lastTrickPinned.value"
           :back-path="round.path"
           :rules="round.rules"
           :reloading="reloading"
           @reload="reloadData"
-        />
+        >
+          <UButton
+            v-if="play.announcement.value"
+            :label="play.announcement.value.label"
+            size="sm"
+            :disabled="play.announcementLocked.value"
+            @click="play.announce"
+          />
+        </LiveToolbar>
       </template>
 
       <template #messages>
@@ -163,8 +181,26 @@ const messagesOpen = ref(false);
         />
       </template>
 
+      <template #trick="{ size }">
+        <LiveTrick
+          v-if="allPlayersOnline && play.trick.visible.value"
+          :cards="play.trick.cards.value"
+          :players="round.players"
+          :viewer-player-id="round.viewerPlayerId"
+          :table-size="size"
+          :winner-id="play.trick.winnerId.value"
+        />
+      </template>
+
       <template #hand="{ size }">
-        <LiveHand v-if="showHand" :cards="state.hand.value" :table-size="size" />
+        <LiveHand
+          v-if="showHand"
+          :cards="play.hand.value"
+          :table-size="size"
+          :interactive="play.handInteractive.value"
+          :is-playable="play.isPlayable"
+          @press="play.playCard"
+        />
       </template>
 
       <template #overlay>

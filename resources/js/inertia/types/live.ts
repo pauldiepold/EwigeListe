@@ -110,7 +110,7 @@ export type LiveSpieler = {
   isRe: boolean | null;
   ansage: string | null;
   absage: string | null;
-  moeglicheAnAbsage: string | null;
+  moeglicheAnAbsage: string | number | null;
   punkte: number | null;
   parteiOffengelegt: number;
 };

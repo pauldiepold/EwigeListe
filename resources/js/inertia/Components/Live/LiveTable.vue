@@ -116,7 +116,7 @@ const SEAT_CLASSES: Record<(typeof POSITIONS)[number], string> = {
       <slot name="messages" />
     </div>
 
-    <div class="absolute top-[46%] left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <div class="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2">
       <slot name="trick" :size="size" />
     </div>
 

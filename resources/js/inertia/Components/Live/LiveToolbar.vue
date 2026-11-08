@@ -24,6 +24,9 @@ const { isSupported: canFullscreen, isFullscreen, toggle: toggleFullscreen } = u
 /** Ob das Meldungsprotokoll aufgeklappt ist (geteilt mit `LiveMessages`). */
 const messagesOpen = defineModel<boolean>('messagesOpen', { default: false });
 
+/** Ob der letzte Stich statt des aktuellen in der Mitte liegt (geteilt mit dem Stich). */
+const lastTrickOpen = defineModel<boolean>('lastTrickOpen', { default: false });
+
 const infoOpen = ref(false);
 </script>
 
@@ -49,6 +52,15 @@ const infoOpen = ref(false);
       aria-label="Info"
       title="Info und Regeln"
       @click="infoOpen = true"
+    />
+    <UButton
+      icon="i-lucide-history"
+      color="neutral"
+      :variant="lastTrickOpen ? 'soft' : 'ghost'"
+      aria-label="Letzter Stich"
+      title="Letzten Stich ein- und ausblenden"
+      :aria-pressed="lastTrickOpen"
+      @click="lastTrickOpen = !lastTrickOpen"
     />
     <UButton
       icon="i-lucide-message-square-text"
