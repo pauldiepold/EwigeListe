@@ -51,6 +51,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Schlanke Guidelines
+    |--------------------------------------------------------------------------
+    |
+    | AGENTS.md liegt in jedem Kontext. Ohne `.ai/rules` bleibt der Hinweis
+    | darauf aus; Deploy (Laravel Cloud), Herd (steht im Herd-MCP) und der
+    | Inertia-Pfad (`resources/js/Pages`, hier `resources/js/inertia`)
+    | passen nicht zum Projekt.
+    |
+    */
+
+    'rules' => [
+        'enabled' => false,
+    ],
+
+    'guidelines' => [
+        'exclude' => [
+            'deployments',
+            'herd',
+            'inertia-laravel/core',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Agent Paths
     |--------------------------------------------------------------------------
     |

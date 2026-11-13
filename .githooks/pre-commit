@@ -1,0 +1,16 @@
+#!/bin/sh
+# Prüft gestagte Dateien wie die CI (Prettier, Pint), egal ob per Edit-Tool oder Shell geändert.
+# Aktiv über `git config core.hooksPath .githooks` (setzt `npm install` per prepare-Skript).
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+js=$(echo "$staged" | grep -E '^resources/js/.+\.(ts|vue)$')
+php=$(echo "$staged" | grep -E '\.php$' | grep -v '\.blade\.php$')
+fail=0
+PINT=vendor/bin/pint; [ -f vendor/bin/pint.bat ] && PINT=vendor/bin/pint.bat  # Windows/Herd: php nur als .bat
+if [ -n "$js" ]; then
+  echo "$js" | xargs npx --no-install prettier --check --log-level warn || fail=1
+fi
+if [ -n "$php" ]; then
+  echo "$php" | xargs "$PINT" --test -q || fail=1
+fi
+[ $fail -eq 0 ] || echo "pre-commit: Format-Fehler. Beheben mit: npm run format:fix bzw. vendor/bin/pint --dirty" >&2
+exit $fail

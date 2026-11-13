@@ -51,7 +51,7 @@ class RecalculateStatisticsTest extends TestCase
     public function the_admin_can_start_the_recalculation_from_the_list_overview(): void
     {
         Bus::fake([UpdateProfile::class]);
-        $admin = User::factory()->create();
+        $admin = User::factory()->admin()->create();
         Group::findOrFail(Group::EWIGE_LISTE_ID)->addPlayer($admin->player);
 
         $this->actingAs($admin)->get(route('groups.index'))

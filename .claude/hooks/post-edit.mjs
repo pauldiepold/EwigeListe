@@ -12,8 +12,12 @@ const input = JSON.parse(await new Promise((resolve) => {
 const filePath = input.tool_input?.file_path ?? input.tool_response?.filePath;
 if (!filePath) process.exit(0);
 
-const projectDir = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
-const relative = path.relative(projectDir, filePath).split(path.sep).join('/');
+// In Subagent-Worktrees (.claude/worktrees/<name>/) gelten deren Pfade und Binaries.
+const mainDir = process.env.CLAUDE_PROJECT_DIR ?? process.cwd();
+const fromMain = path.relative(mainDir, filePath).split(path.sep).join('/');
+const worktree = fromMain.match(/^\.claude\/worktrees\/[^/]+\//)?.[0] ?? '';
+const projectDir = path.join(mainDir, worktree);
+const relative = fromMain.slice(worktree.length);
 const isWindows = process.platform === 'win32';
 
 const generated = /^resources\/js\/inertia\/(actions|routes|wayfinder)\//;

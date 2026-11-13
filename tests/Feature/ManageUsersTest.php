@@ -44,7 +44,7 @@ class ManageUsersTest extends TestCase
     #[Test]
     public function the_admin_can_see_the_settings_page_of_another_user()
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->admin()->create();
         $user = $this->signInRegularUser();
         $this->assertTrue($admin->isAdmin());
 
@@ -233,7 +233,7 @@ class ManageUsersTest extends TestCase
     #[Test]
     public function the_admin_changes_the_password_of_another_user_without_the_old_one()
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->admin()->create();
         $user = $this->signInRegularUser();
         $this->actingAs($admin);
 
@@ -248,7 +248,7 @@ class ManageUsersTest extends TestCase
     #[Test]
     public function the_admin_changes_his_own_password_without_the_old_one()
     {
-        $admin = User::factory()->create();
+        $admin = User::factory()->admin()->create();
         $this->actingAs($admin);
 
         $this->patch(route('users.updatePassword', $admin), [

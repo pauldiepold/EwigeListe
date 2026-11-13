@@ -24,7 +24,7 @@ class GroupMembershipTest extends TestCase
     {
         parent::setUp();
 
-        User::factory()->create(); // Benutzer 1 ist Admin
+        User::factory()->admin()->create();
         $this->user = User::factory()->create();
         $this->player = $this->user->player;
         $this->actingAs($this->user);
