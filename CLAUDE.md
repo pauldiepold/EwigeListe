@@ -27,6 +27,10 @@ Prettier, `php -l` und Pint laufen zusätzlich per Hook nach jedem Edit (`.claud
 
 Lokal läuft die Queue über `database`: `php artisan queue:listen --tries=1` im eigenen Terminal-Tab, sonst werden Statistiken erst berechnet, sobald der Worker läuft. Bei geteilter Datenbank nur einen Worker für alle Workspaces.
 
+## Lokale Datenbank
+
+`./db-sync.sh` (Git Bash) holt den neuesten Prod-Dump per FTP (Zugang über `FTP_*` in `.env`), legt die lokale Datenbank aus `.env` neu an, importiert ihn und ruft `migrate` auf; nur bei `APP_ENV=local`. Ohne `mysql` im PATH importiert es per `docker exec` in den MySQL-Container auf `DB_PORT`; läuft der nicht, bricht es vor dem Download mit Hinweis ab. Ablauf und `.env`-Schlüssel stehen im Kopf des Skripts, die Kopie in praxis-app soll gleich bleiben. Avatare kommen nicht mit, lokal fehlen die Bilder.
+
 ## Arbeitsweise
 
 - Jede Änderung, auch reine Doku, ohne Rückfrage auf einem eigenen Branch von `master` und per PR (Skill `mattpocock-skills:pr`). Jeder Push auf `master` startet „Deploy Production“, deshalb landet dort nur der gemergte PR.
