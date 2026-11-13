@@ -31,7 +31,18 @@ class UserFactory extends Factory
             'player_id' => function () {
                 return Player::factory()->create()->id;
             },
+            // Auf Prod gilt zufällig users.id == player_id. Der Versatz lässt Tests rot werden,
+            // die Benutzer- und Spieler-ID verwechseln (z. B. auth()->id() statt player_id).
+            'id' => fn (array $attributes) => $attributes['player_id'] + 1000,
         ];
+    }
+
+    /**
+     * Wer die Benutzer-ID 1 hat, ist Admin (User::isAdmin()).
+     */
+    public function admin(): static
+    {
+        return $this->state(['id' => 1]);
     }
 
     /**

@@ -23,7 +23,7 @@ vendor/bin/pint --test && php artisan test --compact
 npm run build && npm run test:js && npm run type-check && npm run lint && npm run format
 ```
 
-Prettier, `php -l` und Pint laufen zusätzlich per Hook nach jedem Edit (`.claude/hooks/post-edit.mjs`).
+Nach jedem Edit/Write formatiert `.claude/hooks/post-edit.mjs`. Vor jedem Commit prüft `.githooks/pre-commit` das Format, auch bei Änderungen per Shell; `npm install` aktiviert den Hook.
 
 Lokal läuft die Queue über `database`: `php artisan queue:listen --tries=1` im eigenen Terminal-Tab, sonst werden Statistiken erst berechnet, sobald der Worker läuft. Bei geteilter Datenbank nur einen Worker für alle Workspaces.
 
@@ -34,13 +34,10 @@ Lokal läuft die Queue über `database`: `php artisan queue:listen --tries=1` im
 ## Arbeitsweise
 
 - Jede Änderung, auch reine Doku, ohne Rückfrage auf einem eigenen Branch von `master` und per PR (Skill `mattpocock-skills:pr`). Jeder Push auf `master` startet „Deploy Production“, deshalb landet dort nur der gemergte PR.
-- Tickets immer per Skill `mattpocock-skills:implement` umsetzen, auch direkt nach einem Grilling; ohne den Skill nur, wenn Paul es ausdrücklich sagt. Abschluss: alle Prüfungen grün, PR nach `master`, erst nach Pauls Abnahme mergen (Squash) und das Issue schließen.
+- Tickets immer per Skill `mattpocock-skills:implement` umsetzen, auch direkt nach einem Grilling; ohne den Skill nur, wenn Paul es ausdrücklich sagt. Subagenten in Worktrees bekommen `docs/agents/implementer.md` als Grundlage. Abschluss: alle Prüfungen grün, PR nach `master`, erst nach Pauls Abnahme mergen (Squash) und das Issue schließen.
 - „Deploy“ heißt Staging; Produktion nur, wenn Paul sie ausdrücklich nennt. Staging deployt nur manuell: ohne Rückfrage, wenn `/implement` ein größeres Feature mit offenem PR abschließt (in der Cloud-Session nach grüner CI), sonst auf Pauls Wunsch. Kleine Änderungen nimmt Paul lokal ab.
-  ```bash
-  gh api repos/pauldiepold/EwigeListe/actions/workflows/deploy-staging.yml/dispatches -f ref=<branch> -f inputs[sync_db]=yes
-  ```
-  Den Lauf bis zum Ende beobachten und Paul mit „deployed“ melden.
+  `scripts/ci-deploy.sh [sha] [branch]` im Hintergrund starten: Es wartet auf die CI, deployt mit Prod-Dump und wartet aufs Ende. Danach Paul mit „deployed“ melden.
 - Kleine Aufräumarbeiten im Umfeld des Tickets (Review-Funde, Inkonsistenzen in angefassten Dateien) gleich mit erledigen; nur Größeres als eigenes Issue abgrenzen.
 - Kleine Anfragen klein lösen. Übersteigt der „richtige“ Weg den Nutzen deutlich, die einfachste Variante wählen und in wenigen Sätzen begründen.
-- Fehlt in der Shell ein Tool (`php`, `composer`, Netzwerk), Paul um die Ausführung bitten.
+- Fehlt in der Shell ein Tool (`php`, `composer`, Netzwerk), Paul um die Ausführung bitten. Python gibt es nicht, Hilfsskripte mit `node`.
 - Dauerhaftes Feedback zum Vorgehen in `CLAUDE.md` bzw. im passenden Skill festhalten.

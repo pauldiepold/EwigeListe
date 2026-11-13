@@ -111,7 +111,7 @@ class HiddenPlayerLoginTest extends TestCase
     #[Test]
     public function a_hidden_admin_stays_logged_in(): void
     {
-        $admin = User::factory()->for(Player::factory()->hidden())->create();
+        $admin = User::factory()->admin()->for(Player::factory()->hidden())->create();
 
         $this->actingAs($admin)
             ->get(route('rounds.create'))

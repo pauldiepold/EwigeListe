@@ -28,7 +28,7 @@ class OnePlayerOneUserTest extends TestCase
 
         $this->expectException(UniqueConstraintViolationException::class);
 
-        User::factory()->for($user->player)->create();
+        User::factory()->for($user->player)->create(['id' => 999]);
     }
 
     #[Test]
@@ -48,7 +48,7 @@ class OnePlayerOneUserTest extends TestCase
     {
         $this->restorePreMigrationStateWithCleanData();
         $user = User::factory()->create();
-        User::factory()->for($user->player)->create();
+        User::factory()->for($user->player)->create(['id' => 999]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Spieler ohne Benutzer: keine. Spieler mit mehreren Benutzern: {$user->player_id}.");

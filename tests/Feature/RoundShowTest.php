@@ -27,7 +27,7 @@ class RoundShowTest extends TestCase
     {
         parent::setUp();
 
-        $this->admin = User::factory()->create();
+        $this->admin = User::factory()->admin()->create();
         $this->viewer = User::factory()->create();
         $this->actingAs($this->viewer);
     }
