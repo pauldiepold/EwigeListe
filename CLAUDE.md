@@ -29,7 +29,7 @@ Lokal läuft die Queue über `database`: `php artisan queue:listen --tries=1` im
 
 ## Lokale Datenbank
 
-`./db-sync.sh` (Git Bash) holt den neuesten Prod-Dump per FTP (Zugang über `FTP_*` in `.env`) und spielt ihn in die lokale Datenbank aus `.env`, nur bei `APP_ENV=local`. Ohne `mysql` im `PATH` importiert es über den Docker-Container `phpstormprojects-mysql-1` (`MYSQL_CONTAINER` in `.env` überschreibt den Namen). Danach `php artisan migrate`, falls der Branch neuere Migrationen hat. Avatare kommen nicht mit, lokal fehlen die Bilder.
+`./db-sync.sh` (Git Bash) holt den neuesten Prod-Dump per FTP (Zugang über `FTP_*` in `.env`), legt die lokale Datenbank aus `.env` neu an, importiert ihn und ruft `migrate` auf; nur bei `APP_ENV=local`. Ohne `mysql` im PATH importiert es per `docker exec` in den MySQL-Container auf `DB_PORT`; läuft der nicht, bricht es vor dem Download mit Hinweis ab. Ablauf und `.env`-Schlüssel stehen im Kopf des Skripts, die Kopie in praxis-app soll gleich bleiben. Avatare kommen nicht mit, lokal fehlen die Bilder.
 
 ## Arbeitsweise
 
