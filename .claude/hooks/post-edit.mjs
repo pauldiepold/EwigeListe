@@ -1,6 +1,8 @@
-// PostToolUse-Hook für Edit/Write: formatiert Inertia-Dateien mit Prettier, prüft PHP-Syntax und formatiert PHP mit Pint.
+// PostToolUse-Hook für Edit/Write: formatiert Frontend-Dateien mit Prettier, prüft PHP-Syntax und formatiert PHP mit Pint.
+// Welche Dateien Prettier bekommt, steht in `.claude/projekt.json` (`prettier.muster`, `prettier.ohne`).
 // Exit-Code 2 meldet einen PHP-Syntaxfehler an Claude zurück.
 import { spawnSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 const input = JSON.parse(await new Promise((resolve) => {
@@ -20,9 +22,17 @@ const projectDir = path.join(mainDir, worktree);
 const relative = fromMain.slice(worktree.length);
 const isWindows = process.platform === 'win32';
 
-const generated = /^resources\/js\/inertia\/(actions|routes|wayfinder)\//;
+let projekt = {};
+try {
+  projekt = JSON.parse(readFileSync(path.join(projectDir, '.claude', 'projekt.json'), 'utf8'));
+} catch {
+  // Ohne Konfiguration läuft nur der PHP-Teil.
+}
 
-if (/^resources\/js\/.+\.(ts|vue)$/.test(relative) && !generated.test(relative)) {
+const muster = projekt.prettier?.muster ? new RegExp(projekt.prettier.muster) : null;
+const ohne = projekt.prettier?.ohne ? new RegExp(projekt.prettier.ohne) : null;
+
+if (muster?.test(relative) && !ohne?.test(relative)) {
   const prettier = path.join(projectDir, 'node_modules', '.bin', isWindows ? 'prettier.cmd' : 'prettier');
   spawnSync(`"${prettier}" --write "${filePath}"`, { cwd: projectDir, stdio: 'ignore', shell: true });
 }
