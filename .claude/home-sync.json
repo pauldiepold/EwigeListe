@@ -1,13 +1,13 @@
 {
   "quelle": "pauldiepold/home",
-  "commit": "8fd53d2",
+  "commit": "3684a1a",
   "dateien": {
     ".claude/hooks/cloud-setup.sh": "2becb6acdb22e9d2e295a3c674a5cd7b179a22e44234cf73fa280efbd426e5f5",
     ".claude/hooks/home-sync-check.mjs": "f8ca7853aaafa1963e9b088cfa2dec41e54c643c25c056cdfda36d4f232ec0a4",
     ".claude/hooks/post-edit.mjs": "2b271c2d970e3a22ac12a7d4d433b49085cf2e2560f60a97c8b6f9b41988b0fa",
     ".claude/rules/arbeitsweise.md": "55b1c8acf746dc88754fe150473457620b9bba8fa47e4c87bb4765356baac600",
     ".claude/rules/home.md": "b47be9f252c4229fed21d9a04c52193ae218dc8b41ba5edfba0bdc03288d0ee2",
-    ".claude/rules/texte.md": "a4661a7ae3cebc7d960e65c696dfea4d18b09cd5ef2d02de721f72e8a0752860",
+    ".claude/rules/texte.md": "04d6fdeecf21cde11ba8b18567c7f7928350a6366290f7890c394e12c61c5b31",
     ".claude/rules/umgebung.md": "df5764ed58c38bdeda34242ea792892dc641b8243114b4b5b798f05a1227862e",
     ".claude/settings.json": "2f7639a9eaeda6fa6850fd653d58e319d8173a9789d59588e3b33753c6dcd907",
     ".claude/skills/code-review/agents/openai.yaml": "8229ca854e11dc8e6aef2131ee03f31fb1561cf905fab9ccc325180cf3331352",
