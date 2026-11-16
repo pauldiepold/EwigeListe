@@ -2,6 +2,8 @@
 
 Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Statistiken, Live-Spiel per Pusher). Läuft lokal über Laravel Herd unter `https://ewigeliste.test`.
 
+Arbeitsweise, Texte und Umgebung (Hooks, Staging-Deploy, `db-sync.sh`, Cloud-Sessions) stehen in `.claude/rules/`. Diese Regeln, die Skills ohne Laravel-Bezug und mehrere Skripte kommen aus dem Home Repo, siehe `.claude/rules/home.md`.
+
 @AGENTS.md
 
 ## Stack
@@ -11,8 +13,7 @@ Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Stati
 - Seiten, Komponenten, Resources und Tests: Skill `inertia-pages`.
 - Schlanke Laravel-Struktur: Middleware, Routing und Exceptions in `bootstrap/app.php`, Scheduler in `routes/console.php`, Models in `app/Models`.
 - Live-Spiel-Engine: `app/Models/LiveGame.php`, `app/Live/*`, Events in `app/Events/`.
-- Sichtbare Texte (UI, Meldungen, aria-labels) in der Du-Form und geschlechtsneutral: „Person“ oder „wer …“ statt „Spieler“, „Gewinner“ oder „Administrator“. Wo das holprig wird, generisches Femininum („Zuschauerinnen“), keine Partizipien wie „Zuschauende“. Im Code und in `GLOSSARY.md` bleibt „Spieler“ der Fachbegriff.
-- Begriffe: `GLOSSARY.md`. Entscheidungen: `docs/adr/`, die Gründe hinter dem heutigen Aufbau aus der Migration von Blade: `docs/migration.md`. Queue, Scheduler und Deploy auf Prod und Staging: `docs/betrieb.md`.
+- Begriffe: `GLOSSARY.md`; dort und im Code bleibt „Spieler“ der Fachbegriff. Entscheidungen: `docs/adr/`, die Gründe hinter dem heutigen Aufbau aus der Migration von Blade: `docs/migration.md`. Queue, Scheduler, Deploy und die Unterschiede zwischen Prod und lokal: `docs/betrieb.md`.
 
 ## Prüfungen
 
@@ -23,21 +24,10 @@ vendor/bin/pint --test && php artisan test --compact
 npm run build && npm run test:js && npm run type-check && npm run lint && npm run format
 ```
 
-Nach jedem Edit/Write formatiert `.claude/hooks/post-edit.mjs`. Vor jedem Commit prüft `.githooks/pre-commit` das Format, auch bei Änderungen per Shell; `npm install` aktiviert den Hook.
-
 Lokal läuft die Queue über `database`: `php artisan queue:listen --tries=1` im eigenen Terminal-Tab, sonst werden Statistiken erst berechnet, sobald der Worker läuft. Bei geteilter Datenbank nur einen Worker für alle Workspaces.
 
-## Lokale Datenbank
+## Branch und Deploy
 
-`./db-sync.sh` (Git Bash) holt den neuesten Prod-Dump per FTP (Zugang über `FTP_*` in `.env`), legt die lokale Datenbank aus `.env` neu an, importiert ihn und ruft `migrate` auf; nur bei `APP_ENV=local`. Ohne `mysql` im PATH importiert es per `docker exec` in den MySQL-Container auf `DB_PORT`; läuft der nicht, bricht es vor dem Download mit Hinweis ab. Ablauf und `.env`-Schlüssel stehen im Kopf des Skripts, die Kopie in praxis-app soll gleich bleiben. Avatare kommen nicht mit, lokal fehlen die Bilder.
+Hauptbranch ist `master`. Jeder Push darauf startet „Deploy Production“. Das Repo ist öffentlich: Hosts, Pfade und Zugangsdaten nie committen.
 
-## Arbeitsweise
-
-- Jede Änderung, auch reine Doku, ohne Rückfrage auf einem eigenen Branch von `master` und per PR (Skill `mattpocock-skills:pr`). Jeder Push auf `master` startet „Deploy Production“, deshalb landet dort nur der gemergte PR.
-- Tickets immer per Skill `mattpocock-skills:implement` umsetzen, auch direkt nach einem Grilling; ohne den Skill nur, wenn Paul es ausdrücklich sagt. Subagenten in Worktrees bekommen `docs/agents/implementer.md` als Grundlage. Abschluss: alle Prüfungen grün, PR nach `master`, erst nach Pauls Abnahme mergen (Squash) und das Issue schließen.
-- „Deploy“ heißt Staging; Produktion nur, wenn Paul sie ausdrücklich nennt. Staging deployt nur manuell: ohne Rückfrage, wenn `/implement` ein größeres Feature mit offenem PR abschließt (in der Cloud-Session nach grüner CI), sonst auf Pauls Wunsch. Kleine Änderungen nimmt Paul lokal ab.
-  `scripts/ci-deploy.sh [sha] [branch]` im Hintergrund starten: Es wartet auf die CI, deployt mit Prod-Dump und wartet aufs Ende. Danach Paul mit „deployed“ melden.
-- Kleine Aufräumarbeiten im Umfeld des Tickets (Review-Funde, Inkonsistenzen in angefassten Dateien) gleich mit erledigen; nur Größeres als eigenes Issue abgrenzen.
-- Kleine Anfragen klein lösen. Übersteigt der „richtige“ Weg den Nutzen deutlich, die einfachste Variante wählen und in wenigen Sätzen begründen.
-- Fehlt in der Shell ein Tool (`php`, `composer`, Netzwerk), Paul um die Ausführung bitten. Python gibt es nicht, Hilfsskripte mit `node`.
-- Dauerhaftes Feedback zum Vorgehen in `CLAUDE.md` bzw. im passenden Skill festhalten.
+Nach `./db-sync.sh` fehlen lokal die Avatare, sie kommen mit dem Dump nicht mit.

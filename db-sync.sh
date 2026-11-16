@@ -14,7 +14,7 @@
 #   4. Legt die Datenbank neu an (DROP + CREATE), damit keine Tabellen aus Branch-Migrationen
 #      übrig bleiben, und importiert den Dump.
 #   5. `php artisan migrate --force` zieht Migrationen des aktuellen Branches nach,
-#      danach laufen die projektspezifischen Befehle aus NACH_IMPORT.
+#      danach laufen die Befehle aus `nachImport` in `.claude/projekt.json`.
 #
 # `.env`-Schlüssel:
 #   APP_ENV                 muss `local` sein
@@ -23,13 +23,10 @@
 #   FTP_PATH                optional, Verzeichnis der Dumps, Standard `/`
 #   MYSQL_CONTAINER         optional, Containername statt automatischer Suche über DB_PORT
 #
-# In ein anderes Projekt übernehmen: Datei kopieren, NACH_IMPORT anpassen, `FTP_*` in `.env`
-# eintragen. Alles andere ist generisch und soll in allen Kopien gleich bleiben.
+# Die Datei kommt aus dem Home Repo und ist in allen Projekten gleich. Projektspezifisch sind nur
+# `.env` und `nachImport` in `.claude/projekt.json` (Liste von Befehlen, z. B. ["php artisan cache:update"]).
 
 set -euo pipefail
-
-# Projektspezifisch: Befehle nach Import und Migration (leer lassen, wenn nichts nötig ist).
-NACH_IMPORT=()
 
 # Herd unter Windows liefert nur php.bat (in Git Bash sonst per Alias, der im Skript nicht gilt).
 command -v php > /dev/null || php() { php.bat "$@"; }
@@ -122,10 +119,14 @@ echo ""
 echo "=== Migrationen des Branches ==="
 php artisan migrate --force
 
-if [ ${#NACH_IMPORT[@]} -gt 0 ]; then
-  echo ""
-  echo "=== ${NACH_IMPORT[*]} ==="
-  "${NACH_IMPORT[@]}"
+# Projektspezifische Befehle nach Import und Migration, einer pro Zeile.
+if [ -f .claude/projekt.json ]; then
+  while IFS= read -r befehl; do
+    [ -n "$befehl" ] || continue
+    echo ""
+    echo "=== $befehl ==="
+    eval "$befehl"
+  done < <(node -p "(require('./.claude/projekt.json').nachImport ?? []).join('\n')" | tr -d '\r')
 fi
 
 echo ""

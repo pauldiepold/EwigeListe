@@ -9,7 +9,7 @@ for _ in $(seq 1 60); do
   ID=$(gh run list --branch "$BR" --workflow ci.yml --json databaseId,headSha --jq ".[] | select(.headSha|startswith(\"$SHA\")) | .databaseId" | head -1)
   [ -n "$ID" ] && break; sleep 10
 done
-[ -z "${ID:-}" ] && { echo "CI-Run für $SHA nicht gefunden (CI läuft nur mit offenem PR nach master)"; exit 1; }
+[ -z "${ID:-}" ] && { echo "CI-Run für $SHA nicht gefunden (CI läuft nur mit offenem PR nach dem Hauptbranch)"; exit 1; }
 gh run watch "$ID" --exit-status >/dev/null 2>&1 || { echo "CI FAILED ($ID)"; gh run view "$ID" --log-failed | tail -30; exit 1; }
 echo "CI ok ($ID)"
 gh api "repos/$REPO/actions/workflows/deploy-staging.yml/dispatches" -f ref="$BR" -f "inputs[sync_db]=yes"

@@ -1,0 +1,7 @@
+{
+  "prettier": {
+    "muster": "^resources/js/.+\\.(ts|vue)$",
+    "ohne": "^resources/js/inertia/(actions|routes|wayfinder)/"
+  },
+  "nachImport": []
+}

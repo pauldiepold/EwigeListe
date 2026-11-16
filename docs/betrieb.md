@@ -86,6 +86,12 @@ php artisan queue:work --stop-when-empty --memory=384
 - Der Staging-Deploy startet nach `sync_db` selbst `stats:recalculate` (`.github/workflows/deploy-staging.yml`), der Prod-Deploy nicht. Über den 5-Minuten-Cron dauert die Neuberechnung auf Staging rund 20 bis 25 Minuten; bis dahin zeigt Staging teils noch die Statistik aus dem Dump.
 - Beide Deploys installieren mit `composer install --no-dev`: Debugbar, Telescope, Boost, Pint, PHPUnit und Faker fehlen auf dem Server. Factories und Seeder laufen dort deshalb nicht; `tinker` ist eine normale Abhängigkeit und bleibt verfügbar.
 
+## Prod ist nicht lokal
+
+- **Datenmenge:** Prod hat knapp 30.000 Spiele, 30 Listen und 150 Benutzer (Stand Oktober 2026). Lokale Laufzeiten sagen deshalb wenig aus. Aussagen zur Performance auf Prod-Mengen beziehen und auf Staging prüfen, das mit einem Prod-Dump läuft.
+- **Schema:** Alte Migrationen nutzen `$table->float('x', 3, 1)`. Laravel 13 ignoriert die Nachkommastellen, frische Datenbanken bekommen plain `float`, und die Tests laufen auf SQLite ohne Wertebereich. Prod wurde 2019 angelegt und hat echtes `float(3,1)` (maximal 99,9). Beim Schreiben in alte Float-Spalten (z. B. `profiles`) den Prod-Typ aus der Migration ablesen, nicht aus der lokalen Datenbank. Grün in lokal und CI beweist für Wertebereiche nichts; in #30 scheiterte eine Datenmigration deshalb erst auf Staging.
+- **Queue beim Deploy:** Für eine leere Queue sorgt Paul selbst. Kein `queue:restart` und keinen dauerhaften Worker in die Deploy-Workflows einbauen.
+
 ## Fehlersuche
 
 - Ausgabe und Returncode des letzten Laufs: das Skript im Browser aufrufen. `0` heißt Queue leer, `12` heißt Speichergrenze erreicht (der nächste Aufruf macht weiter).
