@@ -2,7 +2,7 @@
 
 Laravel-13-App zum Offline- und Online-Doppelkopf (Runden, Listen/Gruppen, Statistiken, Live-Spiel per Pusher). Läuft lokal über Laravel Herd unter `https://ewigeliste.test`.
 
-Arbeitsweise, Texte und Umgebung (Hooks, Staging-Deploy, `db-sync.sh`, Cloud-Sessions) stehen in `.claude/rules/`. Diese Regeln, die Skills ohne Laravel-Bezug und mehrere Skripte kommen aus dem Home Repo, siehe `.claude/rules/home.md`.
+Arbeitsweise, Texte und Umgebung (Hooks, Staging-Deploy, `db-sync.sh`, Cloud-Sessions) stehen in `.claude/rules/`. Diese Regeln, die Settings mit dem Plugin `mattpocock-skills` und mehrere Skripte kommen aus dem Home Repo, siehe `.claude/rules/home.md`.
 
 @AGENTS.md
 
