@@ -10,7 +10,7 @@ Arbeitsweise, Texte und Umgebung (Hooks, Staging-Deploy, `db-sync.sh`, Cloud-Ses
 
 - Inertia-SPA: Frontend unter `resources/js/inertia/` (Alias `@`, Pages in `Pages/`), Vue 3 + TS, Nuxt UI, Lucide-Icons (`i-lucide-*`), Inertia v3. Routen per Wayfinder (`@/routes/...`, `@/actions/...`), vom Vite-Plugin generiert und nicht eingecheckt.
 - Jede GET-Route rendert per `Inertia::render()`; Blade gibt es nur für E-Mails, das Root-Template und die statische 503-Seite. Props über `app/Http/Resources/*` (`$wrap = null`), Controller schlank.
-- Seiten, Komponenten, Resources und Tests: Skill `inertia-pages`.
+- Seiten, Komponenten, Resources und Tests: Skill `inertia-pages` (aus dem Home Repo), dazu die Regeln dieses Projekts in `docs/frontend.md`.
 - Schlanke Laravel-Struktur: Middleware, Routing und Exceptions in `bootstrap/app.php`, Scheduler in `routes/console.php`, Models in `app/Models`.
 - Live-Spiel-Engine: `app/Models/LiveGame.php`, `app/Live/*`, Events in `app/Events/`.
 - Begriffe: `GLOSSARY.md`; dort und im Code bleibt „Spieler“ der Fachbegriff. Entscheidungen: `docs/adr/`, die Gründe hinter dem heutigen Aufbau aus der Migration von Blade: `docs/migration.md`. Queue, Scheduler, Deploy und die Unterschiede zwischen Prod und lokal: `docs/betrieb.md`.
