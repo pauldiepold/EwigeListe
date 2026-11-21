@@ -1,6 +1,6 @@
 {
   "quelle": "pauldiepold/home",
-  "commit": "26a8a6e",
+  "commit": "3631cb7",
   "dateien": {
     ".claude/hooks/cloud-setup.sh": "2becb6acdb22e9d2e295a3c674a5cd7b179a22e44234cf73fa280efbd426e5f5",
     ".claude/hooks/home-sync-check.mjs": "f8ca7853aaafa1963e9b088cfa2dec41e54c643c25c056cdfda36d4f232ec0a4",
@@ -10,6 +10,7 @@
     ".claude/rules/texte.md": "04d6fdeecf21cde11ba8b18567c7f7928350a6366290f7890c394e12c61c5b31",
     ".claude/rules/umgebung.md": "df5764ed58c38bdeda34242ea792892dc641b8243114b4b5b798f05a1227862e",
     ".claude/settings.json": "8d79fdf44944c21a911bdee6b727ab4dfc3f61edba445a1e7f5ad7bdac1b72bd",
+    ".claude/skills/inertia-pages/SKILL.md": "7588844d25be9fb9e78ea5a627f41e918fd8b421c382f69f185137d75db4dbb1",
     ".githooks/pre-commit": "c05a13fb844975ae4cf4f056aa84f0327bc1c87258c213b01c3f91d11c33df81",
     ".worktreeinclude": "69aa73cf5bc3377a7d97f2e8d2bb773195815efe225af7f1be6f5b9306bbe14f",
     "config/boost.php": "ba032c1b2357b790f124e896d8c5c82ac6cd1e2d5b230998030e7298ad0b1326",
