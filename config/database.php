@@ -64,6 +64,8 @@ return [
             'engine' => 'InnoDB',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Lokal (MySQL im Docker-Container) kostet jede native Prepare-Runde rund 40 ms Latenz.
+                PDO::ATTR_EMULATE_PREPARES => env('DB_EMULATE_PREPARES') ? true : null,
             ]) : [],
         ],
 
@@ -83,6 +85,8 @@ return [
             'engine' => 'InnoDB',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Lokal (MySQL im Docker-Container) kostet jede native Prepare-Runde rund 40 ms Latenz.
+                PDO::ATTR_EMULATE_PREPARES => env('DB_EMULATE_PREPARES') ? true : null,
             ]) : [],
         ],
         'mysql_testing' => [
@@ -101,6 +105,8 @@ return [
             'engine' => 'InnoDB',
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Lokal (MySQL im Docker-Container) kostet jede native Prepare-Runde rund 40 ms Latenz.
+                PDO::ATTR_EMULATE_PREPARES => env('DB_EMULATE_PREPARES') ? true : null,
             ]) : [],
         ],
 
